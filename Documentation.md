@@ -48,7 +48,7 @@ First you write the **WHILE** keyword, then the condition follows. After the con
 
 ## Data Types
 - ### Number
-You can use numbers for everything. They support every operation and comparison. The numbers can be whole numbers or decimals; it doesn't matter. The numbers are internally stored as a C# double, which is stored in **8 bytes**. The minimum value is ±5.0 × 10^−324^ to ±1.7 × 10^308^ according to the Microsoft documentation.
+You can use numbers for everything. They support every operation and comparison. The numbers can be whole numbers or decimals; it doesn't matter. The numbers are internally stored as a C# double, which is stored in **8 bytes**. The minimum value is ±5.0 × $10^{−324}$ to $±1.7 × 10^{308}$ according to the Microsoft documentation.
 - ### String
 - ### Boolean
 - ### List
