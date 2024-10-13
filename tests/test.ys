@@ -1,0 +1,26 @@
+
+FUN GetCSq(a, b)
+    RETURN MATH.SQRT(a * a + b * b)
+END
+
+FUN RUNTEST()
+    FOR x = 0 TO 360 THEN
+        FOR y = 0 TO 360 THEN
+            (GetCSq(x, y))
+        END
+    END
+END
+
+FUN CountTo(x)
+    PRINT("Here is done")
+    VAR zg = 0
+    FOR y = 0 TO x THEN
+        VAR zg = zg + y
+    END
+    PRINT(zg)
+END
+
+VAR zigzag = 1000
+CountTo(zigzag)
+VAR list = [1, 2]
+PRINT(list.Count)

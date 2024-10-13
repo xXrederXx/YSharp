@@ -1,0 +1,23 @@
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v9.0",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v9.0": {
+      "YSharp 2.0/1.0.0": {
+        "runtime": {
+          "YSharp 2.0.dll": {}
+        }
+      }
+    }
+  },
+  "libraries": {
+    "YSharp 2.0/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    }
+  }
+}
