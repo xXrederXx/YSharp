@@ -6,7 +6,7 @@ public class Error (int index, string message, Position start){
     private readonly string Message = message;
     public readonly int ErrorIndex = index;
     public readonly Position StartPosition = start;
-    public bool IsError => this is not NoError;
+    public bool IsError => this is not ErrorNull;
 
     public override string ToString()
     {
@@ -22,11 +22,11 @@ public class Error (int index, string message, Position start){
 }
 
 // This is NoError, used instead of error = null
-public class NoError : Error
+public class ErrorNull : Error
 {
-    public static readonly NoError Instance = new();
-    public NoError()
-        : base(0, string.Empty, Position._null) { }
+    public static readonly ErrorNull Instance = new();
+    private ErrorNull()
+        : base(0, string.Empty, Position.Null) { }
 
     public override string ToString() => string.Empty;
 }
@@ -48,12 +48,7 @@ public class ExpectedTokenError(Position posStart, string details) : Error(222, 
 
 
 // YS0300 -> Interpreter
-public class VarNotFoundError(Position posStart, string details) : Error(301, details, posStart){}
-public class FuncNotFoundError(Position posStart, string details) : Error(302, details, posStart){}
-public class WrongFormatError(Position posStart, string details) : Error(304, details, posStart){}
-public class NumArgsError(Position posStart, string details) : Error(305, details, posStart){}
-public class ArgOutOfRangeError(Position posStart, string details) : Error(306, details, posStart){}
-public class RunTimeError(Position posStart, string details, Context? context, int errorIndex = 310) : Error(errorIndex, details, posStart)
+public class RunTimeError(Position posStart, string details, Context? context, int errorIndex = 300) : Error(errorIndex, details, posStart)
 {
     private readonly Context? context = context;
 
@@ -81,7 +76,13 @@ public class RunTimeError(Position posStart, string details, Context? context, i
         return "Traceback (most recent call last):\n" + result;
     }
 }
-public class IlligalOperationError(Position posStart, string details, Context? context) : RunTimeError(posStart, details, context, 311);
+
+public class VarNotFoundError(Position posStart, string details, Context? context) : RunTimeError(posStart, details, context, 301);
+public class FuncNotFoundError(Position posStart, string details, Context? context) : RunTimeError(posStart, details, context, 302);
+public class WrongFormatError(Position posStart, string details, Context? context) : RunTimeError(posStart, details, context, 303);
+public class NumArgsError(Position posStart, string details, Context? context) : RunTimeError(posStart, details, context, 304);
+public class ArgOutOfRangeError(Position posStart, string details, Context? context) : RunTimeError(posStart, details, context, 305);
+public class IlligalOperationError(Position posStart, string details, Context? context) : RunTimeError(posStart, details, context, 306);
 
 // YS0400 -> Other
-public class InternalError(string details) : Error(400, details, Position._null){}
+public class InternalError(string details) : Error(400, details, Position.Null){}
