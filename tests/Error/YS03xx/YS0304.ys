@@ -1,0 +1,2 @@
+VAR list = [1, 2, 3]
+list.Get("4") # String Argument not allowed
