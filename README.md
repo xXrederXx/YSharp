@@ -3,5 +3,5 @@ This is my own programming language. I call it Y-Sharp or Y#. For more info read
 <br>
 # TODO
 - [ ] Improve Performance
-- [ ] Add Tests
-- [ ] Improve Error Handeling
+- [x] Add Tests
+- [x] Improve Error Handeling
