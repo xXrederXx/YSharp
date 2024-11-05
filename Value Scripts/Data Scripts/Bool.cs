@@ -1,75 +1,75 @@
 namespace YSharp_2._0;
 
-public class Bool(bool value) : Value()
+public class VBool(bool value) : Value()
 {
     public readonly bool value = value;
 
-    public override ValueError getComparisonEQ(Value other)
+    public override ValueError GetComparisonEQ(Value other)
     {
         Value? ret = other switch
         {
-            Bool _other => new Bool(value == _other.value),
+            VBool _other => new VBool(value == _other.value),
             _ => null
         };
         if (ret == null)
         {
             return (ValueNull.Instance, IlligalOperation(other));
         }
-        return (ret, NoError.Instance);
+        return (ret, ErrorNull.Instance);
     }
-    public override ValueError getComparisonNE(Value other)
+    public override ValueError GetComparisonNE(Value other)
     {
         Value? ret = other switch
         {
-            Bool _other => new Bool(value != _other.value),
+            VBool _other => new VBool(value != _other.value),
             _ => null
         };
         if (ret == null)
         {
             return (ValueNull.Instance, IlligalOperation(other));
         }
-        return (ret, NoError.Instance);
+        return (ret, ErrorNull.Instance);
     }
-    public override ValueError andedTo(Value other)
+    public override ValueError AndedTo(Value other)
     {
         Value? ret = other switch
         {
-            Bool _other => new Bool(value && _other.value),
+            VBool _other => new VBool(value && _other.value),
             _ => null
         };
         if (ret == null)
         {
             return (ValueNull.Instance, IlligalOperation(other));
         }
-        return (ret, NoError.Instance);
+        return (ret, ErrorNull.Instance);
     }
-    public override ValueError oredTo(Value other)
+    public override ValueError OredTo(Value other)
     {
         Value? ret = other switch
         {
-            Bool _other => new Bool(value || _other.value),
+            VBool _other => new VBool(value || _other.value),
             _ => null
         };
         if (ret == null)
         {
             return (ValueNull.Instance, IlligalOperation(other));
         }
-        return (ret, NoError.Instance);
+        return (ret, ErrorNull.Instance);
     }
-    public override ValueError notted()
+    public override ValueError Notted()
     {
-        Bool? ret = new(!value);
+        VBool? ret = new(!value);
         ret.SetContext(context);
-        return (ret, NoError.Instance);
+        return (ret, ErrorNull.Instance);
     }
 
-    public override bool isTrue()
+    public override bool IsTrue()
     {
         return value;
     }
-    public override Bool copy()
+    public override VBool Copy()
     {
-        Bool copy = new(value);
+        VBool copy = new(value);
         copy.SetPos(startPos, endPos);
         copy.SetContext(context);
         return copy;
