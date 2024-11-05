@@ -6,7 +6,6 @@ namespace YSharp_2._0;
 public class Lexer
 {
     private readonly string text;
-    private readonly string fileName;
     private Position pos;
     private char current_char = char.MaxValue;
 
@@ -14,15 +13,14 @@ public class Lexer
     public Lexer(string text, string fileName)
     {
         this.text = text;
-        this.fileName = fileName;
-        pos = new Position(-1, 0, -1, fileName, text); // -1 because Advance auto increments
+        pos = new Position(-1, 0, -1, fileName); // -1 because Advance auto increments
         Advance();
     }
 
     // this uptades to the next charachter
     private void Advance()
     {
-        pos = pos.Advance(current_char);
+        pos.Advance(current_char);
         current_char = pos.Index < text.Length ? text[pos.Index] : char.MaxValue;
     }
 
@@ -60,11 +58,11 @@ public class Lexer
 
         if (hasDot)
         {
-            return (new Token(TokenType.FLOAT, double.Parse(stringBuilder.ToString()), posStart, pos), NoError.Instance);
+            return (new Token(TokenType.FLOAT, double.Parse(stringBuilder.ToString()), posStart, pos), ErrorNull.Instance);
         }
         else
         {
-            return (new Token(TokenType.INT, int.Parse(stringBuilder.ToString()), posStart, pos), NoError.Instance);
+            return (new Token(TokenType.INT, int.Parse(stringBuilder.ToString()), posStart, pos), ErrorNull.Instance);
         }
     }
     private Token MakeIdentifier()
@@ -96,7 +94,7 @@ public class Lexer
         if (current_char == '=')
         {
             Advance();
-            return (new Token(TokenType.NE, startPos: posStart, endPos: pos), NoError.Instance);
+            return (new Token(TokenType.NE, startPos: posStart, endPos: pos), ErrorNull.Instance);
         }
         Advance();
         return (new Token(TokenType.NULL), new ExpectedCharError(posStart, "Expected '=' after '!'"));
@@ -167,12 +165,12 @@ public class Lexer
     private Token SkipTypeAnotation()
     {
         Advance();
-        while (current_char != '=' && current_char != char.MaxValue)
+        while (current_char is not '=' and not char.MaxValue)
         {
             Advance();
         }
         Advance();
-        return new Token(TokenType.EQ, pos, Position._null, Position._null);
+        return new Token(TokenType.EQ, pos, Position.Null, Position.Null);
     }
 
     private Token MakePlus(){
@@ -231,12 +229,12 @@ public class Lexer
             }
             else if (current_char is ';' or '\n' or '\r')
             {
-                tokens.Add(new Token(TokenType.NEWLINE, string.Empty, pos, Position._null));
+                tokens.Add(new Token(TokenType.NEWLINE, string.Empty, pos, Position.Null));
                 Advance();
             }
             else if (current_char == '.')
             {
-                tokens.Add(new Token(TokenType.DOT, string.Empty, pos, Position._null));
+                tokens.Add(new Token(TokenType.DOT, string.Empty, pos, Position.Null));
                 Advance();
             }
             else if (char.IsDigit(current_char)) // Check for digits (int)
@@ -274,19 +272,19 @@ public class Lexer
             }
             else if (current_char == '^')
             {
-                tokens.Add(new Token(TokenType.POW, string.Empty, pos, Position._null));
+                tokens.Add(new Token(TokenType.POW, string.Empty, pos, Position.Null));
                 Advance();
             }
             else if (current_char == '(')
             {
                 parenthesesCount++;
-                tokens.Add(new Token(TokenType.LPAREN, string.Empty, pos, Position._null));
+                tokens.Add(new Token(TokenType.LPAREN, string.Empty, pos, Position.Null));
                 Advance();
             }
             else if (current_char == ')')
             {
                 parenthesesCount--;
-                tokens.Add(new Token(TokenType.RPAREN, string.Empty, pos, Position._null));
+                tokens.Add(new Token(TokenType.RPAREN, string.Empty, pos, Position.Null));
                 Advance();
             }
             // Comparison
@@ -314,19 +312,19 @@ public class Lexer
             // Other
             else if (current_char == ',')
             {
-                tokens.Add(new Token(TokenType.COMMA, string.Empty, pos, Position._null));
+                tokens.Add(new Token(TokenType.COMMA, string.Empty, pos, Position.Null));
                 Advance();
             }
             else if (current_char == '[')
             {
                 squarBracketCount++;
-                tokens.Add(new Token(TokenType.LSQUARE, string.Empty, pos, Position._null));
+                tokens.Add(new Token(TokenType.LSQUARE, string.Empty, pos, Position.Null));
                 Advance();
             }
             else if (current_char == ']')
             {
                 squarBracketCount--;
-                tokens.Add(new Token(TokenType.RSQUARE, string.Empty, pos, Position._null));
+                tokens.Add(new Token(TokenType.RSQUARE, string.Empty, pos, Position.Null));
                 Advance();
             }
             else
@@ -339,14 +337,14 @@ public class Lexer
             }
         }
         if(parenthesesCount != 0){
-            return ([], new UnclosedBracketsError(Position._null, "There are more or less Open parentheses than closed ones"));
+            return ([], new UnclosedBracketsError(Position.Null, "There are more or less Open parentheses than closed ones"));
         }
         if(squarBracketCount != 0){
-            return ([], new UnclosedBracketsError(Position._null, "There are more or less Open square brackets than closed ones"));
+            return ([], new UnclosedBracketsError(Position.Null, "There are more or less Open square brackets than closed ones"));
         }
 
-        tokens.Add(new Token(TokenType.EOF, string.Empty, pos, Position._null)); // Add the End Of File token
-        return (tokens, NoError.Instance);
+        tokens.Add(new Token(TokenType.EOF, string.Empty, pos, Position.Null)); // Add the End Of File token
+        return (tokens, ErrorNull.Instance);
     }
 
 }
