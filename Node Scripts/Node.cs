@@ -1,52 +1,53 @@
 
+using System.Collections.Immutable;
+
 namespace YSharp_2._0;
-public class Node
+// Interface definition
+public interface INode
 {
-    public Position StartPos { get; protected set; }
-    public Position EndPos { get; protected set; }
+    Position StartPos { get; set; }
+    Position EndPos { get; set; }
 }
-
-// This node represents a number token
-public class NumberNode : Node
+public class NodeNull : INode
 {
-    public readonly Token tok;
+    public Position StartPos { get => Position.Null; set => _ = Position.Null; }
+    public Position EndPos { get => Position.Null; set => _ = Position.Null; }
 
-    public NumberNode(Token tok)
-    {
-        this.tok = tok;
-        StartPos = tok.StartPos;
-        EndPos = tok.EndPos;
-    }
+    public static readonly NodeNull Instance = new();
+    private NodeNull() { }
+}
+// NumberNode implements INode
+public class NumberNode(Token tok) : INode
+{
+    public readonly Token tok = tok;
+
+    // Implement properties, not fields
+    public Position StartPos { get; set; } = tok.StartPos;
+    public Position EndPos { get; set; } = tok.EndPos;
 
     public override string ToString() => tok.ToString();
 }
 
-// This node represents a string token
-public class StringNode : Node
-{
-    public readonly Token tok;
 
-    public StringNode(Token tok)
-    {
-        this.tok = tok;
-        StartPos = tok.StartPos;
-        EndPos = tok.EndPos;
-    }
+// This node represents a string token
+public class StringNode(Token tok) : INode
+{
+    public readonly Token tok = tok;
+
+    public Position StartPos { get; set; } = tok.StartPos;
+    public Position EndPos { get; set; } = tok.EndPos;
 
     public override string ToString() => tok.ToString();
 }
 
 // This node represents a list of elements
-public class ListNode : Node
+public class ListNode(List<INode> elementNodes, Position posStart, Position posEnd) : INode
 {
-    public readonly List<Node> elementNodes;
+    public readonly ImmutableList<INode> elementNodes = elementNodes.ToImmutableList();
 
-    public ListNode(List<Node> elementNodes, Position posStart, Position posEnd)
-    {
-        this.elementNodes = elementNodes;
-        StartPos = posStart;
-        EndPos = posEnd;
-    }
+    public Position StartPos { get; set; } = posStart;
+    public Position EndPos { get; set; } = posEnd;
+
     public override string ToString()
     {
         return "[" + string.Join(',', elementNodes) + "]";
@@ -54,54 +55,39 @@ public class ListNode : Node
 }
 
 // This node represents a binary operation
-public class BinOpNode : Node
+public class BinOpNode(INode leftNode, Token opTok, INode rightNode) : INode
 {
-    public readonly Node leftNode;
-    public readonly Token opTok;
-    public readonly Node rightNode;
+    public readonly INode leftNode = leftNode;
+    public readonly Token opTok = opTok;
+    public readonly INode rightNode = rightNode;
 
-    public BinOpNode(Node leftNode, Token opTok, Node rightNode)
-    {
-        this.leftNode = leftNode;
-        this.opTok = opTok;
-        this.rightNode = rightNode;
-
-        StartPos = leftNode.StartPos;
-        EndPos = rightNode.EndPos;
-    }
+    public Position StartPos { get; set; } = leftNode.StartPos;
+    public Position EndPos { get; set; } = rightNode.EndPos;
 
     public override string ToString() => $"({leftNode}, {opTok}, {rightNode})";
 }
 
 // This node represents a unary operation
-public class UnaryOpNode : Node
+public class UnaryOpNode(Token opTok, INode node) : INode
 {
-    public readonly Token opTok;
-    public readonly Node node;
+    public readonly Token opTok = opTok;
+    public readonly INode node = node;
 
-    public UnaryOpNode(Token opTok, Node node)
-    {
-        this.opTok = opTok;
-        this.node = node;
-
-        StartPos = opTok.StartPos;
-        EndPos = node.EndPos;
-    }
+    public Position StartPos { get; set; } = opTok.StartPos;
+    public Position EndPos { get; set; } = node.EndPos;
 
     public override string ToString() => $"({opTok}, {node})";
 }
 
 // This node represents a variable access
-public class VarAccessNode : Node
+public class VarAccessNode(Token varNameTok) : INode
 {
-    public readonly Token varNameTok;
+    public readonly Token varNameTok = varNameTok;
+    public bool fromCall = false;
 
-    public VarAccessNode(Token varNameTok)
-    {
-        this.varNameTok = varNameTok;
-        StartPos = varNameTok.StartPos;
-        EndPos = varNameTok.EndPos;
-    }
+    public Position StartPos { get; set; } = varNameTok.StartPos;
+    public Position EndPos { get; set; } = varNameTok.EndPos;
+
     public override string ToString()
     {
         return varNameTok.Value?.ToString() ?? "null";
@@ -109,19 +95,13 @@ public class VarAccessNode : Node
 }
 
 // This node represents a variable assignment
-public class VarAssignNode : Node
+public class VarAssignNode(Token varNameTok, INode valueNode) : INode
 {
-    public readonly Token varNameTok;
-    public readonly Node valueNode;
+    public readonly Token varNameTok = varNameTok;
+    public readonly INode valueNode = valueNode;
 
-    public VarAssignNode(Token varNameTok, Node valueNode)
-    {
-        this.varNameTok = varNameTok;
-        this.valueNode = valueNode;
-
-        StartPos = varNameTok.StartPos;
-        EndPos = valueNode.EndPos;
-    }
+    public Position StartPos { get; set; } = varNameTok.StartPos;
+    public Position EndPos { get; set; } = valueNode.EndPos;
 
     public override string ToString()
     {
@@ -130,142 +110,104 @@ public class VarAssignNode : Node
 }
 
 // This node represents a dot (.) variable access
-public class DotVarAccessNode : Node
+public class DotVarAccessNode(Token varNameTok, INode parent) : INode
 {
-    public readonly Token varNameTok;
-    public readonly Node parent;
+    public readonly Token varNameTok = varNameTok;
+    public readonly INode parent = parent;
 
-    public DotVarAccessNode(Token varNameTok, Node parent)
-    {
-        this.varNameTok = varNameTok;
-        this.parent = parent;
-
-        StartPos = varNameTok.StartPos;
-        EndPos = varNameTok.EndPos;
-    }
+    public Position StartPos { get; set; } = varNameTok.StartPos;
+    public Position EndPos { get; set; } = varNameTok.EndPos;
 }
 
 // This node represents a function call using dot notation
-public class DotCallNode : Node
+public class DotCallNode(Token funcNameTok, List<INode> argNodes, INode parent) : INode
 {
-    public readonly Token funcNameTok;
-    public readonly List<Node> argNodes;
-    public readonly Node parent;
+    public readonly Token funcNameTok = funcNameTok;
+    public readonly ImmutableList<INode> argNodes = argNodes.ToImmutableList();
+    public readonly INode parent = parent;
 
-    public DotCallNode(Token funcNameTok, List<Node> argNodes, Node parent)
-    {
-        this.funcNameTok = funcNameTok;
-        this.argNodes = argNodes;
-        this.parent = parent;
-
-        StartPos = funcNameTok.StartPos;
-        EndPos = argNodes.Count > 0 ? argNodes[^1].EndPos : funcNameTok.EndPos;
-    }
+    public Position StartPos { get; set; } = funcNameTok.StartPos;
+    public Position EndPos { get; set; } = argNodes.Count > 0 ? argNodes[^1].EndPos : funcNameTok.EndPos;
 }
 
 // This node represents an if statement
-public class IfNode : Node
+public class IfNode(List<IfExpresionCases> cases, ElseCaseData elseCase) : INode
 {
-    public readonly List<IfExpresionCases> cases;
-    public readonly ElseCaseData elseCase;
+    public readonly ImmutableList<IfExpresionCases> cases = cases.ToImmutableList();
+    public readonly ElseCaseData elseCase = elseCase;
 
-    public IfNode(List<IfExpresionCases> cases, ElseCaseData elseCase)
-    {
-        this.cases = cases;
-        this.elseCase = elseCase;
-
-        StartPos = cases[0].condition.StartPos;
-        EndPos = elseCase.Node != null ? elseCase.Node.EndPos : cases[^1].condition.EndPos;
-    }
+    public Position StartPos { get; set; } = cases[0].condition.StartPos;
+    public Position EndPos { get; set; } = elseCase.Node != null ? elseCase.Node.EndPos : cases[^1].condition.EndPos;
 }
 
 // This node represents a for loop
-public class ForNode : Node
+public class ForNode(Token varNameTok, INode startValueNode, INode endValueNode, INode? stepValueNode, INode bodyNode, bool retNull) : INode
 {
-    public readonly Token varNameTok;
-    public readonly Node startValueNode;
-    public readonly Node endValueNode;
-    public readonly Node? stepValueNode;
-    public readonly Node bodyNode;
-    public readonly bool retNull;
+    public readonly Token varNameTok = varNameTok;
+    public readonly INode startValueNode = startValueNode;
+    public readonly INode endValueNode = endValueNode;
+    public readonly INode? stepValueNode = stepValueNode;
+    public readonly INode bodyNode = bodyNode;
+    public readonly bool retNull = retNull;
 
-    public ForNode(Token varNameTok, Node startValueNode, Node endValueNode, Node? stepValueNode, Node bodyNode, bool retNull)
-    {
-        this.varNameTok = varNameTok;
-        this.startValueNode = startValueNode;
-        this.endValueNode = endValueNode;
-        this.stepValueNode = stepValueNode;
-        this.bodyNode = bodyNode;
-        this.retNull = retNull;
-
-        StartPos = varNameTok.StartPos;
-        EndPos = bodyNode.EndPos;
-    }
+    public Position StartPos { get; set; } = varNameTok.StartPos;
+    public Position EndPos { get; set; } = bodyNode.EndPos;
 }
 
 // This node represents a while loop
-public class WhileNode : Node
+public class WhileNode(INode conditionNode, INode bodyNode, bool retNull) : INode
 {
-    public readonly Node conditionNode;
-    public readonly Node bodyNode;
-    public readonly bool retNull;
+    public readonly INode conditionNode = conditionNode;
+    public readonly INode bodyNode = bodyNode;
+    public readonly bool retNull = retNull;
 
-    public WhileNode(Node conditionNode, Node bodyNode, bool retNull)
-    {
-        this.conditionNode = conditionNode;
-        this.bodyNode = bodyNode;
-        this.retNull = retNull;
-
-        StartPos = conditionNode.StartPos;
-        EndPos = bodyNode.EndPos;
-    }
+    public Position StartPos { get; set; } = conditionNode.StartPos;
+    public Position EndPos { get; set; } = bodyNode.EndPos;
 }
 
 // This node represents a function definition
-public class FuncDefNode : Node
+public class FuncDefNode : INode
 {
     public readonly Token? varNameTok;
-    public readonly List<Token> argNameToks;
-    public readonly Node bodyNode;
+    public readonly ImmutableList<Token> argNameToks;
+    public readonly INode bodyNode;
     public readonly bool retNull;
 
-    public FuncDefNode(Token? varNameTok, List<Token> argNameToks, Node bodyNode, bool autoReturn)
+    public FuncDefNode(Token? varNameTok, List<Token> argNameToks, INode bodyNode, bool autoReturn)
     {
         this.varNameTok = varNameTok;
-        this.argNameToks = argNameToks ?? [];
+        this.argNameToks = (argNameToks ?? []).ToImmutableList();
         this.bodyNode = bodyNode;
-        this.retNull = autoReturn;
+        retNull = autoReturn;
 
         if (varNameTok is not null)
         {
-            this.StartPos = varNameTok.StartPos;
+            StartPos = varNameTok.StartPos;
         }
         else if (argNameToks?.Count > 0)
         {
-            this.StartPos = argNameToks[0].StartPos;
+            StartPos = argNameToks[0].StartPos;
         }
         else
         {
-            this.StartPos = bodyNode.StartPos;
+            StartPos = bodyNode.StartPos;
         }
         EndPos = bodyNode.EndPos;
     }
+
+    public Position StartPos { get ; set ; }
+    public Position EndPos { get ; set ; }
 }
 
 // This node represents a function call
-public class CallNode : Node
+public class CallNode(INode nodeToCall, List<INode> argNodes) : INode
 {
-    public readonly Node nodeToCall;
-    public readonly List<Node> argNodes;
+    public readonly INode nodeToCall = nodeToCall;
+    public readonly ImmutableList<INode> argNodes = argNodes.ToImmutableList();
 
-    public CallNode(Node nodeToCall, List<Node> argNodes)
-    {
-        this.nodeToCall = nodeToCall;
-        this.argNodes = argNodes;
+    public Position StartPos { get; set; } = nodeToCall.StartPos;
+    public Position EndPos { get; set; } = argNodes.Count > 0 ? argNodes[^1].EndPos : nodeToCall.EndPos;
 
-        StartPos = nodeToCall.StartPos;
-        EndPos = argNodes.Count > 0 ? argNodes[^1].EndPos : nodeToCall.EndPos;
-    }
     public override string ToString()
     {
         return $"{nodeToCall} -> " + string.Join(',', argNodes);
@@ -273,35 +215,34 @@ public class CallNode : Node
 }
 
 // This node represents a return statement
-public class ReturnNode : Node
+public class ReturnNode(INode? nodeToReturn, Position startPos, Position endPos) : INode
 {
-    public readonly Node? nodeToReturn;
+    public readonly INode? nodeToReturn = nodeToReturn;
 
-    public ReturnNode(Node? nodeToReturn, Position startPos, Position endPos)
-    {
-        this.nodeToReturn = nodeToReturn;
-        StartPos = startPos;
-        EndPos = endPos;
-    }
+    public Position StartPos { get; set; } = startPos;
+    public Position EndPos { get; set; } = endPos;
 }
 
 // This node represents a continue statement
-public class ContinueNode : Node
+public class ContinueNode(Position startPos, Position endPos) : INode
 {
-    public ContinueNode(Position startPos, Position endPos)
-    {
-        StartPos = startPos;
-        EndPos = endPos;
-    }
+    public Position StartPos { get; set; } = startPos;
+    public Position EndPos { get; set; } = endPos;
 }
 
 // This node represents a break statement
-public class BreakNode : Node
+public class BreakNode(Position startPos, Position endPos) : INode
 {
-    public BreakNode(Position startPos, Position endPos)
-    {
-        StartPos = startPos;
-        EndPos = endPos;
-    }
+    public Position StartPos { get; set; } = startPos;
+    public Position EndPos { get; set; } = endPos;
 }
 
+public class TryCatchNode(INode tryNode, INode catchNode, Token? catchVarName) : INode
+{
+    public readonly INode TryNode = tryNode;
+    public readonly INode CatchNode = catchNode;
+    public readonly Token? ChatchVarName = catchVarName;
+
+    public Position StartPos { get; set; } = tryNode.StartPos;
+    public Position EndPos { get; set; } = catchNode is NodeNull _ ? tryNode.EndPos : catchNode.EndPos;
+}

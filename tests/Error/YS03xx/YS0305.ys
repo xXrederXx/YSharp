@@ -1,0 +1,5 @@
+FUN add(a, b)
+    PRINT(a + b)
+END
+
+VAR x = add(1, 2, 6) #Function add(a, b) only takes 2 arguments you passed 3

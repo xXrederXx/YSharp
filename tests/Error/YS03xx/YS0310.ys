@@ -1,0 +1,1 @@
+VAR x = RUN("notAFile") # This will generate a Run Time Error

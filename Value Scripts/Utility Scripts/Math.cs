@@ -1,20 +1,20 @@
 namespace YSharp_2._0;
 
-public class Math : Value
+public class VMath : Value
 {
     public override ValueError GetVar(string name)
     {
         return name switch
         {
-            "PI" => (ValueError)(new Number(System.Math.PI), NoError.Instance),
-            "E" => (ValueError)(new Number(System.Math.E), NoError.Instance),
-            "TAU" => (ValueError)(new Number(System.Math.Tau), NoError.Instance),
+            "PI" => (ValueError)(new VNumber(System.Math.PI), ErrorNull.Instance),
+            "E" => (ValueError)(new VNumber(System.Math.E), ErrorNull.Instance),
+            "TAU" => (ValueError)(new VNumber(System.Math.Tau), ErrorNull.Instance),
             _ => base.GetVar(name),
         };
     }
     public override ValueError GetFunc(string name, List<Value> argNodes)
     {
-        Error err = CheckArgs(argNodes, 1, [typeof(Number)]);
+        Error err = ValueHelper.CheckArgs(argNodes, 1, [typeof(VNumber)], context ?? new Context());
         if (err.IsError)
         {
             return (ValueNull.Instance, err);
@@ -22,33 +22,33 @@ public class Math : Value
 
         return name switch
         {
-            "ABS" => (ValueError)(new Number(System.Math.Abs(((Number)argNodes[0]).value)), NoError.Instance),
-            "CEIL" => (ValueError)(new Number(System.Math.Ceiling(((Number)argNodes[0]).value)), NoError.Instance),
-            "FLOOR" => (ValueError)(new Number(System.Math.Floor(((Number)argNodes[0]).value)), NoError.Instance),
-            "ROUND" => (ValueError)(new Number(System.Math.Round(((Number)argNodes[0]).value)), NoError.Instance),
-            "SQRT" => (ValueError)(new Number(System.Math.Sqrt(((Number)argNodes[0]).value)), NoError.Instance),
-            "CBRT" => (ValueError)(new Number(System.Math.Cbrt(((Number)argNodes[0]).value)), NoError.Instance),
-            "SIN" => (ValueError)(new Number(System.Math.Sin(((Number)argNodes[0]).value)), NoError.Instance),
-            "COS" => (ValueError)(new Number(System.Math.Cos(((Number)argNodes[0]).value)), NoError.Instance),
-            "TAN" => (ValueError)(new Number(System.Math.Tan(((Number)argNodes[0]).value)), NoError.Instance),
-            "SINH" => (ValueError)(new Number(System.Math.Sinh(((Number)argNodes[0]).value)), NoError.Instance),
-            "COSH" => (ValueError)(new Number(System.Math.Cosh(((Number)argNodes[0]).value)), NoError.Instance),
-            "TANH" => (ValueError)(new Number(System.Math.Tanh(((Number)argNodes[0]).value)), NoError.Instance),
-            "ASIN" => (ValueError)(new Number(System.Math.Asin(((Number)argNodes[0]).value)), NoError.Instance),
-            "ACOS" => (ValueError)(new Number(System.Math.Acos(((Number)argNodes[0]).value)), NoError.Instance),
-            "ATAN" => (ValueError)(new Number(System.Math.Atan(((Number)argNodes[0]).value)), NoError.Instance),
-            "ASINH" => (ValueError)(new Number(System.Math.Asinh(((Number)argNodes[0]).value)), NoError.Instance),
-            "ACOSH" => (ValueError)(new Number(System.Math.Acosh(((Number)argNodes[0]).value)), NoError.Instance),
-            "ATANH" => (ValueError)(new Number(System.Math.Atanh(((Number)argNodes[0]).value)), NoError.Instance),
-            "LOG" => (ValueError)(new Number(System.Math.Log(((Number)argNodes[0]).value)), NoError.Instance),
-            "LOG2" => (ValueError)(new Number(System.Math.Log2(((Number)argNodes[0]).value)), NoError.Instance),
-            "LOG10" => (ValueError)(new Number(System.Math.Log10(((Number)argNodes[0]).value)), NoError.Instance),
+            "ABS" => (ValueError)(new VNumber(System.Math.Abs(((VNumber)argNodes[0]).value)), ErrorNull.Instance),
+            "CEIL" => (ValueError)(new VNumber(System.Math.Ceiling(((VNumber)argNodes[0]).value)), ErrorNull.Instance),
+            "FLOOR" => (ValueError)(new VNumber(System.Math.Floor(((VNumber)argNodes[0]).value)), ErrorNull.Instance),
+            "ROUND" => (ValueError)(new VNumber(System.Math.Round(((VNumber)argNodes[0]).value)), ErrorNull.Instance),
+            "SQRT" => (ValueError)(new VNumber(System.Math.Sqrt(((VNumber)argNodes[0]).value)), ErrorNull.Instance),
+            "CBRT" => (ValueError)(new VNumber(System.Math.Cbrt(((VNumber)argNodes[0]).value)), ErrorNull.Instance),
+            "SIN" => (ValueError)(new VNumber(System.Math.Sin(((VNumber)argNodes[0]).value)), ErrorNull.Instance),
+            "COS" => (ValueError)(new VNumber(System.Math.Cos(((VNumber)argNodes[0]).value)), ErrorNull.Instance),
+            "TAN" => (ValueError)(new VNumber(System.Math.Tan(((VNumber)argNodes[0]).value)), ErrorNull.Instance),
+            "SINH" => (ValueError)(new VNumber(System.Math.Sinh(((VNumber)argNodes[0]).value)), ErrorNull.Instance),
+            "COSH" => (ValueError)(new VNumber(System.Math.Cosh(((VNumber)argNodes[0]).value)), ErrorNull.Instance),
+            "TANH" => (ValueError)(new VNumber(System.Math.Tanh(((VNumber)argNodes[0]).value)), ErrorNull.Instance),
+            "ASIN" => (ValueError)(new VNumber(System.Math.Asin(((VNumber)argNodes[0]).value)), ErrorNull.Instance),
+            "ACOS" => (ValueError)(new VNumber(System.Math.Acos(((VNumber)argNodes[0]).value)), ErrorNull.Instance),
+            "ATAN" => (ValueError)(new VNumber(System.Math.Atan(((VNumber)argNodes[0]).value)), ErrorNull.Instance),
+            "ASINH" => (ValueError)(new VNumber(System.Math.Asinh(((VNumber)argNodes[0]).value)), ErrorNull.Instance),
+            "ACOSH" => (ValueError)(new VNumber(System.Math.Acosh(((VNumber)argNodes[0]).value)), ErrorNull.Instance),
+            "ATANH" => (ValueError)(new VNumber(System.Math.Atanh(((VNumber)argNodes[0]).value)), ErrorNull.Instance),
+            "LOG" => (ValueError)(new VNumber(System.Math.Log(((VNumber)argNodes[0]).value)), ErrorNull.Instance),
+            "LOG2" => (ValueError)(new VNumber(System.Math.Log2(((VNumber)argNodes[0]).value)), ErrorNull.Instance),
+            "LOG10" => (ValueError)(new VNumber(System.Math.Log10(((VNumber)argNodes[0]).value)), ErrorNull.Instance),
             _ => base.GetVar(name),
         };
     }
-    public override Value copy()
+    public override Value Copy()
     {
-        return new Math();
+        return new VMath();
     }
 }
 

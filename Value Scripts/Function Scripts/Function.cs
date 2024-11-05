@@ -1,8 +1,8 @@
 namespace YSharp_2._0;
 
-public class Function(string? name, Node bodyNode, List<string> argNames, bool autoReturn) : BaseFunction(name)
+public class VFunction(string? name, INode bodyNode, List<string> argNames, bool autoReturn) : VBaseFunction(name)
 {
-    public readonly Node bodyNode = bodyNode;
+    public readonly INode bodyNode = bodyNode;
     public readonly List<string> argNames = argNames;
     public readonly bool autoReturn = autoReturn;
 
@@ -14,7 +14,6 @@ public class Function(string? name, Node bodyNode, List<string> argNames, bool a
     public RunTimeResult Execute(List<Value> args)
     {
         RunTimeResult res = new();
-        Interpreter interpreter = new();
         Context execContext = GeneratContext();
 
         res.Regrister(CheckAndPopulateArgs(argNames, args, execContext));
@@ -23,7 +22,7 @@ public class Function(string? name, Node bodyNode, List<string> argNames, bool a
             return res;
         }
 
-        Value value = res.Regrister(interpreter.Visit(bodyNode, execContext));
+        Value value = res.Regrister(Interpreter.Visit(bodyNode, execContext));
         if (res.ShouldReturn() && res.funcReturnValue is ValueNull)
         {
             return res;
@@ -32,9 +31,9 @@ public class Function(string? name, Node bodyNode, List<string> argNames, bool a
         return res.Success(retValue);
     }
 
-    public override Function copy()
+    public override VFunction Copy()
     {
-        Function copy = new(name, bodyNode, argNames, autoReturn);
+        VFunction copy = new(name, bodyNode, argNames, autoReturn);
         copy.SetContext(context);
         copy.SetPos(startPos, endPos);
         return copy;

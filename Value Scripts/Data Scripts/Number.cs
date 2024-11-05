@@ -1,6 +1,6 @@
 namespace YSharp_2._0;
 
-public class Number(double value) : Value()
+public class VNumber(double value) : Value()
 {
     public readonly double value = value;
 
@@ -8,191 +8,191 @@ public class Number(double value) : Value()
     {
         if (name == "ToString")
         {
-            Error err = CheckArgs(argNodes, 0, []); // no argument
+            Error err = ValueHelper.CheckArgs(argNodes, 0, [], context); // no argument
             if (!err.IsError)
             {
-                return (new String(value.ToString()), NoError.Instance);
+                return (new VString(value.ToString()), ErrorNull.Instance);
             }
 
-            err = CheckArgs(argNodes, 1, [typeof(String)]); // format argument
+            err = ValueHelper.CheckArgs(argNodes, 1, [typeof(VString)], context); // format argument
             if (err.IsError)
             {
                 return (ValueNull.Instance, err);
             }
 
-            string format = value.ToString(((String)argNodes[0]).value);
+            string format = value.ToString(((VString)argNodes[0]).value);
             //TODO: Add format exeption
-            return (new String(format), NoError.Instance);
+            return (new VString(format), ErrorNull.Instance);
 
         }
         else if (name == "ToBool")
         {
-            Error err = CheckArgs(argNodes, 0, []); // no argument
+            Error err = ValueHelper.CheckArgs(argNodes, 0, [], context); // no argument
             if (!err.IsError)
             {
                 return (ValueNull.Instance, err);
             }
 
-            return (new Bool(isTrue()), NoError.Instance);
+            return (new VBool(IsTrue()), ErrorNull.Instance);
         }
         return base.GetFunc(name, argNodes);
     }
     // arethmetic
-    public override ValueError addedTo(Value other)
+    public override ValueError AddedTo(Value other)
     { // add
         Value? ret = other switch
         {
-            Number _other => new Number(value + _other.value),
+            VNumber _other => new VNumber(value + _other.value),
             _ => null
         };
         if (ret == null)
         {
             return (ValueNull.Instance, IlligalOperation(other));
         }
-        return (ret, NoError.Instance);
+        return (ret, ErrorNull.Instance);
     }
-    public override ValueError subedTo(Value other)
+    public override ValueError SubedTo(Value other)
     { // substract
         Value? ret = other switch
         {
-            Number _other => new Number(value - _other.value),
+            VNumber _other => new VNumber(value - _other.value),
             _ => null
         };
         if (ret == null)
         {
             return (ValueNull.Instance, IlligalOperation(other));
         }
-        return (ret, NoError.Instance);
+        return (ret, ErrorNull.Instance);
     }
-    public override ValueError muledTo(Value other)
+    public override ValueError MuledTo(Value other)
     { // multiply
         Value? ret = other switch
         {
-            Number _other => new Number(value * _other.value),
+            VNumber _other => new VNumber(value * _other.value),
             _ => null
         };
         if (ret == null)
         {
             return (ValueNull.Instance, IlligalOperation(other));
         }
-        return (ret, NoError.Instance);
+        return (ret, ErrorNull.Instance);
     }
-    public override ValueError divedTo(Value other)
+    public override ValueError DivedTo(Value other)
     { // divide
-        if (other is Number _other)
+        if (other is VNumber _other)
         {
             if (_other.value == 0)
             {
-                return (new Bool(false), new RunTimeError(_other.startPos, "Can't divide by 0", context));
+                return (new VBool(false), new RunTimeError(_other.startPos, "Can't divide by 0", context));
             }
-            Number? ret = new(value / _other.value);
+            VNumber? ret = new(value / _other.value);
             ret.SetContext(context);
-            return (ret, NoError.Instance);
+            return (ret, ErrorNull.Instance);
         }
         else
         {
             return (ValueNull.Instance, IlligalOperation(other));
         }
     }
-    public override ValueError powedTo(Value other)
+    public override ValueError PowedTo(Value other)
     { // power
         Value? ret = other switch
         {
-            Number _other => new Number(System.Math.Pow(value, _other.value)),
+            VNumber _other => new VNumber(System.Math.Pow(value, _other.value)),
             _ => null
         };
         if (ret == null)
         {
             return (ValueNull.Instance, IlligalOperation(other));
         }
-        return (ret, NoError.Instance);
+        return (ret, ErrorNull.Instance);
     }
     // comparison
-    public override ValueError getComparisonEQ(Value other)
+    public override ValueError GetComparisonEQ(Value other)
     {
         Value? ret = other switch
         {
-            Number _other => new Bool(value == _other.value),
+            VNumber _other => new VBool(value == _other.value),
             _ => null
         };
         if (ret == null)
         {
             return (ValueNull.Instance, IlligalOperation(other));
         }
-        return (ret, NoError.Instance);
+        return (ret, ErrorNull.Instance);
     }
-    public override ValueError getComparisonNE(Value other)
+    public override ValueError GetComparisonNE(Value other)
     {
         Value? ret = other switch
         {
-            Number _other => new Bool(value != _other.value),
+            VNumber _other => new VBool(value != _other.value),
             _ => null
         };
         if (ret == null)
         {
             return (ValueNull.Instance, IlligalOperation(other));
         }
-        return (ret, NoError.Instance);
+        return (ret, ErrorNull.Instance);
     }
-    public override ValueError getComparisonLT(Value other)
+    public override ValueError GetComparisonLT(Value other)
     {
         Value? ret = other switch
         {
-            Number _other => new Bool(value < _other.value),
+            VNumber _other => new VBool(value < _other.value),
             _ => null
         };
         if (ret == null)
         {
             return (ValueNull.Instance, IlligalOperation(other));
         }
-        return (ret, NoError.Instance);
+        return (ret, ErrorNull.Instance);
     }
-    public override ValueError getComparisonGT(Value other)
+    public override ValueError GetComparisonGT(Value other)
     {
         Value? ret = other switch
         {
-            Number _other => new Bool(value > _other.value),
+            VNumber _other => new VBool(value > _other.value),
             _ => null
         };
         if (ret == null)
         {
             return (ValueNull.Instance, IlligalOperation(other));
         }
-        return (ret, NoError.Instance);
+        return (ret, ErrorNull.Instance);
     }
-    public override ValueError getComparisonLTE(Value other)
+    public override ValueError GetComparisonLTE(Value other)
     {
         Value? ret = other switch
         {
-            Number _other => new Bool(value <= _other.value),
+            VNumber _other => new VBool(value <= _other.value),
             _ => null
         };
         if (ret == null)
         {
             return (ValueNull.Instance, IlligalOperation(other));
         }
-        return (ret, NoError.Instance);
+        return (ret, ErrorNull.Instance);
     }
-    public override ValueError getComparisonGTE(Value other)
+    public override ValueError GetComparisonGTE(Value other)
     {
         Value? ret = other switch
         {
-            Number _other => new Bool(value >= _other.value),
+            VNumber _other => new VBool(value >= _other.value),
             _ => null
         };
         if (ret == null)
         {
             return (ValueNull.Instance, IlligalOperation(other));
         }
-        return (ret, NoError.Instance);
+        return (ret, ErrorNull.Instance);
     }
-    public override bool isTrue()
+    public override bool IsTrue()
     {
         return value != 0;
     }
-    public override Number copy()
+    public override VNumber Copy()
     {
-        Number copy = new(value);
+        VNumber copy = new(value);
         copy.SetPos(startPos, endPos);
         copy.SetContext(context);
         return copy;

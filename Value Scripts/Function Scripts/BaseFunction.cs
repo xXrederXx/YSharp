@@ -1,9 +1,9 @@
 namespace YSharp_2._0;
 
-public class BaseFunction : Value
+public class VBaseFunction : Value
 {
     public readonly string name;
-    public BaseFunction(string? name) : base()
+    public VBaseFunction(string? name) : base()
     {
         if (name == null)
         {
@@ -30,17 +30,13 @@ public class BaseFunction : Value
         return newContext;
     }
 
-    protected RunTimeResult CheckArgs(List<string> argNames, List<Value> args)
+    protected static RunTimeResult CheckArgs(List<string> argNames, List<Value> args, Context context)
     {
         RunTimeResult res = new();
-
-        if (args.Count > argNames.Count)
+        Error err = ValueHelper.IsRightLength(argNames.Count, args, context);
+        if (err.IsError)
         {
-            return res.Failure(new RunTimeError(startPos, $" {args.Count - argNames.Count} too many args passed into {name}", context));
-        }
-        if (args.Count < argNames.Count)
-        {
-            return res.Failure(new RunTimeError(startPos, $" {argNames.Count - args.Count} too few args passed into {name}", context));
+            return res.Failure(err);
         }
         return res.Success(ValueNull.Instance);
     }
@@ -59,10 +55,10 @@ public class BaseFunction : Value
             execContext.symbolTable.Set(argName, argValue);
         }
     }
-    protected RunTimeResult CheckAndPopulateArgs(List<string> argNames, List<Value> args, Context execContext)
+    protected static RunTimeResult CheckAndPopulateArgs(List<string> argNames, List<Value> args, Context execContext)
     {
         RunTimeResult res = new();
-        res.Regrister(CheckArgs(argNames, args));
+        res.Regrister(CheckArgs(argNames, args, execContext));
         if (res.ShouldReturn())
         {
             return res;

@@ -2,18 +2,18 @@ namespace YSharp_2._0;
 
 public static class BuiltInFunctionsTable
 {
-    public static readonly BuiltInFunction print = new("print");
-    public static readonly BuiltInFunction input = new("input");
-    public static readonly BuiltInFunction run = new("run");
-    public static readonly BuiltInFunction timetorun = new("timetorun");
-    public static readonly BuiltInFunction time = new("time");
+    public static readonly VBuiltInFunction print = new("print");
+    public static readonly VBuiltInFunction input = new("input");
+    public static readonly VBuiltInFunction run = new("run");
+    public static readonly VBuiltInFunction timetorun = new("timetorun");
+    public static readonly VBuiltInFunction time = new("time");
 
 }
 
-public class BuiltInFunction : BaseFunction
+public class VBuiltInFunction : VBaseFunction
 {
     private readonly Dictionary<string, List<string>> functionArgs = [];
-    public BuiltInFunction(string name) : base(name)
+    public VBuiltInFunction(string name) : base(name)
     {
         functionArgs.Add("print", new List<string>(["value"]));
         functionArgs.Add("input", new List<string>([]));
@@ -33,7 +33,7 @@ public class BuiltInFunction : BaseFunction
             return res;
         }
 
-        Value? returnValue = null;
+        Value returnValue = ValueNull.Instance;
         switch (name)
         {
             case "print":
@@ -60,13 +60,13 @@ public class BuiltInFunction : BaseFunction
         {
             return res;
         }
-        return res.Success(returnValue ?? ValueNull.Instance);
+        return res.Success(returnValue);
     }
     public RunTimeResult execPrint(Context execContext)
     {
         if (execContext.symbolTable == null)
         {
-            return new RunTimeResult().Failure(new RunTimeError(Position._null, "Symbol table is null", context));
+            return new RunTimeResult().Failure(new RunTimeError(Position.Null, "Symbol table is null", context));
         }
         string value = execContext.symbolTable.Get("value").ToString() ?? " - ";
         value = value.Replace('"', ' ');
@@ -74,9 +74,10 @@ public class BuiltInFunction : BaseFunction
         return new RunTimeResult().Success(ValueNull.Instance);
     }
     public static RunTimeResult execInput(Context execContext)
-    {
+    {   
+        System.Console.Write("> ");
         string inp = Console.ReadLine() ?? "";
-        return new RunTimeResult().Success(new String(inp));
+        return new RunTimeResult().Success(new VString(inp));
     }
     public RunTimeResult execRun(Context execContext)
     {
@@ -86,11 +87,11 @@ public class BuiltInFunction : BaseFunction
         }
 
         Value fileNameValue = execContext.symbolTable.Get("fileName");
-        if (fileNameValue.GetType() != typeof(String))
+        if (fileNameValue is not VString)
         {
             return new RunTimeResult().Failure(new RunTimeError(startPos, "first arg must be string", execContext));
         }
-        string fileName = ((String)fileNameValue).value;
+        string fileName = ((VString)fileNameValue).value;System.Console.WriteLine(fileName);
         string script;
         try
         {
@@ -116,11 +117,11 @@ public class BuiltInFunction : BaseFunction
         }
 
         Value fileNameValue = execContext.symbolTable.Get("fileName");
-        if (fileNameValue.GetType() != typeof(String))
+        if (fileNameValue.GetType() != typeof(VString))
         {
             return new RunTimeResult().Failure(new RunTimeError(startPos, "first arg must be string", execContext));
         }
-        string fileName = ((String)fileNameValue).value;
+        string fileName = ((VString)fileNameValue).value;
         string script;
         try
         {
@@ -136,21 +137,21 @@ public class BuiltInFunction : BaseFunction
         {
             return new RunTimeResult().Failure(res.Item2);
         }
-        string str = "Init Lexer, Create Tokens, Init Parser, Create AST, Init Interpreter, Init Context, Run Interpreter \n" + string.Join(',', res.Item3);
-        return new RunTimeResult().Success(new String(str));
+        string str = "Init Lexer, Create Tokens, Init Parser, Create AST, Init Context, Run Interpreter, Whole Time (ms) \n" + string.Join(',', res.Item3);
+        return new RunTimeResult().Success(new VString(str));
     }
     public static RunTimeResult execTime(Context execContext)
     {
-        return new RunTimeResult().Success(new DateTime());
+        return new RunTimeResult().Success(new VDateTime());
     }
     private void no_Visit_methed()
     {
         throw new NotImplementedException($"No execution method for {name}");
     }
 
-    public override BuiltInFunction copy()
+    public override VBuiltInFunction Copy()
     {
-        BuiltInFunction copy = new(name);
+        VBuiltInFunction copy = new(name);
         copy.SetPos(startPos, endPos);
         copy.SetContext(context);
         return copy;

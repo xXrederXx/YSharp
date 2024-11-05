@@ -1,0 +1,2 @@
+VAR list = [0, 1, 2]
+VAR x = list.Get(4) # There are only 3 elements so the max index would be 2
