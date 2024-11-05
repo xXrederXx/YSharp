@@ -1,4 +1,4 @@
-﻿using System.Diagnostics;
+using System.Diagnostics;
 
 namespace YSharp_2._0;
 
@@ -47,10 +47,10 @@ internal  class RunClass
     public RunClass()
     {
         // predifined values
-        globalSymbolTable.Set("TRUE", new Bool(true));
-        globalSymbolTable.Set("FALSE", new Bool(false));
+        globalSymbolTable.Set("TRUE", new VBool(true));
+        globalSymbolTable.Set("FALSE", new VBool(false));
 
-        globalSymbolTable.Set("MATH", new Math());
+        globalSymbolTable.Set("MATH", new VMath());
         globalSymbolTable.Set("PRINT", BuiltInFunctionsTable.print);
         globalSymbolTable.Set("INPUT", BuiltInFunctionsTable.input);
         globalSymbolTable.Set("RUN", BuiltInFunctionsTable.run);
@@ -67,7 +67,7 @@ internal  class RunClass
         // look if the lexer threw an Error
         if (tokens.Item2.IsError)
         {
-            return (new Number(0), tokens.Item2);
+            return (new VNumber(0), tokens.Item2);
         }
 
         //* For testing -> foreach (Token tok in tokens.Item1){Console.WriteLine(tok.ToString());}
@@ -80,18 +80,16 @@ internal  class RunClass
 
         if (ast.HasError)
         {
-            return (new Number(0), ast.Error);
+            return (new VNumber(0), ast.Error);
         }
 
-        // create Interpreter for iterpreting code
-        Interpreter interpreter = new();
 
         Context context = new("<program>", null, new())
         {
             symbolTable = globalSymbolTable
         };
 
-        RunTimeResult result = interpreter.Visit(ast.Node, context);
+        RunTimeResult result = Interpreter.Visit(ast.Node, context);
 
         // return the node and Error
         return (result.value, result.error);
@@ -101,7 +99,8 @@ internal  class RunClass
     {
         List<long> times = [];
         Stopwatch sw = new();
-
+        Stopwatch WholeTime = new();
+        WholeTime.Start();
         // 1: init lexer
         sw.Start();
         Lexer lexer = new(text, fn);
@@ -114,7 +113,7 @@ internal  class RunClass
 
         if (tokens.Item2.IsError)
         {
-            return (new Number(0), tokens.Item2, times);
+            return (new VNumber(0), tokens.Item2, times);
         }
         sw.Stop();
         times.Add(sw.ElapsedTicks);
@@ -131,14 +130,8 @@ internal  class RunClass
 
         if (ast.Error.IsError)
         {
-            return (new Number(0), ast.Error, times);
+            return (new VNumber(0), ast.Error, times);
         }
-        sw.Stop();
-        times.Add(sw.ElapsedTicks);
-
-        // 5: init interpreter
-        sw.Restart();
-        Interpreter interpreter = new();
         sw.Stop();
         times.Add(sw.ElapsedTicks);
 
@@ -153,10 +146,11 @@ internal  class RunClass
 
         // 7: run interpreter
         sw.Restart();
-        RunTimeResult result = interpreter.Visit(ast.Node, context);
+        RunTimeResult result = Interpreter.Visit(ast.Node, context);
         sw.Stop();
         times.Add(sw.ElapsedTicks);
-    
+        WholeTime.Stop();
+        times.Add(WholeTime.ElapsedMilliseconds);
         // return the node and Error
         return (result.value, result.error, times);
     }
