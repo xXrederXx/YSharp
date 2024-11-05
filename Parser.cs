@@ -6,8 +6,8 @@ namespace YSharp_2._0;
 // this keeps the result of the parser
 public class ParseResult
 {
-    public Error Error { get; private set; } = NoError.Instance;
-    public Node Node { get; private set; } = new();
+    public Error Error { get; private set; } = ErrorNull.Instance;
+    public INode Node { get; private set; } = NodeNull.Instance;
     public (List<IfExpresionCases>, ElseCaseData) NodeTupleNN { get; private set; }
     private int _advanceCount = 0;
     public int ToReverseCount { get; private set; } = 0;
@@ -16,7 +16,7 @@ public class ParseResult
     public bool HasError => Error.IsError;
 
     // Try to register the result; if error is present, mark reversal
-    public Node? TryRegister(ParseResult result)
+    public INode? TryRegister(ParseResult result)
     {
         if (result.HasError)
         {
@@ -27,7 +27,7 @@ public class ParseResult
     }
 
     // Register result and accumulate advances
-    public Node Register(ParseResult result)
+    public INode Register(ParseResult result)
     {
         _advanceCount += result._advanceCount;
         if (result.HasError)
@@ -55,7 +55,7 @@ public class ParseResult
     }
 
     // Return successful result with Node
-    public ParseResult Success(Node node)
+    public ParseResult Success(INode node)
     {
         Node = node;
         return this;
@@ -141,7 +141,7 @@ public class Parser
         }
 
         res.Register(Advance());
-        Node condition = res.Register(Statement());
+        INode condition = res.Register(Statement());
         if (res.HasError)
         {
             return res;
@@ -157,7 +157,7 @@ public class Parser
         {
             res.Register(Advance());
 
-            Node _statements = res.Register(Statements());
+            INode _statements = res.Register(Statements());
             if (res.HasError)
             {
                 return res;
@@ -181,7 +181,7 @@ public class Parser
         }
         else
         {
-            Node expr = res.Register(Statement());
+            INode expr = res.Register(Statement());
             if (res.HasError)
             {
                 return res;
@@ -213,7 +213,7 @@ public class Parser
             if (currentToken.Type == TokenType.NEWLINE)
             {
                 res.Register(Advance());
-                Node _statements = res.Register(Statements());
+                INode _statements = res.Register(Statements());
                 if (res.HasError)
                 {
                     return res;
@@ -231,7 +231,7 @@ public class Parser
             }
             else
             {
-                Node expr = res.Register(Statement());
+                INode expr = res.Register(Statement());
                 if (res.HasError)
                 {
                     return res;
@@ -302,7 +302,7 @@ public class Parser
 
         res.Register(Advance());
 
-        Node startValue = res.Register(Expression());
+        INode startValue = res.Register(Expression());
         if (res.HasError)
         {
             return res;
@@ -314,12 +314,12 @@ public class Parser
         }
 
         res.Register(Advance());
-        Node endValue = res.Register(Expression());
+        INode endValue = res.Register(Expression());
         if (res.HasError)
         {
             return res;
         }
-        Node? stepValue = null;
+        INode? stepValue = null;
         if (currentToken.Matches(TokenType.KEYWORD, "STEP"))
         {
             res.Register(Advance());
@@ -341,7 +341,7 @@ public class Parser
         if (currentToken.Type == TokenType.NEWLINE)
         {
             res.Register(Advance());
-            Node _body = res.Register(Statements());
+            INode _body = res.Register(Statements());
             if (res.HasError)
             {
                 return res;
@@ -356,7 +356,7 @@ public class Parser
             return res.Success(new ForNode(varName, startValue, endValue, stepValue, _body, false));
         }
 
-        Node body = res.Register(Statement());
+        INode body = res.Register(Statement());
         if (res.HasError)
         {
             return res;
@@ -374,7 +374,7 @@ public class Parser
         }
         res.Register(Advance());
 
-        Node condition = res.Register(Expression());
+        INode condition = res.Register(Expression());
         if (res.HasError)
         {
             return res;
@@ -390,7 +390,7 @@ public class Parser
         if (currentToken.Type == TokenType.NEWLINE)
         {
             res.Register(Advance());
-            Node _body = res.Register(Statements());
+            INode _body = res.Register(Statements());
             if (res.HasError)
             {
                 return res;
@@ -405,7 +405,7 @@ public class Parser
             return res.Success(new WhileNode(condition, _body, false));
         }
 
-        Node body = res.Register(Statement());
+        INode body = res.Register(Statement());
         if (res.HasError)
         {
             return res;
@@ -416,7 +416,7 @@ public class Parser
     private ParseResult ListExpr()
     {
         ParseResult res = new();
-        List<Node> elementNodes = [];
+        List<INode> elementNodes = [];
         Position StartPos = currentToken.StartPos;
 
         if (currentToken.Type != TokenType.LSQUARE)
@@ -490,7 +490,7 @@ public class Parser
         }
 
         // it is a function
-        (ParseResult, List<Node>) args = MakeArgs();
+        (ParseResult, List<INode>) args = MakeArgs();
         res.Register(args.Item1);
         if (res.HasError)
         {
@@ -566,7 +566,7 @@ public class Parser
         {
             res.Register(Advance());
 
-            Node nodeToReturn = res.Register(Expression());
+            INode nodeToReturn = res.Register(Expression());
             if (res.HasError)
             {
                 return res;
@@ -580,7 +580,7 @@ public class Parser
         }
 
         res.Register(Advance());
-        Node body = res.Register(Statements());
+        INode body = res.Register(Statements());
         if (res.HasError)
         {
             return res;
@@ -593,10 +593,10 @@ public class Parser
 
         return res.Success(new FuncDefNode(varNameTok, argNameTok, body, false));
     }
-    private (ParseResult, List<Node>) MakeArgs()
+    private (ParseResult, List<INode>) MakeArgs()
     {
         ParseResult res = new();
-        List<Node> argNodes = [];
+        List<INode> argNodes = [];
 
         if (currentToken.Type != TokenType.LPAREN)
         {
@@ -607,7 +607,7 @@ public class Parser
         if (currentToken.Type == TokenType.RPAREN)
         {
             res.Register(Advance());
-            return (res.Success(new Node()), argNodes); // empty node just for the parseresult.succses
+            return (res.Success(NodeNull.Instance), argNodes); // empty node just for the parseresult.succses
         }
 
         // get argument
@@ -636,20 +636,20 @@ public class Parser
 
         res.Register(Advance());
 
-        return (res.Success(new Node()), argNodes); // empty node just for the parseresult.succses
+        return (res.Success(NodeNull.Instance), argNodes); // empty node just for the parseresult.succses
     }
     private ParseResult ShortendVarAssignHelper(Token varName, TokenType type){
         ParseResult res = new();
 
         res.Register(Advance());
-        Node expr = res.Register(Expression()); // this gets the "value" of the variable
+        INode expr = res.Register(Expression()); // this gets the "value" of the variable
         if (res.HasError)
         {
             return res;
         }
 
         // This converts varName += Expr to varName = varName + Expr 
-        Node converted = new BinOpNode(new VarAccessNode(varName), new Token(type, expr.StartPos, expr.StartPos), expr);
+        INode converted = new BinOpNode(new VarAccessNode(varName), new Token(type, expr.StartPos, expr.StartPos), expr);
         return res.Success(new VarAssignNode(varName, converted));
     }
     private ParseResult VarAssignExpr()
@@ -668,7 +668,7 @@ public class Parser
         }
 
         Token varName = currentToken;
-        Node expr;
+        INode expr;
 
         res.Register(Advance());
 
@@ -682,7 +682,7 @@ public class Parser
             _ => null,
         };
         if(EqType is not null){
-            Node converted = res.Register(ShortendVarAssignHelper(varName, (TokenType)EqType));
+            INode converted = res.Register(ShortendVarAssignHelper(varName, (TokenType)EqType));
             if (res.HasError)
             {
                 return res;
@@ -698,7 +698,7 @@ public class Parser
                     new BinOpNode(
                         new VarAccessNode(varName),
                         new Token(TokenType.PLUS),
-                        new NumberNode(new Token(TokenType.INT, 1, Position._null, Position._null))
+                        new NumberNode(new Token(TokenType.INT, 1, Position.Null, Position.Null))
                     )
                 )
             );
@@ -710,7 +710,7 @@ public class Parser
                     new BinOpNode(
                         new VarAccessNode(varName),
                         new Token(TokenType.MINUS),
-                        new NumberNode(new Token(TokenType.INT, 1, Position._null, Position._null))
+                        new NumberNode(new Token(TokenType.INT, 1, Position.Null, Position.Null))
                     )
                 )
             );
@@ -731,6 +731,59 @@ public class Parser
 
         return res.Success(new VarAssignNode(varName, expr));
     }
+    private ParseResult TryCatchExpr()
+    {
+        ParseResult res = new();
+
+        if (!currentToken.Matches(TokenType.KEYWORD, "TRY"))
+        {
+            return res.Failure(new ExpectedKeywordError(currentToken.StartPos, $"Expected TRY"));
+        }
+        res.Register(Advance());
+
+        INode tryBlock = res.Register(Statements());
+        INode catchBlock = NodeNull.Instance;
+        Token? varName = null;
+        if (res.HasError)
+        {
+            return res;
+        }
+
+        if (!currentToken.Matches(TokenType.KEYWORD, "END"))
+        {
+            res.Failure(new ExpectedKeywordError(currentToken.StartPos, "Expected END"));
+        }
+        res.Register(Advance());
+
+        while(currentToken.Type == TokenType.NEWLINE){
+            res.Register(Advance());
+        }
+
+        if (currentToken.Matches(TokenType.KEYWORD, "CATCH"))
+        {
+            res.Register(Advance());
+
+            if(currentToken.Type == TokenType.IDENTIFIER){
+                varName = currentToken;
+                res.Register(Advance());
+            }
+
+            catchBlock = res.Register(Statements());
+            if (res.HasError)
+            {
+                return res;
+            }
+
+            if (!currentToken.Matches(TokenType.KEYWORD, "END"))
+            {
+                res.Failure(new ExpectedKeywordError(currentToken.StartPos, "Expected END"));
+            }
+            res.Register(Advance());
+        }
+
+        return res.Success(new TryCatchNode(tryBlock, catchBlock, varName));
+    }
+
     // Important Methods Start at bottom to top
     private ParseResult Atom()
     {
@@ -753,7 +806,7 @@ public class Parser
         // check identifier
         else if (tok.Type == TokenType.IDENTIFIER)
         {
-            Node identifierExpr = res.Register(IdentifierExpr());
+            INode identifierExpr = res.Register(IdentifierExpr());
             if (res.HasError)
             {
                 return res;
@@ -765,7 +818,7 @@ public class Parser
         else if (tok.Type == TokenType.LPAREN)
         {
             res.Register(Advance());
-            Node expr = res.Register(Expression());
+            INode expr = res.Register(Expression());
             if (res.HasError)
             {
                 return res;
@@ -780,7 +833,7 @@ public class Parser
         }
         else if (tok.Type == TokenType.LSQUARE)
         {
-            Node listExpression = res.Register(ListExpr());
+            INode listExpression = res.Register(ListExpr());
             if (res.HasError)
             {
                 return res;
@@ -791,7 +844,7 @@ public class Parser
         // check keywords
         else if (tok.Matches(TokenType.KEYWORD, "IF"))
         {
-            Node ifExpression = res.Register(IfExpr());
+            INode ifExpression = res.Register(IfExpr());
             if (res.HasError)
             {
                 return res;
@@ -800,7 +853,7 @@ public class Parser
         }
         else if (tok.Matches(TokenType.KEYWORD, "FOR"))
         {
-            Node forExpression = res.Register(ForExpr());
+            INode forExpression = res.Register(ForExpr());
             if (res.HasError)
             {
                 return res;
@@ -809,7 +862,7 @@ public class Parser
         }
         else if (tok.Matches(TokenType.KEYWORD, "WHILE"))
         {
-            Node whileExpression = res.Register(WhileExpr());
+            INode whileExpression = res.Register(WhileExpr());
             if (res.HasError)
             {
                 return res;
@@ -818,21 +871,28 @@ public class Parser
         }
         else if (tok.Matches(TokenType.KEYWORD, "FUN"))
         {
-            Node funcExpression = res.Register(FuncDef());
+            INode funcExpression = res.Register(FuncDef());
             if (res.HasError)
             {
                 return res;
             }
             return res.Success(funcExpression);
         }
-
+        else if (tok.Matches(TokenType.KEYWORD, "TRY"))
+        {
+            INode tryCatch = res.Register(TryCatchExpr());
+            if (res.HasError) {
+                return res;
+            }
+            return res.Success(tryCatch);
+        }
         return res.Failure(new InvalidSyntaxError(tok.StartPos, "expected int, float, identifier, IF, FOR, WHILE, FUN, '(' or '['"));
     }
     private ParseResult Call()
     {
         ParseResult res = new();
 
-        Node atom = res.Register(Atom());
+        INode atom = res.Register(Atom());
         if (res.HasError)
         {
             return res;
@@ -840,7 +900,7 @@ public class Parser
 
         if (currentToken.Type == TokenType.LPAREN)
         {
-            (ParseResult, List<Node>) args = MakeArgs();
+            (ParseResult, List<INode>) args = MakeArgs();
             res.Register(args.Item1);
             if (res.HasError)
             {
@@ -854,7 +914,7 @@ public class Parser
     {
         ParseResult res = new();
 
-        Node? left = res.Register(Call());
+        INode? left = res.Register(Call());
         if (res.HasError)
         {
             return res;
@@ -865,7 +925,7 @@ public class Parser
             Token opTok = currentToken;
             res.Register(Advance());
 
-            Node? right = res.Register(Factor());
+            INode? right = res.Register(Factor());
             if (res.HasError)
             {
                 return res;
@@ -885,7 +945,7 @@ public class Parser
         if (tok.Type is TokenType.PLUS or TokenType.MINUS)
         {
             res.Register(Advance());
-            Node factor = res.Register(Factor());
+            INode factor = res.Register(Factor());
             if (res.HasError)
             {
                 return res;
@@ -899,7 +959,7 @@ public class Parser
     { // will return BinOpNode
         ParseResult res = new();
 
-        Node? left = res.Register(Factor());
+        INode? left = res.Register(Factor());
         if (res.HasError)
         {
             return res;
@@ -911,7 +971,7 @@ public class Parser
             Token opTok = currentToken;
 
             res.Register(Advance());
-            Node? right = res.Register(Factor());
+            INode? right = res.Register(Factor());
             if (res.HasError)
             {
                 return res;
@@ -925,7 +985,7 @@ public class Parser
     {
         ParseResult res = new();
 
-        Node? left = res.Register(Term());
+        INode? left = res.Register(Term());
         if (res.HasError)
         {
             return res;
@@ -936,7 +996,7 @@ public class Parser
             Token opTok = currentToken;
 
             res.Register(Advance());
-            Node? right = res.Register(Term());
+            INode? right = res.Register(Term());
             if (res.HasError)
             {
                 return res;
@@ -955,7 +1015,7 @@ public class Parser
             Token opTok = currentToken;
 
             res.Register(Advance());
-            Node node = res.Register(CompExpr());
+            INode node = res.Register(CompExpr());
             if (res.HasError)
             {
                 return res;
@@ -964,7 +1024,7 @@ public class Parser
         }
 
         // Binary Operation
-        Node? left = res.Register(ArithExpr());
+        INode? left = res.Register(ArithExpr());
         if (res.HasError)
         {
             return res.Failure(new InvalidSyntaxError(left.StartPos, "expected 'NOT', int, float, identifier, '+', '-', '(', '['"));
@@ -976,7 +1036,7 @@ public class Parser
             Token opTok = currentToken;
 
             res.Register(Advance());
-            Node? right = res.Register(ArithExpr());
+            INode? right = res.Register(ArithExpr());
             if (res.HasError)
             {
                 return res.Failure(new InvalidSyntaxError(right.StartPos, "expected 'NOT', int, float, identifier, '+', '-', '(', '['"));
@@ -992,7 +1052,7 @@ public class Parser
         // A variable assignement
         if (currentToken.Matches(TokenType.KEYWORD, "VAR"))
         {
-            Node node = res.Register(VarAssignExpr());
+            INode node = res.Register(VarAssignExpr());
             if (res.HasError)
             {
                 return res;
@@ -1001,7 +1061,7 @@ public class Parser
             return res.Success(node);
         }
         // Binary Operation
-        Node? left = res.Register(CompExpr());
+        INode? left = res.Register(CompExpr());
         if (res.HasError)
         {
             return res.Failure(new InvalidSyntaxError(left.StartPos, "expected 'VAR', 'IF', 'WHILE', 'FUN', int, float, identifier, '+', '-', '(', '['"));
@@ -1012,7 +1072,7 @@ public class Parser
             Token opTok = currentToken;
 
             res.Register(Advance());
-            Node? right = res.Register(CompExpr());
+            INode? right = res.Register(CompExpr());
             if (res.HasError)
             {
                 return res.Failure(new InvalidSyntaxError(right.StartPos, "expected 'VAR', int, float, identifier, '+', '-', '(', '['"));
@@ -1034,7 +1094,7 @@ public class Parser
         if (currentToken.Matches(TokenType.KEYWORD, "RETURN"))
         {
             res.Register(Advance());
-            Node? _expr = res.TryRegister(Expression());
+            INode? _expr = res.TryRegister(Expression());
             if (_expr == null)
             {
                 Reverse(res.ToReverseCount);
@@ -1052,7 +1112,7 @@ public class Parser
             return res.Success(new BreakNode(posStart, currentToken.StartPos));
         }
 
-        Node expr = res.Register(Expression());
+        INode expr = res.Register(Expression());
 
         if (res.HasError)
         {
@@ -1069,14 +1129,14 @@ public class Parser
             return res.Failure(new InternalError("start pos is null"));
         }
         Position StartPos = currentToken.StartPos;
-        List<Node> AllStatements = [];
+        List<INode> AllStatements = [];
 
         while (currentToken.Type == TokenType.NEWLINE) // skip all new lines
         {
             res.Register(Advance());
         }
 
-        Node? currentStatement = res.Register(Statement());
+        INode? currentStatement = res.Register(Statement());
         if (res.HasError)
         {
             return res;
