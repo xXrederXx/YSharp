@@ -2,15 +2,15 @@
 
 namespace YSharp_2._0;
 
-public readonly struct ElseCaseData(Node? _node, bool? _bool){ // Node Bool Nullable
+public readonly struct ElseCaseData(INode? _node, bool? _bool){ // Node Bool Nullable
     public static readonly ElseCaseData _null = new(null, null);
     public readonly bool? Bool = _bool;
-    public readonly Node? Node = _node;
+    public readonly INode? Node = _node;
 }
 
-public readonly struct IfExpresionCases(Node condition, Node expression, bool returnNull){
-    public readonly Node condition = condition;
-    public readonly Node expresion = expression;
+public readonly struct IfExpresionCases(INode condition, INode expression, bool returnNull){
+    public readonly INode condition = condition;
+    public readonly INode expresion = expression;
     public readonly bool returnNull = returnNull;
 }
 
