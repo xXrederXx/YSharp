@@ -1,6 +1,6 @@
 namespace YSharp_2._0;
 
-public class String(string value) : Value()
+public class VString(string value) : Value()
 {
     public readonly string value = value;
 
@@ -8,7 +8,7 @@ public class String(string value) : Value()
     {
         if (name == "ToNumber")
         {
-            Error err = CheckArgs(argNodes, 0, [typeof(String)]); // format argument
+            Error err = ValueHelper.CheckArgs(argNodes, 0, [typeof(VString)], context); // format argument
             if (err.IsError)
             {
                 return (ValueNull.Instance, err);
@@ -16,83 +16,83 @@ public class String(string value) : Value()
 
             if (double.TryParse(value, out double res))
             {
-                return (new Number(res), NoError.Instance);
+                return (new VNumber(res), ErrorNull.Instance);
             }
             else
             {
-                return (ValueNull.Instance, new WrongFormatError(startPos, value + " can't be converted to Number"));
+                return (ValueNull.Instance, new WrongFormatError(startPos, value + " can't be converted to Number", context));
             }
         }
         else if (name == "ToBool")
         {
-            Error err = CheckArgs(argNodes, 0, []); // no argument
+            Error err = ValueHelper.CheckArgs(argNodes, 0, [], context); // no argument
             if (!err.IsError)
             {
                 return (ValueNull.Instance, err);
             }
 
-            return (new Bool(isTrue()), NoError.Instance);
+            return (new VBool(IsTrue()), ErrorNull.Instance);
         }
         return base.GetFunc(name, argNodes);
     }
     public override ValueError GetVar(string name)
     {
         if(name == "Length"){
-            return (new Number(value.Length), NoError.Instance);
+            return (new VNumber(value.Length), ErrorNull.Instance);
         }
         return base.GetVar(name);
     }
-    public override ValueError addedTo(Value other)
+    public override ValueError AddedTo(Value other)
     {
         Value? ret = other switch
         {
-            String _other => new String(value + _other.value).SetContext(context),
+            VString _other => new VString(value + _other.value).SetContext(context),
             _ => null
         };
         if (ret == null)
         {
             return (ValueNull.Instance, IlligalOperation(other));
         }
-        return (ret, NoError.Instance);
+        return (ret, ErrorNull.Instance);
     }
-    public override ValueError muledTo(Value other)
+    public override ValueError MuledTo(Value other)
     {
         Value? ret = null;
-        if (other is Number)
+        if (other is VNumber)
         {
             string _value = "";
-            int mulTimes = (int)((Number)other).value;
+            int mulTimes = (int)((VNumber)other).value;
 
             for (int i = 0; i < mulTimes; i++)
             {
                 _value += value;
             }
-            ret = new String(_value).SetContext(context);
+            ret = new VString(_value).SetContext(context);
         }
 
         if (ret == null)
         {
             return (ValueNull.Instance, IlligalOperation(other));
         }
-        return (ret, NoError.Instance);
+        return (ret, ErrorNull.Instance);
     }
 
-    public override ValueError getComparisonEQ(Value other)
+    public override ValueError GetComparisonEQ(Value other)
     {
-        if (other is String _other)
+        if (other is VString _other)
         {
-            return (new Bool(value == _other.value), NoError.Instance);
+            return (new VBool(value == _other.value), ErrorNull.Instance);
         }
         else
         {
             return (ValueNull.Instance, IlligalOperation(other));
         }
     }
-    public override ValueError getComparisonNE(Value other)
+    public override ValueError GetComparisonNE(Value other)
     {
-        if (other is String _other)
+        if (other is VString _other)
         {
-            return (new Bool(value != _other.value), NoError.Instance);
+            return (new VBool(value != _other.value), ErrorNull.Instance);
         }
         else
         {
@@ -100,13 +100,13 @@ public class String(string value) : Value()
         }
     }
 
-    public override bool isTrue()
+    public override bool IsTrue()
     {
         return value.Length > 0;
     }
-    public override Value copy()
+    public override Value Copy()
     {
-        String copy = new(value);
+        VString copy = new(value);
         copy.SetPos(startPos, endPos);
         copy.SetContext(context);
         return copy;
