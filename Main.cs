@@ -62,7 +62,7 @@ internal  class RunClass
     {
         // create a Lexer and generate the tokens with it
         Lexer lexer = new(text, fn);
-        (List<Token>, Error) tokens = lexer.MakeTokens();
+        (List<IToken>, Error) tokens = lexer.MakeTokens();
 
         // look if the lexer threw an Error
         if (tokens.Item2.IsError)
@@ -109,7 +109,7 @@ internal  class RunClass
 
         // 2: create tokens
         sw.Restart();
-        (List<Token>, Error) tokens = lexer.MakeTokens();
+        (List<IToken>, Error) tokens = lexer.MakeTokens();
 
         if (tokens.Item2.IsError)
         {
