@@ -17,9 +17,9 @@ public class NodeNull : INode
     private NodeNull() { }
 }
 // NumberNode implements INode
-public class NumberNode(Token tok) : INode
+public class NumberNode(Token<double> tok) : INode
 {
-    public readonly Token tok = tok;
+    public readonly Token<double> tok = tok;
 
     // Implement properties, not fields
     public Position StartPos { get; set; } = tok.StartPos;
@@ -30,9 +30,9 @@ public class NumberNode(Token tok) : INode
 
 
 // This node represents a string token
-public class StringNode(Token tok) : INode
+public class StringNode(Token<string> tok) : INode
 {
-    public readonly Token tok = tok;
+    public readonly Token<string> tok = tok;
 
     public Position StartPos { get; set; } = tok.StartPos;
     public Position EndPos { get; set; } = tok.EndPos;
@@ -55,10 +55,10 @@ public class ListNode(List<INode> elementNodes, Position posStart, Position posE
 }
 
 // This node represents a binary operation
-public class BinOpNode(INode leftNode, Token opTok, INode rightNode) : INode
+public class BinOpNode(INode leftNode, IToken opTok, INode rightNode) : INode
 {
     public readonly INode leftNode = leftNode;
-    public readonly Token opTok = opTok;
+    public readonly IToken opTok = opTok;
     public readonly INode rightNode = rightNode;
 
     public Position StartPos { get; set; } = leftNode.StartPos;
@@ -68,9 +68,9 @@ public class BinOpNode(INode leftNode, Token opTok, INode rightNode) : INode
 }
 
 // This node represents a unary operation
-public class UnaryOpNode(Token opTok, INode node) : INode
+public class UnaryOpNode(IToken opTok, INode node) : INode
 {
-    public readonly Token opTok = opTok;
+    public readonly IToken opTok = opTok;
     public readonly INode node = node;
 
     public Position StartPos { get; set; } = opTok.StartPos;
@@ -80,9 +80,9 @@ public class UnaryOpNode(Token opTok, INode node) : INode
 }
 
 // This node represents a variable access
-public class VarAccessNode(Token varNameTok) : INode
+public class VarAccessNode(Token<string> varNameTok) : INode
 {
-    public readonly Token varNameTok = varNameTok;
+    public readonly Token<string> varNameTok = varNameTok;
     public bool fromCall = false;
 
     public Position StartPos { get; set; } = varNameTok.StartPos;
@@ -95,9 +95,9 @@ public class VarAccessNode(Token varNameTok) : INode
 }
 
 // This node represents a variable assignment
-public class VarAssignNode(Token varNameTok, INode valueNode) : INode
+public class VarAssignNode(Token<string> varNameTok, INode valueNode) : INode
 {
-    public readonly Token varNameTok = varNameTok;
+    public readonly Token<string> varNameTok = varNameTok;
     public readonly INode valueNode = valueNode;
 
     public Position StartPos { get; set; } = varNameTok.StartPos;
@@ -110,9 +110,9 @@ public class VarAssignNode(Token varNameTok, INode valueNode) : INode
 }
 
 // This node represents a dot (.) variable access
-public class DotVarAccessNode(Token varNameTok, INode parent) : INode
+public class DotVarAccessNode(Token<string> varNameTok, INode parent) : INode
 {
-    public readonly Token varNameTok = varNameTok;
+    public readonly Token<string> varNameTok = varNameTok;
     public readonly INode parent = parent;
 
     public Position StartPos { get; set; } = varNameTok.StartPos;
@@ -120,9 +120,9 @@ public class DotVarAccessNode(Token varNameTok, INode parent) : INode
 }
 
 // This node represents a function call using dot notation
-public class DotCallNode(Token funcNameTok, List<INode> argNodes, INode parent) : INode
+public class DotCallNode(Token<string> funcNameTok, List<INode> argNodes, INode parent) : INode
 {
-    public readonly Token funcNameTok = funcNameTok;
+    public readonly Token<string> funcNameTok = funcNameTok;
     public readonly ImmutableList<INode> argNodes = argNodes.ToImmutableList();
     public readonly INode parent = parent;
 
@@ -141,9 +141,9 @@ public class IfNode(List<IfExpresionCases> cases, ElseCaseData elseCase) : INode
 }
 
 // This node represents a for loop
-public class ForNode(Token varNameTok, INode startValueNode, INode endValueNode, INode? stepValueNode, INode bodyNode, bool retNull) : INode
+public class ForNode(Token<string> varNameTok, INode startValueNode, INode endValueNode, INode? stepValueNode, INode bodyNode, bool retNull) : INode
 {
-    public readonly Token varNameTok = varNameTok;
+    public readonly Token<string> varNameTok = varNameTok;
     public readonly INode startValueNode = startValueNode;
     public readonly INode endValueNode = endValueNode;
     public readonly INode? stepValueNode = stepValueNode;
@@ -168,12 +168,12 @@ public class WhileNode(INode conditionNode, INode bodyNode, bool retNull) : INod
 // This node represents a function definition
 public class FuncDefNode : INode
 {
-    public readonly Token? varNameTok;
-    public readonly ImmutableList<Token> argNameToks;
+    public readonly Token<string> varNameTok;
+    public readonly ImmutableList<IToken> argNameToks;
     public readonly INode bodyNode;
     public readonly bool retNull;
 
-    public FuncDefNode(Token? varNameTok, List<Token> argNameToks, INode bodyNode, bool autoReturn)
+    public FuncDefNode(Token<string> varNameTok, List<IToken> argNameToks, INode bodyNode, bool autoReturn)
     {
         this.varNameTok = varNameTok;
         this.argNameToks = (argNameToks ?? []).ToImmutableList();
@@ -237,11 +237,11 @@ public class BreakNode(Position startPos, Position endPos) : INode
     public Position EndPos { get; set; } = endPos;
 }
 
-public class TryCatchNode(INode tryNode, INode catchNode, Token? catchVarName) : INode
+public class TryCatchNode(INode tryNode, INode catchNode, Token<string> catchVarName) : INode
 {
     public readonly INode TryNode = tryNode;
     public readonly INode CatchNode = catchNode;
-    public readonly Token? ChatchVarName = catchVarName;
+    public readonly Token<string> ChatchVarName = catchVarName;
 
     public Position StartPos { get; set; } = tryNode.StartPos;
     public Position EndPos { get; set; } = catchNode is NodeNull _ ? tryNode.EndPos : catchNode.EndPos;

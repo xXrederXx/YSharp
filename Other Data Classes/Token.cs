@@ -58,17 +58,27 @@ public static class TokenTypeHelper
 
     public static bool IsKeyword(string s) => Keywords.Contains(s);
 }
+public interface IToken{
+    TokenType Type { get; }
+    Position StartPos { get; }
+    Position EndPos { get; }
+    public bool Matches(TokenType type, string value){
+        return false;
+    }
+}
+
 
 // Token class optimized with enum and nullable reference types
-public class Token
+public class Token<T> : IToken
 {
-    public readonly TokenType Type;
-    public readonly object Value;
-    public readonly Position StartPos;
-    public readonly Position EndPos;
+    public TokenType Type { get; }
+    public  T Value { get; }
+    public Position StartPos { get; }
+    public Position EndPos { get; }
+
 
     // Constructor
-    public Token(TokenType type, object value, Position startPos, Position endPos)
+    public Token(TokenType type, T value, Position startPos, Position endPos)
     {
         Type = type;
         Value = value;
@@ -85,28 +95,8 @@ public class Token
             EndPos = endPos;
         }
     }
-    public Token(TokenType type, Position startPos, Position endPos)
-    {
-        Type = type;
-        Value = "";
-
-        if (!startPos.IsNull)
-        {
-            StartPos = startPos;
-            EndPos = StartPos; // If there is no end Position just assume it to be 1 char
-            EndPos.Advance(' ');
-        }
-
-        if (!endPos.IsNull)
-        {
-            EndPos = endPos;
-        }
-    }
-    public Token(TokenType type)
-    {
-        Type = type;
-        Value = "";
-    }
+    public Token(TokenType type, Position startPos, Position endPos) : this(type, default(T), startPos, endPos){}
+    public Token(TokenType type) : this(type, default(T), Position.Null, Position.Null){}
 
     // String Representation
     public override string ToString()
@@ -121,4 +111,9 @@ public class Token
         }
         return Type == type && (Value as string) == value;
     }
+}
+
+public class TokenNoValueType{
+    public static TokenNoValueType Instance = new();
+    private TokenNoValueType(){}
 }

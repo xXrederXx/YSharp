@@ -88,15 +88,15 @@ public class ParseResult
 // the parser which is used to make the abstract syntax tree
 public class Parser
 {
-    private readonly List<Token> tokens;
+    private readonly List<IToken> tokens;
     private int tokIndex = -1;
-    private Token currentToken;
+    private IToken currentToken;
 
     // initalizer
-    public Parser(List<Token> tokens)
+    public Parser(List<IToken> tokens)
     {
         this.tokens = tokens;
-        currentToken = new Token(TokenType.NULL);
+        currentToken = new Token<TokenNoValueType>(TokenType.NULL);
         Advance();
     }
     // goes to the next token
@@ -107,7 +107,7 @@ public class Parser
         return 0; // tutorial sayd wrap in advance so it needs to return something
     }
 
-    private Token Reverse(int amount = 1)
+    private IToken Reverse(int amount = 1)
     {
         tokIndex -= amount;
         UpdateCurrentTok();
@@ -292,7 +292,7 @@ public class Parser
             return res.Failure(new ExpectedTokenError(currentToken.StartPos, "Expected identifier"));
         }
 
-        Token varName = currentToken;
+        Token<string> varName = (Token<string>)currentToken;
         res.Register(Advance());
 
         if (currentToken.Type != TokenType.EQ)
@@ -466,12 +466,12 @@ public class Parser
     private ParseResult IdentifierExpr()
     {
         ParseResult res = new();
-        Token tok = currentToken;
+        IToken tok = currentToken;
 
         res.Register(Advance());
         if (currentToken.Type != TokenType.DOT) // normal identifier
         {
-            return res.Success(new VarAccessNode(tok));
+            return res.Success(new VarAccessNode((Token<string>)tok));
         }
 
         // there is a dot notaited identifier
@@ -481,12 +481,12 @@ public class Parser
             return res.Failure(new ExpectedTokenError(currentToken.StartPos, "Expected IDENTIFIER"));
         }
 
-        Token varName = currentToken;
+        Token<string> varName = (Token<string>)currentToken;
 
         res.Register(Advance());
         if (currentToken.Type != TokenType.LPAREN) // it is a variable
         {
-            return res.Success(new DotVarAccessNode(varName, new VarAccessNode(tok)));
+            return res.Success(new DotVarAccessNode(varName, new VarAccessNode((Token<string>)tok)));
         }
 
         // it is a function
@@ -496,7 +496,7 @@ public class Parser
         {
             return res;
         }
-        return res.Success(new DotCallNode(varName, args.Item2, new VarAccessNode(tok)));
+        return res.Success(new DotCallNode(varName, args.Item2, new VarAccessNode((Token<string>)tok)));
     }
     private ParseResult FuncDef()
     {
@@ -508,10 +508,10 @@ public class Parser
 
         res.Register(Advance());
 
-        Token? varNameTok;
+        Token<string> varNameTok;
         if (currentToken.Type == TokenType.IDENTIFIER)
         {
-            varNameTok = currentToken;
+            varNameTok = (Token<string>)currentToken;
             res.Register(Advance());
             if (currentToken.Type != TokenType.LPAREN)
             {
@@ -520,7 +520,7 @@ public class Parser
         }
         else
         {
-            varNameTok = null;
+            varNameTok = new Token<string>(TokenType.NULL);
             if (currentToken.Type != TokenType.LPAREN)
             {
                 return res.Failure(new ExpectedTokenError(currentToken.StartPos, "expected identifier or '('"));
@@ -528,7 +528,7 @@ public class Parser
         }
 
         res.Register(Advance());
-        List<Token> argNameTok = [];
+        List<IToken> argNameTok = [];
 
         if (currentToken.Type == TokenType.IDENTIFIER)
         { // has args
@@ -638,7 +638,7 @@ public class Parser
 
         return (res.Success(NodeNull.Instance), argNodes); // empty node just for the parseresult.succses
     }
-    private ParseResult ShortendVarAssignHelper(Token varName, TokenType type){
+    private ParseResult ShortendVarAssignHelper(Token<string> varName, TokenType type){
         ParseResult res = new();
 
         res.Register(Advance());
@@ -649,7 +649,7 @@ public class Parser
         }
 
         // This converts varName += Expr to varName = varName + Expr 
-        INode converted = new BinOpNode(new VarAccessNode(varName), new Token(type, expr.StartPos, expr.StartPos), expr);
+        INode converted = new BinOpNode(new VarAccessNode(varName), new Token<TokenNoValueType>(type, expr.StartPos, expr.StartPos), expr);
         return res.Success(new VarAssignNode(varName, converted));
     }
     private ParseResult VarAssignExpr()
@@ -667,7 +667,7 @@ public class Parser
             return res.Failure(new InvalidSyntaxError(currentToken.StartPos, "Expected Identifier"));
         }
 
-        Token varName = currentToken;
+        Token<string> varName = (Token<string>)currentToken;
         INode expr;
 
         res.Register(Advance());
@@ -697,8 +697,8 @@ public class Parser
                     varName,
                     new BinOpNode(
                         new VarAccessNode(varName),
-                        new Token(TokenType.PLUS),
-                        new NumberNode(new Token(TokenType.INT, 1, Position.Null, Position.Null))
+                        new Token<TokenNoValueType>(TokenType.PLUS),
+                        new NumberNode(new Token<double>(TokenType.INT, 1, Position.Null, Position.Null))
                     )
                 )
             );
@@ -709,8 +709,8 @@ public class Parser
                     varName,
                     new BinOpNode(
                         new VarAccessNode(varName),
-                        new Token(TokenType.MINUS),
-                        new NumberNode(new Token(TokenType.INT, 1, Position.Null, Position.Null))
+                        new Token<TokenNoValueType>(TokenType.MINUS),
+                        new NumberNode(new Token<double>(TokenType.INT, 1, Position.Null, Position.Null))
                     )
                 )
             );
@@ -743,7 +743,7 @@ public class Parser
 
         INode tryBlock = res.Register(Statements());
         INode catchBlock = NodeNull.Instance;
-        Token? varName = null;
+        Token<string> varName = new Token<string>(TokenType.NULL);
         if (res.HasError)
         {
             return res;
@@ -764,7 +764,7 @@ public class Parser
             res.Register(Advance());
 
             if(currentToken.Type == TokenType.IDENTIFIER){
-                varName = currentToken;
+                varName = (Token<string>)currentToken;
                 res.Register(Advance());
             }
 
@@ -789,18 +789,18 @@ public class Parser
     {
         ParseResult res = new();
 
-        Token tok = currentToken;
+        IToken tok = currentToken;
 
         // check tyoes
         if (tok.Type is TokenType.INT or TokenType.FLOAT)
         {
             res.Register(Advance());
-            return res.Success(new NumberNode(tok));
+            return res.Success(new NumberNode((Token<double>)tok));
         }
         else if (tok.Type == TokenType.STRING)
         {
             res.Register(Advance());
-            return res.Success(new StringNode(tok));
+            return res.Success(new StringNode((Token<string>)tok));
         }
 
         // check identifier
@@ -922,7 +922,7 @@ public class Parser
 
         while (currentToken.Type == TokenType.POW)
         {
-            Token opTok = currentToken;
+            Token<TokenNoValueType> opTok = (Token<TokenNoValueType>)currentToken;
             res.Register(Advance());
 
             INode? right = res.Register(Factor());
@@ -939,7 +939,7 @@ public class Parser
     {
         ParseResult res = new();
 
-        Token tok = currentToken;
+        IToken tok = currentToken;
 
         // if there is a plus or a minus it could be +5 or -5
         if (tok.Type is TokenType.PLUS or TokenType.MINUS)
@@ -950,7 +950,7 @@ public class Parser
             {
                 return res;
             }
-            return res.Success(new UnaryOpNode(tok, factor));
+            return res.Success(new UnaryOpNode((Token<TokenNoValueType>)tok, factor));
         }
 
         return Power();
@@ -968,7 +968,7 @@ public class Parser
         // point before line
         while (currentToken.Type is TokenType.MUL or TokenType.DIV)
         {
-            Token opTok = currentToken;
+            Token<TokenNoValueType> opTok = (Token<TokenNoValueType>)currentToken;
 
             res.Register(Advance());
             INode? right = res.Register(Factor());
@@ -993,7 +993,7 @@ public class Parser
 
         while (currentToken.Type is TokenType.PLUS or TokenType.MINUS)
         { // punkt vor strich
-            Token opTok = currentToken;
+            Token<TokenNoValueType> opTok = (Token<TokenNoValueType>)currentToken;
 
             res.Register(Advance());
             INode? right = res.Register(Term());
@@ -1012,7 +1012,7 @@ public class Parser
 
         if (currentToken.Matches(TokenType.KEYWORD, "NOT"))
         {
-            Token opTok = currentToken;
+            IToken opTok = currentToken;
 
             res.Register(Advance());
             INode node = res.Register(CompExpr());
@@ -1033,7 +1033,7 @@ public class Parser
         // This checks for the comparison operators
         while (currentToken.Type is TokenType.EE or TokenType.NE or TokenType.GT or TokenType.LT or TokenType.GTE or TokenType.LTE)
         {
-            Token opTok = currentToken;
+            Token<TokenNoValueType> opTok = (Token<TokenNoValueType>)currentToken;
 
             res.Register(Advance());
             INode? right = res.Register(ArithExpr());
@@ -1069,7 +1069,7 @@ public class Parser
 
         while (currentToken.Matches(TokenType.KEYWORD, "AND") || currentToken.Matches(TokenType.KEYWORD, "OR"))
         {
-            Token opTok = currentToken;
+            IToken opTok = currentToken;
 
             res.Register(Advance());
             INode? right = res.Register(CompExpr());

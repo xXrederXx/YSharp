@@ -160,16 +160,7 @@ public static class Interpreter
 
     private static RunTimeResult Visit_Number(NumberNode node, Context context)
     {
-        double value;
-        if (node.tok.Value is null)
-        {
-            value = 0;
-        }
-        else
-        {
-            value = Convert.ToDouble(node.tok.Value);
-        }
-        return new RunTimeResult().Success(new VNumber(value).SetContext(context).SetPos(node.StartPos, node.EndPos));
+        return new RunTimeResult().Success(new VNumber(node.tok.Value).SetContext(context).SetPos(node.StartPos, node.EndPos));
     }
     private static RunTimeResult Visit_String(StringNode node, Context context)
     {
@@ -609,12 +600,8 @@ public static class Interpreter
         List<string> argNames = new(node.argNameToks.Count);
         for (int i = 0; i < node.argNameToks.Count; i++)
         {
-            Token tok = node.argNameToks[i];
-            string? name = (string?)tok.Value;
-            if (name is not null)
-            {
-                argNames.Add(name);
-            }
+            Token<string> tok = (Token<string>)node.argNameToks[i];
+            argNames.Add(tok.Value);
         }
 
         VFunction funcValue = new(funcName, bodyNode, argNames, node.retNull);
