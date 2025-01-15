@@ -1,0 +1,1 @@
+VAR x = GetX() # Function GetX() is not defined

@@ -1,0 +1,22 @@
+FUN foo(a, b, c)
+    a + b
+    a / c
+    c * b
+    MATH.SIN(b + c)
+END
+
+VAR list = []
+VAR list2 = []
+VAR str = ""
+FOR x = 0 TO 10_000 THEN
+    list.Add(x)
+    VAR y = 25 * (2 / 5 + 6)^2
+    VAR b = NOT TRUE AND NOT FALSE OR TRUE
+    IF x > 50 THEN
+        list2.Add(x)
+    END
+    VAR str += x.ToString()
+    foo(x, 3, 6)
+END
+
+

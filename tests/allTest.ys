@@ -1,0 +1,39 @@
+
+FUN add(a, b)
+  RETURN a + b
+END
+
+FUN forTest()
+    FOR x = 0 TO 10 THEN
+        PRINT(x)
+    END
+
+    FOR x = 0 TO 20 STEP 2 THEN
+        PRINT(x)
+    END
+END
+
+FUN whileTest()
+    VAR x = "cool"
+    WHILE x == "cool" THEN
+        PRINT("x is cool")
+        IF INPUT() == "bad" THEN
+            VAR x = "bad"
+        END
+    END
+END
+
+# this is a comment
+
+VAR x = "69.42"
+VAR y = [0, 9, 11]
+VAR time = TIME()
+
+PRINT(y.IndexOf(11))
+PRINT(y.Remove(0))
+
+add(x.ToNumber(), y.Get(0))
+forTest()
+whileTest()
+
+PRINT(TIME() - time)

@@ -1,0 +1,19 @@
+C:\Users\Thierry\Meine Dateien\Programmieren\CSharp\YSharp 2.0\bin\Debug\net9.0\YSharp 2.0.exe
+C:\Users\Thierry\Meine Dateien\Programmieren\CSharp\YSharp 2.0\bin\Debug\net9.0\YSharp 2.0.deps.json
+C:\Users\Thierry\Meine Dateien\Programmieren\CSharp\YSharp 2.0\bin\Debug\net9.0\YSharp 2.0.runtimeconfig.json
+C:\Users\Thierry\Meine Dateien\Programmieren\CSharp\YSharp 2.0\bin\Debug\net9.0\YSharp 2.0.dll
+C:\Users\Thierry\Meine Dateien\Programmieren\CSharp\YSharp 2.0\bin\Debug\net9.0\YSharp 2.0.pdb
+C:\Users\Thierry\Meine Dateien\Programmieren\CSharp\YSharp 2.0\obj\Debug\net9.0\YSharp 2.0.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Thierry\Meine Dateien\Programmieren\CSharp\YSharp 2.0\obj\Debug\net9.0\YSharp 2.0.AssemblyInfoInputs.cache
+C:\Users\Thierry\Meine Dateien\Programmieren\CSharp\YSharp 2.0\obj\Debug\net9.0\YSharp 2.0.AssemblyInfo.cs
+C:\Users\Thierry\Meine Dateien\Programmieren\CSharp\YSharp 2.0\obj\Debug\net9.0\YSharp 2.0.csproj.CoreCompileInputs.cache
+C:\Users\Thierry\Meine Dateien\Programmieren\CSharp\YSharp 2.0\obj\Debug\net9.0\YSharp 2.0.dll
+C:\Users\Thierry\Meine Dateien\Programmieren\CSharp\YSharp 2.0\obj\Debug\net9.0\refint\YSharp 2.0.dll
+C:\Users\Thierry\Meine Dateien\Programmieren\CSharp\YSharp 2.0\obj\Debug\net9.0\YSharp 2.0.pdb
+C:\Users\Thierry\Meine Dateien\Programmieren\CSharp\YSharp 2.0\obj\Debug\net9.0\YSharp 2.0.genruntimeconfig.cache
+C:\Users\Thierry\Meine Dateien\Programmieren\CSharp\YSharp 2.0\obj\Debug\net9.0\ref\YSharp 2.0.dll
+C:\Users\Thierry\Meine Dateien\Programmieren\CSharp\YSharp 2.0\obj\Debug\net9.0\YSharp 2.0.csproj.AssemblyReference.cache
+C:\Users\Thierry\Meine Dateien\Programmieren\CSharp\YSharp 2.0\bin\Debug\net9.0\Microsoft.Win32.SystemEvents.dll
+C:\Users\Thierry\Meine Dateien\Programmieren\CSharp\YSharp 2.0\bin\Debug\net9.0\System.Drawing.Common.dll
+C:\Users\Thierry\Meine Dateien\Programmieren\CSharp\YSharp 2.0\bin\Debug\net9.0\runtimes\win\lib\net8.0\Microsoft.Win32.SystemEvents.dll
+C:\Users\Thierry\Meine Dateien\Programmieren\CSharp\YSharp 2.0\obj\Debug\net9.0\YSharp 2.0.csproj.Up2Date

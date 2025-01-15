@@ -1,0 +1,6 @@
+TRY
+    PRINT("Huray" + r)
+END
+CATCH
+    PRINT("Cought")
+END

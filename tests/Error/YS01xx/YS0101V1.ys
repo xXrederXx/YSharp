@@ -1,0 +1,1 @@
+VAR x = (5 - 6 * ( 7 + 6) # There is a  not closed parenthese
