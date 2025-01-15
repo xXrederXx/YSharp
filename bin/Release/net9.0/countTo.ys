@@ -1,9 +1,0 @@
-
-# VAR end = INPUT()
-# VAR end = end.ToNumber()
-
-VAR y = 0
-FOR x = 0 TO 10_000_000 THEN
-    VAR y = x
-END
-PRINT(y) "test \n new line \t tab "
