@@ -43,12 +43,6 @@
       "frameworks": {
         "net9.0": {
           "targetAlias": "net9.0",
-          "dependencies": {
-            "System.Drawing.Common": {
-              "target": "Package",
-              "version": "[8.0.10, )"
-            }
-          },
           "imports": [
             "net461",
             "net462",
