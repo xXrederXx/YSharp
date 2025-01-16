@@ -611,15 +611,10 @@ public static class Interpreter
     private static RunTimeResult Visit_WhileNode(WhileNode node, Context context)
     {
         RunTimeResult res = new();
-        if (res.ShouldReturn())
-        {
-            return res;
-        }
 
         while (true)
         {
-            Value condition = res.Regrister(Visit(node.conditionNode, context));
-            if (res.ShouldReturn())
+            if (res.Regrister(Visit(node.conditionNode, context), out Value condition))
             {
                 return res;
             }
@@ -627,8 +622,8 @@ public static class Interpreter
             {
                 break;
             }
-            res.Regrister(Visit(node.bodyNode, context));
-            if (res.ShouldReturn() && !res.loopContinue && res.loopBreak)
+            
+            if (res.Regrister(Visit(node.bodyNode, context), out Value _) && !res.loopContinue && res.loopBreak)
             {
                 return res;
             }
@@ -749,8 +744,7 @@ public static class Interpreter
         Value value;
         if (node.nodeToReturn is not null)
         {
-            value = res.Regrister(Visit(node.nodeToReturn, context));
-            if (res.ShouldReturn())
+            if (res.Regrister(Visit(node.nodeToReturn, context), out value))
             {
                 return res;
             }
@@ -796,8 +790,7 @@ public static class Interpreter
             context.symbolTable.Set(varName, new VString(res.error.ToString()));
         }
 
-        Value catchVal = res.Regrister(Visit(node.CatchNode, context));
-        if (res.ShouldReturn())
+        if (res.Regrister(Visit(node.CatchNode, context), out Value catchVal))
         {
             return res;
         }
