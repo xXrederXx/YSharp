@@ -142,15 +142,24 @@ public class DotCallNode(Token<string> funcNameTok, List<INode> argNodes, INode 
         argNodes.Count > 0 ? argNodes[^1].EndPos : funcNameTok.EndPos;
 }
 
-// This node represents an if statement
-public class IfNode(List<IfExpresionCases> cases, ElseCaseData elseCase) : INode
+public class SubIfNode(INode Condition, INode Expression, bool ReturnNull) : INode
 {
-    public readonly ImmutableList<IfExpresionCases> cases = cases.ToImmutableList();
-    public readonly ElseCaseData elseCase = elseCase;
+    public readonly INode condition = Condition;
+    public readonly INode expression = Expression;
+    public readonly bool returnNull = ReturnNull;
 
-    public Position StartPos { get; set; } = cases[0].Condition.StartPos;
+    public Position StartPos { get; set; } = Condition.StartPos;
+    public Position EndPos { get; set; } = Expression.EndPos;
+}
+// This node represents an if statement
+public class IfNode(List<SubIfNode> Cases, INode ElseNode) : INode
+{
+    public readonly ImmutableList<SubIfNode> cases = Cases.ToImmutableList();
+    public readonly INode elseNode = ElseNode;
+
+    public Position StartPos { get; set; } = Cases[0].condition.StartPos;
     public Position EndPos { get; set; } =
-        elseCase.Node != null ? elseCase.Node.EndPos : cases[^1].Condition.EndPos;
+        ElseNode != null ? ElseNode.EndPos : Cases[^1].EndPos;
 }
 
 // This node represents a for loop
