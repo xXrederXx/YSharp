@@ -183,7 +183,7 @@ public class Parser
             }
             else
             {
-                (List<IfExpresionCases>, ElseCaseData) allCases = res.RegisterTuple(IfExprBorC());
+                (List<IfExpresionCases>, ElseCaseData) allCases = res.RegisterTuple(IfExprElseOrElif());
                 if (res.HasError)
                 {
                     return res;
@@ -200,7 +200,7 @@ public class Parser
                 return res;
             }
             cases.Add(new(condition, expr, false));
-            (List<IfExpresionCases>, ElseCaseData) allCases = res.RegisterTuple(IfExprBorC());
+            (List<IfExpresionCases>, ElseCaseData) allCases = res.RegisterTuple(IfExprElseOrElif());
             if (res.HasError)
             {
                 return res;
@@ -211,81 +211,83 @@ public class Parser
         return res.Success((cases, elseCase));
     }
 
-    private ParseResult IfExprB()
+    private ParseResult IfExprElif()
     {
         return IfExprCases("ELIF");
     }
 
-    private ParseResult IfExprC()
+    private ParseResult IfExprElse()
     { // Tuple
         ParseResult res = new();
         ElseCaseData elseCase = ElseCaseData._null;
 
-        if (currentToken.IsMatching(TokenType.KEYWORD, "ELSE"))
+        if (currentToken.IsNotMatching(TokenType.KEYWORD, "ELSE"))
+        {
+            return res.Success((new List<IfExpresionCases>(), elseCase));
+        }
+
+        res.Advance();
+        AdvanceParser();
+
+        if (currentToken.IsType(TokenType.NEWLINE))
         {
             res.Advance();
             AdvanceParser();
-
-            if (currentToken.IsType(TokenType.NEWLINE))
+            INode _statements = res.Register(Statements());
+            if (res.HasError)
             {
-                res.Advance();
-                AdvanceParser();
-                INode _statements = res.Register(Statements());
-                if (res.HasError)
-                {
-                    return res;
-                }
-                elseCase = new(_statements, true);
+                return res;
+            }
+            elseCase = new(_statements, true);
 
-                if (currentToken.IsMatching(TokenType.KEYWORD, "END"))
-                {
-                    res.Advance();
-                    AdvanceParser();
-                }
-                else
-                {
-                    return res.Failure(
-                        new ExpectedKeywordError(currentToken.StartPos, "Expected END")
-                    );
-                }
-            }
-            else
+            if (currentToken.IsNotMatching(TokenType.KEYWORD, "END"))
             {
-                INode expr = res.Register(Statement());
-                if (res.HasError)
-                {
-                    return res;
-                }
-                elseCase = new(expr, false);
+                return res.Failure(
+                    new ExpectedKeywordError(currentToken.StartPos, "Expected END")
+                );
             }
+
+            res.Advance();
+            AdvanceParser();
+            
+        }
+        else
+        {
+            INode expr = res.Register(Statement());
+            if (res.HasError)
+            {
+                return res;
+            }
+            elseCase = new(expr, false);
         }
         return res.Success((new List<IfExpresionCases>(), elseCase));
     }
 
-    private ParseResult IfExprBorC()
+    private ParseResult IfExprElseOrElif()
     {
         ParseResult res = new();
-        List<IfExpresionCases> cases = [];
-        ElseCaseData elseCase;
+        (List<IfExpresionCases>, ElseCaseData) data;
+
         if (currentToken.IsMatching(TokenType.KEYWORD, "ELIF"))
         {
-            (List<IfExpresionCases>, ElseCaseData) allCases = res.RegisterTuple(IfExprB());
-            if (res.HasError)
-            {
-                return res;
-            }
-            cases = allCases.Item1;
-            elseCase = allCases.Item2;
+            data = res.RegisterTuple(IfExprElif());
+        }
+        else if (currentToken.IsMatching(TokenType.KEYWORD, "ELSE"))
+        {
+            data = res.RegisterTuple(IfExprElse());
         }
         else
         {
-            elseCase = res.RegisterTuple(IfExprC()).Item2;
-            if (res.HasError)
-            {
-                return res;
-            }
+            return res.Failure(
+                new ExpectedKeywordError(currentToken.StartPos, "Expected 'ELIF' or 'ELSE'")
+            );
         }
-        return res.Success((cases, elseCase));
+
+        if (res.HasError)
+        {
+            return res;
+        }
+        return res.Success(data);
     }
 
     private ParseResult IfExpr()
