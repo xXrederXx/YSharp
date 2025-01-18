@@ -82,10 +82,8 @@ public interface IToken
     TokenType Type { get; }
     Position StartPos { get; }
     Position EndPos { get; }
-    public bool Matches(TokenType type, string value)
-    {
-        return false;
-    }
+    public bool IsMatching(TokenType type, string value);
+    public bool IsNotMatching(TokenType type, string value);
     public bool IsType(TokenType type);
     public bool IsType(params TokenType[] types);
     public bool IsNotType(TokenType type);
@@ -131,13 +129,17 @@ public class Token<T> : IToken
         return Value != null ? $"{Type}:{Value}" : Type.ToString();
     }
 
-    public bool Matches(TokenType type, string value)
+    public bool IsMatching(TokenType type, string value)
     {
         if (Value is null)
         {
             return Type.Equals(type);
         }
         return Type == type && (Value as string) == value;
+    }
+    public bool IsNotMatching(TokenType type, string value)
+    {
+        return !IsMatching(type, value);
     }
 
     public bool IsType(TokenType type){
