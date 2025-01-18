@@ -169,7 +169,7 @@ public class Parser
                 return res;
             }
 
-            cases.Add(new SubIfNode(caseCondition, caseBodyNode, true));
+            cases.Add(new SubIfNode(caseCondition, caseBodyNode));
 
             if (currentToken.IsMatching(TokenType.KEYWORD, "END")) {
                 return res.Success(new IfNode(cases, elseCase));

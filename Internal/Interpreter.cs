@@ -450,9 +450,8 @@ public static class Interpreter
 
         for (int i = 0; i < node.cases.Count; i++)
         {
-            INode condition = node.cases[i].Condition;
-            INode expr = node.cases[i].Expression;
-            bool retNull = node.cases[i].ReturnNull;
+            INode condition = node.cases[i].condition;
+            INode expr = node.cases[i].expression;
 
             if (res.Regrister(Visit(condition, context), out Value conditionValue))
             {
@@ -465,18 +464,17 @@ public static class Interpreter
                 {
                     return res;
                 }
-                return res.Success(retNull ? ValueNull.Instance : exprValue);
+                return res.Success(exprValue);
             }
         }
 
-        if (node.elseCase.Node is not null && node.elseCase.Bool is not null)
+        if (node.elseNode is not null && node.elseNode is not NodeNull)
         {
-            bool retNull = node.elseCase.Bool ?? true;
-            if (res.Regrister(Visit(node.elseCase.Node, context), out Value elseValue))
+            if (res.Regrister(Visit(node.elseNode, context), out Value elseValue))
             {
                 return res;
             }
-            return res.Success(retNull ? ValueNull.Instance : elseValue);
+            return res.Success(elseValue);
         }
         return res.Success(ValueNull.Instance);
     }

@@ -142,11 +142,10 @@ public class DotCallNode(Token<string> funcNameTok, List<INode> argNodes, INode 
         argNodes.Count > 0 ? argNodes[^1].EndPos : funcNameTok.EndPos;
 }
 
-public class SubIfNode(INode Condition, INode Expression, bool ReturnNull) : INode
+public class SubIfNode(INode Condition, INode Expression) : INode
 {
     public readonly INode condition = Condition;
     public readonly INode expression = Expression;
-    public readonly bool returnNull = ReturnNull;
 
     public Position StartPos { get; set; } = Condition.StartPos;
     public Position EndPos { get; set; } = Expression.EndPos;
