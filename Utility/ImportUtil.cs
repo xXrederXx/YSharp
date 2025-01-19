@@ -29,14 +29,10 @@ public static class ImportUtil
     private const string ExposeAttributeName = "Expose";
     public static void Load(string filePath)
     {
-        if (!File.Exists(filePath) || !filePath.EndsWith(".dll"))
+        if(!TryGetAssamblyFromPath(filePath, out Assembly assembly))
         {
-            Console.WriteLine("File not found: " + filePath);
             return;
         }
-
-        // Load the assembly
-        Assembly assembly = Assembly.LoadFrom(filePath);
 
         // Get the first class
         Type classType = assembly.GetTypes()[0];
@@ -44,7 +40,8 @@ public static class ImportUtil
 
         // Create an instance of the class
         object? classInstance = Activator.CreateInstance(classType);
-        if(classInstance == null){
+        if (classInstance == null)
+        {
             Console.WriteLine("Created instance is null");
             return;
         }
@@ -54,7 +51,8 @@ public static class ImportUtil
         Console.WriteLine("Public Methods:");
         foreach (var method in publicMethods)
         {
-            if(HasAttribute(method, ExposeAttributeName)){
+            if (HasAttribute(method, ExposeAttributeName))
+            {
                 Console.WriteLine($"- {method.ReturnType} {method.Name}({string.Join(", ", method.GetParameters().Select(x => $"{x.ParameterType} {x.Name}"))})");
             }
         }
@@ -64,7 +62,8 @@ public static class ImportUtil
         Console.WriteLine("Public Fields:");
         foreach (var field in publicFields)
         {
-            if(HasAttribute(field, ExposeAttributeName)){
+            if (HasAttribute(field, ExposeAttributeName))
+            {
                 Console.WriteLine($"- {field.FieldType} {field.Name}: {field.GetValue(classInstance)}");
             }
         }
@@ -79,6 +78,30 @@ public static class ImportUtil
                 Console.WriteLine($"- {property.PropertyType} {property.Name}: {property.GetValue(classInstance)}");
             }
         }
+    }
+
+    private static bool TryGetAssamblyFromPath(string filePath, out Assembly assembly)
+    {
+        assembly = null;
+
+        if (!File.Exists(filePath) || !filePath.EndsWith(".dll"))
+        {
+            Console.WriteLine("File not found: " + filePath);
+            return false;
+        }
+
+        try
+        {
+            // Load the assembly
+            assembly = Assembly.LoadFrom(filePath);
+            return true;
+        }
+        catch (Exception ex)
+        {
+            System.Console.WriteLine(ex.Message);
+            return false;
+        }
+        
     }
 
     private static bool HasAttribute(ICustomAttributeProvider provider, string attribute){
