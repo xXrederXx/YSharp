@@ -5,8 +5,8 @@ namespace YSharp.Utility;
 
 
 /*
-To expose Variables or methods use the Expose attribute, you need to define it
-for your library yourself like this:
+To expose Variables or methods use the Expose attribute and they need to be public
+you need to define itfor your library yourself like this:
 
 [AttributeUsage(AttributeTargets.Method | AttributeTargets.Field | AttributeTargets.Property)]
 public class ExposeAttribute : Attribute { }
