@@ -72,6 +72,7 @@ public static class TokenTypeHelper
         "BREAK",
         "TRY",
         "CATCH",
+        "IMPORT"
     ];
 
     public static bool IsKeyword(string s) => Keywords.Contains(s);
