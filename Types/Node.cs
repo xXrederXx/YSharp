@@ -281,3 +281,10 @@ public class TryCatchNode(INode tryNode, INode catchNode, Token<string> catchVar
     public Position EndPos { get; set; } =
         catchNode is NodeNull _ ? tryNode.EndPos : catchNode.EndPos;
 }
+
+public class ImportNode(Token<string> pathTok, Position startPos, Position endPos) : INode
+{
+    public Position StartPos { get; set; } = startPos;
+    public Position EndPos { get; set; } = endPos;
+    public Token<string> PathTok  = pathTok;
+}
