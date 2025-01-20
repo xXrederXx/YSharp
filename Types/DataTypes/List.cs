@@ -2,15 +2,15 @@ using YSharp.Types.InternalTypes;
 
 namespace YSharp.Types.ClassTypes;
 
-public class VList(List<Value> elements) : Value
+public class VList(List<Value> elements) : Value, IDefaultConvertableValue<List<Value>>
 {
-    public List<Value> elements = elements;
+    public List<Value> value { get; set; } = elements;
 
     public override ValueAndError GetVar(string name)
     {
         if (name == "Count")
         {
-            return (new VNumber(elements.Count), ErrorNull.Instance);
+            return (new VNumber(value.Count), ErrorNull.Instance);
         }
         return base.GetVar(name);
     }
@@ -25,7 +25,7 @@ public class VList(List<Value> elements) : Value
 
         int index = (int)((VNumber)argValues[0]).value;
 
-        if (index >= elements.Count)
+        if (index >= value.Count)
         {
             return (
                 0,
@@ -39,7 +39,7 @@ public class VList(List<Value> elements) : Value
 
         if (index < 0)
         {
-            index = elements.Count + index; // -1 would be last element
+            index = value.Count + index; // -1 would be last element
         }
 
         if (index < 0)
@@ -61,7 +61,7 @@ public class VList(List<Value> elements) : Value
     {
         if (name == "Add")
         {
-            elements.AddRange(argValues);
+            value.AddRange(argValues);
             return (ValueNull.Instance, ErrorNull.Instance);
         }
         else if (name == "Get")
@@ -72,7 +72,7 @@ public class VList(List<Value> elements) : Value
                 return (ValueNull.Instance, index.Item2);
             }
 
-            return (elements[index.Item1], ErrorNull.Instance);
+            return (value[index.Item1], ErrorNull.Instance);
         }
         else if (name == "Remove")
         {
@@ -82,7 +82,7 @@ public class VList(List<Value> elements) : Value
                 return (ValueNull.Instance, index.Item2);
             }
 
-            elements.RemoveAt(index.Item1);
+            value.RemoveAt(index.Item1);
             return (ValueNull.Instance, ErrorNull.Instance);
         }
         else if (name == "IndexOf")
@@ -106,11 +106,11 @@ public class VList(List<Value> elements) : Value
         // Use pattern matching to simplify type checks and casts
         int index = value switch
         {
-            VNumber num => elements.FindIndex(v => v is VNumber n && n.value == num.value),
-            VString str => elements.FindIndex(v => v is VString s && s.value == str.value),
-            VBool b => elements.FindIndex(v => v is VBool boolVal && boolVal.value == b.value),
-            VList list => elements.FindIndex(v =>
-                v is VList l && l.elements.SequenceEqual(list.elements)
+            VNumber num => this.value.FindIndex(v => v is VNumber n && n.value == num.value),
+            VString str => this.value.FindIndex(v => v is VString s && s.value == str.value),
+            VBool b => this.value.FindIndex(v => v is VBool boolVal && boolVal.value == b.value),
+            VList list => this.value.FindIndex(v =>
+                v is VList l && l.value.SequenceEqual(list.value)
             ),
             _ => -1,
         };
@@ -122,8 +122,8 @@ public class VList(List<Value> elements) : Value
     {
         if (other is VList _other)
         {
-            elements.AddRange(_other.elements);
-            return (new VList(elements), ErrorNull.Instance);
+            value.AddRange(_other.value);
+            return (new VList(value), ErrorNull.Instance);
         }
         else
         {
@@ -135,18 +135,18 @@ public class VList(List<Value> elements) : Value
     {
         if (other is VNumber _other)
         {
-            List<Value> startElments = [.. elements];
+            List<Value> startElments = [.. value];
             if (_other.value < 2)
             {
-                return (_other.value < 1 ? new VList([]) : new VList(elements), ErrorNull.Instance); // * 1 = original * 0 or less = []
+                return (_other.value < 1 ? new VList([]) : new VList(value), ErrorNull.Instance); // * 1 = original * 0 or less = []
             }
 
             for (int i = 2; i <= _other.value; i++)
             {
-                elements.AddRange(startElments);
+                value.AddRange(startElments);
             }
 
-            return (new VList(elements), ErrorNull.Instance);
+            return (new VList(value), ErrorNull.Instance);
         }
         else
         {
@@ -158,7 +158,7 @@ public class VList(List<Value> elements) : Value
     {
         if (other is VList _other)
         {
-            return (new VBool(elements == _other.elements), ErrorNull.Instance);
+            return (new VBool(value == _other.value), ErrorNull.Instance);
         }
         else
         {
@@ -170,7 +170,7 @@ public class VList(List<Value> elements) : Value
     {
         if (other is VList _other)
         {
-            return (new VBool(elements != _other.elements), ErrorNull.Instance);
+            return (new VBool(value != _other.value), ErrorNull.Instance);
         }
         else
         {
@@ -180,12 +180,12 @@ public class VList(List<Value> elements) : Value
 
     public override bool IsTrue()
     {
-        return elements.Count > 0;
+        return value.Count > 0;
     }
 
     public override Value Copy()
     {
-        VList copy = new(elements);
+        VList copy = new(value);
         copy.SetPos(startPos, endPos);
         copy.SetContext(context);
         return copy;
@@ -195,11 +195,11 @@ public class VList(List<Value> elements) : Value
     {
         string res = "[";
 
-        for (int i = 0; i < elements.Count; i++)
+        for (int i = 0; i < value.Count; i++)
         {
-            Value v = elements[i];
+            Value v = value[i];
             res += v.ToString();
-            if (i != elements.Count - 1)
+            if (i != value.Count - 1)
             {
                 res += ", ";
             }
