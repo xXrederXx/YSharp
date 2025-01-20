@@ -40,15 +40,16 @@ public static class ImportUtil
             .Where(cls => HasAttribute(cls, ExposeAttributeName))
             .ToArray();
 
-        System.Console.WriteLine(classType);
+        List<ExposedClassData> data = [];
+        foreach (Type type in classType){
+            data.Add(GetExposedClassData(type));
+        }
+    }
 
+    private static ExposedClassData GetExposedClassData(Type classType)
+    {
         // Create an instance of the class
         object? classInstance = Activator.CreateInstance(classType);
-        if (classInstance == null)
-        {
-            Console.WriteLine("Created instance is null");
-            return;
-        }
 
         // List public methods
         MethodInfo[] publicMethods = classType
@@ -67,6 +68,8 @@ public static class ImportUtil
             .GetProperties(BindingFlags.Public | BindingFlags.Instance)
             .Where(prop => HasAttribute(prop, ExposeAttributeName) && prop.CanRead)
             .ToArray();
+
+        return new ExposedClassData(publicMethods, publicFields, publicProperties, classInstance);
     }
 
     private static bool TryGetAssamblyFromPath(string filePath, out Assembly assembly)
