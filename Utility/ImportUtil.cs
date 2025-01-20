@@ -3,7 +3,6 @@ using System.Reflection;
 
 namespace YSharp.Utility;
 
-
 /*
 To expose Variables or methods use the Expose attribute and they need to be public
 you need to define itfor your library yourself like this:
@@ -27,9 +26,10 @@ the .csproj file should look similar to this:
 public static class ImportUtil
 {
     private const string ExposeAttributeName = "Expose";
+
     public static void Load(string filePath)
     {
-        if(!TryGetAssamblyFromPath(filePath, out Assembly assembly))
+        if (!TryGetAssamblyFromPath(filePath, out Assembly assembly))
         {
             return;
         }
@@ -47,37 +47,22 @@ public static class ImportUtil
         }
 
         // List public methods
-        MethodInfo[] publicMethods = classType.GetMethods(BindingFlags.Public | BindingFlags.Instance);
-        Console.WriteLine("Public Methods:");
-        foreach (var method in publicMethods)
-        {
-            if (HasAttribute(method, ExposeAttributeName))
-            {
-                Console.WriteLine($"- {method.ReturnType} {method.Name}({string.Join(", ", method.GetParameters().Select(x => $"{x.ParameterType} {x.Name}"))})");
-            }
-        }
+        MethodInfo[] publicMethods = classType
+            .GetMethods(BindingFlags.Public | BindingFlags.Instance)
+            .Where(meth => HasAttribute(meth, ExposeAttributeName))
+            .ToArray();
 
         // List public variables (fields)
-        FieldInfo[] publicFields = classType.GetFields(BindingFlags.Public | BindingFlags.Instance);
-        Console.WriteLine("Public Fields:");
-        foreach (var field in publicFields)
-        {
-            if (HasAttribute(field, ExposeAttributeName))
-            {
-                Console.WriteLine($"- {field.FieldType} {field.Name}: {field.GetValue(classInstance)}");
-            }
-        }
+        FieldInfo[] publicFields = classType
+            .GetFields(BindingFlags.Public | BindingFlags.Instance)
+            .Where(field => HasAttribute(field, ExposeAttributeName))
+            .ToArray();
 
         // List public properties
-        PropertyInfo[] publicProperties = classType.GetProperties(BindingFlags.Public | BindingFlags.Instance);
-        Console.WriteLine("Public Properties:");
-        foreach (var property in publicProperties)
-        {
-            if (property.CanRead && HasAttribute(property, ExposeAttributeName))
-            {
-                Console.WriteLine($"- {property.PropertyType} {property.Name}: {property.GetValue(classInstance)}");
-            }
-        }
+        PropertyInfo[] publicProperties = classType
+            .GetProperties(BindingFlags.Public | BindingFlags.Instance)
+            .Where(prop => HasAttribute(prop, ExposeAttributeName) && prop.CanRead)
+            .ToArray();
     }
 
     private static bool TryGetAssamblyFromPath(string filePath, out Assembly assembly)
@@ -101,10 +86,10 @@ public static class ImportUtil
             System.Console.WriteLine(ex.Message);
             return false;
         }
-        
     }
 
-    private static bool HasAttribute(ICustomAttributeProvider provider, string attribute){
+    private static bool HasAttribute(ICustomAttributeProvider provider, string attribute)
+    {
         return provider.GetCustomAttributes(false).Any(attr => attr.GetType().Name == attribute);
     }
 }
