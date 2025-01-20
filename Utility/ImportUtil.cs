@@ -35,7 +35,11 @@ public static class ImportUtil
         }
 
         // Get the first class
-        Type classType = assembly.GetTypes()[0];
+        Type[] classType = assembly
+            .GetTypes()
+            .Where(cls => HasAttribute(cls, ExposeAttributeName))
+            .ToArray();
+
         System.Console.WriteLine(classType);
 
         // Create an instance of the class
@@ -92,4 +96,13 @@ public static class ImportUtil
     {
         return provider.GetCustomAttributes(false).Any(attr => attr.GetType().Name == attribute);
     }
+}
+
+
+public class ExposedClassData(MethodInfo[] Methods, FieldInfo[] Fields, PropertyInfo[] Properties, object? instance = null)
+{
+    public readonly MethodInfo[] methods = Methods;
+    public readonly FieldInfo[] fields = Fields;
+    public readonly PropertyInfo[] properties = Properties;
+    public readonly object? instance = instance;
 }
