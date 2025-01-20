@@ -111,5 +111,8 @@ public class ArgOutOfRangeError(Position posStart, string details, Context? cont
 public class IlligalOperationError(Position posStart, string details, Context? context)
     : RunTimeError(posStart, details, context, 306);
 
+public class FileNotFoundError(Position posStart, string details, Context? context)
+    : RunTimeError(posStart, details, context, 307);
+
 // YS0400 -> Other
 public class InternalError(string details) : Error(400, details, Position.Null) { }

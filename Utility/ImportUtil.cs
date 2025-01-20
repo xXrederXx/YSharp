@@ -26,12 +26,21 @@ the .csproj file should look similar to this:
 public static class ImportUtil
 {
     private const string ExposeAttributeName = "Expose";
+    public readonly static string DefaultPath;
 
-    public static void Load(string filePath)
+    static ImportUtil(){
+        DefaultPath = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Packages");
+    }
+
+    public static List<ExposedClassData> Load(string filePath, out string error)
     {
-        if (!TryGetAssamblyFromPath(filePath, out Assembly assembly))
+        error = "";
+
+        string AssemblyError = TryGetAssamblyFromPath(filePath, out Assembly assembly);
+        if (AssemblyError != string.Empty)
         {
-            return;
+            error = "Error occured during the process of getting the assembly. \n" + AssemblyError;
+            return [];
         }
 
         // Get the first class
@@ -42,14 +51,31 @@ public static class ImportUtil
 
         List<ExposedClassData> data = [];
         foreach (Type type in classType){
-            data.Add(GetExposedClassData(type));
+            data.Add(GetExposedClassData(type, out string err));
+            if(err != string.Empty){
+                error = "Error ocurred while fetching the data. \n" + err;
+                return [];
+            }
         }
+
+        return data;
     }
 
-    private static ExposedClassData GetExposedClassData(Type classType)
+    private static ExposedClassData GetExposedClassData(Type classType, out string error)
     {
-        // Create an instance of the class
-        object? classInstance = Activator.CreateInstance(classType);
+        error = string.Empty;
+        object? classInstance;
+
+        try
+        {
+            // Create an instance of the class
+            classInstance = Activator.CreateInstance(classType);
+        }
+        catch (Exception ex)
+        {
+            error = ex.Message;
+            return new ExposedClassData([], [], []);
+        }
 
         // List public methods
         MethodInfo[] publicMethods = classType
@@ -72,26 +98,25 @@ public static class ImportUtil
         return new ExposedClassData(publicMethods, publicFields, publicProperties, classInstance);
     }
 
-    private static bool TryGetAssamblyFromPath(string filePath, out Assembly assembly)
+    private static string TryGetAssamblyFromPath(string filePath, out Assembly assembly)
     {
         assembly = null;
 
         if (!File.Exists(filePath) || !filePath.EndsWith(".dll"))
         {
             Console.WriteLine("File not found: " + filePath);
-            return false;
+            return "File not found (Maybe wrong format?)";
         }
 
         try
         {
             // Load the assembly
             assembly = Assembly.LoadFrom(filePath);
-            return true;
+            return string.Empty;
         }
         catch (Exception ex)
         {
-            System.Console.WriteLine(ex.Message);
-            return false;
+            return ex.Message;
         }
     }
 

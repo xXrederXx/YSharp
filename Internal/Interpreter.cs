@@ -2,6 +2,7 @@ using YSharp.Types;
 using YSharp.Types.ClassTypes;
 using YSharp.Types.FunctionTypes;
 using YSharp.Types.InternalTypes;
+using YSharp.Utility;
 
 namespace YSharp.Internal;
 
@@ -169,6 +170,7 @@ public static class Interpreter
             ContinueNode => Visit_ContinueNode(),
             BreakNode => Visit_BreakNode(),
             TryCatchNode n => Visit_TryCatchNode(n, context),
+            ImportNode n => Visit_ImportNode(n, context),
             _ => throw new Exception("No method found for " + node.GetType()),
         };
     }
@@ -793,5 +795,46 @@ public static class Interpreter
             return res;
         }
         return res.Success(catchVal);
+    }
+
+    private static RunTimeResult Visit_ImportNode(ImportNode n, Context context)
+    {
+        RunTimeResult res = new();
+
+        string filePath = n.PathTok.Value;
+        if (Path.GetExtension(filePath) != ".dll"){
+            filePath += ".dll";
+        }
+
+        if(Path.IsPathRooted(filePath))
+        {
+            filePath = ImportUtil.DefaultPath + filePath;
+        }
+
+        if(!File.Exists(filePath)){
+            res.Failure(
+                new FileNotFoundError(
+                    n.StartPos,
+                    "The packege at the import path " + 
+                    n.PathTok.Value + 
+                    " was calculated to be at " + 
+                    filePath + 
+                    " sadly, there is no such file.", 
+                    context
+                )
+            );
+        }
+
+        List<ExposedClassData> exposeds = ImportUtil.Load(filePath, out string err);
+        if(err != string.Empty)
+        {
+            return res.Failure(
+                new RunTimeError(n.StartPos, err, context)
+            );
+        }
+
+        //TODO: Implement call logic
+        
+        return res;
     }
 }
