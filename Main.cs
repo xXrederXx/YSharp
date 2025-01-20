@@ -13,8 +13,6 @@ internal class Start
 {
     private static void Main(string[] args)
     {
-        ImportUtil.Load(@"C:\Users\Thierry\Meine Dateien\Programmieren\CSharp\output\MathLibrary.dll");
-        return;
         Console.WriteLine("Type 'e' now to enable log");
         bool logTextEnabled = Console.ReadLine() == "e";
 
