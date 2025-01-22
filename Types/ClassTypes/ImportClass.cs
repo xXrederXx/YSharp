@@ -16,14 +16,15 @@ public class ImportClass : Value
 
     public override ValueAndError GetFunc(string name, List<Value> argNodes)
     {
-
-        ValueAndError returnVE = new(ValueNull.Instance, new FuncNotFoundError(
-            argNodes.Count >= 1 ? argNodes[0].startPos : Position.Null, 
-            $"No Function {name} found",
-            new Internal.Context()
+        ValueAndError returnVE = new(
+            ValueNull.Instance,
+            new FuncNotFoundError(
+                argNodes.Count >= 1 ? argNodes[0].startPos : Position.Null,
+                $"No Function {name} found",
+                new Internal.Context()
             )
         );
-    
+
         foreach (MethodInfo? method in data.methods)
         {
             ParameterInfo[] paramsInfo = method.GetParameters();
