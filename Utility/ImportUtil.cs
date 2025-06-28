@@ -26,10 +26,14 @@ the .csproj file should look similar to this:
 public static class ImportUtil
 {
     private const string ExposeAttributeName = "Expose";
-    public readonly static string DefaultPath;
+    public static readonly string DefaultPath;
 
-    static ImportUtil(){
-        DefaultPath = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Packages");
+    static ImportUtil()
+    {
+        DefaultPath = Path.Join(
+            Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+            "Packages"
+        );
     }
 
     public static List<ExposedClassData> Load(string filePath, out string error)
@@ -50,9 +54,11 @@ public static class ImportUtil
             .ToArray();
 
         List<ExposedClassData> data = [];
-        foreach (Type type in classType){
+        foreach (Type type in classType)
+        {
             data.Add(GetExposedClassData(type, out string err));
-            if(err != string.Empty){
+            if (err != string.Empty)
+            {
                 error = "Error ocurred while fetching the data. \n" + err;
                 return [];
             }
@@ -126,8 +132,12 @@ public static class ImportUtil
     }
 }
 
-
-public class ExposedClassData(MethodInfo[] Methods, FieldInfo[] Fields, PropertyInfo[] Properties, object? instance = null)
+public class ExposedClassData(
+    MethodInfo[] Methods,
+    FieldInfo[] Fields,
+    PropertyInfo[] Properties,
+    object? instance = null
+)
 {
     public readonly MethodInfo[] methods = Methods;
     public readonly FieldInfo[] fields = Fields;

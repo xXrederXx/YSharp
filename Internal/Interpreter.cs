@@ -31,7 +31,9 @@ public class RunTimeResult
         loopBreak = res.loopBreak;
         return res.value;
     }
-    public bool Regrister(RunTimeResult res, out Value val){
+
+    public bool Regrister(RunTimeResult res, out Value val)
+    {
         val = Regrister(res);
         return ShouldReturn();
     }
@@ -218,10 +220,12 @@ public static class Interpreter
 
         Task.WaitAll(leftTask, rightTask);
 
-        if(res.Regrister(leftTask.Result, out Value left)){
+        if (res.Regrister(leftTask.Result, out Value left))
+        {
             return res;
         }
-        if(res.Regrister(rightTask.Result, out Value right)){
+        if (res.Regrister(rightTask.Result, out Value right))
+        {
             return res;
         }
 
@@ -622,8 +626,12 @@ public static class Interpreter
             {
                 break;
             }
-            
-            if (res.Regrister(Visit(node.bodyNode, context), out Value _) && !res.loopContinue && res.loopBreak)
+
+            if (
+                res.Regrister(Visit(node.bodyNode, context), out Value _)
+                && !res.loopContinue
+                && res.loopBreak
+            )
             {
                 return res;
             }
@@ -802,39 +810,39 @@ public static class Interpreter
         RunTimeResult res = new();
 
         string filePath = n.PathTok.Value;
-        if (Path.GetExtension(filePath) != ".dll"){
+        if (Path.GetExtension(filePath) != ".dll")
+        {
             filePath += ".dll";
         }
 
-        if(Path.IsPathRooted(filePath))
+        if (Path.IsPathRooted(filePath))
         {
             filePath = ImportUtil.DefaultPath + filePath;
         }
 
-        if(!File.Exists(filePath)){
+        if (!File.Exists(filePath))
+        {
             res.Failure(
                 new FileNotFoundError(
                     n.StartPos,
-                    "The packege at the import path " + 
-                    n.PathTok.Value + 
-                    " was calculated to be at " + 
-                    filePath + 
-                    " sadly, there is no such file.", 
+                    "The packege at the import path "
+                        + n.PathTok.Value
+                        + " was calculated to be at "
+                        + filePath
+                        + " sadly, there is no such file.",
                     context
                 )
             );
         }
 
         List<ExposedClassData> exposeds = ImportUtil.Load(filePath, out string err);
-        if(err != string.Empty)
+        if (err != string.Empty)
         {
-            return res.Failure(
-                new RunTimeError(n.StartPos, err, context)
-            );
+            return res.Failure(new RunTimeError(n.StartPos, err, context));
         }
 
         //TODO: Implement call logic
-        
+
         return res;
     }
 }
