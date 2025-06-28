@@ -1,4 +1,6 @@
 ﻿using System.Diagnostics;
+using BenchmarkDotNet.Running;
+using YSharp.Benchmarks;
 using YSharp.Internal;
 using YSharp.Types;
 using YSharp.Types.ClassTypes;
@@ -11,6 +13,16 @@ namespace YSharp;
 internal class Start
 {
     private static void Main(string[] args)
+    {
+        TestRunner();
+    }
+
+    private static void TestRunner()
+    {
+        BenchmarkRunner.Run<Bench1>();
+    }
+
+    private static void ConsoleRunner()
     {
         Console.WriteLine("Type 'e' now to enable log");
         bool logTextEnabled = Console.ReadLine() == "e";
