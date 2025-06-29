@@ -1,4 +1,8 @@
 using System;
+using YSharp.Internal;
+using YSharp.Types.ClassTypes;
+using YSharp.Types.FunctionTypes;
+using YSharp.Types.InternalTypes;
 
 namespace YSharp.Benchmarks;
 
@@ -12,12 +16,66 @@ public static class BenchHelp
     public static readonly string Text50000Char;
     public static readonly string Text100000Char;
 
+    public static readonly List<IToken> TokenS;
+    public static readonly List<IToken> TokenM;
+    public static readonly List<IToken> TokenL;
+    public static readonly List<IToken> TokenXL;
+
+    public static readonly ParseResult astS;
+    public static readonly ParseResult astM;
+    public static readonly ParseResult astL;
+    public static readonly ParseResult astXL;
+
     static BenchHelp()
     {
         Text5000Char = GetText(5000);
         Text10000Char = GetText(10000);
         Text50000Char = GetText(50000);
         Text100000Char = GetText(100000);
+
+        CheckString(Text5000Char);
+        CheckString(Text10000Char);
+        CheckString(Text50000Char);
+        CheckString(Text100000Char);
+
+        TokenS = new Lexer(Text5000Char, "BenchHelp").MakeTokens().Item1;
+        TokenM = new Lexer(Text10000Char, "BenchHelp").MakeTokens().Item1;
+        TokenL = new Lexer(Text50000Char, "BenchHelp").MakeTokens().Item1;
+        TokenXL = new Lexer(Text100000Char, "BenchHelp").MakeTokens().Item1;
+
+        astS = new Parser(TokenS).Parse();
+        astM = new Parser(TokenM).Parse();
+        astL = new Parser(TokenL).Parse();
+        astXL = new Parser(TokenXL).Parse();
+    }
+
+    public static SymbolTable GetSymbolTable()
+    {
+        SymbolTable SampleSymbolTable = new();
+
+        SampleSymbolTable.Set("TRUE", new VBool(true));
+        SampleSymbolTable.Set("FALSE", new VBool(false));
+
+        SampleSymbolTable.Set("MATH", new VMath());
+        SampleSymbolTable.Set("PRINT", BuiltInFunctionsTable.print);
+        SampleSymbolTable.Set("INPUT", BuiltInFunctionsTable.input);
+        SampleSymbolTable.Set("RUN", BuiltInFunctionsTable.run);
+        SampleSymbolTable.Set("TIMETORUN", BuiltInFunctionsTable.timetorun);
+        SampleSymbolTable.Set("TIME", BuiltInFunctionsTable.time);
+
+        return SampleSymbolTable;
+    }
+
+    private static void CheckString(string str)
+    {
+        RunClass runClass = new();
+        var res = runClass.Run("BENCH-HELPER-CHECK", str);
+        if (res.Item2.IsError)
+        {
+            System.Console.WriteLine(
+                $"DID NOT PASS BENCH-HELPER-CHECK \n\n ERROR: \n\t{res.Item2} \n\n TEXT: \n {str}"
+            );
+        }
     }
 
     private static string GetText(int length)

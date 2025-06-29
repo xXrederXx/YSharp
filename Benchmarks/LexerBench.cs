@@ -4,13 +4,17 @@ using YSharp.Internal;
 
 namespace YSharp.Benchmarks;
 
+[SimpleJob]
+[MemoryDiagnoser]
 public class LexerBench
 {
+    public bool x;
     [Benchmark]
     public void Benchmark5000()
     {
         Lexer lexer = new(BenchHelp.Text5000Char, "BENCHMARK");
         var tokens = lexer.MakeTokens();
+        x = tokens.Item2.IsError;
     }
 
     [Benchmark]
@@ -18,6 +22,7 @@ public class LexerBench
     {
         Lexer lexer = new(BenchHelp.Text10000Char, "BENCHMARK");
         var tokens = lexer.MakeTokens();
+        x = tokens.Item2.IsError;
     }
 
     [Benchmark]
@@ -25,6 +30,7 @@ public class LexerBench
     {
         Lexer lexer = new(BenchHelp.Text50000Char, "BENCHMARK");
         var tokens = lexer.MakeTokens();
+        x = tokens.Item2.IsError;
     }
 
     [Benchmark]
@@ -32,13 +38,14 @@ public class LexerBench
     {
         Lexer lexer = new(BenchHelp.Text100000Char, "BENCHMARK");
         var tokens = lexer.MakeTokens();
+        x = tokens.Item2.IsError;
     }
 }
 /* 
-| Method          | Mean      | Error    | StdDev   | Median    |
-|---------------- |----------:|---------:|---------:|----------:|
-| Benchmark5000   |  15.44 us | 0.306 us | 0.511 us |  15.20 us |
-| Benchmark10000  |  23.38 us | 0.217 us | 0.192 us |  23.32 us |
-| Benchmark50000  |  80.42 us | 0.707 us | 0.661 us |  80.34 us |
-| Benchmark100000 | 152.55 us | 1.599 us | 1.496 us | 151.76 us | 
+| Method          | Mean      | Error    | StdDev   | Gen0   | Gen1   | Allocated |
+|---------------- |----------:|---------:|---------:|-------:|-------:|----------:|
+| Benchmark5000   |  15.65 us | 0.228 us | 0.263 us | 2.5024 | 0.1831 |  41.34 KB |
+| Benchmark10000  |  23.14 us | 0.454 us | 0.637 us | 2.5024 | 0.1831 |  41.34 KB |
+| Benchmark50000  |  73.85 us | 0.701 us | 0.621 us | 2.4414 | 0.1221 |  41.34 KB |
+| Benchmark100000 | 153.86 us | 0.841 us | 0.702 us | 2.4414 |      - |  41.34 KB | 
 */

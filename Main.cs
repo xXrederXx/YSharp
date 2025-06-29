@@ -19,7 +19,7 @@ internal class Start
 
     private static void TestRunner()
     {
-        BenchmarkRunner.Run<Bench1>();
+        BenchmarkRunner.Run<InterpreterBench>();
     }
 
     private static void ConsoleRunner()
