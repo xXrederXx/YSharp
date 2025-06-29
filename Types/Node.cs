@@ -26,6 +26,8 @@ public class NodeNull : INode
     public static readonly NodeNull Instance = new();
 
     private NodeNull() { }
+
+    public override string ToString() => "Null Node";
 }
 
 // NumberNode implements INode
@@ -61,7 +63,7 @@ public class ListNode(List<INode> elementNodes, Position posStart, Position posE
 
     public override string ToString()
     {
-        return "[" + string.Join(',', elementNodes) + "]";
+        return "[" + string.Join(',', elementNodes.Select(x => x.ToString())) + "]";
     }
 }
 
@@ -99,10 +101,7 @@ public class VarAccessNode(Token<string> varNameTok) : INode
     public Position StartPos { get; set; } = varNameTok.StartPos;
     public Position EndPos { get; set; } = varNameTok.EndPos;
 
-    public override string ToString()
-    {
-        return varNameTok.Value?.ToString() ?? "null";
-    }
+    public override string ToString() => $"Access {varNameTok.Value}";
 }
 
 // This node represents a variable assignment
@@ -128,6 +127,8 @@ public class DotVarAccessNode(Token<string> varNameTok, INode parent) : INode
 
     public Position StartPos { get; set; } = varNameTok.StartPos;
     public Position EndPos { get; set; } = varNameTok.EndPos;
+
+    public override string ToString() => $"Access {varNameTok.Value} from {parent}";
 }
 
 // This node represents a function call using dot notation
@@ -140,6 +141,9 @@ public class DotCallNode(Token<string> funcNameTok, List<INode> argNodes, INode 
     public Position StartPos { get; set; } = funcNameTok.StartPos;
     public Position EndPos { get; set; } =
         argNodes.Count > 0 ? argNodes[^1].EndPos : funcNameTok.EndPos;
+
+    public override string ToString() =>
+        $"Calling {funcNameTok} on {parent} with args: {string.Join(", ", argNodes.Select(x => x.ToString()))}";
 }
 
 public class SubIfNode(INode Condition, INode Expression) : INode
@@ -149,7 +153,10 @@ public class SubIfNode(INode Condition, INode Expression) : INode
 
     public Position StartPos { get; set; } = Condition.StartPos;
     public Position EndPos { get; set; } = Expression.EndPos;
+
+    public override string ToString() => $"If {condition} then {expression}";
 }
+
 // This node represents an if statement
 public class IfNode(List<SubIfNode> Cases, INode ElseNode) : INode
 {
@@ -157,8 +164,10 @@ public class IfNode(List<SubIfNode> Cases, INode ElseNode) : INode
     public readonly INode elseNode = ElseNode;
 
     public Position StartPos { get; set; } = Cases[0].condition.StartPos;
-    public Position EndPos { get; set; } =
-        ElseNode != null ? ElseNode.EndPos : Cases[^1].EndPos;
+    public Position EndPos { get; set; } = ElseNode != null ? ElseNode.EndPos : Cases[^1].EndPos;
+
+    public override string ToString() =>
+        $"All If Casses: {string.Join(", ", cases.Select(x => x.ToString()))} Else: {elseNode}";
 }
 
 // This node represents a for loop
@@ -180,6 +189,9 @@ public class ForNode(
 
     public Position StartPos { get; set; } = varNameTok.StartPos;
     public Position EndPos { get; set; } = bodyNode.EndPos;
+
+    public override string ToString() =>
+        $"for {varNameTok} start {startValueNode} end {endValueNode} with step {stepValueNode} do {bodyNode} and return Null {retNull}";
 }
 
 // This node represents a while loop
@@ -191,6 +203,8 @@ public class WhileNode(INode conditionNode, INode bodyNode, bool retNull) : INod
 
     public Position StartPos { get; set; } = conditionNode.StartPos;
     public Position EndPos { get; set; } = bodyNode.EndPos;
+
+    public override string ToString() => $"while {conditionNode} do {bodyNode}";
 }
 
 // This node represents a function definition
@@ -230,6 +244,9 @@ public class FuncDefNode : INode
 
     public Position StartPos { get; set; }
     public Position EndPos { get; set; }
+
+    public override string ToString() =>
+        $"Define Function {varNameTok} with args {argNameToks} and do {bodyNode} (return null {retNull})";
 }
 
 // This node represents a function call
@@ -242,10 +259,8 @@ public class CallNode(INode nodeToCall, List<INode> argNodes) : INode
     public Position EndPos { get; set; } =
         argNodes.Count > 0 ? argNodes[^1].EndPos : nodeToCall.EndPos;
 
-    public override string ToString()
-    {
-        return $"{nodeToCall} -> " + string.Join(',', argNodes);
-    }
+    public override string ToString() =>
+        $"{nodeToCall} -> " + string.Join(',', argNodes.Select(x => x.ToString()));
 }
 
 // This node represents a return statement
@@ -255,6 +270,8 @@ public class ReturnNode(INode? nodeToReturn, Position startPos, Position endPos)
 
     public Position StartPos { get; set; } = startPos;
     public Position EndPos { get; set; } = endPos;
+
+    public override string ToString() => $"return {nodeToReturn}";
 }
 
 // This node represents a continue statement
@@ -262,6 +279,8 @@ public class ContinueNode(Position startPos, Position endPos) : INode
 {
     public Position StartPos { get; set; } = startPos;
     public Position EndPos { get; set; } = endPos;
+
+    public override string ToString() => $"Continue Node";
 }
 
 // This node represents a break statement
@@ -269,6 +288,8 @@ public class BreakNode(Position startPos, Position endPos) : INode
 {
     public Position StartPos { get; set; } = startPos;
     public Position EndPos { get; set; } = endPos;
+
+    public override string ToString() => $"Break Node";
 }
 
 public class TryCatchNode(INode tryNode, INode catchNode, Token<string> catchVarName) : INode
@@ -280,11 +301,15 @@ public class TryCatchNode(INode tryNode, INode catchNode, Token<string> catchVar
     public Position StartPos { get; set; } = tryNode.StartPos;
     public Position EndPos { get; set; } =
         catchNode is NodeNull _ ? tryNode.EndPos : catchNode.EndPos;
+
+    public override string ToString() => $"Try {TryNode} Catch {CatchNode} as {ChatchVarName}";
 }
 
 public class ImportNode(Token<string> pathTok, Position startPos, Position endPos) : INode
 {
     public Position StartPos { get; set; } = startPos;
     public Position EndPos { get; set; } = endPos;
-    public Token<string> PathTok  = pathTok;
+    public Token<string> PathTok = pathTok;
+
+    public override string ToString() => $"Import {PathTok}";
 }
