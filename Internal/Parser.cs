@@ -828,6 +828,24 @@ public class Parser
         return res.Success(new TryCatchNode(tryBlock, catchBlock, varName));
     }
 
+    private ParseResult ImportExpr()
+    {
+        ParseResult res = new();
+        Position startPos = currentToken.StartPos;
+        if(currentToken.IsNotMatching(TokenType.KEYWORD, "IMPORT")){
+            return res.Failure(new ExpectedKeywordError(currentToken.StartPos, "Expected IMPORT"));
+        }
+
+        res.Advance();
+        AdvanceParser();
+
+        if(currentToken.IsNotType(TokenType.STRING)){
+            return res.Failure(new InvalidSyntaxError(currentToken.StartPos, "Expected a string (Path to dll) after IMPORT"));
+        }
+
+        Token<string> token = (Token<string>)currentToken;
+        return res.Success(new ImportNode(token, startPos, currentToken.EndPos));
+    }
     // Important Methods Start at bottom to top
     private ParseResult Atom()
     {
@@ -931,6 +949,15 @@ public class Parser
                 return res;
             }
             return res.Success(tryCatch);
+        } 
+        else if (tok.IsMatching(TokenType.KEYWORD, "IMPORT"))
+        {
+            INode importNode = res.Register(ImportExpr());
+            if (res.HasError)
+            {
+                return res;
+            }
+            return res.Success(importNode);
         }
         return res.Failure(
             new InvalidSyntaxError(

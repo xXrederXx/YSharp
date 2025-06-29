@@ -2,9 +2,9 @@ using YSharp.Types.InternalTypes;
 
 namespace YSharp.Types.ClassTypes;
 
-public class VString(string value) : Value()
+public class VString(string value) : Value(), IDefaultConvertableValue<string>
 {
-    public readonly string value = value;
+    public string value { get; set; } = value;
 
     public override ValueAndError GetFunc(string name, List<Value> argNodes)
     {

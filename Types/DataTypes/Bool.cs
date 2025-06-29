@@ -2,9 +2,9 @@ using YSharp.Types.InternalTypes;
 
 namespace YSharp.Types.ClassTypes;
 
-public class VBool(bool value) : Value()
+public class VBool(bool value) : Value(), IDefaultConvertableValue<bool>
 {
-    public readonly bool value = value;
+    public bool value { get; set; } = value;
 
     public override ValueAndError GetComparisonEQ(Value other)
     {

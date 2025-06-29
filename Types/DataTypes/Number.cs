@@ -2,9 +2,9 @@ using YSharp.Types.InternalTypes;
 
 namespace YSharp.Types.ClassTypes;
 
-public class VNumber(double value) : Value()
+public class VNumber(double value) : Value(), IDefaultConvertableValue<double>
 {
-    public readonly double value = value;
+    public double value { get; set; } = value;
 
     public override ValueAndError GetFunc(string name, List<Value> argNodes)
     {
