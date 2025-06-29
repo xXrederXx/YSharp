@@ -89,4 +89,38 @@ public static class BenchHelp
         text = text.Substring(0, text.LastIndexOf(';'));
         return text;
     }
+    private static string BetterString(string str, int length = 120)
+    {
+        if (string.IsNullOrEmpty(str) || str.Length <= length)
+            return str;
+
+        int halfLength = length / 2;
+        string start = str.Substring(0, halfLength);
+        string end = str.Substring(str.Length - halfLength);
+        return start + " ...... " + end;
+    }
+
+    public static void LogData()
+    {
+        System.Console.WriteLine("\nBENCH HELPER DATA");
+        System.Console.WriteLine($"SAMPLE TEXT ({SampleText.Length} Char):\n{BetterString(SampleText)}");
+
+        System.Console.WriteLine($"\nTEXT VARIANTS:");
+        System.Console.WriteLine($"\tSHORT ({Text5000Char.Length} Char): \n\t {BetterString(Text5000Char)}");
+        System.Console.WriteLine($"\tMEDIUM ({Text10000Char.Length} Char): \n\t {BetterString(Text10000Char)}");
+        System.Console.WriteLine($"\tLONG ({Text50000Char.Length} Char): \n\t {BetterString(Text50000Char)}");
+        System.Console.WriteLine($"\tEXTREME ({Text100000Char.Length} Char): \n\t {BetterString(Text100000Char)}");
+
+        System.Console.WriteLine($"\nTOKEN LIST VARIANTS:");
+        System.Console.WriteLine($"\tSHORT -> {TokenS.Count} Tokens (LAST: {TokenS[^2]})");
+        System.Console.WriteLine($"\tMEDIUM -> {TokenM.Count} Tokens (LAST: {TokenM[^2]})");
+        System.Console.WriteLine($"\tLONG -> {TokenL.Count} Tokens (LAST: {TokenL[^2]})");
+        System.Console.WriteLine($"\tEXTREME -> {TokenXL.Count} Tokens (LAST: {TokenXL[^2]})");
+
+        System.Console.WriteLine($"\nAST VARIANTS:");
+        System.Console.WriteLine($"\tSHORT -> {astS.Node} Tokens");
+        System.Console.WriteLine($"\tMEDIUM -> {astM.Node} Tokens");
+        System.Console.WriteLine($"\tLONG -> {astL.Node} Tokens");
+        System.Console.WriteLine($"\tEXTREME -> {astXL.Node} Tokens");
+    }
 }

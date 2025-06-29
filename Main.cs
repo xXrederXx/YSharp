@@ -14,7 +14,8 @@ internal class Start
 {
     private static void Main(string[] args)
     {
-        TestRunner();
+        BenchHelp.LogData();
+        
     }
 
     private static void TestRunner()
