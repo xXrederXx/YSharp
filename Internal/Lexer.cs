@@ -175,7 +175,7 @@ public class Lexer
     private void SkipComent()
     {
         Advance();
-        while (current_char is not '\n' and not '\r' and not char.MaxValue)
+        while (current_char is not '\n' and not '\r' and not ';' and not char.MaxValue)
         {
             Advance();
         }
