@@ -9,7 +9,7 @@ namespace YSharp.Benchmarks;
 public class InterpreterBench
 {
     [Benchmark]
-    public void BenchmarkS()
+    public void InterpreterBenchmarkS()
     {
         Interpreter.Visit(
             BenchHelp.astS.Node,
@@ -18,7 +18,7 @@ public class InterpreterBench
     }
 
     [Benchmark]
-    public void BenchmarkM()
+    public void InterpreterBenchmarkM()
     {
         Interpreter.Visit(
             BenchHelp.astM.Node,
@@ -27,7 +27,7 @@ public class InterpreterBench
     }
 
     [Benchmark]
-    public void BenchmarkL()
+    public void InterpreterBenchmarkL()
     {
         Interpreter.Visit(
             BenchHelp.astL.Node,
@@ -36,7 +36,7 @@ public class InterpreterBench
     }
 
     [Benchmark]
-    public void BenchmarkXL()
+    public void InterpreterBenchmarkXL()
     {
         Interpreter.Visit(
             BenchHelp.astXL.Node,

@@ -8,28 +8,28 @@ namespace YSharp.Benchmarks;
 public class RunTimeBench
 {
     [Benchmark]
-    public void Benchmark5000()
+    public void RTBenchmarkS()
     {
         RunClass runClass = new();
         runClass.Run("BENCHMARK", BenchHelp.Text5000Char);
     }
 
     [Benchmark]
-    public void Benchmark10000()
+    public void RTBenchmarkM()
     {
         RunClass runClass = new();
         runClass.Run("BENCHMARK", BenchHelp.Text10000Char);
     }
 
     [Benchmark]
-    public void Benchmark50000()
+    public void RTBenchmarkL()
     {
         RunClass runClass = new();
         runClass.Run("BENCHMARK", BenchHelp.Text50000Char);
     }
 
     [Benchmark]
-    public void Benchmark100000()
+    public void RTBenchmarkXL()
     {
         RunClass runClass = new();
         runClass.Run("BENCHMARK", BenchHelp.Text100000Char);

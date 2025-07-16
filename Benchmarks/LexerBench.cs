@@ -10,7 +10,7 @@ public class LexerBench
 {
     public bool x;
     [Benchmark]
-    public void Benchmark5000()
+    public void LexerBenchmarkS()
     {
         Lexer lexer = new(BenchHelp.Text5000Char, "BENCHMARK");
         var tokens = lexer.MakeTokens();
@@ -18,7 +18,7 @@ public class LexerBench
     }
 
     [Benchmark]
-    public void Benchmark10000()
+    public void LexerBenchmarkM()
     {
         Lexer lexer = new(BenchHelp.Text10000Char, "BENCHMARK");
         var tokens = lexer.MakeTokens();
@@ -26,7 +26,7 @@ public class LexerBench
     }
 
     [Benchmark]
-    public void Benchmark50000()
+    public void LexerBenchmarkL()
     {
         Lexer lexer = new(BenchHelp.Text50000Char, "BENCHMARK");
         var tokens = lexer.MakeTokens();
@@ -34,7 +34,7 @@ public class LexerBench
     }
 
     [Benchmark]
-    public void Benchmark100000()
+    public void LexerBenchmarkXL()
     {
         Lexer lexer = new(BenchHelp.Text100000Char, "BENCHMARK");
         var tokens = lexer.MakeTokens();

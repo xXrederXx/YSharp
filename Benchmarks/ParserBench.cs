@@ -9,28 +9,28 @@ namespace YSharp.Benchmarks;
 public class ParserBench
 {
     [Benchmark]
-    public void BenchmarkS()
+    public void ParserBenchmarkS()
     {
         Parser parser = new(BenchHelp.TokenS);
         var tokens = parser.Parse();
     }
 
     [Benchmark]
-    public void BenchmarkM()
+    public void ParserBenchmarkM()
     {
         Parser parser = new(BenchHelp.TokenM);
         var tokens = parser.Parse();
     }
 
     [Benchmark]
-    public void BenchmarkL()
+    public void ParserBenchmarkL()
     {
         Parser parser = new(BenchHelp.TokenL);
         var tokens = parser.Parse();
     }
 
     [Benchmark]
-    public void BenchmarkXL()
+    public void ParserBenchmarkXL()
     {
         Parser parser = new(BenchHelp.TokenXL);
         var tokens = parser.Parse();
