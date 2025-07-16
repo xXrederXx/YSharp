@@ -246,7 +246,7 @@ public class FuncDefNode : INode
     public Position EndPos { get; set; }
 
     public override string ToString() =>
-        $"Define Function {varNameTok} with args {argNameToks} and do {bodyNode} (return null {retNull})";
+        $"Define Function {varNameTok} with args {string.Join(", ", argNameToks.Select(x => x.ToString()))} and do {bodyNode} (return null {retNull})";
 }
 
 // This node represents a function call

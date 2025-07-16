@@ -15,6 +15,11 @@ public class ParseResult
     // Check if an error exists
     public bool HasError => Error.IsError;
 
+    public void ResetError()
+    {
+        Error = ErrorNull.Instance;
+    }
+
     // Try to register the result; if error is present, mark reversal
     public INode? TryRegister(ParseResult result)
     {
@@ -77,8 +82,8 @@ public class ParseResult
 public class Parser
 {
     private readonly ImmutableArray<IToken> tokens;
-    private int tokIndex = -1;
-    private IToken currentToken;
+    public int tokIndex = -1;
+    public IToken currentToken;
 
     // initalizer
     public Parser(List<IToken> tokens)
@@ -164,14 +169,18 @@ public class Parser
             AdvanceParser();
 
             INode caseBodyNode = res.Register(Statements());
-            if (res.HasError)
+            if (res.HasError && res.Error is not EndKeywordError)
             {
                 return res;
             }
+            res.ResetError();
 
             cases.Add(new SubIfNode(caseCondition, caseBodyNode));
 
-            if (currentToken.IsMatching(TokenType.KEYWORD, "END")) {
+            if (currentToken.IsMatching(TokenType.KEYWORD, "END"))
+            {
+                res.Advance();
+                AdvanceParser();
                 return res.Success(new IfNode(cases, elseCase));
             }
         }
@@ -188,20 +197,18 @@ public class Parser
 
         if (currentToken.IsNotType(TokenType.NEWLINE))
         {
-            return res.Failure(
-                new ExpectedCharError(currentToken.StartPos, "Newline expected")
-            );
+            return res.Failure(new ExpectedCharError(currentToken.StartPos, "Newline expected"));
         }
 
         res.Advance();
         AdvanceParser();
 
         elseCase = res.Register(Statements());
-        if (res.HasError)
+        if (res.HasError && res.Error is not EndKeywordError)
         {
             return res;
         }
-
+        res.ResetError();
         if (currentToken.IsNotMatching(TokenType.KEYWORD, "END"))
         {
             return res.Failure(new ExpectedKeywordError(currentToken.StartPos, "Expected END"));
@@ -288,11 +295,11 @@ public class Parser
             res.Advance();
             AdvanceParser();
             INode _body = res.Register(Statements());
-            if (res.HasError)
+            if (res.HasError && res.Error is not EndKeywordError)
             {
                 return res;
             }
-
+            res.ResetError();
             if (currentToken.IsNotMatching(TokenType.KEYWORD, "END"))
             {
                 return res.Failure(new ExpectedKeywordError(currentToken.StartPos, "Expected END"));
@@ -304,11 +311,17 @@ public class Parser
         }
 
         INode body = res.Register(Statement());
-        if (res.HasError)
+        if (res.HasError && res.Error is not EndKeywordError)
         {
             return res;
         }
-
+        res.ResetError();
+        if (currentToken.IsNotMatching(TokenType.KEYWORD, "END"))
+        {
+            return res.Failure(new ExpectedKeywordError(currentToken.StartPos, "Expected END"));
+        }
+        res.Advance();
+        AdvanceParser();
         return res.Success(new ForNode(varName, startValue, endValue, stepValue, body, false));
     }
 
@@ -342,11 +355,11 @@ public class Parser
             res.Advance();
             AdvanceParser();
             INode _body = res.Register(Statements());
-            if (res.HasError)
+            if (res.HasError && res.Error is not EndKeywordError)
             {
                 return res;
             }
-
+            res.ResetError();
             if (currentToken.IsNotMatching(TokenType.KEYWORD, "END"))
             {
                 return res.Failure(new ExpectedKeywordError(currentToken.StartPos, "Expected END"));
@@ -358,10 +371,17 @@ public class Parser
         }
 
         INode body = res.Register(Statement());
-        if (res.HasError)
+        if (res.HasError && res.Error is not EndKeywordError)
         {
             return res;
         }
+        res.ResetError();
+        if (currentToken.IsNotMatching(TokenType.KEYWORD, "END"))
+        {
+            return res.Failure(new ExpectedKeywordError(currentToken.StartPos, "Expected END"));
+        }
+        res.Advance();
+        AdvanceParser();
 
         return res.Success(new WhileNode(condition, body, true));
     }
@@ -574,17 +594,17 @@ public class Parser
         res.Advance();
         AdvanceParser();
         INode body = res.Register(Statements());
-        if (res.HasError)
+        if (res.HasError && res.Error is not EndKeywordError)
         {
             return res;
         }
+        res.ResetError();
         if (currentToken.IsNotMatching(TokenType.KEYWORD, "END"))
         {
             return res.Failure(new ExpectedKeywordError(currentToken.StartPos, "expected END"));
         }
         res.Advance();
         AdvanceParser();
-
         return res.Success(new FuncDefNode(varNameTok, argNameTok, body, false));
     }
 
@@ -781,14 +801,15 @@ public class Parser
         INode tryBlock = res.Register(Statements());
         INode catchBlock = NodeNull.Instance;
         Token<string> varName = new Token<string>(TokenType.NULL);
-        if (res.HasError)
+        if (res.HasError && res.Error is not EndKeywordError)
         {
             return res;
         }
+        res.ResetError();
 
         if (currentToken.IsNotMatching(TokenType.KEYWORD, "END"))
         {
-            res.Failure(new ExpectedKeywordError(currentToken.StartPos, "Expected END"));
+            return res.Failure(new ExpectedKeywordError(currentToken.StartPos, "Expected END"));
         }
         res.Advance();
         AdvanceParser();
@@ -812,14 +833,15 @@ public class Parser
             }
 
             catchBlock = res.Register(Statements());
-            if (res.HasError)
+            if (res.HasError && res.Error is not EndKeywordError)
             {
                 return res;
             }
+            res.ResetError();
 
             if (currentToken.IsNotMatching(TokenType.KEYWORD, "END"))
             {
-                res.Failure(new ExpectedKeywordError(currentToken.StartPos, "Expected END"));
+                return res.Failure(new ExpectedKeywordError(currentToken.StartPos, "Expected END"));
             }
             res.Advance();
             AdvanceParser();
@@ -832,20 +854,28 @@ public class Parser
     {
         ParseResult res = new();
         Position startPos = currentToken.StartPos;
-        if(currentToken.IsNotMatching(TokenType.KEYWORD, "IMPORT")){
+        if (currentToken.IsNotMatching(TokenType.KEYWORD, "IMPORT"))
+        {
             return res.Failure(new ExpectedKeywordError(currentToken.StartPos, "Expected IMPORT"));
         }
 
         res.Advance();
         AdvanceParser();
 
-        if(currentToken.IsNotType(TokenType.STRING)){
-            return res.Failure(new InvalidSyntaxError(currentToken.StartPos, "Expected a string (Path to dll) after IMPORT"));
+        if (currentToken.IsNotType(TokenType.STRING))
+        {
+            return res.Failure(
+                new InvalidSyntaxError(
+                    currentToken.StartPos,
+                    "Expected a string (Path to dll) after IMPORT"
+                )
+            );
         }
 
         Token<string> token = (Token<string>)currentToken;
         return res.Success(new ImportNode(token, startPos, currentToken.EndPos));
     }
+
     // Important Methods Start at bottom to top
     private ParseResult Atom()
     {
@@ -949,7 +979,7 @@ public class Parser
                 return res;
             }
             return res.Success(tryCatch);
-        } 
+        }
         else if (tok.IsMatching(TokenType.KEYWORD, "IMPORT"))
         {
             INode importNode = res.Register(ImportExpr());
@@ -958,6 +988,10 @@ public class Parser
                 return res;
             }
             return res.Success(importNode);
+        }
+        else if (tok.IsMatching(TokenType.KEYWORD, "END"))
+        {
+            return res.Failure(new EndKeywordError(currentToken.StartPos));
         }
         return res.Failure(
             new InvalidSyntaxError(
@@ -1116,12 +1150,7 @@ public class Parser
         INode? left = res.Register(ArithExpr());
         if (res.HasError)
         {
-            return res.Failure(
-                new InvalidSyntaxError(
-                    left.StartPos,
-                    "expected 'NOT', int, float, identifier, '+', '-', '(', '['"
-                )
-            );
+            return res;
         }
 
         // This checks for the comparison operators
@@ -1143,12 +1172,7 @@ public class Parser
             INode? right = res.Register(ArithExpr());
             if (res.HasError)
             {
-                return res.Failure(
-                    new InvalidSyntaxError(
-                        right.StartPos,
-                        "expected 'NOT', int, float, identifier, '+', '-', '(', '['"
-                    )
-                );
+                return res;
             }
 
             left = new BinOpNode(left, opTok, right);
@@ -1174,12 +1198,7 @@ public class Parser
         INode? left = res.Register(CompExpr());
         if (res.HasError)
         {
-            return res.Failure(
-                new InvalidSyntaxError(
-                    left.StartPos,
-                    "expected 'VAR', 'IF', 'WHILE', 'FUN', int, float, identifier, '+', '-', '(', '['"
-                )
-            );
+            return res;
         }
 
         while (
@@ -1194,12 +1213,7 @@ public class Parser
             INode? right = res.Register(CompExpr());
             if (res.HasError)
             {
-                return res.Failure(
-                    new InvalidSyntaxError(
-                        right.StartPos,
-                        "expected 'VAR', int, float, identifier, '+', '-', '(', '['"
-                    )
-                );
+                return res;
             }
 
             left = new BinOpNode(left, opTok, right);
@@ -1233,6 +1247,10 @@ public class Parser
             AdvanceParser();
             return res.Success(new ContinueNode(posStart, currentToken.StartPos));
         }
+        if (currentToken.IsMatching(TokenType.KEYWORD, "END"))
+        {
+            return res.Failure(new EndKeywordError(currentToken.StartPos));
+        }
         if (currentToken.IsMatching(TokenType.KEYWORD, "BREAK"))
         {
             res.Advance();
@@ -1244,12 +1262,7 @@ public class Parser
 
         if (res.HasError)
         {
-            return res.Failure(
-                new InvalidSyntaxError(
-                    currentToken.StartPos,
-                    "expected 'RETURN', 'CONTINUE', 'BREAK', 'VAR', 'IF', 'WHILE', 'FUN', int, float, identifier, '+', '-', '(', '['"
-                )
-            );
+            return res;
         }
 
         return res.Success(expr);
@@ -1279,21 +1292,15 @@ public class Parser
 
         AllStatements.Add(currentStatement);
 
-        while (true) // repeat until no more lines are available
+        while (currentToken.IsNotType(TokenType.EOF)) // repeat until no more lines are available
         {
-            bool moreStatements = false;
             while (currentToken.IsType(TokenType.NEWLINE)) // skip all new Lines
             {
                 res.Advance();
                 AdvanceParser();
-                moreStatements = true;
-            }
-            if (!moreStatements) // if no new line was detected break out of the loop
-            {
-                break;
             }
 
-            currentStatement = res.TryRegister(Statement());
+            currentStatement = res.Register(Statement());
             if (res.HasError)
             {
                 return res;

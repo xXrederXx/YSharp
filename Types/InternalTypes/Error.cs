@@ -42,10 +42,16 @@ public class ErrorNull : Error
 
 // Specific error types
 
+//Y0S690 -> Internal Use
+
+public class EndKeywordError(Position posStart)
+    : Error(690, "End keyword there", posStart)
+{ }
 
 // YS0100 -> Lexer
 public class UnclosedBracketsError(Position posStart, string details)
-    : Error(101, details, posStart) { }
+    : Error(101, details, posStart)
+{ }
 
 public class IllegalCharError(Position posStart, string details) : Error(110, details, posStart) { }
 

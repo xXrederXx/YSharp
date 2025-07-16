@@ -1,4 +1,6 @@
 ﻿using System.Diagnostics;
+using BenchmarkDotNet.Configs;
+using BenchmarkDotNet.Loggers;
 using BenchmarkDotNet.Running;
 using YSharp.Benchmarks;
 using YSharp.Internal;
@@ -15,12 +17,25 @@ internal class Start
     private static void Main(string[] args)
     {
         BenchHelp.LogData();
-        
+        TestRunner();
     }
 
     private static void TestRunner()
     {
-        BenchmarkRunner.Run<InterpreterBench>();
+        var summaries = new[]
+        {
+            BenchmarkRunner.Run<LexerBench>(),
+            BenchmarkRunner.Run<ParserBench>(),
+            BenchmarkRunner.Run<InterpreterBench>(),
+            BenchmarkRunner.Run<RunTimeBench>()
+        };
+
+        foreach (var summary in summaries)
+        {
+            Console.WriteLine(summary.Title);
+            Console.WriteLine(summary.HostEnvironmentInfo.ToFormattedString());
+            Console.WriteLine(summary.Table.ToString());
+        }
     }
 
     private static void ConsoleRunner()

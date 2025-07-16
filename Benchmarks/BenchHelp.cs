@@ -1,5 +1,6 @@
 using System;
 using YSharp.Internal;
+using YSharp.Types;
 using YSharp.Types.ClassTypes;
 using YSharp.Types.FunctionTypes;
 using YSharp.Types.InternalTypes;
@@ -9,7 +10,7 @@ namespace YSharp.Benchmarks;
 public static class BenchHelp
 {
     public static readonly string SampleText =
-        ";FUN add(a, b);  RETURN a + b;END;;FUN forTest();    FOR x = 0 TO 10 THEN;        PRINT(x); PRINT(\" A \" + \" L \" + \" o \" + \" n \" + \" g \" + \" string \");PRINT(\" A \" + \" L \" + \" o \" + \" n \" + \" g \" + \" string \");PRINT(\" A \" + \" L \" + \" o \" + \" n \" + \" g \" + \" string \");PRINT(\" A \" + \" L \" + \" o \" + \" n \" + \" g \" + \" string \");PRINT(\" A \" + \" L \" + \" o \" + \" n \" + \" g \" + \" string \");PRINT(\" A \" + \" L \" + \" o \" + \" n \" + \" g \" + \" string \");PRINT(\" A \" + \" L \" + \" o \" + \" n \" + \" g \" + \" string \");    END;;    FOR x = 0 TO 20 STEP 2 THEN;        PRINT(x);    END;END;;FUN whileTest();    VAR x = \"cool\";    WHILE x == \"cool\" THEN;        PRINT(\"x is cool\");        IF INPUT() == \"bad\" THEN;            VAR x = \"bad\";        END;    END;END;;# this is a comment;;VAR x = \"69.42\";VAR y = [0, 9, 11];VAR time = TIME();;PRINT(y.IndexOf(11));PRINT(y.Remove(0));;add(x.ToNumber(), y.Get(0));forTest();whileTest();;PRINT(TIME() - time);FUN foo(a, b, c);    a + b;    a / c;    c * b;    MATH.SIN(b + c);END;;VAR list = [];VAR list2 = [];VAR str = \"\";FOR x = 0 TO 10_000 THEN;    list.Add(x);    VAR y = 25 * (2 / 5 + 6)^2;    VAR b = NOT TRUE AND NOT FALSE OR TRUE;    IF x > 50 THEN;        list2.Add(x);    END;    VAR str += x.ToString();    foo(x, 3, 6);END;;FUN GetCSq(a, b);    RETURN MATH.SQRT(a * a + b * b);END;;FUN RUNTEST();    FOR x = 0 TO 360 THEN;        FOR y = 0 TO 360 THEN;            (GetCSq(x, y));        END;    END;END;;FUN CountTo(x);    PRINT(\"Here is done\");    VAR zg = 0;    FOR y = 0 TO x THEN;        VAR zg = zg + y;    END;    PRINT(zg);END;;VAR zigzag = 1000;CountTo(zigzag);VAR list = [1, 2];PRINT(list.Count);TRY;    PRINT(\"Huray\" + r);END;CATCH;    PRINT(\"Cought\");END;VAR list = [1, 2,3,4,5,6,6,7,7,8,8,8,9,9,9,4,42,3243,43,64535,6434,43,];";
+        "FUN func(a, b, c, d, e, f, g); PRINT(a + b + c); VAR x = d + e + f + g; PRINT(x); END; 1 + 2 FUN add(a, b); RETURN a + b;END;FUN adda(a, b);  RETURN a + b;END;;;1+2; VAR list = [1,2,3,4,5,6,6,7,7,8,8,8,9,9,9,4,42,3243,43,64535,6434,43,3]; 1 + 2 + 3+ 44 +45 + 3 + 43 +4";
 
     public static readonly string Text5000Char;
     public static readonly string Text10000Char;
@@ -29,9 +30,9 @@ public static class BenchHelp
     static BenchHelp()
     {
         Text5000Char = GetText(5000);
-        Text10000Char = GetText(10000);
-        Text50000Char = GetText(50000);
-        Text100000Char = GetText(100000);
+        Text10000Char = GetText(10000) + ";END;1+1";
+        Text50000Char = GetText(50000) + ";PRINT(a);END;1+1";
+        Text100000Char = GetText(100000) + ";PRINT(a);END;1+1";
 
         CheckString(Text5000Char);
         CheckString(Text10000Char);
@@ -43,8 +44,10 @@ public static class BenchHelp
         TokenL = new Lexer(Text50000Char, "BenchHelp").MakeTokens().Item1;
         TokenXL = new Lexer(Text100000Char, "BenchHelp").MakeTokens().Item1;
 
-        astS = new Parser(TokenS).Parse();
-        astM = new Parser(TokenM).Parse();
+        Parser parserS = new(TokenS);
+        astS = parserS.Parse();
+        Parser parserM = new(TokenM);
+        astM = parserM.Parse();
         astL = new Parser(TokenL).Parse();
         astXL = new Parser(TokenXL).Parse();
     }
@@ -73,7 +76,7 @@ public static class BenchHelp
         if (res.Item2.IsError)
         {
             System.Console.WriteLine(
-                $"DID NOT PASS BENCH-HELPER-CHECK \n\n ERROR: \n\t{res.Item2} \n\n TEXT: \n {str}"
+                $"DID NOT PASS BENCH-HELPER-CHECK \n\n ERROR: \n\t{res.Item2} \n\n TEXT: \n {BetterString(str)}"
             );
         }
     }
@@ -118,9 +121,9 @@ public static class BenchHelp
         System.Console.WriteLine($"\tEXTREME -> {TokenXL.Count} Tokens (LAST: {TokenXL[^2]})");
 
         System.Console.WriteLine($"\nAST VARIANTS:");
-        System.Console.WriteLine($"\tSHORT -> {astS.Node} Tokens");
-        System.Console.WriteLine($"\tMEDIUM -> {astM.Node} Tokens");
-        System.Console.WriteLine($"\tLONG -> {astL.Node} Tokens");
-        System.Console.WriteLine($"\tEXTREME -> {astXL.Node} Tokens");
+        System.Console.WriteLine($"\tSHORT -> {astS.Node.ToString()?.Length}");
+        System.Console.WriteLine($"\tMEDIUM -> {astM.Node.ToString()?.Length}");
+        System.Console.WriteLine($"\tLONG -> {astL.Node.ToString()?.Length}");
+        System.Console.WriteLine($"\tEXTREME -> {astXL.Node.ToString()?.Length}");
     }
 }
