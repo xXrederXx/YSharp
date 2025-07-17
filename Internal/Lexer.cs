@@ -8,6 +8,7 @@ public class Lexer
     private readonly string text;
     private Position pos;
     private char current_char = char.MaxValue;
+    private readonly StringBuilder stringBuilder = new();
 
     // Initalizer
     public Lexer(string text, string fileName)
@@ -27,7 +28,6 @@ public class Lexer
     // this is used to make a number token of type int or float
     private (Token<double>, Error) MakeNumber()
     {
-        StringBuilder stringBuilder = new();
         bool hasDot = false;
         Position posStart = pos;
 
@@ -47,7 +47,7 @@ public class Lexer
                 if (hasDot)
                 {
                     return (
-                        new(TokenType.NULL),
+                        new Token<double>(TokenType.NULL),
                         new IllegalCharError(posStart, "You can't have 2 dots in a number")
                     ); // cant have 2 dots in a number
                 }
@@ -61,10 +61,12 @@ public class Lexer
             }
             Advance();
         }
+        double value = double.Parse(stringBuilder.ToString());
+        stringBuilder.Clear();
         return (
             new Token<double>(
                 TokenType.FLOAT,
-                double.Parse(stringBuilder.ToString()),
+                value,
                 posStart,
                 pos
             ),
@@ -74,7 +76,6 @@ public class Lexer
 
     private Token<string> MakeIdentifier()
     {
-        StringBuilder stringBuilder = new();
         Position posStart = pos;
 
         while (
@@ -87,6 +88,7 @@ public class Lexer
         }
 
         string idStr = stringBuilder.ToString();
+        stringBuilder.Clear();
         if (TokenTypeHelper.IsKeyword(idStr))
         {
             return new Token<string>(TokenType.KEYWORD, idStr, posStart, pos);
