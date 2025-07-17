@@ -1,3 +1,5 @@
+using YSharp.Utility;
+
 namespace YSharp.Types.InternalTypes;
 
 public struct Position
@@ -5,10 +7,10 @@ public struct Position
     public static readonly Position Null = new();
 
     // Auto-properties for better memory layout
-    public int Index { get; private set; }
-    public int Line { get; private set; }
-    public int Column { get; private set; }
-    public readonly string FileName { get; }
+    public int Index;
+    public int Line;
+    public int Column;
+    public readonly byte FileId;
 
     // Constructor for a valid position
     public Position(int index, int line, int column, string fileName)
@@ -16,7 +18,7 @@ public struct Position
         Index = index;
         Line = line;
         Column = column;
-        FileName = fileName ?? throw new ArgumentNullException(nameof(fileName)); // Avoid null strings
+        FileId = FileNameRegistry.GetFileId(fileName);
     }
 
     // Default constructor for a "null" position
@@ -25,7 +27,7 @@ public struct Position
         Index = 0;
         Line = 0;
         Column = 0;
-        FileName = string.Empty; // Use empty string instead of allocating "fileName"
+        FileId = 0;
     }
 
     // Advance to the next character
@@ -33,7 +35,6 @@ public struct Position
     {
         Index++;
         Column++;
-
         // Adjust for line breaks
         if (currentChar is '\n' or '\r')
         {
@@ -43,11 +44,9 @@ public struct Position
     }
 
     // String representation for debugging
-    public override readonly string ToString()
-    {
-        return $"Column {Column}, Index {Index}";
-    }
+    public override string ToString() =>
+        $"[Idx: {Index}, Ln: {Line}, Col: {Column}, FID: {FileId}]";
 
-    // Check if the position is "null"
-    public readonly bool IsNull => string.IsNullOrEmpty(FileName);
+
+    public readonly bool IsNull => FileId == 0;
 }

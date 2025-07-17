@@ -1,4 +1,5 @@
 using YSharp.Internal;
+using YSharp.Utility;
 
 namespace YSharp.Types.InternalTypes;
 
@@ -12,7 +13,7 @@ public class Error(int index, string message, Position start)
     public override string ToString()
     {
         string msg =
-            StartPosition.FileName
+            FileNameRegistry.GetFileName(StartPosition.FileId)
             + "("
             + (StartPosition.Line + 1)
             + ", "
@@ -90,7 +91,7 @@ public class RunTimeError(Position posStart, string details, Context? context, i
 
         while (ctx != null && !pos.IsNull)
         {
-            result = $"  File {pos.FileName}, line {pos.Line + 1}, in {ctx.displayName}\n" + result;
+            result = $"  File {FileNameRegistry.GetFileName(pos.FileId)}, line {pos.Line + 1}, in {ctx.displayName}\n" + result;
             pos = ctx.parentEntryPos;
             ctx = ctx.parent;
         }
