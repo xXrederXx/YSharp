@@ -996,7 +996,7 @@ public class Parser
         return res.Failure(
             new InvalidSyntaxError(
                 tok.StartPos,
-                "expected int, float, identifier, IF, FOR, WHILE, FUN, '(' or '['"
+                $"expected int, float, identifier, IF, FOR, WHILE, FUN, '(' or '[' current token is of type {tok.Type}"
             )
         );
     }

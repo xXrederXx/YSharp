@@ -59,9 +59,13 @@ public class IllegalCharError(Position posStart, string details) : Error(110, de
 public class ExpectedCharError(Position posStart, string details)
     : Error(111, details, posStart) { }
 
+public class IllegalEscapeCharError(Position posStart, string details)
+    : Error(112, details, posStart) { }
+
 // YS0200 -> Parser
 public class InvalidSyntaxError(Position posStart, string details)
-    : Error(220, details, posStart) { }
+    : Error(220, details, posStart)
+{ }
 
 public class ExpectedKeywordError(Position posStart, string details)
     : Error(221, details, posStart) { }

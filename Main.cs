@@ -16,7 +16,7 @@ internal class Start
 {
     private static void Main(string[] args)
     {
-        TestRunner();
+        BenchmarkRunner.Run<LexerBench>();
     }
 
     private static void TestRunner()
