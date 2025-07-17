@@ -5,7 +5,7 @@
 ### 16.07.2025 - 21.20
 
 - **Detail**: V1 
-- **Name**: Initial
+- **Description**: Initial
 
 | Method           |        Mean |     Error |    StdDev |     Gen0 |     Gen1 |     Gen2 |  Allocated |
 | ---------------- | ----------: | --------: | --------: | -------: | -------: | -------: | ---------: |
@@ -14,13 +14,24 @@
 | LexerBenchmarkL  |  5,809.8 μs | 108.72 μs | 206.85 μs | 328.1250 | 320.3125 |  78.1250 | 4486.75 KB |
 | LexerBenchmarkXL | 11,486.1 μs | 228.07 μs | 604.81 μs | 640.6250 | 625.0000 | 156.2500 |  8975.2 KB |
 
+### 16.07.2025 - 21.20
+
+- **Detail**: V1 
+- **Description**: After StringBuilder Sharing
+
+| Method           | Mean       | Error     | StdDev    | Gen0     | Gen1     | Gen2     | Allocated  |
+|----------------- |-----------:|----------:|----------:|---------:|---------:|---------:|-----------:|
+| LexerBenchmarkS  |   107.9 μs |   2.10 μs |   3.69 μs |  19.4092 |   6.4697 |        - |  318.47 KB |
+| LexerBenchmarkM  |   202.2 μs |   3.81 μs |   4.67 μs |  39.0625 |  16.8457 |        - |  639.32 KB |
+| LexerBenchmarkL  | 3,584.6 μs |  69.80 μs |  74.69 μs | 234.3750 | 230.4688 |  70.3125 | 3065.89 KB |
+| LexerBenchmarkXL | 7,266.5 μs | 141.95 μs | 132.78 μs | 468.7500 | 460.9375 | 148.4375 | 6132.67 KB |
 
 ## Parser
 
 ### 16.07.2025 - 21.20
 
 - **Detail**: V1 
-- **Name**: Initial
+- **Description**: Initial
 
 | Method            |       Mean |     Error |    StdDev |     Gen0 |     Gen1 |    Gen2 |   Allocated |
 | ----------------- | ---------: | --------: | --------: | -------: | -------: | ------: | ----------: |
@@ -35,7 +46,7 @@
 ### 16.07.2025 - 21.20
 
 - **Detail**: V1 
-- **Name**: Initial
+- **Description**: Initial
   
 | Method                 |       Mean |    Error |    StdDev |     Gen0 |    Gen1 |  Allocated |
 | ---------------------- | ---------: | -------: | --------: | -------: | ------: | ---------: |
@@ -50,7 +61,7 @@
 ### 16.07.2025 - 21.20
 
 - **Detail**: V1 
-- **Name**: Initial
+- **Description**: Initial
 
 | Method        |        Mean |     Error |    StdDev |      Median |      Gen0 |      Gen1 |     Gen2 | Allocated |
 | ------------- | ----------: | --------: | --------: | ----------: | --------: | --------: | -------: | --------: |
