@@ -14,7 +14,7 @@
 | LexerBenchmarkL  |  5,809.8 μs | 108.72 μs | 206.85 μs | 328.1250 | 320.3125 |  78.1250 | 4486.75 KB |
 | LexerBenchmarkXL | 11,486.1 μs | 228.07 μs | 604.81 μs | 640.6250 | 625.0000 | 156.2500 |  8975.2 KB |
 
-### 16.07.2025 - 21.20
+### 17.07.2025 - 13.45
 
 - **Detail**: V1 
 - **Description**: After StringBuilder Sharing
