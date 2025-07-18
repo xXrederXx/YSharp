@@ -15,7 +15,9 @@ public class Lexer
     public Lexer(string text, string fileName)
     {
         this.text = text;
-        pos = new Position(-1, 0, -1, fileName); // -1 because Advance auto increments
+
+        // The .MaxValue enshures that the first advance call overflows to
+        pos = new Position(-1, 0, ushort.MaxValue, fileName);
         Advance();
     }
 

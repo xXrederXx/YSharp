@@ -38,6 +38,18 @@
 | LexerBenchmarkL  | 3,084.37 μs |  44.210 μs |  41.354 μs | 203.1250 | 199.2188 |  66.4063 | 2628.66 KB |
 | LexerBenchmarkXL | 6,217.37 μs | 121.353 μs | 162.002 μs | 406.2500 | 398.4375 | 140.6250 | 5257.98 KB |
 
+### 19.07.2025 - 14.00
+
+- **Detail**: V1 
+- **Description**: After Position Update and Lexer Rewrite
+
+| Method           | Mean        | Error      | StdDev     | Gen0     | Gen1     | Gen2     | Allocated  |
+|----------------- |------------:|-----------:|-----------:|---------:|---------:|---------:|-----------:|
+| LexerBenchmarkS  |    90.13 μs |   1.787 μs |   2.195 μs |  15.3809 |   4.6387 |        - |   253.2 KB |
+| LexerBenchmarkM  |   179.86 μs |   2.638 μs |   2.467 μs |  31.0059 |  12.9395 |        - |  508.08 KB |
+| LexerBenchmarkL  | 2,779.37 μs |  54.550 μs | 102.459 μs | 183.5938 | 179.6875 |  62.5000 | 2410.07 KB |
+| LexerBenchmarkXL | 6,525.45 μs | 132.065 μs | 381.038 μs | 382.8125 | 375.0000 | 148.4375 | 4820.64 KB |
+
 ## Parser
 
 ### 16.07.2025 - 21.20
@@ -63,6 +75,18 @@
 | ParserBenchmarkM  |   335.1 μs |  6.48 μs |   7.20 μs |  85.9375 |  28.3203 |       - |  1409.48 KB |
 | ParserBenchmarkL  | 2,197.0 μs | 21.24 μs |  17.74 μs | 437.5000 | 187.5000 | 23.4375 |  7042.88 KB |
 | ParserBenchmarkXL | 4,898.4 μs | 93.51 μs | 103.94 μs | 882.8125 | 570.3125 | 46.8750 | 14094.54 KB |
+
+### 19.07.2025 - 14.00
+
+- **Detail**: V1 
+- **Description**: After Position Update and Lexer Rewrite
+  
+| Method            | Mean       | Error    | StdDev    | Gen0     | Gen1     | Gen2    | Allocated   |
+|------------------ |-----------:|---------:|----------:|---------:|---------:|--------:|------------:|
+| ParserBenchmarkS  |   153.6 μs |  2.02 μs |   1.89 μs |  41.9922 |  10.2539 |       - |   686.05 KB |
+| ParserBenchmarkM  |   321.9 μs |  6.34 μs |   7.79 μs |  84.4727 |  27.8320 |       - |  1386.73 KB |
+| ParserBenchmarkL  | 2,254.1 μs | 13.52 μs |  11.98 μs | 437.5000 | 203.1250 | 27.3438 |  6929.24 KB |
+| ParserBenchmarkXL | 4,644.6 μs | 90.54 μs | 107.78 μs | 875.0000 | 531.2500 | 54.6875 | 13867.17 KB |
 
 ## Interpreter
 
@@ -90,6 +114,18 @@
 | InterpreterBenchmarkL  | 1,424.4 μs | 21.59 μs | 19.14 μs | 105.4688 | 42.9688 | 1724.63 KB |
 | InterpreterBenchmarkXL | 2,906.5 μs | 24.17 μs | 21.42 μs | 210.9375 | 89.8438 | 3450.26 KB |
 
+### 19.07.2025 - 14.00
+
+- **Detail**: V1 
+- **Description**: After Position Update and Lexer Rewrite
+
+| Method                 | Mean       | Error    | StdDev    | Median     | Gen0     | Gen1    | Allocated  |
+|----------------------- |-----------:|---------:|----------:|-----------:|---------:|--------:|-----------:|
+| InterpreterBenchmarkS  |   139.3 μs |  2.75 μs |   4.43 μs |   141.5 μs |  10.0098 |  1.2207 |  163.93 KB |
+| InterpreterBenchmarkM  |   283.1 μs |  5.55 μs |   9.72 μs |   287.4 μs |  20.0195 |  3.9063 |  331.12 KB |
+| InterpreterBenchmarkL  | 1,464.5 μs | 28.50 μs |  43.52 μs | 1,485.8 μs | 101.5625 | 39.0625 | 1657.53 KB |
+| InterpreterBenchmarkXL | 3,086.9 μs | 60.65 μs | 102.99 μs | 3,084.0 μs | 203.1250 | 89.8438 | 3321.65 KB |
+
 ## Runtime
 
 ### 16.07.2025 - 21.20
@@ -115,6 +151,18 @@
 | RTBenchmarkM  |    859.5 μs |   3.85 μs |   3.60 μs |  140.6250 |  66.4063 |        - |   2.25 MB |
 | RTBenchmarkL  |  9,906.1 μs | 127.53 μs | 119.29 μs |  781.2500 | 468.7500 | 125.0000 |  11.13 MB |
 | RTBenchmarkXL | 22,350.4 μs | 319.36 μs | 266.68 μs | 1562.5000 | 875.0000 | 250.0000 |  22.27 MB |
+
+### 19.07.2025 - 14.00
+
+- **Detail**: V1 
+- **Description**: After Position Update and Lexer Rewrite
+  
+| Method        | Mean        | Error     | StdDev    | Gen0      | Gen1     | Gen2     | Allocated |
+|-------------- |------------:|----------:|----------:|----------:|---------:|---------:|----------:|
+| RTBenchmarkS  |    433.1 μs |   8.64 μs |  16.22 μs |   67.3828 |  25.8789 |        - |   1.08 MB |
+| RTBenchmarkM  |    900.4 μs |  17.82 μs |  26.67 μs |  135.7422 |  66.4063 |        - |   2.17 MB |
+| RTBenchmarkL  | 10,168.1 μs | 188.70 μs | 176.51 μs |  734.3750 | 406.2500 | 109.3750 |  10.74 MB |
+| RTBenchmarkXL | 22,521.6 μs | 443.59 μs | 636.19 μs | 1500.0000 | 781.2500 | 250.0000 |   21.5 MB |
 
 ## Details
 
