@@ -27,8 +27,8 @@ public class Lexer
         current_char = pos.Index < text.Length ? text[pos.Index] : char.MaxValue;
     }
 
-    private bool IsValidIdentifierChar(char c) =>
-        char.IsLetterOrDigit(current_char) || current_char == '_';
+    private static bool IsValidIdentifierChar(char c) =>
+        char.IsLetterOrDigit(c) || c == '_';
 
     // this is used to make a number token of type int or float
     private (Token<double>, Error) MakeNumber()
