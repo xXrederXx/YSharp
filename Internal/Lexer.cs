@@ -1,5 +1,6 @@
 using System.Runtime.CompilerServices;
 using System.Text;
+using FastEnumUtility;
 using YSharp.Types.InternalTypes;
 
 namespace YSharp.Internal;
@@ -29,8 +30,7 @@ public class Lexer
         current_char = pos.Index < text.Length ? text[pos.Index] : char.MaxValue;
     }
 
-    private static bool IsValidIdentifierChar(char c) =>
-        char.IsLetterOrDigit(c) || c == '_';
+    private static bool IsValidIdentifierChar(char c) => char.IsLetterOrDigit(c) || c == '_';
 
     // this is used to make a number token of type int or float
     private (Token<double>, Error) MakeNumber()
@@ -70,7 +70,7 @@ public class Lexer
         return (new Token<double>(TokenType.FLOAT, value, posStart, pos), ErrorNull.Instance);
     }
 
-    private Token<string> MakeIdentifier()
+    private IToken MakeIdentifier()
     {
         Position posStart = pos;
 
@@ -81,13 +81,14 @@ public class Lexer
         }
 
         string idStr = stringBuilder.ToString();
+        bool IsKeyword = FastEnum.TryParse<KeywordType>(idStr, out KeywordType keywordType);
         stringBuilder.Clear();
-        return new Token<string>(
-            TokenTypeHelper.IsKeyword(idStr) ? TokenType.KEYWORD : TokenType.IDENTIFIER,
-            idStr,
-            posStart,
-            pos
-        );
+
+        if (IsKeyword)
+        {
+            return new Token<KeywordType>(TokenType.KEYWORD, keywordType, posStart, pos);
+        }
+        return new Token<string>(TokenType.IDENTIFIER, idStr, posStart, pos);
     }
 
     private (Token<TokenNoValueType>, Error) MakeNotEquals()

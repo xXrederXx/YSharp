@@ -1,3 +1,5 @@
+using FastEnumUtility;
+
 namespace YSharp.Types.InternalTypes;
 
 // Token types optimized using enum
@@ -48,34 +50,28 @@ public enum TokenType
     ,
 }
 
-// Keywords optimized with HashSet
-public static class TokenTypeHelper
+public enum KeywordType
 {
-    private static readonly HashSet<string> Keywords =
-    [
-        "VAR",
-        "AND",
-        "OR",
-        "NOT",
-        "IF",
-        "THEN",
-        "ELIF",
-        "ELSE",
-        "FOR",
-        "TO",
-        "STEP",
-        "WHILE",
-        "FUN",
-        "END",
-        "RETURN",
-        "CONTINUE",
-        "BREAK",
-        "TRY",
-        "CATCH",
-        "IMPORT"
-    ];
-
-    public static bool IsKeyword(string s) => Keywords.Contains(s);
+    VAR,
+    AND,
+    OR,
+    NOT,
+    IF,
+    THEN,
+    ELIF,
+    ELSE,
+    FOR,
+    TO,
+    STEP,
+    WHILE,
+    FUN,
+    END,
+    RETURN,
+    CONTINUE,
+    BREAK,
+    TRY,
+    CATCH,
+    IMPORT,
 }
 
 public interface IToken
@@ -83,8 +79,8 @@ public interface IToken
     TokenType Type { get; }
     Position StartPos { get; }
     Position EndPos { get; }
-    public bool IsMatching(TokenType type, string value);
-    public bool IsNotMatching(TokenType type, string value);
+    public bool IsMatching(TokenType type, KeywordType value);
+    public bool IsNotMatching(TokenType type, KeywordType value);
     public bool IsType(TokenType type);
     public bool IsType(params TokenType[] types);
     public bool IsNotType(TokenType type);
@@ -127,28 +123,20 @@ public class Token<T> : IToken
     // String Representation
     public override string ToString()
     {
-        return Value != null ? $"{Type}:{Value}" : Type.ToString();
+        return Value != null ? $"{Type.FastToString()}:{Value}" : Type.FastToString();
     }
 
-    public bool IsMatching(TokenType type, string value)
-    {
-        if (Value is null)
-        {
-            return Type.Equals(type);
-        }
-        return Type == type && (Value as string) == value;
-    }
-    public bool IsNotMatching(TokenType type, string value)
-    {
-        return !IsMatching(type, value);
-    }
+    public bool IsMatching(TokenType type, KeywordType value) =>
+        Type == type && (Value is KeywordType keywordType) && keywordType == value;
 
-    public bool IsType(TokenType type){
-        return Type == type;
-    }
+    public bool IsNotMatching(TokenType type, KeywordType value) => !IsMatching(type, value);
+
+    public bool IsType(TokenType type) => Type == type;
+
     public bool IsType(params TokenType[] types)
     {
-        foreach (TokenType type in types){
+        foreach (TokenType type in types)
+        {
             if (Type == type)
             {
                 return true;
@@ -156,12 +144,10 @@ public class Token<T> : IToken
         }
         return false;
     }
-    public bool IsNotType(TokenType type){
-        return Type != type;
-    }
-    public bool IsNotType(params TokenType[] types){
-        return !IsType(types);
-    }
+
+    public bool IsNotType(TokenType type) => Type != type;
+
+    public bool IsNotType(params TokenType[] types) => !IsType(types);
 }
 
 public class TokenNoValueType

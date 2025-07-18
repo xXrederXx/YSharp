@@ -129,14 +129,14 @@ public class Parser
         List<SubIfNode> cases = [];
         INode elseCase = NodeNull.Instance;
 
-        if (currentToken.IsNotMatching(TokenType.KEYWORD, "IF"))
+        if (currentToken.IsNotMatching(TokenType.KEYWORD, KeywordType.IF))
         {
             return res.Failure(new ExpectedKeywordError(currentToken.StartPos, $"Expected IF"));
         }
 
         while (
-            currentToken.IsMatching(TokenType.KEYWORD, "IF")
-            || currentToken.IsMatching(TokenType.KEYWORD, "ELIF")
+            currentToken.IsMatching(TokenType.KEYWORD, KeywordType.IF)
+            || currentToken.IsMatching(TokenType.KEYWORD, KeywordType.ELIF)
         )
         {
             res.Advance();
@@ -148,7 +148,7 @@ public class Parser
                 return res;
             }
 
-            if (currentToken.IsNotMatching(TokenType.KEYWORD, "THEN"))
+            if (currentToken.IsNotMatching(TokenType.KEYWORD, KeywordType.THEN))
             {
                 return res.Failure(
                     new ExpectedKeywordError(currentToken.StartPos, $"Expected THEN")
@@ -177,7 +177,7 @@ public class Parser
 
             cases.Add(new SubIfNode(caseCondition, caseBodyNode));
 
-            if (currentToken.IsMatching(TokenType.KEYWORD, "END"))
+            if (currentToken.IsMatching(TokenType.KEYWORD, KeywordType.END))
             {
                 res.Advance();
                 AdvanceParser();
@@ -185,7 +185,7 @@ public class Parser
             }
         }
 
-        if (currentToken.IsNotMatching(TokenType.KEYWORD, "ELSE"))
+        if (currentToken.IsNotMatching(TokenType.KEYWORD, KeywordType.ELSE))
         {
             return res.Failure(
                 new ExpectedKeywordError(currentToken.StartPos, "Expected END or ELSE")
@@ -209,7 +209,7 @@ public class Parser
             return res;
         }
         res.ResetError();
-        if (currentToken.IsNotMatching(TokenType.KEYWORD, "END"))
+        if (currentToken.IsNotMatching(TokenType.KEYWORD, KeywordType.END))
         {
             return res.Failure(new ExpectedKeywordError(currentToken.StartPos, "Expected END"));
         }
@@ -224,7 +224,7 @@ public class Parser
     {
         ParseResult res = new();
 
-        if (currentToken.IsNotMatching(TokenType.KEYWORD, "FOR"))
+        if (currentToken.IsNotMatching(TokenType.KEYWORD, KeywordType.FOR))
         {
             return res.Failure(new ExpectedKeywordError(currentToken.StartPos, "Expected FOR"));
         }
@@ -257,7 +257,7 @@ public class Parser
             return res;
         }
 
-        if (currentToken.IsNotMatching(TokenType.KEYWORD, "TO"))
+        if (currentToken.IsNotMatching(TokenType.KEYWORD, KeywordType.TO))
         {
             return res.Failure(new ExpectedKeywordError(currentToken.StartPos, "Expected TO"));
         }
@@ -270,7 +270,7 @@ public class Parser
             return res;
         }
         INode? stepValue = null;
-        if (currentToken.IsMatching(TokenType.KEYWORD, "STEP"))
+        if (currentToken.IsMatching(TokenType.KEYWORD, KeywordType.STEP))
         {
             res.Advance();
             AdvanceParser();
@@ -282,7 +282,7 @@ public class Parser
             }
         }
 
-        if (currentToken.IsNotMatching(TokenType.KEYWORD, "THEN"))
+        if (currentToken.IsNotMatching(TokenType.KEYWORD, KeywordType.THEN))
         {
             return res.Failure(new ExpectedKeywordError(currentToken.StartPos, "Expected THEN"));
         }
@@ -300,7 +300,7 @@ public class Parser
                 return res;
             }
             res.ResetError();
-            if (currentToken.IsNotMatching(TokenType.KEYWORD, "END"))
+            if (currentToken.IsNotMatching(TokenType.KEYWORD, KeywordType.END))
             {
                 return res.Failure(new ExpectedKeywordError(currentToken.StartPos, "Expected END"));
             }
@@ -316,7 +316,7 @@ public class Parser
             return res;
         }
         res.ResetError();
-        if (currentToken.IsNotMatching(TokenType.KEYWORD, "END"))
+        if (currentToken.IsNotMatching(TokenType.KEYWORD, KeywordType.END))
         {
             return res.Failure(new ExpectedKeywordError(currentToken.StartPos, "Expected END"));
         }
@@ -329,7 +329,7 @@ public class Parser
     {
         ParseResult res = new();
 
-        if (currentToken.IsNotMatching(TokenType.KEYWORD, "WHILE"))
+        if (currentToken.IsNotMatching(TokenType.KEYWORD, KeywordType.WHILE))
         {
             return res.Failure(new ExpectedKeywordError(currentToken.StartPos, "Expected WHILE"));
         }
@@ -342,7 +342,7 @@ public class Parser
             return res;
         }
 
-        if (currentToken.IsNotMatching(TokenType.KEYWORD, "THEN"))
+        if (currentToken.IsNotMatching(TokenType.KEYWORD, KeywordType.THEN))
         {
             return res.Failure(new ExpectedKeywordError(currentToken.StartPos, "Expected THEN"));
         }
@@ -360,7 +360,7 @@ public class Parser
                 return res;
             }
             res.ResetError();
-            if (currentToken.IsNotMatching(TokenType.KEYWORD, "END"))
+            if (currentToken.IsNotMatching(TokenType.KEYWORD, KeywordType.END))
             {
                 return res.Failure(new ExpectedKeywordError(currentToken.StartPos, "Expected END"));
             }
@@ -376,7 +376,7 @@ public class Parser
             return res;
         }
         res.ResetError();
-        if (currentToken.IsNotMatching(TokenType.KEYWORD, "END"))
+        if (currentToken.IsNotMatching(TokenType.KEYWORD, KeywordType.END))
         {
             return res.Failure(new ExpectedKeywordError(currentToken.StartPos, "Expected END"));
         }
@@ -495,7 +495,7 @@ public class Parser
     private ParseResult FuncDef()
     {
         ParseResult res = new();
-        if (currentToken.IsNotMatching(TokenType.KEYWORD, "FUN"))
+        if (currentToken.IsNotMatching(TokenType.KEYWORD, KeywordType.FUN))
         {
             return res.Failure(new ExpectedKeywordError(currentToken.StartPos, "expected FUN"));
         }
@@ -599,7 +599,7 @@ public class Parser
             return res;
         }
         res.ResetError();
-        if (currentToken.IsNotMatching(TokenType.KEYWORD, "END"))
+        if (currentToken.IsNotMatching(TokenType.KEYWORD, KeywordType.END))
         {
             return res.Failure(new ExpectedKeywordError(currentToken.StartPos, "expected END"));
         }
@@ -699,7 +699,7 @@ public class Parser
     {
         ParseResult res = new();
 
-        if (currentToken.IsNotMatching(TokenType.KEYWORD, "VAR"))
+        if (currentToken.IsNotMatching(TokenType.KEYWORD, KeywordType.VAR))
         {
             return res.Failure(new ExpectedKeywordError(currentToken.StartPos, "expected VAR"));
         }
@@ -791,7 +791,7 @@ public class Parser
     {
         ParseResult res = new();
 
-        if (currentToken.IsNotMatching(TokenType.KEYWORD, "TRY"))
+        if (currentToken.IsNotMatching(TokenType.KEYWORD, KeywordType.TRY))
         {
             return res.Failure(new ExpectedKeywordError(currentToken.StartPos, $"Expected TRY"));
         }
@@ -807,7 +807,7 @@ public class Parser
         }
         res.ResetError();
 
-        if (currentToken.IsNotMatching(TokenType.KEYWORD, "END"))
+        if (currentToken.IsNotMatching(TokenType.KEYWORD, KeywordType.END))
         {
             return res.Failure(new ExpectedKeywordError(currentToken.StartPos, "Expected END"));
         }
@@ -820,7 +820,7 @@ public class Parser
             AdvanceParser();
         }
 
-        if (currentToken.IsMatching(TokenType.KEYWORD, "CATCH"))
+        if (currentToken.IsMatching(TokenType.KEYWORD, KeywordType.CATCH))
         {
             res.Advance();
             AdvanceParser();
@@ -839,7 +839,7 @@ public class Parser
             }
             res.ResetError();
 
-            if (currentToken.IsNotMatching(TokenType.KEYWORD, "END"))
+            if (currentToken.IsNotMatching(TokenType.KEYWORD, KeywordType.END))
             {
                 return res.Failure(new ExpectedKeywordError(currentToken.StartPos, "Expected END"));
             }
@@ -854,7 +854,7 @@ public class Parser
     {
         ParseResult res = new();
         Position startPos = currentToken.StartPos;
-        if (currentToken.IsNotMatching(TokenType.KEYWORD, "IMPORT"))
+        if (currentToken.IsNotMatching(TokenType.KEYWORD, KeywordType.IMPORT))
         {
             return res.Failure(new ExpectedKeywordError(currentToken.StartPos, "Expected IMPORT"));
         }
@@ -935,7 +935,7 @@ public class Parser
             return res.Success(listExpression);
         }
         // check keywords
-        else if (tok.IsMatching(TokenType.KEYWORD, "IF"))
+        else if (tok.IsMatching(TokenType.KEYWORD, KeywordType.IF))
         {
             INode ifExpression = res.Register(IfExpr());
             if (res.HasError)
@@ -944,7 +944,7 @@ public class Parser
             }
             return res.Success(ifExpression);
         }
-        else if (tok.IsMatching(TokenType.KEYWORD, "FOR"))
+        else if (tok.IsMatching(TokenType.KEYWORD, KeywordType.FOR))
         {
             INode forExpression = res.Register(ForExpr());
             if (res.HasError)
@@ -953,7 +953,7 @@ public class Parser
             }
             return res.Success(forExpression);
         }
-        else if (tok.IsMatching(TokenType.KEYWORD, "WHILE"))
+        else if (tok.IsMatching(TokenType.KEYWORD, KeywordType.WHILE))
         {
             INode whileExpression = res.Register(WhileExpr());
             if (res.HasError)
@@ -962,7 +962,7 @@ public class Parser
             }
             return res.Success(whileExpression);
         }
-        else if (tok.IsMatching(TokenType.KEYWORD, "FUN"))
+        else if (tok.IsMatching(TokenType.KEYWORD, KeywordType.FUN))
         {
             INode funcExpression = res.Register(FuncDef());
             if (res.HasError)
@@ -971,7 +971,7 @@ public class Parser
             }
             return res.Success(funcExpression);
         }
-        else if (tok.IsMatching(TokenType.KEYWORD, "TRY"))
+        else if (tok.IsMatching(TokenType.KEYWORD, KeywordType.TRY))
         {
             INode tryCatch = res.Register(TryCatchExpr());
             if (res.HasError)
@@ -980,7 +980,7 @@ public class Parser
             }
             return res.Success(tryCatch);
         }
-        else if (tok.IsMatching(TokenType.KEYWORD, "IMPORT"))
+        else if (tok.IsMatching(TokenType.KEYWORD, KeywordType.IMPORT))
         {
             INode importNode = res.Register(ImportExpr());
             if (res.HasError)
@@ -989,7 +989,7 @@ public class Parser
             }
             return res.Success(importNode);
         }
-        else if (tok.IsMatching(TokenType.KEYWORD, "END"))
+        else if (tok.IsMatching(TokenType.KEYWORD, KeywordType.END))
         {
             return res.Failure(new EndKeywordError(currentToken.StartPos));
         }
@@ -1132,7 +1132,7 @@ public class Parser
     {
         ParseResult res = new();
 
-        if (currentToken.IsMatching(TokenType.KEYWORD, "NOT"))
+        if (currentToken.IsMatching(TokenType.KEYWORD, KeywordType.NOT))
         {
             IToken opTok = currentToken;
 
@@ -1184,7 +1184,7 @@ public class Parser
     {
         ParseResult res = new();
         // A variable assignement
-        if (currentToken.IsMatching(TokenType.KEYWORD, "VAR"))
+        if (currentToken.IsMatching(TokenType.KEYWORD, KeywordType.VAR))
         {
             INode node = res.Register(VarAssignExpr());
             if (res.HasError)
@@ -1202,8 +1202,8 @@ public class Parser
         }
 
         while (
-            currentToken.IsMatching(TokenType.KEYWORD, "AND")
-            || currentToken.IsMatching(TokenType.KEYWORD, "OR")
+            currentToken.IsMatching(TokenType.KEYWORD, KeywordType.AND)
+            || currentToken.IsMatching(TokenType.KEYWORD, KeywordType.OR)
         )
         {
             IToken opTok = currentToken;
@@ -1230,7 +1230,7 @@ public class Parser
         }
         Position posStart = currentToken.StartPos;
 
-        if (currentToken.IsMatching(TokenType.KEYWORD, "RETURN"))
+        if (currentToken.IsMatching(TokenType.KEYWORD, KeywordType.RETURN))
         {
             res.Advance();
             AdvanceParser();
@@ -1241,17 +1241,17 @@ public class Parser
             }
             return res.Success(new ReturnNode(_expr, posStart, currentToken.StartPos));
         }
-        if (currentToken.IsMatching(TokenType.KEYWORD, "CONTINUE"))
+        if (currentToken.IsMatching(TokenType.KEYWORD, KeywordType.CONTINUE))
         {
             res.Advance();
             AdvanceParser();
             return res.Success(new ContinueNode(posStart, currentToken.StartPos));
         }
-        if (currentToken.IsMatching(TokenType.KEYWORD, "END"))
+        if (currentToken.IsMatching(TokenType.KEYWORD, KeywordType.END))
         {
             return res.Failure(new EndKeywordError(currentToken.StartPos));
         }
-        if (currentToken.IsMatching(TokenType.KEYWORD, "BREAK"))
+        if (currentToken.IsMatching(TokenType.KEYWORD, KeywordType.BREAK))
         {
             res.Advance();
             AdvanceParser();
