@@ -1275,7 +1275,7 @@ public class Parser
         {
             return res.Failure(new InternalError("start pos is null"));
         }
-        
+
         Position StartPos = currentToken.StartPos;
         List<INode> AllStatements = [];
         INode currentStatement;

@@ -3,35 +3,35 @@ VAR doubleVar: double = 3.141529618
 VAR stringVar: string = "A string"
 VAR x = ((1 + 1) * ( 1 - 1) / 5)^7
 
-x++
-x--
-x += 5
-x -= 5
-x *= 6
-x /= 6
+#VAR x++
+#x--
+VAR x += 5
+VAR x -= 5
+VAR x *= 6
+VAR x /= 6
 
 IF (x == x) THEN
-	x++
+	VAR x+=1
 END
 
 IF (x != 69) THEN
-	x--
+	VAR x+=1
 END
 
 IF (x <= x) THEN
-	x++
+	VAR x+=1
 END
 
 IF (x >= 69) THEN
-	x--
+	VAR x+=1
 END
 
 IF (x < x) THEN
-	x++
+	VAR x+=1
 END
 
 IF (x > 69) THEN
-	x--
+	VAR x+=1
 END
 
 VAR listVar: list = [1, 2, 3]
@@ -40,28 +40,28 @@ FUN add(a, b) -> a + b
 
 FUN addTimes(a, b , x)
 	VAR end = a
-	FOR VAR i = 0 TO x STEP 0.5
+	FOR i = 0 TO x STEP 0.5 THEN
 		IF (i == 2) THEN
 			CONTINUE
 		END
 		IF (i == 10) THEN
 			BREAK
 		END
-		end += b
+		VAR end += b
 	END
 	RETURN end
 END
 
 IF (x == 0) THEN
-	x = 1
-ELIF (x == 2) THEN
-	x = 2
-ELSE
-	x = 6
+	VAR x = 1
+#ELIF (x == 2) THEN
+#	VAR x = 2
+#ELSE
+#	VAR x = 6
 END
 
-TRY
-	VAR y = stringVar + intVar
-CATCH
-	VAR y = 12
-END
+#TRY
+#	VAR y = stringVar + intVar
+#CATCH 
+#	VAR y = 12
+#END
