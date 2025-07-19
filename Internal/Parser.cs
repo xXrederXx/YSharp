@@ -1028,7 +1028,7 @@ public class Parser
     {
         ParseResult res = new();
 
-        INode? left = res.Register(Call());
+        INode left = res.Register(Call());
         if (res.HasError)
         {
             return res;
@@ -1040,7 +1040,7 @@ public class Parser
             res.Advance();
             AdvanceParser();
 
-            INode? right = res.Register(Factor());
+            INode right = res.Register(Factor());
             if (res.HasError)
             {
                 return res;
@@ -1077,7 +1077,7 @@ public class Parser
     { // will return BinOpNode
         ParseResult res = new();
 
-        INode? left = res.Register(Factor());
+        INode left = res.Register(Factor());
         if (res.HasError)
         {
             return res;
@@ -1090,7 +1090,7 @@ public class Parser
 
             res.Advance();
             AdvanceParser();
-            INode? right = res.Register(Factor());
+            INode right = res.Register(Factor());
             if (res.HasError)
             {
                 return res;
@@ -1105,7 +1105,7 @@ public class Parser
     {
         ParseResult res = new();
 
-        INode? left = res.Register(Term());
+        INode left = res.Register(Term());
         if (res.HasError)
         {
             return res;
@@ -1117,7 +1117,7 @@ public class Parser
 
             res.Advance();
             AdvanceParser();
-            INode? right = res.Register(Term());
+            INode right = res.Register(Term());
             if (res.HasError)
             {
                 return res;
@@ -1147,7 +1147,7 @@ public class Parser
         }
 
         // Binary Operation
-        INode? left = res.Register(ArithExpr());
+        INode left = res.Register(ArithExpr());
         if (res.HasError)
         {
             return res;
@@ -1169,7 +1169,7 @@ public class Parser
 
             res.Advance();
             AdvanceParser();
-            INode? right = res.Register(ArithExpr());
+            INode right = res.Register(ArithExpr());
             if (res.HasError)
             {
                 return res;
@@ -1195,7 +1195,7 @@ public class Parser
             return res.Success(node);
         }
         // Binary Operation
-        INode? left = res.Register(CompExpr());
+        INode left = res.Register(CompExpr());
         if (res.HasError)
         {
             return res;
@@ -1210,7 +1210,7 @@ public class Parser
 
             res.Advance();
             AdvanceParser();
-            INode? right = res.Register(CompExpr());
+            INode right = res.Register(CompExpr());
             if (res.HasError)
             {
                 return res;
@@ -1275,22 +1275,10 @@ public class Parser
         {
             return res.Failure(new InternalError("start pos is null"));
         }
+        
         Position StartPos = currentToken.StartPos;
         List<INode> AllStatements = [];
-
-        while (currentToken.IsType(TokenType.NEWLINE)) // skip all new lines
-        {
-            res.Advance();
-            AdvanceParser();
-        }
-
-        INode? currentStatement = res.Register(Statement());
-        if (res.HasError)
-        {
-            return res;
-        }
-
-        AllStatements.Add(currentStatement);
+        INode currentStatement;
 
         while (currentToken.IsNotType(TokenType.EOF)) // repeat until no more lines are available
         {
@@ -1304,11 +1292,6 @@ public class Parser
             if (res.HasError)
             {
                 return res;
-            }
-            if (currentStatement == null)
-            {
-                Reverse(res.ToReverseCount);
-                break;
             }
             AllStatements.Add(currentStatement);
         }
