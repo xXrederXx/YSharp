@@ -179,7 +179,7 @@ public class Lexer
 
     private void SkipTypeAnotation()
     {
-        while (IsValidIdentifierChar(current_char))
+        while (IsValidIdentifierChar(current_char) || current_char == ' ')
         {
             Advance();
         }
