@@ -705,24 +705,29 @@ public class Parser
 
         if (currentToken.IsNotMatching(TokenType.KEYWORD, KeywordType.VAR))
         {
-            return res.Failure(new ExpectedKeywordError(currentToken.StartPos, "expected VAR"));
+            return res.Failure(new ExpectedKeywordError(currentToken.StartPos, "VAR"));
         }
 
-        res.Advance();
-        AdvanceParser();
+        AdvanceParser(res);
         if (currentToken.IsNotType(TokenType.IDENTIFIER))
         {
             return res.Failure(
-                new InvalidSyntaxError(currentToken.StartPos, "Expected Identifier")
+                new InvalidSyntaxError(
+                    currentToken.StartPos,
+                    "Expected an Identifier after the VAR Keyword"
+                )
+            );
+        }
+        if (currentToken is not Token<string> varName)
+        {
+            return res.Failure(
+                new InternalError(
+                    "Trying to cast the current token to a string token failed in VarAssignExpr"
+                )
             );
         }
 
-        Token<string> varName = (Token<string>)currentToken;
-        INode expr;
-
-        res.Advance();
-        AdvanceParser();
-
+        AdvanceParser(res);
         // look if it is a shorthand written way else use null
         TokenType? EqType = currentToken.Type switch
         {
@@ -777,12 +782,11 @@ public class Parser
         // normal variable assign
         if (currentToken.IsNotType(TokenType.EQ))
         {
-            return res.Failure(new InvalidSyntaxError(currentToken.StartPos, "Expected ="));
+            return res.Failure(new InvalidSyntaxError(currentToken.StartPos, "Expected an '=' after the variable name"));
         }
 
-        res.Advance();
-        AdvanceParser();
-        expr = res.Register(Expression()); // this gets the "value" of the variable
+        AdvanceParser(res);
+        INode expr = res.Register(Expression()); // this gets the "value" of the variable
         if (res.HasError)
         {
             return res;
@@ -1187,6 +1191,7 @@ public class Parser
     private ParseResult Expression()
     {
         ParseResult res = new();
+
         // A variable assignement
         if (currentToken.IsMatching(TokenType.KEYWORD, KeywordType.VAR))
         {
@@ -1198,6 +1203,7 @@ public class Parser
 
             return res.Success(node);
         }
+
         // Binary Operation
         INode left = res.Register(CompExpr());
         if (res.HasError)
@@ -1212,8 +1218,7 @@ public class Parser
         {
             IToken opTok = currentToken;
 
-            res.Advance();
-            AdvanceParser();
+            AdvanceParser(res);
             INode right = res.Register(CompExpr());
             if (res.HasError)
             {

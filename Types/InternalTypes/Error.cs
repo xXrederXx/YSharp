@@ -10,24 +10,8 @@ public class Error(int index, string message, Position start)
     public readonly Position StartPosition = start;
     public bool IsError => this is not ErrorNull;
 
-    public override string ToString()
-    {
-        string msg =
-            FileNameRegistry.GetFileName(StartPosition.FileId)
-            + "("
-            + (StartPosition.Line + 1)
-            + ", "
-            + (StartPosition.Column + 1)
-            + "): ";
-        string number = ErrorIndex.ToString();
-        while (number.Length < 4)
-        {
-            number = "0" + number;
-        }
-        msg = msg + "error YS" + number + ": ";
-        msg += Message;
-        return msg;
-    }
+    public override string ToString() =>
+        $"{FileNameRegistry.GetFileName(StartPosition.FileId)}({StartPosition.Line + 1}, {StartPosition.Column + 1}): ERROR YS{ErrorIndex:D4} {Message}";
 }
 
 // This is NoError, used instead of error = null
@@ -45,14 +29,11 @@ public class ErrorNull : Error
 
 //Y0S690 -> Internal Use
 
-public class EndKeywordError(Position posStart)
-    : Error(690, "End keyword there", posStart)
-{ }
+public class EndKeywordError(Position posStart) : Error(690, "End keyword there", posStart) { }
 
 // YS0100 -> Lexer
 public class UnclosedBracketsError(Position posStart, string details)
-    : Error(101, details, posStart)
-{ }
+    : Error(101, details, posStart) { }
 
 public class IllegalCharError(Position posStart, string details) : Error(110, details, posStart) { }
 
@@ -64,11 +45,10 @@ public class IllegalEscapeCharError(Position posStart, string details)
 
 // YS0200 -> Parser
 public class InvalidSyntaxError(Position posStart, string details)
-    : Error(220, details, posStart)
-{ }
+    : Error(220, details, posStart) { }
 
-public class ExpectedKeywordError(Position posStart, string details)
-    : Error(221, details, posStart) { }
+public class ExpectedKeywordError(Position posStart, string Expectedkeyword)
+    : Error(221, "Expected the keyword " + Expectedkeyword, posStart) { }
 
 public class ExpectedTokenError(Position posStart, string details)
     : Error(222, details, posStart) { }
@@ -95,7 +75,9 @@ public class RunTimeError(Position posStart, string details, Context? context, i
 
         while (ctx != null && !pos.IsNull)
         {
-            result = $"  File {FileNameRegistry.GetFileName(pos.FileId)}, line {pos.Line + 1}, in {ctx.displayName}\n" + result;
+            result =
+                $"  File {FileNameRegistry.GetFileName(pos.FileId)}, line {pos.Line + 1}, in {ctx.displayName}\n"
+                + result;
             pos = ctx.parentEntryPos;
             ctx = ctx.parent;
         }
