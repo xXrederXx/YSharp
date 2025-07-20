@@ -35,10 +35,7 @@ public class ParseResult
     public INode Register(ParseResult result)
     {
         _advanceCount += result._advanceCount;
-        if (result.HasError)
-        {
-            Error = result.Error;
-        }
+        Error = result.Error;
         return result.Node;
     }
 
@@ -98,6 +95,13 @@ public class Parser
     {
         tokIndex++;
         UpdateCurrentTok();
+    }
+
+    private void AdvanceParser(ParseResult res)
+    {
+        tokIndex++;
+        UpdateCurrentTok();
+        res.Advance();
     }
 
     private IToken Reverse(int amount = 1)
@@ -1224,38 +1228,31 @@ public class Parser
     private ParseResult Statement()
     {
         ParseResult res = new();
-        if (currentToken.StartPos.IsNull)
-        {
-            return res.Failure(new InternalError("start pos is null"));
-        }
-        Position posStart = currentToken.StartPos;
+        Position startPos = currentToken.StartPos;
 
         if (currentToken.IsMatching(TokenType.KEYWORD, KeywordType.RETURN))
         {
-            res.Advance();
-            AdvanceParser();
+            AdvanceParser(res);
             INode? _expr = res.TryRegister(Expression());
             if (_expr == null)
             {
                 Reverse(res.ToReverseCount);
             }
-            return res.Success(new ReturnNode(_expr, posStart, currentToken.StartPos));
+            return res.Success(new ReturnNode(_expr, startPos, currentToken.StartPos));
         }
         if (currentToken.IsMatching(TokenType.KEYWORD, KeywordType.CONTINUE))
         {
-            res.Advance();
-            AdvanceParser();
-            return res.Success(new ContinueNode(posStart, currentToken.StartPos));
+            AdvanceParser(res);
+            return res.Success(new ContinueNode(startPos, currentToken.StartPos));
+        }
+        if (currentToken.IsMatching(TokenType.KEYWORD, KeywordType.BREAK))
+        {
+            AdvanceParser(res);
+            return res.Success(new BreakNode(startPos, currentToken.StartPos));
         }
         if (currentToken.IsMatching(TokenType.KEYWORD, KeywordType.END))
         {
             return res.Failure(new EndKeywordError(currentToken.StartPos));
-        }
-        if (currentToken.IsMatching(TokenType.KEYWORD, KeywordType.BREAK))
-        {
-            res.Advance();
-            AdvanceParser();
-            return res.Success(new BreakNode(posStart, currentToken.StartPos));
         }
 
         INode expr = res.Register(Expression());
@@ -1278,22 +1275,22 @@ public class Parser
 
         Position StartPos = currentToken.StartPos;
         List<INode> AllStatements = [];
-        INode currentStatement;
+        INode nextStatement;
 
         while (currentToken.IsNotType(TokenType.EOF)) // repeat until no more lines are available
         {
             while (currentToken.IsType(TokenType.NEWLINE)) // skip all new Lines
             {
-                res.Advance();
-                AdvanceParser();
+                AdvanceParser(res);
             }
 
-            currentStatement = res.Register(Statement());
+            nextStatement = res.Register(Statement());
             if (res.HasError)
             {
                 return res;
             }
-            AllStatements.Add(currentStatement);
+
+            AllStatements.Add(nextStatement);
         }
         if (currentToken.EndPos.IsNull)
         {
