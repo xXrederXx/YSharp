@@ -112,6 +112,18 @@
 | ParserBenchmarkL  | 2,024.9 μs | 38.39 μs | 48.55 μs | 398.4375 | 164.0625 | 27.3438 |  6300.37 KB |
 | ParserBenchmarkXL | 4,621.9 μs | 50.98 μs | 47.69 μs | 796.8750 | 539.0625 | 54.6875 | 12607.94 KB |
 
+### 20.07.2025 - 21.10
+
+- **Detail**: V1 
+- **Description**: After Refactor of Parser
+  
+| Method            | Mean       | Error    | StdDev   | Gen0     | Gen1     | Gen2    | Allocated   |
+|------------------ |-----------:|---------:|---------:|---------:|---------:|--------:|------------:|
+| ParserBenchmarkS  |   156.3 us |  3.01 us |  4.60 us |  38.0859 |   9.2773 |       - |   624.27 KB |
+| ParserBenchmarkM  |   322.7 us |  6.33 us |  6.78 us |  77.1484 |  25.3906 |       - |   1261.2 KB |
+| ParserBenchmarkL  | 2,279.4 us | 45.47 us | 63.75 us | 398.4375 | 164.0625 | 27.3438 |  6300.37 KB |
+| ParserBenchmarkXL | 4,719.7 us | 59.14 us | 55.32 us | 796.8750 | 539.0625 | 54.6875 | 12607.94 KB |
+
 ## Interpreter
 
 ### 16.07.2025 - 21.20
