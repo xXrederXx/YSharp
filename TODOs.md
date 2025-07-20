@@ -3,3 +3,4 @@
   - Update Interpreter to execute it
 
 - Reduce object instantiation
+- Rework the dot notation in the parser
