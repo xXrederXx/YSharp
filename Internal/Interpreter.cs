@@ -101,6 +101,9 @@ public class Context
         parent = null;
         parentEntryPos = new();
     }
+
+    public override string ToString() => $"DisplayName {displayName} / SymbolTable {symbolTable} / Parent Entry {parentEntryPos} / parent {parent}";
+
 }
 
 public class SymbolTable
@@ -173,8 +176,14 @@ public static class Interpreter
             BreakNode => Visit_BreakNode(),
             TryCatchNode n => Visit_TryCatchNode(n, context),
             ImportNode n => Visit_ImportNode(n, context),
-            _ => throw new Exception("No method found for " + node.GetType()),
+            _ => Vistit_ErrorNode(node, context),
         };
+    }
+
+    private static RunTimeResult Vistit_ErrorNode(INode node, Context ctx)
+    {
+        Console.WriteLine("No method found for " + node.GetType() + ctx.ToString());
+        return new RunTimeResult().Success(ValueNull.Instance);
     }
 
     private static RunTimeResult Visit_Number(NumberNode node, Context context)

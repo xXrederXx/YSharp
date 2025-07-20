@@ -1283,6 +1283,10 @@ public class Parser
             {
                 AdvanceParser(res);
             }
+            if (currentToken.IsType(TokenType.EOF))
+            {
+                break;
+            }
 
             nextStatement = res.Register(Statement());
             if (res.HasError)
