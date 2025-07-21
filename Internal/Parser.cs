@@ -100,7 +100,7 @@ public class Parser
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private void AdvanceParser(ParseResult res)
+    public void AdvanceParser(ParseResult res)
     {
         tokIndex++;
         UpdateCurrentTok();
@@ -200,17 +200,10 @@ public class Parser
         AdvanceParser(res);
 
         elseCase = res.Register(Statements());
-        if (res.HasError && res.Error is not EndKeywordError)
+        if (ParserUtil.HasErrorButEnd(res, this))
         {
             return res;
         }
-        res.ResetError();
-        if (currentToken.IsNotMatching(TokenType.KEYWORD, KeywordType.END))
-        {
-            return res.Failure(new ExpectedKeywordError(currentToken.StartPos, "END"));
-        }
-
-        AdvanceParser(res);
 
         return res.Success(new IfNode(cases, elseCase));
     }
@@ -301,16 +294,10 @@ public class Parser
             body = res.Register(Statement());
         }
 
-        if (res.HasError && res.Error is not EndKeywordError)
+        if (ParserUtil.HasErrorButEnd(res, this))
         {
             return res;
         }
-        res.ResetError();
-        if (currentToken.IsNotMatching(TokenType.KEYWORD, KeywordType.END))
-        {
-            return res.Failure(new ExpectedKeywordError(currentToken.StartPos, "END"));
-        }
-        AdvanceParser(res);
         return res.Success(new ForNode(varName, startValue, endValue, stepValue, body, false));
     }
 
@@ -347,16 +334,10 @@ public class Parser
             body = res.Register(Statement());
         }
 
-        if (res.HasError && res.Error is not EndKeywordError)
+        if (ParserUtil.HasErrorButEnd(res, this))
         {
             return res;
         }
-        res.ResetError();
-        if (currentToken.IsNotMatching(TokenType.KEYWORD, KeywordType.END))
-        {
-            return res.Failure(new ExpectedKeywordError(currentToken.StartPos, "Expected END"));
-        }
-        AdvanceParser(res);
 
         return res.Success(new WhileNode(condition, body, true));
     }
@@ -559,16 +540,10 @@ public class Parser
 
         AdvanceParser(res);
         INode body = res.Register(Statements());
-        if (res.HasError && res.Error is not EndKeywordError)
+        if (ParserUtil.HasErrorButEnd(res, this))
         {
             return res;
         }
-        res.ResetError();
-        if (currentToken.IsNotMatching(TokenType.KEYWORD, KeywordType.END))
-        {
-            return res.Failure(new ExpectedKeywordError(currentToken.StartPos, "END"));
-        }
-        AdvanceParser(res);
         return res.Success(new FuncDefNode(varNameTok, argNameTok, body, false));
     }
 
@@ -770,17 +745,10 @@ public class Parser
         INode tryBlock = res.Register(Statements());
         INode catchBlock = NodeNull.Instance;
         Token<string> varName = new Token<string>(TokenType.NULL);
-        if (res.HasError && res.Error is not EndKeywordError)
+        if (ParserUtil.HasErrorButEnd(res, this))
         {
             return res;
         }
-        res.ResetError();
-
-        if (currentToken.IsNotMatching(TokenType.KEYWORD, KeywordType.END))
-        {
-            return res.Failure(new ExpectedKeywordError(currentToken.StartPos, "Expected END"));
-        }
-        AdvanceParser(res);
 
         while (currentToken.IsType(TokenType.NEWLINE))
         {
@@ -798,17 +766,10 @@ public class Parser
             }
 
             catchBlock = res.Register(Statements());
-            if (res.HasError && res.Error is not EndKeywordError)
+            if (ParserUtil.HasErrorButEnd(res, this))
             {
                 return res;
             }
-            res.ResetError();
-
-            if (currentToken.IsNotMatching(TokenType.KEYWORD, KeywordType.END))
-            {
-                return res.Failure(new ExpectedKeywordError(currentToken.StartPos, "Expected END"));
-            }
-            AdvanceParser(res);
         }
 
         return res.Success(new TryCatchNode(tryBlock, catchBlock, varName));
@@ -834,7 +795,9 @@ public class Parser
                 )
             );
         }
-        if (!ParserUtil.TryCastToken(currentToken, out Token<string> token, out InternalError error))
+        if (
+            !ParserUtil.TryCastToken(currentToken, out Token<string> token, out InternalError error)
+        )
         {
             return res.Failure(error);
         }
