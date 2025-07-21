@@ -122,6 +122,36 @@ public class Parser
         }
     }
 
+    public INode GetBodyNode(ParseResult res)
+    {
+        if (currentToken.IsType(TokenType.NEWLINE))
+        {
+            AdvanceParser(res);
+            return res.Register(Statements());
+        }
+        else
+        {
+            return res.Register(Statement());
+        }
+    }
+
+    public bool HasErrorButEnd(ParseResult res)
+    {
+        if (res.HasError && res.Error is not EndKeywordError)
+        {
+            return true;
+        }
+        res.ResetError();
+
+        if (currentToken.IsNotMatchingKeyword(KeywordType.END))
+        {
+            res.Failure(new ExpectedKeywordError(currentToken.StartPos, "END"));
+            return true;
+        }
+        AdvanceParser(res);
+        return false;
+    }
+
     // main function which parses all tokens
     public ParseResult Parse()
     {
@@ -200,7 +230,7 @@ public class Parser
         AdvanceParser(res);
 
         elseCase = res.Register(Statements());
-        if (ParserUtil.HasErrorButEnd(res, this))
+        if (HasErrorButEnd(res))
         {
             return res;
         }
@@ -283,18 +313,8 @@ public class Parser
 
         AdvanceParser(res);
 
-        INode body;
-        if (currentToken.IsType(TokenType.NEWLINE))
-        {
-            AdvanceParser(res);
-            body = res.Register(Statements());
-        }
-        else
-        {
-            body = res.Register(Statement());
-        }
-
-        if (ParserUtil.HasErrorButEnd(res, this))
+        INode body = GetBodyNode(res);
+        if (HasErrorButEnd(res))
         {
             return res;
         }
@@ -323,18 +343,8 @@ public class Parser
         }
 
         AdvanceParser(res);
-        INode body;
-        if (currentToken.IsType(TokenType.NEWLINE))
-        {
-            AdvanceParser(res);
-            body = res.Register(Statements());
-        }
-        else
-        {
-            body = res.Register(Statement());
-        }
-
-        if (ParserUtil.HasErrorButEnd(res, this))
+        INode body = GetBodyNode(res);
+        if (HasErrorButEnd(res))
         {
             return res;
         }
@@ -540,7 +550,7 @@ public class Parser
 
         AdvanceParser(res);
         INode body = res.Register(Statements());
-        if (ParserUtil.HasErrorButEnd(res, this))
+        if (HasErrorButEnd(res))
         {
             return res;
         }
@@ -745,7 +755,7 @@ public class Parser
         INode tryBlock = res.Register(Statements());
         INode catchBlock = NodeNull.Instance;
         Token<string> varName = new Token<string>(TokenType.NULL);
-        if (ParserUtil.HasErrorButEnd(res, this))
+        if (HasErrorButEnd(res))
         {
             return res;
         }
@@ -766,7 +776,7 @@ public class Parser
             }
 
             catchBlock = res.Register(Statements());
-            if (ParserUtil.HasErrorButEnd(res, this))
+            if (HasErrorButEnd(res))
             {
                 return res;
             }
