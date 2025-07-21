@@ -2,6 +2,7 @@ using System.Collections.Immutable;
 using System.Runtime.CompilerServices;
 using YSharp.Types;
 using YSharp.Types.InternalTypes;
+using YSharp.Utility;
 
 namespace YSharp.Internal;
 
@@ -82,12 +83,10 @@ public class Parser
     private readonly ImmutableArray<IToken> tokens;
     public int tokIndex = -1;
     public IToken currentToken;
-    public ParseResult parseResult;
 
     // initalizer
     public Parser(List<IToken> tokens)
     {
-        parseResult = new ParseResult();
         this.tokens = tokens.ToImmutableArray();
         currentToken = new Token<TokenNoValueType>(TokenType.NULL);
         AdvanceParser();
@@ -234,14 +233,15 @@ public class Parser
             );
         }
 
-        if (currentToken is not Token<string> varName)
+        if (
+            !ParserUtil.TryCastToken(
+                currentToken,
+                out Token<string> varName,
+                out InternalError error
+            )
+        )
         {
-            return res.Failure(
-                new InternalError(
-                    "Casting current token to a Token<string> failed in ForExpr\nToken:"
-                        + currentToken
-                )
-            );
+            return res.Failure(error);
         }
 
         AdvanceParser(res);
@@ -412,14 +412,9 @@ public class Parser
     private ParseResult IdentifierExpr()
     {
         ParseResult res = new();
-        if (currentToken is not Token<string> tok)
+        if (!ParserUtil.TryCastToken(currentToken, out Token<string> tok, out InternalError error))
         {
-            return res.Failure(
-                new InternalError(
-                    "Casting current token to a Token<string> failed in IdentifierExpr\nToken:"
-                        + currentToken
-                )
-            );
+            return res.Failure(error);
         }
 
         AdvanceParser(res);
@@ -437,14 +432,15 @@ public class Parser
             );
         }
 
-        if (currentToken is not Token<string> varName)
+        if (
+            !ParserUtil.TryCastToken(
+                currentToken,
+                out Token<string> varName,
+                out InternalError errorNameCast
+            )
+        )
         {
-            return res.Failure(
-                new InternalError(
-                    "Casting current token to a Token<string> failed in IdentifierExpr\nToken:"
-                        + currentToken
-                )
-            );
+            return res.Failure(errorNameCast);
         }
 
         AdvanceParser(res);
@@ -476,14 +472,15 @@ public class Parser
         Token<string> varNameTok;
         if (currentToken.IsType(TokenType.IDENTIFIER))
         {
-            if (currentToken is not Token<string> _varNameTok)
+            if (
+                !ParserUtil.TryCastToken(
+                    currentToken,
+                    out Token<string> _varNameTok,
+                    out InternalError error
+                )
+            )
             {
-                return res.Failure(
-                    new InternalError(
-                        "Casting current token to a Token<TokenNoValueType> failed in CompExpr\nToken:"
-                            + currentToken
-                    )
-                );
+                return res.Failure(error);
             }
             varNameTok = _varNameTok;
             AdvanceParser(res);
@@ -837,14 +834,9 @@ public class Parser
                 )
             );
         }
-        if (currentToken is not Token<string> token)
+        if (!ParserUtil.TryCastToken(currentToken, out Token<string> token, out InternalError error))
         {
-            return res.Failure(
-                new InternalError(
-                    "Casting current token to a Token<string> failed in ImportExpr\nToken:"
-                        + currentToken
-                )
-            );
+            return res.Failure(error);
         }
         return res.Success(new ImportNode(token, startPos, currentToken.EndPos));
     }
@@ -1001,14 +993,15 @@ public class Parser
 
         while (currentToken.IsType(TokenType.POW))
         {
-            if (currentToken is not Token<TokenNoValueType> opTok)
+            if (
+                !ParserUtil.TryCastToken(
+                    currentToken,
+                    out Token<TokenNoValueType> opTok,
+                    out InternalError error
+                )
+            )
             {
-                return res.Failure(
-                    new InternalError(
-                        "Casting current token to a Token<TokenNoValueType> failed in Power\nToken:"
-                            + currentToken
-                    )
-                );
+                return res.Failure(error);
             }
             AdvanceParser(res);
 
@@ -1030,14 +1023,15 @@ public class Parser
         // if there is a plus or a minus it could be +5 or -5
         if (currentToken.IsType(TokenType.PLUS, TokenType.MINUS))
         {
-            if (currentToken is not Token<TokenNoValueType> opTok)
+            if (
+                !ParserUtil.TryCastToken(
+                    currentToken,
+                    out Token<TokenNoValueType> opTok,
+                    out InternalError error
+                )
+            )
             {
-                return res.Failure(
-                    new InternalError(
-                        "Casting current token to a Token<TokenNoValueType> failed in Factor\nToken:"
-                            + currentToken
-                    )
-                );
+                return res.Failure(error);
             }
             AdvanceParser(res);
             INode factor = res.Register(Factor());
@@ -1063,14 +1057,15 @@ public class Parser
 
         while (currentToken.IsType(TokenType.MUL, TokenType.DIV))
         {
-            if (currentToken is not Token<TokenNoValueType> opTok)
+            if (
+                !ParserUtil.TryCastToken(
+                    currentToken,
+                    out Token<TokenNoValueType> opTok,
+                    out InternalError error
+                )
+            )
             {
-                return res.Failure(
-                    new InternalError(
-                        "Casting current token to a Token<TokenNoValueType> failed in Term\nToken:"
-                            + currentToken
-                    )
-                );
+                return res.Failure(error);
             }
 
             AdvanceParser(res);
@@ -1147,14 +1142,15 @@ public class Parser
             )
         )
         {
-            if (currentToken is not Token<TokenNoValueType> opTok)
+            if (
+                !ParserUtil.TryCastToken(
+                    currentToken,
+                    out Token<TokenNoValueType> opTok,
+                    out InternalError error
+                )
+            )
             {
-                return res.Failure(
-                    new InternalError(
-                        "Casting current token to a Token<TokenNoValueType> failed in CompExpr\nToken:"
-                            + currentToken
-                    )
-                );
+                return res.Failure(error);
             }
 
             AdvanceParser(res);
