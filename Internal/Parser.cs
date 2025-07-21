@@ -1,4 +1,5 @@
 using System.Collections.Immutable;
+using System.Runtime.CompilerServices;
 using YSharp.Types;
 using YSharp.Types.InternalTypes;
 
@@ -81,10 +82,12 @@ public class Parser
     private readonly ImmutableArray<IToken> tokens;
     public int tokIndex = -1;
     public IToken currentToken;
+    public ParseResult parseResult;
 
     // initalizer
     public Parser(List<IToken> tokens)
     {
+        parseResult = new ParseResult();
         this.tokens = tokens.ToImmutableArray();
         currentToken = new Token<TokenNoValueType>(TokenType.NULL);
         AdvanceParser();
@@ -97,6 +100,7 @@ public class Parser
         UpdateCurrentTok();
     }
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private void AdvanceParser(ParseResult res)
     {
         tokIndex++;

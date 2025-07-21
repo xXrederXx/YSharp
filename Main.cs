@@ -16,7 +16,7 @@ internal class Start
 {
     private static void Main(string[] args)
     {
-        ConsoleRunner();
+        BenchmarkRunner.Run<ParserBench>();
     }
 
     private static void TestRunner()
