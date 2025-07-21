@@ -277,11 +277,11 @@ public static class Interpreter
                 result = left.GetComparisonGTE(right);
                 break;
             default:
-                if (node.opTok.IsMatching(TokenType.KEYWORD, KeywordType.AND))
+                if (node.opTok.IsMatchingKeyword(KeywordType.AND))
                 {
                     result = left.AndedTo(right);
                 }
-                else if (node.opTok.IsMatching(TokenType.KEYWORD, KeywordType.OR))
+                else if (node.opTok.IsMatchingKeyword(KeywordType.OR))
                 {
                     result = left.OredTo(right);
                 }
@@ -320,7 +320,7 @@ public static class Interpreter
         {
             result = value.MuledTo(new VNumber(-1));
         }
-        else if (node.opTok.IsMatching(TokenType.KEYWORD, KeywordType.NOT))
+        else if (node.opTok.IsMatchingKeyword(KeywordType.NOT))
         {
             result = value.Notted();
         }

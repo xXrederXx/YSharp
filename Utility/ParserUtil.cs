@@ -38,7 +38,7 @@ public static class ParserUtil
         }
         res.ResetError();
 
-        if (parser.currentToken.IsNotMatching(TokenType.KEYWORD, KeywordType.END))
+        if (parser.currentToken.IsNotMatchingKeyword(KeywordType.END))
         {
             res.Failure(new ExpectedKeywordError(parser.currentToken.StartPos, "END"));
             return true;

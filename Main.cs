@@ -16,7 +16,7 @@ internal class Start
 {
     private static void Main(string[] args)
     {
-        BenchmarkRunner.Run<ParserBench>();
+        BenchHelp.LogData();
     }
 
     private static void TestRunner()

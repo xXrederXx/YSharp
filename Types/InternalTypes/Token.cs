@@ -79,8 +79,8 @@ public interface IToken
     TokenType Type { get; }
     Position StartPos { get; }
     Position EndPos { get; }
-    public bool IsMatching(TokenType type, KeywordType value);
-    public bool IsNotMatching(TokenType type, KeywordType value);
+    public bool IsMatchingKeyword(KeywordType value);
+    public bool IsNotMatchingKeyword(KeywordType value);
     public bool IsType(TokenType type);
     public bool IsType(params TokenType[] types);
     public bool IsNotType(TokenType type);
@@ -126,10 +126,10 @@ public class Token<T> : IToken
         return Value != null ? $"{Type.FastToString()}:{Value}" : Type.FastToString();
     }
 
-    public bool IsMatching(TokenType type, KeywordType value) =>
-        Type == type && (Value is KeywordType keywordType) && keywordType == value;
+    public bool IsMatchingKeyword(KeywordType value) =>
+        Type == TokenType.KEYWORD && (Value is KeywordType keywordType) && keywordType == value;
 
-    public bool IsNotMatching(TokenType type, KeywordType value) => !IsMatching(type, value);
+    public bool IsNotMatchingKeyword(KeywordType value) => !IsMatchingKeyword(value);
 
     public bool IsType(TokenType type) => Type == type;
 
