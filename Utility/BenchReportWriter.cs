@@ -1,9 +1,11 @@
 using System;
+using System.Globalization;
 using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 using BenchmarkDotNet.Environments;
 using BenchmarkDotNet.Exporters;
+using BenchmarkDotNet.Reports;
 
 namespace YSharp.Utility;
 
@@ -30,39 +32,75 @@ public static class BenchReportWriter
     }
 
     public static void UpdateFiles<T>(
-        BenchmarkDotNet.Reports.Summary summary,
+        Summary summary,
         string changeDescription
     )
     {
-        UpdateSummary<T>(summary, changeDescription);
-        UpdateHistory<T>(summary, changeDescription);
         UpdateDetails<T>(out int UsedVersion);
+        UpdateHistory<T>(changeDescription, UsedVersion);
+        UpdateSummary<T>(summary, changeDescription);
         System.Console.WriteLine(UsedVersion);
     }
 
     private static void UpdateSummary<T>(
-        BenchmarkDotNet.Reports.Summary summary,
+        Summary summary,
         string changeDescription
     ) { }
 
-    private static void UpdateHistory<T>(
-        BenchmarkDotNet.Reports.Summary summary,
-        string changeDescription
-    ) { }
+    private static void UpdateHistory<T>(string changeDescription, int UsedVersion)
+    {
+        string oldText = File.ReadAllText(HistoryPath);
+
+        string BenchTitle = "## " + typeof(T).Name.Replace("Bench", "");
+        string dateStamp = DateTime.Now.ToString(
+            "dd.MM.yyyy - HH.mm",
+            CultureInfo.InvariantCulture
+        );
+
+        string HeadingSection =
+            $"\n\n### {dateStamp}\n\n- **Detail**: V{UsedVersion}\n- **Description**: {changeDescription}\n\n";
+        string Table = SummaryToMarkdownTable<T>();
+        string NewInfo = HeadingSection + Table;
+
+        int idx = oldText.IndexOf(BenchTitle);
+        if (idx == -1)
+        {
+            oldText += BenchTitle;
+            idx = oldText.Length;
+        }
+        else
+        {
+            idx = oldText.IndexOf('\n', idx);
+        }
+        oldText = oldText.Insert(idx, NewInfo);
+
+        File.WriteAllText(HistoryPath, oldText);
+    }
+
+    public static string SummaryToMarkdownTable<T>()
+    {
+        string path = Path.Combine(
+            "BenchmarkDotNet.Artifacts",
+            "results",
+            $"{typeof(T)}-report-github.md"
+        );
+        if (!File.Exists(path))
+        {
+            return "N/A";
+        }
+        string text = File.ReadAllText(path);
+        return text.Substring(text.IndexOf('|'));
+    }
 
     private static void UpdateDetails<T>(out int UsedVersion)
     {
         string oldText = File.Exists(DetailsPath) ? File.ReadAllText(DetailsPath) : "";
-        if (oldText == "")
-        {
-            oldText = "# Details\n";
-        }
         string VersionRegex = @"## V(\d+)";
         RegexOptions options = RegexOptions.Multiline;
         Match m = Regex.Match(oldText, VersionRegex, options);
 
         int lastVersion = 0;
-        int lastVersionIndex = 0;
+        int lastVersionIndex = oldText.Length;
 
         if (m.Success)
         {
