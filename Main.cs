@@ -1,6 +1,4 @@
 ﻿using System.Diagnostics;
-using BenchmarkDotNet.Configs;
-using BenchmarkDotNet.Loggers;
 using BenchmarkDotNet.Running;
 using YSharp.Benchmarks;
 using YSharp.Internal;
@@ -8,7 +6,6 @@ using YSharp.Types;
 using YSharp.Types.ClassTypes;
 using YSharp.Types.FunctionTypes;
 using YSharp.Types.InternalTypes;
-using YSharp.Utility;
 
 namespace YSharp;
 

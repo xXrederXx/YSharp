@@ -1,5 +1,3 @@
-using System;
-
 namespace YSharp.Types.InternalTypes;
 
 public interface IDefaultConvertableValue{}

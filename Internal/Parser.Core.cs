@@ -2,7 +2,6 @@ using System.Collections.Immutable;
 using System.Runtime.CompilerServices;
 using YSharp.Types;
 using YSharp.Types.InternalTypes;
-using YSharp.Utility;
 
 namespace YSharp.Internal;
 
