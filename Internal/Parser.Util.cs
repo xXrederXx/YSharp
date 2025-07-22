@@ -60,4 +60,51 @@ public partial class Parser
 
         return false;
     }
+
+    private List<INode> MakeArgs(ParseResult res)
+    {
+
+        if (currentToken.IsNotType(TokenType.LPAREN))
+        {
+            res.Failure(new ExpectedTokenError(currentToken.StartPos, "expected a '('"));
+            return [];
+        }
+
+        AdvanceParser(res);
+        if (currentToken.IsType(TokenType.RPAREN))
+        {
+            AdvanceParser(res);
+            return []; // empty node just for the parseresult.succses
+        }
+
+        // get argument
+        List<INode> argNodes = [];
+        argNodes.Add(res.Register(Expression()));
+        if (res.HasError)
+        {
+            return [];
+        }
+
+        // get the rest of the arguments which are seperated by commas
+        while (currentToken.IsType(TokenType.COMMA))
+        {
+            AdvanceParser(res);
+
+            argNodes.Add(res.Register(Expression()));
+            if (res.HasError)
+            {
+                return [];
+            }
+        }
+
+        if (currentToken.IsNotType(TokenType.RPAREN))
+        {
+            res.Failure(new ExpectedTokenError(currentToken.StartPos, "expected a ')' or a ','"));
+            return [];
+        }
+
+        AdvanceParser(res);
+
+        return argNodes; // empty node just for the parseresult.succses
+    }
 }

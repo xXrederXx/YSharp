@@ -276,13 +276,12 @@ public partial class Parser
         }
 
         // it is a function
-        (ParseResult, List<INode>) args = MakeArgs();
-        res.Register(args.Item1);
+        List<INode> args = MakeArgs(res);
         if (res.HasError)
         {
             return res;
         }
-        return res.Success(new DotCallNode(varName, args.Item2, new VarAccessNode(tok)));
+        return res.Success(new DotCallNode(varName, args, new VarAccessNode(tok)));
     }
 
     private ParseResult FuncDef()
@@ -384,60 +383,6 @@ public partial class Parser
             return res;
         }
         return res.Success(new FuncDefNode(varNameTok, argNameTok, body, false));
-    }
-
-    private (ParseResult, List<INode>) MakeArgs()
-    {
-        ParseResult res = new();
-        List<INode> argNodes = [];
-
-        if (currentToken.IsNotType(TokenType.LPAREN))
-        {
-            return (
-                res.Failure(new ExpectedTokenError(currentToken.StartPos, "expected a '('")),
-                []
-            );
-        }
-
-        AdvanceParser(res);
-        if (currentToken.IsType(TokenType.RPAREN))
-        {
-            AdvanceParser(res);
-            return (res.Success(NodeNull.Instance), argNodes); // empty node just for the parseresult.succses
-        }
-
-        // get argument
-        argNodes.Add(res.Register(Expression()));
-        if (res.HasError)
-        {
-            return (res, []);
-        }
-
-        // get the rest of the arguments which are seperated by commas
-        while (currentToken.IsType(TokenType.COMMA))
-        {
-            AdvanceParser(res);
-
-            argNodes.Add(res.Register(Expression()));
-            if (res.HasError)
-            {
-                return (res, []);
-            }
-        }
-
-        if (currentToken.IsNotType(TokenType.RPAREN))
-        {
-            return (
-                res.Failure(
-                    new ExpectedTokenError(currentToken.StartPos, "expected a ')' or a ','")
-                ),
-                []
-            );
-        }
-
-        AdvanceParser(res);
-
-        return (res.Success(NodeNull.Instance), argNodes); // empty node just for the parseresult.succses
     }
 
     private ParseResult ShortendVarAssignHelper(Token<string> varName, TokenType type)
@@ -770,13 +715,12 @@ public partial class Parser
 
         if (currentToken.IsType(TokenType.LPAREN))
         {
-            (ParseResult, List<INode>) args = MakeArgs();
-            res.Register(args.Item1);
+            List<INode> args = MakeArgs(res);
             if (res.HasError)
             {
                 return res;
             }
-            return res.Success(new CallNode(atom, args.Item2));
+            return res.Success(new CallNode(atom, args));
         }
         return res.Success(atom);
     }
