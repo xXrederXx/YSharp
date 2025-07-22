@@ -10,18 +10,15 @@ public class ParseResult
 {
     public Error Error { get; private set; } = ErrorNull.Instance;
     public INode Node { get; private set; } = NodeNull.Instance;
-    private int _advanceCount = 0;
     public int ToReverseCount { get; private set; } = 0;
-
-    // Check if an error exists
     public bool HasError => Error.IsError;
+    private int _advanceCount = 0;
 
     public void ResetError()
     {
         Error = ErrorNull.Instance;
     }
 
-    // Try to register the result; if error is present, mark reversal
     public INode? TryRegister(ParseResult result)
     {
         if (result.HasError)
@@ -32,7 +29,6 @@ public class ParseResult
         return Register(result);
     }
 
-    // Register result and accumulate advances
     public INode Register(ParseResult result)
     {
         _advanceCount += result._advanceCount;
@@ -40,40 +36,28 @@ public class ParseResult
         return result.Node;
     }
 
-    public bool SafeRegrister(ParseResult result, out INode node)
-    {
-        node = Register(result);
-        return result.HasError;
-    }
-
-    // Register an advancement count increment
     public void Advance()
     {
         _advanceCount++;
     }
 
-    // Return successful result with Node
     public ParseResult Success(INode node)
     {
         Node = node;
         return this;
     }
 
-    // Return failure result and update error if not already set
     public ParseResult Failure(Error error)
     {
         if (!HasError || _advanceCount == 0)
         {
             Error = error;
         }
-        //* For testing -> Console.WriteLine(error.ToString() + Node.ToString());
         return this;
     }
 
-    public override string ToString()
-    {
-        return Node.ToString() ?? "null";
-    }
+    public override string ToString() =>
+        $"Node: {Node} / Error: {Error} / AdvanceCount: {_advanceCount}";
 }
 
 // the parser which is used to make the abstract syntax tree
@@ -83,7 +67,6 @@ public partial class Parser
     public int tokIndex = -1;
     public IToken currentToken;
 
-    // initalizer
     public Parser(List<IToken> tokens)
     {
         this.tokens = tokens.ToImmutableArray();
@@ -91,7 +74,6 @@ public partial class Parser
         AdvanceParser();
     }
 
-    // goes to the next token
     private void AdvanceParser()
     {
         tokIndex++;
@@ -121,7 +103,6 @@ public partial class Parser
         }
     }
 
-    // main function which parses all tokens
     public ParseResult Parse()
     {
         return Statements();
