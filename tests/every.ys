@@ -10,6 +10,8 @@ VAR x -= 5
 VAR x *= 6
 VAR x /= 6
 
+PRINT("Asigning works, starting test comparisons (x) = " + x.ToString())
+
 IF (x == x) THEN
 	VAR x+=1
 END
@@ -33,10 +35,13 @@ END
 IF (x > 69) THEN
 	VAR x+=1
 END
+PRINT("End test comparisons (x) = " + x.ToString())
 
 VAR listVar: list = [1, 2, 3]
 
 FUN add(a, b) -> a + b
+
+PRINT(add(23, 7))
 
 FUN addTimes(a, b , x)
 	VAR end = a
@@ -51,6 +56,8 @@ FUN addTimes(a, b , x)
 	END
 	RETURN end
 END
+
+PRINT(addTimes(2, 3, 4))
 
 IF (x == 0) THEN
 	VAR x = 1

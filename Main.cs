@@ -17,7 +17,17 @@ internal class Start
 {
     private static void Main(string[] args)
     {
-        BenchHelp.LogData();
+        RunTest();
+    }
+
+    private static void RunTest()
+    {
+        (Value, Error) res = new RunClass().Run("<stdin>", "RUN(\"tests/every.ys\")");
+
+        if (res.Item2.IsError)
+        {
+            Console.WriteLine(res.Item2);
+        }
     }
 
     private static void TestRunner()
