@@ -1,31 +1,15 @@
-# Benchmarks Summary V1
 
-- Details: *Detail number*
-
-## Benchmark Type 1
+# Benchmarks Summary V2
+## Parser
 
 ### Inital
 
-*Full Table*
-
 ### Improvements
 
-- Revisions: *Number of benches done*
-
-*Full Table but with Absolute improvements*
+- Revisions: 0
 
 ### Current
 
-- Details: *details*
-  
-*Full Table*
+- Details: 0
 
 
-## Benchmark Type 2
-*Repeat*
-
-## Benchmark Type 3
-
-## Benchmark Type n
-
-# Benchmarks Summary V2 *IF NEW DETAILS*

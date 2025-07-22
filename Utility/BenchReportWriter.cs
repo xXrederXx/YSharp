@@ -31,21 +31,261 @@ public static class BenchReportWriter
             File.Create(DetailsPath);
     }
 
-    public static void UpdateFiles<T>(
-        Summary summary,
-        string changeDescription
-    )
+    public static void UpdateFiles<T>(Summary summary, string changeDescription)
     {
         UpdateDetails<T>(out int UsedVersion);
         UpdateHistory<T>(changeDescription, UsedVersion);
-        UpdateSummary<T>(summary, changeDescription);
+        UpdateSummary<T>(summary, changeDescription, UsedVersion);
         System.Console.WriteLine(UsedVersion);
     }
 
-    private static void UpdateSummary<T>(
-        Summary summary,
-        string changeDescription
-    ) { }
+    private static void UpdateSummary<T>(Summary summary, string changeDescription, int UsedVersion)
+    {
+        string oldText = File.ReadAllText(SummaryPath);
+
+        string H1Title = $"# Benchmarks Summary V{UsedVersion}\n";
+        if (!oldText.Contains(H1Title))
+        {
+            oldText += '\n' + H1Title;
+        }
+
+        int relevantStart = oldText.IndexOf(H1Title);
+        int relevantEnd = oldText.IndexOf($"# Benchmarks Summary V{UsedVersion + 1}");
+        if (relevantEnd == -1)
+        {
+            relevantEnd = oldText.Length;
+        }
+
+        string H2Title = "## " + typeof(T).Name.Replace("Bench", "");
+        int H2idx = oldText.IndexOf(H2Title, relevantStart, relevantEnd - relevantStart);
+        if (H2idx == -1)
+        {
+            string insertText =
+                '\n'
+                + H2Title
+                + "\n\n### Inital"
+                + "\n\n### Improvements"
+                + "\n\n- Revisions: 0"
+                + "\n\n### Current"
+                + "\n\n- Details: 0\n\n";
+            H2idx = oldText.IndexOf('\n', relevantStart);
+            oldText = oldText.Insert(H2idx, insertText);
+        }
+
+        relevantStart = H2idx;
+        relevantEnd = oldText.IndexOf("## ", relevantStart);
+
+        if (relevantEnd == -1)
+            relevantEnd = oldText.Length;
+
+        string currentStatsTable = SummaryToMarkdownTable<T>();
+
+        // Insert initial table if not present
+        oldText = InsertInitialIfMissing(oldText, relevantStart, relevantEnd, currentStatsTable);
+
+        // Replace current table
+        oldText = ReplaceSectionTable(
+            oldText,
+            "### Current",
+            currentStatsTable,
+            relevantStart,
+            relevantEnd
+        );
+
+        // Generate delta improvements
+        string initialTable = ExtractSectionTable(
+            oldText,
+            "### Inital",
+            relevantStart,
+            relevantEnd
+        );
+        string improvementTable = GenerateDeltaTable(initialTable, currentStatsTable);
+        oldText = ReplaceSectionTable(
+            oldText,
+            "### Improvements",
+            currentStatsTable + "\n\n" + improvementTable,
+            relevantStart,
+            relevantEnd
+        );
+
+        // Replace metadata
+        oldText = ReplaceKeywordValue(
+            oldText,
+            relevantStart,
+            relevantEnd,
+            "Details",
+            changeDescription
+        );
+        oldText = IncrementKeywordNumber(oldText, relevantStart, relevantEnd, "Revisions");
+
+        File.WriteAllText(SummaryPath, oldText);
+    }
+
+    private static string InsertInitialIfMissing(
+        string text,
+        int start,
+        int end,
+        string currentTable
+    )
+    {
+        string section = ExtractSection(text, "### Inital", start, end);
+        if (!section.Contains("|")) // no markdown table
+        {
+            text = ReplaceSectionTable(text, "### Inital", currentTable, start, end);
+        }
+        return text;
+    }
+
+    private static string ExtractSection(string text, string header, int start, int end)
+    {
+        int headerStart = text.IndexOf(header, start, end - start);
+        if (headerStart == -1)
+            return "";
+        int nextHeader = text.IndexOf("### ", headerStart + 1);
+        if (nextHeader == -1 || nextHeader > end)
+            nextHeader = end;
+        return text.Substring(headerStart, nextHeader - headerStart);
+    }
+
+    private static string ExtractSectionTable(string text, string header, int start, int end)
+    {
+        string section = ExtractSection(text, header, start, end);
+        int tableStart = section.IndexOf('|');
+        if (tableStart == -1)
+            return "";
+        return section.Substring(tableStart).Trim();
+    }
+
+    private static string ReplaceSectionTable(
+        string text,
+        string header,
+        string newTable,
+        int start,
+        int end
+    )
+    {
+        int headerStart = text.IndexOf(header, start, end - start);
+        if (headerStart == -1)
+            return text;
+        int tableStart = text.IndexOf('|', headerStart);
+        if (tableStart == -1 || tableStart > end)
+        {
+            // No table found, just insert
+            int insertPos = text.IndexOf('\n', headerStart) + 1;
+            return text.Insert(insertPos, "\n" + newTable + "\n");
+        }
+
+        int nextHeader = text.IndexOf("### ", tableStart + 1);
+        if (nextHeader == -1 || nextHeader > end)
+            nextHeader = end;
+
+        return text.Substring(0, tableStart) + newTable + "\n" + text.Substring(nextHeader);
+    }
+
+    private static string GenerateDeltaTable(string initialTable, string currentTable)
+    {
+        var initialLines = initialTable.Split('\n').Where(l => l.StartsWith("|")).ToArray();
+        var currentLines = currentTable.Split('\n').Where(l => l.StartsWith("|")).ToArray();
+
+        if (initialLines.Length != currentLines.Length)
+            return "_Improvement data not aligned._";
+
+        var deltaLines = new List<string> { "**Δ (Change)**" };
+
+        for (int i = 0; i < initialLines.Length; i++)
+        {
+            if (i == 1) // header separator line
+            {
+                deltaLines.Add(currentLines[i]);
+                continue;
+            }
+
+            var initCells = initialLines[i].Split('|').Select(c => c.Trim()).ToArray();
+            var currCells = currentLines[i].Split('|').Select(c => c.Trim()).ToArray();
+
+            var deltaCells = new List<string>();
+            for (int j = 0; j < initCells.Length; j++)
+            {
+                if (
+                    j == 0
+                    || string.IsNullOrWhiteSpace(initCells[j])
+                    || !double.TryParse(initCells[j], out double initVal)
+                    || !double.TryParse(currCells[j], out double currVal)
+                )
+                {
+                    deltaCells.Add(""); // skip header/first col or non-numeric
+                }
+                else
+                {
+                    double delta = currVal - initVal;
+                    string sign = delta >= 0 ? "+" : "-";
+                    deltaCells.Add($"{sign}{Math.Abs(delta):0.##}");
+                }
+            }
+
+            deltaLines.Add("| " + string.Join(" | ", deltaCells) + " |");
+        }
+
+        return string.Join("\n", deltaLines);
+    }
+
+    public static string ReplaceKeywordValue(
+        string text,
+        int startIndex,
+        int endIndex,
+        string keyword,
+        string replacement
+    )
+    {
+        if (startIndex < 0 || endIndex >= text.Length || startIndex > endIndex)
+            throw new ArgumentOutOfRangeException("Invalid start or end index.");
+
+        if (replacement.Contains("\n") || replacement.Contains("\r"))
+            throw new ArgumentException("Replacement string cannot contain newlines.");
+
+        string searchArea = text.Substring(startIndex, endIndex - startIndex + 1);
+
+        // Pattern: keyword: [anything until newline or end]
+        string pattern = $@"{Regex.Escape(keyword)}:\s*[^\r\n]*";
+        Match match = Regex.Match(searchArea, pattern);
+
+        if (match.Success)
+        {
+            string newEntry = $"{keyword}: {replacement}";
+            string updatedPart = Regex.Replace(searchArea, pattern, newEntry);
+            return text.Substring(0, startIndex) + updatedPart + text.Substring(endIndex + 1);
+        }
+
+        return text; // keyword not found in range
+    }
+
+    public static string IncrementKeywordNumber(
+        string text,
+        int startIndex,
+        int endIndex,
+        string keyword
+    )
+    {
+        if (startIndex < 0 || endIndex >= text.Length || startIndex > endIndex)
+            throw new ArgumentOutOfRangeException("Invalid start or end index.");
+
+        string searchArea = text.Substring(startIndex, endIndex - startIndex + 1);
+
+        string pattern = $@"{Regex.Escape(keyword)}:\s*(\d+)";
+        Match match = Regex.Match(searchArea, pattern);
+
+        if (match.Success)
+        {
+            int number = int.Parse(match.Groups[1].Value);
+            int newNumber = number + 1;
+
+            string updatedPart = Regex.Replace(searchArea, pattern, $"{keyword}: {newNumber}");
+
+            return text.Substring(0, startIndex) + updatedPart + text.Substring(endIndex + 1);
+        }
+
+        return text; // keyword not found or no number behind it
+    }
 
     private static void UpdateHistory<T>(string changeDescription, int UsedVersion)
     {
