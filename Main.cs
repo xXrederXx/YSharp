@@ -1,5 +1,4 @@
 ﻿using System.Diagnostics;
-using BenchmarkDotNet.Running;
 using YSharp.Benchmarks;
 using YSharp.Internal;
 using YSharp.Types;
@@ -14,7 +13,7 @@ internal class Start
 {
     private static void Main(string[] args)
     {
-        RunTest();
+        BenchHelp.Run<ParserBench>();
     }
 
     private static void RunTest()
@@ -29,10 +28,10 @@ internal class Start
 
     private static void TestRunner()
     {
-        BenchmarkRunner.Run<LexerBench>();
-        BenchmarkRunner.Run<ParserBench>();
-        BenchmarkRunner.Run<InterpreterBench>();
-        BenchmarkRunner.Run<RunTimeBench>();
+        BenchHelp.Run<LexerBench>();
+        BenchHelp.Run<ParserBench>();
+        BenchHelp.Run<InterpreterBench>();
+        BenchHelp.Run<RunTimeBench>();
     }
 
     private static void ConsoleRunner()

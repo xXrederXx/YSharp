@@ -1,4 +1,4 @@
-# Benchmark Times
+# Benchmark Histrory
 
 ## Lexer
 
@@ -235,17 +235,3 @@
 | RTBenchmarkM  |    800.5 μs |   3.32 μs |   3.11 μs |  127.9297 |  54.6875 |        - |   2.04 MB |
 | RTBenchmarkL  |  9,414.8 μs | 186.76 μs | 174.69 μs |  703.1250 | 312.5000 | 109.3750 |   10.1 MB |
 | RTBenchmarkXL | 21,396.9 μs | 396.78 μs | 331.33 μs | 1437.5000 | 812.5000 | 250.0000 |  20.22 MB |
-
-## Details
-
-### V1
-
-```
-BenchmarkDotNet v0.15.2, Windows 11 (10.0.26100.4484/24H2/2024Update/HudsonValley)  
-AMD Ryzen 5 5600X 3.70GHz, 1 CPU, 12 logical and 6 physical cores  
-.NET SDK 9.0.201  
-  [Host]     : .NET 9.0.3 (9.0.325.11113), X64 RyuJIT AVX2  
-  DefaultJob : .NET 9.0.3 (9.0.325.11113), X64 RyuJIT AVX2  
-```
-
-Attributes `[SimpleJob] [MemoryDiagnoser]`

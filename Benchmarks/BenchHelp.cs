@@ -1,7 +1,9 @@
+using BenchmarkDotNet.Running;
 using YSharp.Internal;
 using YSharp.Types.ClassTypes;
 using YSharp.Types.FunctionTypes;
 using YSharp.Types.InternalTypes;
+using YSharp.Utility;
 
 namespace YSharp.Benchmarks;
 
@@ -90,6 +92,7 @@ public static class BenchHelp
         text = text.Substring(0, text.LastIndexOf(';'));
         return text;
     }
+
     private static string BetterString(string str, int length = 120)
     {
         if (string.IsNullOrEmpty(str) || str.Length <= length)
@@ -104,13 +107,23 @@ public static class BenchHelp
     public static void LogData()
     {
         System.Console.WriteLine("\nBENCH HELPER DATA");
-        System.Console.WriteLine($"SAMPLE TEXT ({SampleText.Length} Char):\n{BetterString(SampleText)}");
+        System.Console.WriteLine(
+            $"SAMPLE TEXT ({SampleText.Length} Char):\n{BetterString(SampleText)}"
+        );
 
         System.Console.WriteLine($"\nTEXT VARIANTS:");
-        System.Console.WriteLine($"\tSHORT ({Text5000Char.Length} Char): \n\t {BetterString(Text5000Char)}");
-        System.Console.WriteLine($"\tMEDIUM ({Text10000Char.Length} Char): \n\t {BetterString(Text10000Char)}");
-        System.Console.WriteLine($"\tLONG ({Text50000Char.Length} Char): \n\t {BetterString(Text50000Char)}");
-        System.Console.WriteLine($"\tEXTREME ({Text100000Char.Length} Char): \n\t {BetterString(Text100000Char)}");
+        System.Console.WriteLine(
+            $"\tSHORT ({Text5000Char.Length} Char): \n\t {BetterString(Text5000Char)}"
+        );
+        System.Console.WriteLine(
+            $"\tMEDIUM ({Text10000Char.Length} Char): \n\t {BetterString(Text10000Char)}"
+        );
+        System.Console.WriteLine(
+            $"\tLONG ({Text50000Char.Length} Char): \n\t {BetterString(Text50000Char)}"
+        );
+        System.Console.WriteLine(
+            $"\tEXTREME ({Text100000Char.Length} Char): \n\t {BetterString(Text100000Char)}"
+        );
 
         System.Console.WriteLine($"\nTOKEN LIST VARIANTS:");
         System.Console.WriteLine($"\tSHORT -> {TokenS.Count} Tokens (LAST: {TokenS[^2]})");
@@ -123,5 +136,11 @@ public static class BenchHelp
         System.Console.WriteLine($"\tMEDIUM -> {astM.Node.ToString()?.Length}");
         System.Console.WriteLine($"\tLONG -> {astL.Node.ToString()?.Length}");
         System.Console.WriteLine($"\tEXTREME -> {astXL.Node.ToString()?.Length}");
+    }
+
+    public static void Run<T>(string changeDescription = "-")
+    {
+        BenchmarkDotNet.Reports.Summary summary = BenchmarkRunner.Run<T>();
+        BenchReportWriter.UpdateFiles<T>(summary, changeDescription);
     }
 }
