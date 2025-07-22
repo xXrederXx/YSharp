@@ -1,94 +1,12 @@
-using System.Collections.Immutable;
-using System.Runtime.CompilerServices;
+using System;
 using YSharp.Types;
 using YSharp.Types.InternalTypes;
 using YSharp.Utility;
 
 namespace YSharp.Internal;
 
-// the parser which is used to make the abstract syntax tree
-public class Parser
+public partial class Parser
 {
-    private readonly ImmutableArray<IToken> tokens;
-    public int tokIndex = -1;
-    public IToken currentToken;
-
-    // initalizer
-    public Parser(List<IToken> tokens)
-    {
-        this.tokens = tokens.ToImmutableArray();
-        currentToken = new Token<TokenNoValueType>(TokenType.NULL);
-        AdvanceParser();
-    }
-
-    // goes to the next token
-    private void AdvanceParser()
-    {
-        tokIndex++;
-        UpdateCurrentTok();
-    }
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public void AdvanceParser(ParseResult res)
-    {
-        tokIndex++;
-        UpdateCurrentTok();
-        res.Advance();
-    }
-
-    private IToken Reverse(int amount = 1)
-    {
-        tokIndex -= amount;
-        UpdateCurrentTok();
-        return currentToken;
-    }
-
-    private void UpdateCurrentTok()
-    {
-        if (tokIndex >= 0 && tokIndex < tokens.Length)
-        {
-            currentToken = tokens[tokIndex];
-        }
-    }
-
-    public INode GetBodyNode(ParseResult res)
-    {
-        if (currentToken.IsType(TokenType.NEWLINE))
-        {
-            AdvanceParser(res);
-            return res.Register(Statements());
-        }
-        else
-        {
-            return res.Register(Statement());
-        }
-    }
-
-    public bool HasErrorButEnd(ParseResult res)
-    {
-        if (res.HasError && res.Error is not EndKeywordError)
-        {
-            return true;
-        }
-        res.ResetError();
-
-        if (currentToken.IsNotMatchingKeyword(KeywordType.END))
-        {
-            res.Failure(new ExpectedKeywordError(currentToken.StartPos, "END"));
-            return true;
-        }
-        AdvanceParser(res);
-        return false;
-    }
-
-    // main function which parses all tokens
-    public ParseResult Parse()
-    {
-        return Statements();
-    }
-
-    // helper methods
-
     private ParseResult IfExpr()
     {
         ParseResult res = new();
@@ -185,13 +103,7 @@ public class Parser
             );
         }
 
-        if (
-            !ParserUtil.TryCastToken(
-                currentToken,
-                out Token<string> varName,
-                out InternalError error
-            )
-        )
+        if (!TryCastToken(currentToken, out Token<string> varName, out InternalError error))
         {
             return res.Failure(error);
         }
@@ -332,7 +244,7 @@ public class Parser
     private ParseResult IdentifierExpr()
     {
         ParseResult res = new();
-        if (!ParserUtil.TryCastToken(currentToken, out Token<string> tok, out InternalError error))
+        if (!TryCastToken(currentToken, out Token<string> tok, out InternalError error))
         {
             return res.Failure(error);
         }
@@ -352,13 +264,7 @@ public class Parser
             );
         }
 
-        if (
-            !ParserUtil.TryCastToken(
-                currentToken,
-                out Token<string> varName,
-                out InternalError errorNameCast
-            )
-        )
+        if (!TryCastToken(currentToken, out Token<string> varName, out InternalError errorNameCast))
         {
             return res.Failure(errorNameCast);
         }
@@ -392,13 +298,7 @@ public class Parser
         Token<string> varNameTok;
         if (currentToken.IsType(TokenType.IDENTIFIER))
         {
-            if (
-                !ParserUtil.TryCastToken(
-                    currentToken,
-                    out Token<string> _varNameTok,
-                    out InternalError error
-                )
-            )
+            if (!TryCastToken(currentToken, out Token<string> _varNameTok, out InternalError error))
             {
                 return res.Failure(error);
             }
@@ -734,9 +634,7 @@ public class Parser
                 )
             );
         }
-        if (
-            !ParserUtil.TryCastToken(currentToken, out Token<string> token, out InternalError error)
-        )
+        if (!TryCastToken(currentToken, out Token<string> token, out InternalError error))
         {
             return res.Failure(error);
         }
@@ -896,7 +794,7 @@ public class Parser
         while (currentToken.IsType(TokenType.POW))
         {
             if (
-                !ParserUtil.TryCastToken(
+                !TryCastToken(
                     currentToken,
                     out Token<TokenNoValueType> opTok,
                     out InternalError error
@@ -926,7 +824,7 @@ public class Parser
         if (currentToken.IsType(TokenType.PLUS, TokenType.MINUS))
         {
             if (
-                !ParserUtil.TryCastToken(
+                !TryCastToken(
                     currentToken,
                     out Token<TokenNoValueType> opTok,
                     out InternalError error
@@ -960,7 +858,7 @@ public class Parser
         while (currentToken.IsType(TokenType.MUL, TokenType.DIV))
         {
             if (
-                !ParserUtil.TryCastToken(
+                !TryCastToken(
                     currentToken,
                     out Token<TokenNoValueType> opTok,
                     out InternalError error
@@ -1045,7 +943,7 @@ public class Parser
         )
         {
             if (
-                !ParserUtil.TryCastToken(
+                !TryCastToken(
                     currentToken,
                     out Token<TokenNoValueType> opTok,
                     out InternalError error

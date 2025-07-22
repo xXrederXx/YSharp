@@ -1,37 +1,11 @@
+using System.Collections.Immutable;
 using System.Runtime.CompilerServices;
-using YSharp.Internal;
 using YSharp.Types;
 using YSharp.Types.InternalTypes;
+using YSharp.Utility;
 
-namespace YSharp.Utility;
+namespace YSharp.Internal;
 
-public static class ParserUtil
-{
-    public static bool TryCastToken<T>(
-        IToken token,
-        out Token<T> result,
-        out InternalError error,
-        [CallerMemberName] string membername = "NoMemberName"
-    )
-    {
-        if (token is Token<T> casted)
-        {
-            result = casted;
-            error = null!;
-
-            return true;
-        }
-
-        result = null!;
-        error = new InternalError(
-            $"Casting the token ({token.GetType()}) to a Token<{typeof(T)}> failed in {membername} / Token: {token}"
-        );
-
-        return false;
-    }
-}
-
-// this keeps the result of the parser
 public class ParseResult
 {
     public Error Error { get; private set; } = ErrorNull.Instance;
@@ -99,5 +73,57 @@ public class ParseResult
     public override string ToString()
     {
         return Node.ToString() ?? "null";
+    }
+}
+
+// the parser which is used to make the abstract syntax tree
+public partial class Parser
+{
+    private readonly ImmutableArray<IToken> tokens;
+    public int tokIndex = -1;
+    public IToken currentToken;
+
+    // initalizer
+    public Parser(List<IToken> tokens)
+    {
+        this.tokens = tokens.ToImmutableArray();
+        currentToken = new Token<TokenNoValueType>(TokenType.NULL);
+        AdvanceParser();
+    }
+
+    // goes to the next token
+    private void AdvanceParser()
+    {
+        tokIndex++;
+        UpdateCurrentTok();
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public void AdvanceParser(ParseResult res)
+    {
+        tokIndex++;
+        UpdateCurrentTok();
+        res.Advance();
+    }
+
+    private IToken Reverse(int amount = 1)
+    {
+        tokIndex -= amount;
+        UpdateCurrentTok();
+        return currentToken;
+    }
+
+    private void UpdateCurrentTok()
+    {
+        if (tokIndex >= 0 && tokIndex < tokens.Length)
+        {
+            currentToken = tokens[tokIndex];
+        }
+    }
+
+    // main function which parses all tokens
+    public ParseResult Parse()
+    {
+        return Statements();
     }
 }
