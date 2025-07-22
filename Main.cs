@@ -8,6 +8,7 @@ using YSharp.Types;
 using YSharp.Types.ClassTypes;
 using YSharp.Types.FunctionTypes;
 using YSharp.Types.InternalTypes;
+using YSharp.Utility;
 
 namespace YSharp;
 
