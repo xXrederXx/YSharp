@@ -1017,6 +1017,10 @@ public partial class Parser
             nextStatement = res.Register(Statement());
             if (res.HasError)
             {
+                if (res.Error is EndKeywordError)
+                {
+                    return res.Success(new ListNode(AllStatements, StartPos, currentToken.EndPos));
+                }
                 return res;
             }
 
