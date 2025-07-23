@@ -35,12 +35,12 @@ public static class BenchReportWriter
     {
         UpdateDetails<T>(out int UsedVersion);
         UpdateHistory<T>(changeDescription, UsedVersion);
-        UpdateSummary<T>(summary, changeDescription, UsedVersion);
-        System.Console.WriteLine(UsedVersion);
+        //UpdateSummary<T>(changeDescription, UsedVersion);
     }
 
-    private static void UpdateSummary<T>(Summary summary, string changeDescription, int UsedVersion)
+    private static void UpdateSummary<T>(string changeDescription, int UsedVersion)
     {
+        throw new NotImplementedException("This not working blud");
         string oldText = File.ReadAllText(SummaryPath);
 
         string H1Title = $"# Benchmarks Summary V{UsedVersion}\n";
@@ -61,27 +61,25 @@ public static class BenchReportWriter
         if (H2idx == -1)
         {
             string insertText =
-                '\n'
+                "\n\n"
                 + H2Title
-                + "\n\n### Inital"
+                + "\n\n### Initial"
                 + "\n\n### Improvements"
                 + "\n\n- Revisions: 0"
                 + "\n\n### Current"
-                + "\n\n- Details: 0\n\n";
+                + "\n\n- Details: -\n\n";
             H2idx = oldText.IndexOf('\n', relevantStart);
             oldText = oldText.Insert(H2idx, insertText);
         }
 
         relevantStart = H2idx;
-        relevantEnd = oldText.IndexOf("## ", relevantStart);
-
-        if (relevantEnd == -1)
-            relevantEnd = oldText.Length;
+        relevantEnd = GetNewEndPos(oldText, relevantStart);
 
         string currentStatsTable = SummaryToMarkdownTable<T>();
 
         // Insert initial table if not present
         oldText = InsertInitialIfMissing(oldText, relevantStart, relevantEnd, currentStatsTable);
+        relevantEnd = GetNewEndPos(oldText, relevantStart);
 
         // Replace current table
         oldText = ReplaceSectionTable(
@@ -91,11 +89,12 @@ public static class BenchReportWriter
             relevantStart,
             relevantEnd
         );
+        relevantEnd = GetNewEndPos(oldText, relevantStart);
 
         // Generate delta improvements
         string initialTable = ExtractSectionTable(
             oldText,
-            "### Inital",
+            "### Initial",
             relevantStart,
             relevantEnd
         );
@@ -103,10 +102,11 @@ public static class BenchReportWriter
         oldText = ReplaceSectionTable(
             oldText,
             "### Improvements",
-            currentStatsTable + "\n\n" + improvementTable,
+            "\n\n" + improvementTable,
             relevantStart,
             relevantEnd
         );
+        relevantEnd = GetNewEndPos(oldText, relevantStart);
 
         // Replace metadata
         oldText = ReplaceKeywordValue(
@@ -116,9 +116,18 @@ public static class BenchReportWriter
             "Details",
             changeDescription
         );
+        relevantEnd = GetNewEndPos(oldText, relevantStart);
         oldText = IncrementKeywordNumber(oldText, relevantStart, relevantEnd, "Revisions");
 
         File.WriteAllText(SummaryPath, oldText);
+    }
+
+    private static int GetNewEndPos(string oldText, int relevantStart)
+    {
+        int relevantEnd = oldText.IndexOf("\n## ", relevantStart + 1);
+        if (relevantEnd == -1)
+            relevantEnd = oldText.Length - 1;
+        return relevantEnd;
     }
 
     private static string InsertInitialIfMissing(
@@ -128,10 +137,10 @@ public static class BenchReportWriter
         string currentTable
     )
     {
-        string section = ExtractSection(text, "### Inital", start, end);
+        string section = ExtractSection(text, "### Initial", start, end);
         if (!section.Contains("|")) // no markdown table
         {
-            text = ReplaceSectionTable(text, "### Inital", currentTable, start, end);
+            text = ReplaceSectionTable(text, "### Initial", currentTable, start, end);
         }
         return text;
     }
@@ -238,7 +247,9 @@ public static class BenchReportWriter
     )
     {
         if (startIndex < 0 || endIndex >= text.Length || startIndex > endIndex)
-            throw new ArgumentOutOfRangeException("Invalid start or end index.");
+            throw new ArgumentOutOfRangeException(
+                "Invalid start or end index. " + startIndex + " - " + endIndex
+            );
 
         if (replacement.Contains("\n") || replacement.Contains("\r"))
             throw new ArgumentException("Replacement string cannot contain newlines.");
@@ -254,6 +265,10 @@ public static class BenchReportWriter
             string newEntry = $"{keyword}: {replacement}";
             string updatedPart = Regex.Replace(searchArea, pattern, newEntry);
             return text.Substring(0, startIndex) + updatedPart + text.Substring(endIndex + 1);
+        }
+        else
+        {
+            System.Console.WriteLine("No match found " + keyword + searchArea);
         }
 
         return text; // keyword not found in range
