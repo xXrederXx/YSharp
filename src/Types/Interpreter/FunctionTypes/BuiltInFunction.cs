@@ -1,8 +1,8 @@
 using YSharp.Core;
-using YSharp.Types.ClassTypes;
-using YSharp.Types.InternalTypes;
+using YSharp.Types.Common;
+using YSharp.Types.Interpreter.ClassTypes;
 
-namespace YSharp.Types.FunctionTypes;
+namespace YSharp.Types.Interpreter.FunctionTypes;
 
 public static class BuiltInFunctionsTable
 {

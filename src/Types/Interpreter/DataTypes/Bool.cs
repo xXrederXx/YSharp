@@ -1,8 +1,8 @@
-using YSharp.Types.InternalTypes;
+using YSharp.Types.Common;
 
-namespace YSharp.Types.ClassTypes;
+namespace YSharp.Types.Interpreter.ClassTypes;
 
-public class VBool(bool value) : Value(), IDefaultConvertableValue<bool>
+public class VBool(bool value) : Value()
 {
     public bool value { get; set; } = value;
 

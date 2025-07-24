@@ -1,7 +1,9 @@
-using YSharp.Types;
-using YSharp.Types.ClassTypes;
-using YSharp.Types.FunctionTypes;
-using YSharp.Types.InternalTypes;
+using YSharp.AST;
+using YSharp.Types.Common;
+using YSharp.Types.Interpreter;
+using YSharp.Types.Interpreter.ClassTypes;
+using YSharp.Types.Interpreter.FunctionTypes;
+using YSharp.Types.Lexer;
 using YSharp.Utils;
 
 namespace YSharp.Core;
@@ -102,8 +104,8 @@ public class Context
         parentEntryPos = new();
     }
 
-    public override string ToString() => $"DisplayName {displayName} / SymbolTable {symbolTable} / Parent Entry {parentEntryPos} / parent {parent}";
-
+    public override string ToString() =>
+        $"DisplayName {displayName} / SymbolTable {symbolTable} / Parent Entry {parentEntryPos} / parent {parent}";
 }
 
 public class SymbolTable

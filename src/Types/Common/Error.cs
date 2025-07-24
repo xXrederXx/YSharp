@@ -1,7 +1,7 @@
 using YSharp.Core;
 using YSharp.Utils;
 
-namespace YSharp.Types.InternalTypes;
+namespace YSharp.Types.Common;
 
 public class Error(int index, string message, Position start)
 {

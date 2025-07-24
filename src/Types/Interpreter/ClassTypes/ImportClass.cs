@@ -1,8 +1,8 @@
 using System.Reflection;
-using YSharp.Types.InternalTypes;
+using YSharp.Types.Common;
 using YSharp.Utils;
 
-namespace YSharp.Types.ClassTypes;
+namespace YSharp.Types.Interpreter.ClassTypes;
 
 public class ImportClass : Value
 {
@@ -65,7 +65,7 @@ public class ImportClass : Value
 
     private static object? ConvertParam(Type typeReqiered, Value valToConvert)
     {
-        if (!TypeCanBeUsed(typeReqiered) || valToConvert is not IDefaultConvertableValue)
+        /* if (!TypeCanBeUsed(typeReqiered) || valToConvert is not IDefaultConvertableValue)
         {
             return null;
         }
@@ -87,8 +87,8 @@ public class ImportClass : Value
         )
         {
             return convDb;
-        }
-        return null;
+        }*/
+        return null; 
     }
 
     private static Value ConvertReturn(object? data)
@@ -130,4 +130,8 @@ public class ImportClass : Value
     {
         return base.Copy();
     }
+}
+
+internal interface IDefaultConvertableValue<T>
+{
 }

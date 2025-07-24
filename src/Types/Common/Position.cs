@@ -1,6 +1,6 @@
 using YSharp.Utils;
 
-namespace YSharp.Types.InternalTypes;
+namespace YSharp.Types.Common;
 
 public struct Position : IEquatable<Position>
 {

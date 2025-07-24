@@ -1,10 +1,11 @@
 ﻿using System.Diagnostics;
 using YSharp.Benchmarks;
 using YSharp.Core;
-using YSharp.Types;
-using YSharp.Types.ClassTypes;
-using YSharp.Types.FunctionTypes;
-using YSharp.Types.InternalTypes;
+using YSharp.Types.Common;
+using YSharp.Types.Interpreter;
+using YSharp.Types.Interpreter.ClassTypes;
+using YSharp.Types.Interpreter.FunctionTypes;
+using YSharp.Types.Lexer;
 
 namespace YSharp;
 
@@ -13,7 +14,7 @@ internal class Start
 {
     private static void Main(string[] args)
     {
-        BenchHelp.Run<ParserBench>();
+        RunTest();
     }
 
     private static void RunTest()

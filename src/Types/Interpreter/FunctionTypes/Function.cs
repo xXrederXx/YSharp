@@ -1,6 +1,7 @@
+using YSharp.AST;
 using YSharp.Core;
 
-namespace YSharp.Types.FunctionTypes;
+namespace YSharp.Types.Interpreter.FunctionTypes;
 
 public class VFunction(string? name, INode bodyNode, List<string> argNames, bool autoReturn)
     : VBaseFunction(name)
@@ -25,7 +26,7 @@ public class VFunction(string? name, INode bodyNode, List<string> argNames, bool
             return res;
         }
 
-        Value value = res.Regrister(Interpreter.Visit(bodyNode, execContext));
+        Value value = res.Regrister(Core.Interpreter.Visit(bodyNode, execContext));
         if (res.ShouldReturn() && res.funcReturnValue is ValueNull)
         {
             return res;

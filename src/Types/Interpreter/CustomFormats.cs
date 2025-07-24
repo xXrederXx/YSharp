@@ -1,4 +1,6 @@
-namespace YSharp.Types.InternalTypes;
+using YSharp.Types.Common;
+
+namespace YSharp.Types.Interpreter;
 public record ValueAndError(Value Value, Error Error)
 {
     public bool ValueIsNull => Value is null or ValueNull;

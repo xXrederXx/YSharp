@@ -1,8 +1,8 @@
 using BenchmarkDotNet.Running;
 using YSharp.Core;
-using YSharp.Types.ClassTypes;
-using YSharp.Types.FunctionTypes;
-using YSharp.Types.InternalTypes;
+using YSharp.Types.Interpreter.ClassTypes;
+using YSharp.Types.Interpreter.FunctionTypes;
+using YSharp.Types.Lexer;
 using YSharp.Utils;
 
 namespace YSharp.Benchmarks;

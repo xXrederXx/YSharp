@@ -1,7 +1,8 @@
 using System.Runtime.CompilerServices;
 using System.Text;
 using FastEnumUtility;
-using YSharp.Types.InternalTypes;
+using YSharp.Types.Common;
+using YSharp.Types.Lexer;
 
 namespace YSharp.Core;
 

@@ -1,8 +1,8 @@
-using YSharp.Types.InternalTypes;
+using YSharp.Types.Common;
 
-namespace YSharp.Types.ClassTypes;
+namespace YSharp.Types.Interpreter.ClassTypes;
 
-public class VList(List<Value> elements) : Value, IDefaultConvertableValue<List<Value>>
+public class VList(List<Value> elements) : Value
 {
     public List<Value> value { get; set; } = elements;
 

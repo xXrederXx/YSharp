@@ -1,8 +1,8 @@
-using YSharp.Types.InternalTypes;
+using YSharp.Types.Common;
 
-namespace YSharp.Types.ClassTypes;
+namespace YSharp.Types.Interpreter.ClassTypes;
 
-public class VNumber(double value) : Value(), IDefaultConvertableValue<double>
+public class VNumber(double value) : Value()
 {
     public double value { get; set; } = value;
 

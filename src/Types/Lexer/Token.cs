@@ -1,6 +1,7 @@
 using FastEnumUtility;
+using YSharp.Types.Common;
 
-namespace YSharp.Types.InternalTypes;
+namespace YSharp.Types.Lexer;
 
 // Token types optimized using enum
 public enum TokenType

@@ -1,8 +1,8 @@
-using YSharp.Types.InternalTypes;
+using YSharp.Types.Common;
 
-namespace YSharp.Types.ClassTypes;
+namespace YSharp.Types.Interpreter.ClassTypes;
 
-public class VString(string value) : Value(), IDefaultConvertableValue<string>
+public class VString(string value) : Value()
 {
     public string value { get; set; } = value;
 

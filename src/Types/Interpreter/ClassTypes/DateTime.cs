@@ -1,6 +1,7 @@
-using YSharp.Types.InternalTypes;
+using YSharp.Types.Common;
+using YSharp.Types.Interpreter;
 
-namespace YSharp.Types.ClassTypes;
+namespace YSharp.Types.Interpreter.ClassTypes;
 
 public class VDateTime(DateTime? dateTime = null) : Value
 {

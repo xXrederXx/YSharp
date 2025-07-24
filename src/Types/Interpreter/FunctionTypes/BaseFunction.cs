@@ -1,7 +1,7 @@
 using YSharp.Core;
-using YSharp.Types.InternalTypes;
+using YSharp.Types.Common;
 
-namespace YSharp.Types.FunctionTypes;
+namespace YSharp.Types.Interpreter.FunctionTypes;
 
 public class VBaseFunction : Value
 {
