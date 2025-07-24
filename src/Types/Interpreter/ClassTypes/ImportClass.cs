@@ -20,7 +20,7 @@ public class ImportClass : Value
             new FuncNotFoundError(
                 argNodes.Count >= 1 ? argNodes[0].startPos : Position.Null,
                 $"No Function {name} found",
-                new Core.Context()
+                new Context()
             )
         );
 
@@ -88,7 +88,7 @@ public class ImportClass : Value
         {
             return convDb;
         }*/
-        return null; 
+        return null;
     }
 
     private static Value ConvertReturn(object? data)
@@ -132,6 +132,4 @@ public class ImportClass : Value
     }
 }
 
-internal interface IDefaultConvertableValue<T>
-{
-}
+internal interface IDefaultConvertableValue<T> { }

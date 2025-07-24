@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics;
 using YSharp.Benchmarks;
 using YSharp.Core;
+using YSharp.Types.AST;
 using YSharp.Types.Common;
 using YSharp.Types.Interpreter;
 using YSharp.Types.Interpreter.ClassTypes;

@@ -1,5 +1,6 @@
 using BenchmarkDotNet.Attributes;
 using YSharp.Core;
+using YSharp.Types.Interpreter;
 
 namespace YSharp.Benchmarks;
 
