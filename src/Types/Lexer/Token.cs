@@ -116,10 +116,22 @@ public class Token<T> : IToken
     }
 
     public Token(TokenType type, Position startPos, Position endPos)
-        : this(type, default(T), startPos, endPos) { }
+        : this(type, default(T)!, startPos, endPos)
+    {
+        if (typeof(T) != typeof(TokenNoValueType))
+        {
+            throw new InvalidOperationException("You cant set no value but set a value type");
+        }
+    }
 
     public Token(TokenType type)
-        : this(type, default(T), Position.Null, Position.Null) { }
+        : this(type, default(T)!, Position.Null, Position.Null)
+    {
+        if (typeof(T) != typeof(TokenNoValueType))
+        {
+            throw new InvalidOperationException("You cant set no value but set a value type");
+        }
+    }
 
     // String Representation
     public override string ToString()

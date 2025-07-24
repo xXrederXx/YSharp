@@ -39,7 +39,7 @@ public static class ImportUtil
     {
         error = "";
 
-        string AssemblyError = TryGetAssamblyFromPath(filePath, out Assembly assembly);
+        string AssemblyError = TryGetAssamblyFromPath(filePath, out Assembly? assembly);
         if (AssemblyError != string.Empty)
         {
             error = "Error occured during the process of getting the assembly. \n" + AssemblyError;
@@ -47,10 +47,9 @@ public static class ImportUtil
         }
 
         // Get the first class
-        Type[] classType = assembly
-            .GetTypes()
-            .Where(cls => HasAttribute(cls, ExposeAttributeName))
-            .ToArray();
+        Type[] classType =
+            assembly?.GetTypes().Where(cls => HasAttribute(cls, ExposeAttributeName)).ToArray()
+            ?? [];
 
         List<ExposedClassData> data = [];
         foreach (Type type in classType)
@@ -103,7 +102,7 @@ public static class ImportUtil
         return new ExposedClassData(publicMethods, publicFields, publicProperties, classInstance);
     }
 
-    private static string TryGetAssamblyFromPath(string filePath, out Assembly assembly)
+    private static string TryGetAssamblyFromPath(string filePath, out Assembly? assembly)
     {
         assembly = null;
 
