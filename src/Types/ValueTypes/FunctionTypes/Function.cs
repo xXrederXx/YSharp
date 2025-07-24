@@ -1,4 +1,4 @@
-using YSharp.Internal;
+using YSharp.Core;
 
 namespace YSharp.Types.FunctionTypes;
 

@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics;
 using YSharp.Benchmarks;
-using YSharp.Internal;
+using YSharp.Core;
 using YSharp.Types;
 using YSharp.Types.ClassTypes;
 using YSharp.Types.FunctionTypes;

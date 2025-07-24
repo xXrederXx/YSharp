@@ -2,9 +2,9 @@ using YSharp.Types;
 using YSharp.Types.ClassTypes;
 using YSharp.Types.FunctionTypes;
 using YSharp.Types.InternalTypes;
-using YSharp.Utility;
+using YSharp.Utils;
 
-namespace YSharp.Internal;
+namespace YSharp.Core;
 
 public class RunTimeResult
 {

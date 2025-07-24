@@ -1,4 +1,4 @@
-using YSharp.Utility;
+using YSharp.Utils;
 
 namespace YSharp.Types.InternalTypes;
 

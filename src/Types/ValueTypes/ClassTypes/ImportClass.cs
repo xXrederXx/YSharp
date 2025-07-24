@@ -1,6 +1,6 @@
 using System.Reflection;
 using YSharp.Types.InternalTypes;
-using YSharp.Utility;
+using YSharp.Utils;
 
 namespace YSharp.Types.ClassTypes;
 
@@ -20,7 +20,7 @@ public class ImportClass : Value
             new FuncNotFoundError(
                 argNodes.Count >= 1 ? argNodes[0].startPos : Position.Null,
                 $"No Function {name} found",
-                new Internal.Context()
+                new Core.Context()
             )
         );
 

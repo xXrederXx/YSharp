@@ -1,7 +1,7 @@
 using YSharp.Types;
 using YSharp.Types.InternalTypes;
 
-namespace YSharp.Internal;
+namespace YSharp.Core;
 
 public partial class Parser
 {

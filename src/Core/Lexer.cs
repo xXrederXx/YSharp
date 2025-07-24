@@ -3,7 +3,7 @@ using System.Text;
 using FastEnumUtility;
 using YSharp.Types.InternalTypes;
 
-namespace YSharp.Internal;
+namespace YSharp.Core;
 
 public class Lexer
 {

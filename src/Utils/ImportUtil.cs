@@ -1,6 +1,6 @@
 using System.Reflection;
 
-namespace YSharp.Utility;
+namespace YSharp.Utils;
 
 /*
 To expose Variables or methods use the Expose attribute and they need to be public

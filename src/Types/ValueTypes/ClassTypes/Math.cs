@@ -1,4 +1,4 @@
-using YSharp.Internal;
+using YSharp.Core;
 using YSharp.Types.InternalTypes;
 
 namespace YSharp.Types.ClassTypes;

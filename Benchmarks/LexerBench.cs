@@ -1,5 +1,5 @@
 using BenchmarkDotNet.Attributes;
-using YSharp.Internal;
+using YSharp.Core;
 
 namespace YSharp.Benchmarks;
 

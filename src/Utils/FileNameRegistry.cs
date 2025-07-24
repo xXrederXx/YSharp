@@ -1,4 +1,4 @@
-namespace YSharp.Utility;
+namespace YSharp.Utils;
 
 public static class FileNameRegistry
 {
