@@ -2,7 +2,7 @@ using System.Collections.Immutable;
 using YSharp.Types.Common;
 using YSharp.Types.Lexer;
 
-namespace YSharp.AST;
+namespace YSharp.Types.AST;
 
 // Interface definition
 public interface INode

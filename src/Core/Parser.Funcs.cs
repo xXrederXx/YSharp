@@ -1,5 +1,4 @@
-using YSharp.AST;
-using YSharp.Types;
+using YSharp.Types.AST;
 using YSharp.Types.Common;
 using YSharp.Types.Lexer;
 

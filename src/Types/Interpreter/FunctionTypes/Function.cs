@@ -1,5 +1,5 @@
-using YSharp.AST;
 using YSharp.Core;
+using YSharp.Types.AST;
 
 namespace YSharp.Types.Interpreter.FunctionTypes;
 

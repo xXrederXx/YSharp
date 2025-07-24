@@ -1,5 +1,7 @@
 using BenchmarkDotNet.Running;
 using YSharp.Core;
+using YSharp.Types.AST;
+using YSharp.Types.Interpreter;
 using YSharp.Types.Interpreter.ClassTypes;
 using YSharp.Types.Interpreter.FunctionTypes;
 using YSharp.Types.Lexer;

@@ -1,5 +1,4 @@
 using YSharp.Types.Common;
-using YSharp.Types.Interpreter;
 
 namespace YSharp.Types.Interpreter.ClassTypes;
 
