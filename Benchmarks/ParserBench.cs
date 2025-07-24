@@ -14,7 +14,7 @@ public class ParserBench
         var tokens = parser.Parse();
     }
 
-    /* [Benchmark]
+    [Benchmark]
     public void ParserBenchmarkM()
     {
         Parser parser = new(BenchHelp.TokenM);
@@ -33,5 +33,5 @@ public class ParserBench
     {
         Parser parser = new(BenchHelp.TokenXL);
         var tokens = parser.Parse();
-    } */
+    }
 }

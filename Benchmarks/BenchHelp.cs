@@ -143,6 +143,6 @@ public static class BenchHelp
     public static void Run<T>(string changeDescription = "-")
     {
         BenchmarkDotNet.Reports.Summary summary = BenchmarkRunner.Run<T>();
-        BenchReportWriter.UpdateFiles<T>(summary, changeDescription);
+        BenchReportWriter.UpdateFiles<T>(changeDescription);
     }
 }

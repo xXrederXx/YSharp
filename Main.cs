@@ -15,7 +15,7 @@ internal class Start
 {
     private static void Main(string[] args)
     {
-        RunTest();
+        TestRunner("before updating Interpreter");
     }
 
     private static void RunTest()
@@ -28,12 +28,12 @@ internal class Start
         }
     }
 
-    private static void TestRunner()
+    private static void TestRunner(string change = "-")
     {
-        BenchHelp.Run<LexerBench>();
-        BenchHelp.Run<ParserBench>();
-        BenchHelp.Run<InterpreterBench>();
-        BenchHelp.Run<RunTimeBench>();
+        BenchHelp.Run<LexerBench>(change);
+        BenchHelp.Run<ParserBench>(change);
+        BenchHelp.Run<InterpreterBench>(change);
+        BenchHelp.Run<RunTimeBench>(change);
     }
 
     private static void ConsoleRunner()

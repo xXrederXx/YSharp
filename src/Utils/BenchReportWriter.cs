@@ -8,7 +8,7 @@ namespace YSharp.Utils;
 
 public static class BenchReportWriter
 {
-    public const string Folder = "./Documentation/Benchmarks";
+    public const string Folder = "./Docs/Benchmarks";
     private static string SummaryPath => Path.Combine(Folder, "benchmarks_summary.md");
     private static string HistoryPath => Path.Combine(Folder, "benchmarks_history.md");
     private static string DetailsPath => Path.Combine(Folder, "benchmarks_details.md");
@@ -19,16 +19,16 @@ public static class BenchReportWriter
             Directory.CreateDirectory(Folder);
 
         if (!File.Exists(SummaryPath))
-            File.Create(SummaryPath);
+            File.Create(SummaryPath).Dispose();
 
         if (!File.Exists(HistoryPath))
-            File.Create(HistoryPath);
+            File.Create(HistoryPath).Dispose();
 
         if (!File.Exists(DetailsPath))
-            File.Create(DetailsPath);
+            File.Create(DetailsPath).Dispose();
     }
 
-    public static void UpdateFiles<T>(Summary summary, string changeDescription)
+    public static void UpdateFiles<T>(string changeDescription)
     {
         UpdateDetails<T>(out int UsedVersion);
         UpdateHistory<T>(changeDescription, UsedVersion);
