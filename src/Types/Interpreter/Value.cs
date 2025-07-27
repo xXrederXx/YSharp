@@ -9,11 +9,7 @@ public class Value
     public Position endPos;
     protected Context? context;
 
-    public Value()
-    {
-        SetPos(Position.Null, Position.Null);
-        SetContext();
-    }
+    public Value() { }
 
     public Value SetPos(Position startPos, Position endPos)
     { // set the positions
@@ -22,7 +18,7 @@ public class Value
         return this;
     }
 
-    public Value SetContext(Context? context = null)
+    public Value SetContext(Context? context)
     {
         this.context = context;
         return this;
@@ -124,7 +120,7 @@ public class Value
 
     public virtual Value Copy()
     {
-        throw new Exception("No copy method defined");
+        throw new NotImplementedException("No copy method defined");
     }
 
     protected Error IlligalOperation(Value? other = null)

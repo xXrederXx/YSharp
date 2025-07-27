@@ -15,7 +15,7 @@ internal class Start
 {
     private static void Main(string[] args)
     {
-        TestRunner("before updating Interpreter");
+        RunTest();
     }
 
     private static void RunTest()
