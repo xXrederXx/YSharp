@@ -52,9 +52,8 @@ public static class Interpreter
 
     private static RunTimeResult Visit_String(StringNode node, Context context)
     {
-        string? value = (string?)node.tok.Value;
         return new RunTimeResult().Success(
-            new VString(value ?? "").SetContext(context).SetPos(node.StartPos, node.EndPos)
+            new VString(node.tok.Value).SetContext(context).SetPos(node.StartPos, node.EndPos)
         );
     }
 
@@ -79,97 +78,59 @@ public static class Interpreter
     private static RunTimeResult Visit_BinaryOp(BinOpNode node, Context context)
     {
         RunTimeResult res = new();
+        Value left = res.Regrister(Visit(node.leftNode, context));
+        Value right = res.Regrister(Visit(node.rightNode, context));
 
-        // Run both left and right in parallel
-        Task<RunTimeResult> leftTask = Task.Run(() => Visit(node.leftNode, context));
-        Task<RunTimeResult> rightTask = Task.Run(() => Visit(node.rightNode, context));
-
-        Task.WaitAll(leftTask, rightTask);
-
-        if (res.Regrister(leftTask.Result, out Value left))
-        {
-            return res;
-        }
-        if (res.Regrister(rightTask.Result, out Value right))
+        if (res.ShouldReturn())
         {
             return res;
         }
 
-        ValueAndError result;
-        // Arethmetic
-        switch (node.opTok.Type)
+        ValueAndError KeywordHandeler()
         {
-            case TokenType.PLUS:
-                result = left.AddedTo(right);
-                break;
-            case TokenType.MINUS:
-                result = left.SubedTo(right);
-                break;
-            case TokenType.MUL:
-                result = left.MuledTo(right);
-                break;
-            case TokenType.DIV:
-                result = left.DivedTo(right);
-                break;
-            case TokenType.POW:
-                result = left.PowedTo(right);
-                break;
-            // comparison
-            case TokenType.EE:
-                result = left.GetComparisonEQ(right);
-                break;
-            case TokenType.NE:
-                result = left.GetComparisonNE(right);
-                break;
-            case TokenType.LT:
-                result = left.GetComparisonLT(right);
-                break;
-            case TokenType.GT:
-                result = left.GetComparisonGT(right);
-                break;
-            case TokenType.LTE:
-                result = left.GetComparisonLTE(right);
-                break;
-            case TokenType.GTE:
-                result = left.GetComparisonGTE(right);
-                break;
-            default:
-                if (node.opTok.IsMatchingKeyword(KeywordType.AND))
-                {
-                    result = left.AndedTo(right);
-                }
-                else if (node.opTok.IsMatchingKeyword(KeywordType.OR))
-                {
-                    result = left.OredTo(right);
-                }
-                else
-                {
-                    throw new Exception("operator token type is wrong: " + node.opTok.Type);
-                }
-
-                break;
+            if (node.opTok.IsMatchingKeyword(KeywordType.AND))
+            {
+                return left.AndedTo(right);
+            }
+            else if (node.opTok.IsMatchingKeyword(KeywordType.OR))
+            {
+                return left.OredTo(right);
+            }
+            throw new Exception("operator token type is wrong: " + node.opTok.Type);
         }
+
+        ValueAndError result = node.opTok.Type switch
+        {
+            TokenType.PLUS => left.AddedTo(right),
+            TokenType.MINUS => left.SubedTo(right),
+            TokenType.MUL => left.MuledTo(right),
+            TokenType.DIV => left.DivedTo(right),
+            TokenType.POW => left.PowedTo(right),
+            TokenType.EE => left.GetComparisonEQ(right),
+            TokenType.NE => left.GetComparisonNE(right),
+            TokenType.LT => left.GetComparisonLT(right),
+            TokenType.GT => left.GetComparisonGT(right),
+            TokenType.LTE => left.GetComparisonLTE(right),
+            TokenType.GTE => left.GetComparisonGTE(right),
+            TokenType.KEYWORD => KeywordHandeler(),
+            _ => throw new Exception("operator token type is wrong: " + node.opTok.Type),
+        };
 
         if (result.Error.IsError)
         {
             return res.Failure(result.Error);
         }
-        else
-        {
-            return res.Success(result.Value.SetPos(node.StartPos, node.StartPos));
-        }
+
+        return res.Success(result.Value.SetPos(node.StartPos, node.StartPos));
     }
 
     private static RunTimeResult Visit_UnaryOp(UnaryOpNode node, Context context)
     {
         RunTimeResult res = new();
-        if (res.Regrister(Visit(node.node, context), out Value value))
+        Value value = res.Regrister(Visit(node.node, context));
+        if (res.ShouldReturn())
         {
             return res;
-        }
-        if (value is null)
-        {
-            return res.Failure(new InternalError("Cast in Visit_UnaryOp failed"));
         }
 
         ValueAndError result;
@@ -190,10 +151,8 @@ public static class Interpreter
         {
             return res.Failure(result.Error);
         }
-        else
-        {
-            return res.Success(result.Value.SetPos(node.StartPos, node.StartPos));
-        }
+
+        return res.Success(result.Value.SetPos(node.StartPos, node.StartPos));
     }
 
     private static RunTimeResult Visit_VarAccessNode(VarAccessNode node, Context context)
@@ -205,10 +164,10 @@ public static class Interpreter
             return res.Failure(new InternalError("There is no SymbolTable in this context"));
         }
 
-        string? varName = (string?)node.varNameTok.Value;
+        string varName = node.varNameTok.Value;
         Value value = context.symbolTable.Get(varName);
 
-        if (value is null or ValueNull)
+        if (value is ValueNull)
         {
             if (node.fromCall)
                 return res.Failure(
@@ -225,14 +184,11 @@ public static class Interpreter
     private static RunTimeResult Visit_VarAssignNode(VarAssignNode node, Context context)
     {
         RunTimeResult res = new();
-        string? varName = (string?)node.varNameTok.Value;
-        if (res.Regrister(Visit(node.valueNode, context), out Value value))
+        string varName = node.varNameTok.Value;
+        Value value = res.Regrister(Visit(node.valueNode, context));
+        if (res.ShouldReturn())
         {
             return res;
-        }
-        if (varName is null)
-        {
-            return res.Failure(new InternalError("Var name is null"));
         }
 
         if (context.symbolTable is null)
@@ -248,7 +204,7 @@ public static class Interpreter
     {
         RunTimeResult res = new();
 
-        string? varName = (string?)node.varNameTok.Value;
+        string varName = node.varNameTok.Value;
         ValueAndError value = res.Regrister(Visit(node.parent, context)).GetVar(varName ?? "null");
         if (res.ShouldReturn())
         {
@@ -264,9 +220,6 @@ public static class Interpreter
                 new VarNotFoundError(node.StartPos, $"{varName} var is not defined", context)
             );
         }
-        /* if (value is (ValueNull)){
-            return res.success(value);
-        } */
         return res.Success(
             value.Value.Copy().SetPos(node.StartPos, node.EndPos).SetContext(context)
         );
@@ -276,7 +229,7 @@ public static class Interpreter
     {
         RunTimeResult res = new();
 
-        string? funcName = (string?)node.funcNameTok.Value;
+        string funcName = node.funcNameTok.Value;
 
         List<Value> argValue = new(node.argNodes.Count);
         for (int i = 0; i < node.argNodes.Count; i++)
@@ -301,9 +254,6 @@ public static class Interpreter
         {
             return res.Failure(value.Error);
         }
-        /* if (value is (ValueNull)){
-            return res.success(value);
-        } */
         try
         {
             return res.Success(
@@ -324,15 +274,16 @@ public static class Interpreter
         {
             INode condition = node.cases[i].condition;
             INode expr = node.cases[i].expression;
-
-            if (res.Regrister(Visit(condition, context), out Value conditionValue))
+            Value conditionValue = res.Regrister(Visit(condition, context));
+            if (res.ShouldReturn())
             {
                 return res;
             }
 
             if (conditionValue.IsTrue())
             {
-                if (res.Regrister(Visit(expr, context), out Value exprValue))
+                Value exprValue = res.Regrister(Visit(expr, context));
+                if (res.ShouldReturn())
                 {
                     return res;
                 }
@@ -340,9 +291,10 @@ public static class Interpreter
             }
         }
 
-        if (node.elseNode is not null && node.elseNode is not NodeNull)
+        if (node.elseNode is not null and not NodeNull)
         {
-            if (res.Regrister(Visit(node.elseNode, context), out Value elseValue))
+            Value elseValue = res.Regrister(Visit(node.elseNode, context));
+            if (res.ShouldReturn())
             {
                 return res;
             }
@@ -354,19 +306,10 @@ public static class Interpreter
     private static RunTimeResult Visit_ForNode(ForNode node, Context context)
     {
         RunTimeResult res = new();
-        // calculate in parallel
-        Task<RunTimeResult> startValueTask = Task.Run(() => Visit(node.startValueNode, context));
-        Task<RunTimeResult> endValueTask = Task.Run(() => Visit(node.endValueNode, context));
+        Value startValue = res.Regrister(Visit(node.startValueNode, context));
+        Value endValue = res.Regrister(Visit(node.endValueNode, context));
 
-        // wait till both are executed
-        Task.WhenAll(startValueTask, endValueTask);
-
-        if (res.Regrister(startValueTask.Result, out Value startValue))
-        {
-            return res;
-        }
-
-        if (res.Regrister(endValueTask.Result, out Value endValue))
+        if (res.ShouldReturn())
         {
             return res;
         }
@@ -374,7 +317,8 @@ public static class Interpreter
         Value stepValue;
         if (node.stepValueNode is not null)
         {
-            if (res.Regrister(Visit(node.stepValueNode, context), out stepValue))
+            stepValue = res.Regrister(Visit(node.stepValueNode, context));
+            if (res.ShouldReturn())
             {
                 return res;
             }
@@ -384,24 +328,11 @@ public static class Interpreter
             stepValue = new VNumber(1);
         }
 
-        if (startValue is null || endValue is null || stepValue is null)
-        {
-            return res.Failure(
-                new InternalError(
-                    $"startValue is null {startValue is null} endValue is null {endValue is null} stepValue is null {stepValue is null}"
-                )
-            );
-        }
-
         double StartNumber;
         double EndNumber;
         double StepNumber;
 
-        if (startValue is VNumber numStart)
-        {
-            StartNumber = numStart.value;
-        }
-        else
+        if (startValue is not VNumber numStart)
         {
             return res.Failure(
                 new WrongFormatError(
@@ -411,21 +342,13 @@ public static class Interpreter
                 )
             );
         }
-        if (endValue is VNumber numEnd)
-        {
-            EndNumber = numEnd.value;
-        }
-        else
+        if (endValue is not VNumber numEnd)
         {
             return res.Failure(
                 new WrongFormatError(startValue.startPos, "The End Number is not a Number", context)
             );
         }
-        if (stepValue is VNumber numStep)
-        {
-            StepNumber = numStep.value;
-        }
-        else
+        if (stepValue is not VNumber numStep)
         {
             return res.Failure(
                 new WrongFormatError(
@@ -436,26 +359,27 @@ public static class Interpreter
             );
         }
 
+        StartNumber = numStart.value;
+        EndNumber = numEnd.value;
+        StepNumber = numStep.value;
+
         double i = StartNumber;
         Func<double, bool> condition;
         if (StepNumber >= 0)
         {
-            condition = i => i < EndNumber;
+            condition = (i) => i < EndNumber;
         }
         else
         {
-            condition = i => i > EndNumber;
+            condition = (i) => i > EndNumber;
         }
 
         if (context.symbolTable is null)
         {
             return res.Failure(new InternalError("No symbol Table"));
         }
-        string? varName = (string?)node.varNameTok.Value;
-        if (varName is null)
-        {
-            return res.Failure(new InternalError($"No value for varName -> {varName}"));
-        }
+        string varName = node.varNameTok.Value;
+
         while (condition(i))
         {
             context.symbolTable.Set(varName, new VNumber(i));
@@ -484,7 +408,8 @@ public static class Interpreter
 
         while (true)
         {
-            if (res.Regrister(Visit(node.conditionNode, context), out Value condition))
+            Value condition = res.Regrister(Visit(node.conditionNode, context));
+            if (res.ShouldReturn())
             {
                 return res;
             }
@@ -492,12 +417,8 @@ public static class Interpreter
             {
                 break;
             }
-
-            if (
-                res.Regrister(Visit(node.bodyNode, context), out Value _)
-                && !res.loopContinue
-                && res.loopBreak
-            )
+            res.Regrister(Visit(node.bodyNode, context));
+            if (res.ShouldReturn() && !res.loopContinue && res.loopBreak)
             {
                 return res;
             }
@@ -516,11 +437,7 @@ public static class Interpreter
     private static RunTimeResult Visit_FuncDefNode(FuncDefNode node, Context context)
     {
         RunTimeResult res = new();
-        string? funcName = null;
-        if (node.varNameTok is not null)
-        {
-            funcName = (string?)node.varNameTok.Value;
-        }
+        string funcName = node.varNameTok.Value;
         INode bodyNode = node.bodyNode;
 
         List<string> argNames = new(node.argNameToks.Count);
@@ -533,10 +450,7 @@ public static class Interpreter
         VFunction funcValue = new(funcName, bodyNode, argNames, node.retNull);
         funcValue.SetContext(context).SetPos(node.StartPos, node.EndPos);
 
-        if (node.varNameTok is not null && context.symbolTable is not null && funcName is not null)
-        {
-            context.symbolTable.Set(funcName, funcValue);
-        }
+        context.symbolTable?.Set(funcName, funcValue);
         return res.Success(funcValue);
     }
 
@@ -576,8 +490,7 @@ public static class Interpreter
 
         for (int i = 0; i < node.argNodes.Count; i++)
         {
-            INode arg = node.argNodes[i];
-            args.Add(res.Regrister(Visit(arg, context)));
+            args.Add(res.Regrister(Visit(node.argNodes[i], context)));
             if (res.ShouldReturn())
             {
                 return res;
@@ -618,7 +531,8 @@ public static class Interpreter
         Value value;
         if (node.nodeToReturn is not null)
         {
-            if (res.Regrister(Visit(node.nodeToReturn, context), out value))
+            value = res.Regrister(Visit(node.nodeToReturn, context));
+            if (res.ShouldReturn())
             {
                 return res;
             }
@@ -657,14 +571,11 @@ public static class Interpreter
 
         if (node.ChatchVarName is not null)
         {
-            if (node.ChatchVarName.Value is not string varName)
-            {
-                return res.Failure(new InternalError("The var Name is null"));
-            }
-            context.symbolTable.Set(varName, new VString(res.error.ToString()));
+            context.symbolTable.Set(node.ChatchVarName.Value, new VString(res.error.ToString()));
         }
 
-        if (res.Regrister(Visit(node.CatchNode, context), out Value catchVal))
+        Value catchVal = res.Regrister(Visit(node.CatchNode, context));
+        if (res.ShouldReturn())
         {
             return res;
         }
