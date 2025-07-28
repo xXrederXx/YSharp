@@ -64,7 +64,7 @@
 
 ### 24.07.2025 - 19.52
 
-- **Detail**: V2
+- **Detail**: V1
 - **Description**: before updating Interpreter
 
 | Method           |        Mean |      Error |     StdDev |     Gen0 |     Gen1 |     Gen2 |  Allocated |
@@ -150,7 +150,7 @@
 
 ### 24.07.2025 - 19.53
 
-- **Detail**: V2
+- **Detail**: V1
 - **Description**: before updating Interpreter
 
 | Method            |       Mean |    Error |   StdDev |     Gen0 |     Gen1 |    Gen2 |   Allocated |
@@ -212,7 +212,7 @@
 
 ### 24.07.2025 - 19.54
 
-- **Detail**: V2
+- **Detail**: V1
 - **Description**: before updating Interpreter
 
 | Method                 |       Mean |    Error |  StdDev |     Gen0 |    Gen1 |  Allocated |
@@ -221,6 +221,19 @@
 | InterpreterBenchmarkM  |   275.6 μs |  1.30 μs | 1.15 μs |  20.0195 |  3.9063 |  330.44 KB |
 | InterpreterBenchmarkL  | 1,444.5 μs | 10.42 μs | 9.75 μs | 101.5625 | 37.1094 | 1652.56 KB |
 | InterpreterBenchmarkXL | 2,934.4 μs |  9.09 μs | 7.59 μs | 203.1250 | 89.8438 | 3310.19 KB |
+
+
+### 28.07.2025 - 16.15
+
+- **Detail**: V1
+- **Description**: After refactor
+
+| Method                 | Mean      | Error    | StdDev    | Gen0     | Gen1    | Allocated  |
+|----------------------- |----------:|---------:|----------:|---------:|--------:|-----------:|
+| InterpreterBenchmarkS  |  29.12 μs | 0.290 μs |  0.271 μs |   6.2561 |  0.7629 |   102.2 KB |
+| InterpreterBenchmarkM  |  64.00 μs | 0.533 μs |  0.472 μs |  12.5732 |  2.4414 |  206.58 KB |
+| InterpreterBenchmarkL  | 351.07 μs | 7.014 μs | 11.327 μs |  62.9883 | 22.9492 | 1031.45 KB |
+| InterpreterBenchmarkXL | 766.38 μs | 7.510 μs |  6.271 μs | 125.9766 | 56.6406 | 2065.08 KB |
 
 ## Runtime
 
@@ -274,7 +287,7 @@
 
 ### 24.07.2025 - 19.55
 
-- **Detail**: V2
+- **Detail**: V1
 - **Description**: before updating Interpreter
 
 | Method        |        Mean |     Error |    StdDev |      Gen0 |     Gen1 |     Gen2 | Allocated |
