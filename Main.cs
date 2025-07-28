@@ -15,7 +15,7 @@ internal class Start
 {
     private static void Main(string[] args)
     {
-        BenchHelp.Run<InterpreterBench>("After refactor");
+        RunTest();
     }
 
     private static void RunTest()

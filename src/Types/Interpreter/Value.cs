@@ -28,7 +28,7 @@ public class Value
     {
         return (
             ValueNull.Instance,
-            new VarNotFoundError(Position.Null, $"Variable {name} was not found", context)
+            new VarNotFoundError(Position.Null, name, context)
         );
     }
 
@@ -36,7 +36,7 @@ public class Value
     {
         return (
             ValueNull.Instance,
-            new FuncNotFoundError(Position.Null, $"Function {name} was not found", context)
+            new FuncNotFoundError(Position.Null, name, context)
         );
     }
 

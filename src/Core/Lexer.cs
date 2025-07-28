@@ -51,10 +51,7 @@ public class Lexer
             {
                 if (hasDot)
                 {
-                    return (
-                        new Token<double>(TokenType.NULL),
-                        new IllegalCharError(posStart, "You can't have 2 dots in a number")
-                    ); // cant have 2 dots in a number
+                    return (new Token<double>(TokenType.NULL), new IllegalNumberFormat(posStart));
                 }
 
                 hasDot = true;
@@ -66,9 +63,17 @@ public class Lexer
             }
             Advance();
         }
-        double value = double.Parse(stringBuilder.ToString());
-        stringBuilder.Clear();
-        return (new Token<double>(TokenType.FLOAT, value, posStart, pos), ErrorNull.Instance);
+        if (double.TryParse(stringBuilder.ToString(), out double value))
+        {
+            stringBuilder.Clear();
+            return (new Token<double>(TokenType.FLOAT, value, posStart, pos), ErrorNull.Instance);
+        }
+        return (
+            new Token<double>(TokenType.FLOAT, value, posStart, pos),
+            new InternalLexerError(
+                $"Couldnt convert Number to double -> Number ({stringBuilder.ToString()})"
+            )
+        );
     }
 
     private IToken MakeIdentifier()
@@ -99,15 +104,9 @@ public class Lexer
 
         if (current_char == '=')
         {
-            return (
-                new Token<TokenNoValueType>(TokenType.NE, startPos: posStart, endPos: pos),
-                ErrorNull.Instance
-            );
+            return (new Token<TokenNoValueType>(TokenType.NE, posStart, pos), ErrorNull.Instance);
         }
-        return (
-            new Token<TokenNoValueType>(TokenType.NULL),
-            new ExpectedCharError(posStart, "Expected '=' after '!'")
-        );
+        return (new Token<TokenNoValueType>(TokenType.NULL), new ExpectedCharError(posStart, '='));
     }
 
     private Token<TokenNoValueType> MakeDecicion(
@@ -152,10 +151,7 @@ public class Lexer
                 {
                     return (
                         new Token<string>(TokenType.NULL),
-                        new IllegalEscapeCharError(
-                            startPos,
-                            $"The character '{current_char}' is not a valide escape character"
-                        )
+                        new IllegalEscapeCharError(startPos, current_char)
                     );
                 }
             }
@@ -231,8 +227,6 @@ public class Lexer
     public (List<IToken>, Error) MakeTokens()
     {
         List<IToken> tokens = [];
-        int parenthesesCount = 0; // to check if there are unclosed parentesies
-        int squarBracketCount = 0; // to check if there are unclosed square brackets
 
         while (current_char != char.MaxValue)
         {
@@ -309,13 +303,11 @@ public class Lexer
             }
             else if (current_char == '(')
             {
-                parenthesesCount++;
                 tokens.Add(new Token<TokenNoValueType>(TokenType.LPAREN, pos, pos));
                 Advance();
             }
             else if (current_char == ')')
             {
-                parenthesesCount--;
                 tokens.Add(new Token<TokenNoValueType>(TokenType.RPAREN, pos, pos));
                 Advance();
             }
@@ -353,13 +345,11 @@ public class Lexer
             }
             else if (current_char == '[')
             {
-                squarBracketCount++;
                 tokens.Add(new Token<TokenNoValueType>(TokenType.LSQUARE, pos, pos));
                 Advance();
             }
             else if (current_char == ']')
             {
-                squarBracketCount--;
                 tokens.Add(new Token<TokenNoValueType>(TokenType.RSQUARE, pos, pos));
                 Advance();
             }
@@ -368,32 +358,10 @@ public class Lexer
                 // Not a valid token, return an error
                 return (
                     new List<IToken>(),
-                    new IllegalCharError(pos, "Invalid char: " + current_char)
+                    new IllegalCharError(pos, current_char)
                 );
             }
         }
-
-        if (parenthesesCount != 0)
-        {
-            return (
-                [],
-                new UnclosedBracketsError(
-                    Position.Null,
-                    "There are more or less Open parentheses than closed ones"
-                )
-            );
-        }
-        if (squarBracketCount != 0)
-        {
-            return (
-                [],
-                new UnclosedBracketsError(
-                    Position.Null,
-                    "There are more or less Open square brackets than closed ones"
-                )
-            );
-        }
-
         tokens.Add(new Token<TokenNoValueType>(TokenType.EOF, pos, pos)); // Add the End Of File token
         return (tokens, ErrorNull.Instance);
     }

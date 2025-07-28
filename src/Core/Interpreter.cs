@@ -161,7 +161,9 @@ public static class Interpreter
 
         if (context.symbolTable is null)
         {
-            return res.Failure(new InternalError("There is no SymbolTable in this context"));
+            return res.Failure(
+                new InternalInterpreterError("There is no SymbolTable in this context")
+            );
         }
 
         string varName = node.varNameTok.Value;
@@ -170,12 +172,8 @@ public static class Interpreter
         if (value is ValueNull)
         {
             if (node.fromCall)
-                return res.Failure(
-                    new FuncNotFoundError(node.StartPos, $"{varName} is not defined", context)
-                );
-            return res.Failure(
-                new VarNotFoundError(node.StartPos, $"{varName} is not defined", context)
-            );
+                return res.Failure(new FuncNotFoundError(node.StartPos, varName, context));
+            return res.Failure(new VarNotFoundError(node.StartPos, varName, context));
         }
 
         return res.Success(value.Copy().SetPos(node.StartPos, node.EndPos).SetContext(context));
@@ -193,7 +191,7 @@ public static class Interpreter
 
         if (context.symbolTable is null)
         {
-            return res.Failure(new InternalError("Symbol Table is null"));
+            return res.Failure(new InternalInterpreterError("Symbol Table is null"));
         }
 
         context.symbolTable.Set(varName, value);
@@ -216,9 +214,7 @@ public static class Interpreter
         }
         if (value.ValueIsNull)
         {
-            return res.Failure(
-                new VarNotFoundError(node.StartPos, $"{varName} var is not defined", context)
-            );
+            return res.Failure(new VarNotFoundError(node.StartPos, varName!, context));
         }
         return res.Success(
             value.Value.Copy().SetPos(node.StartPos, node.EndPos).SetContext(context)
@@ -335,27 +331,19 @@ public static class Interpreter
         if (startValue is not VNumber numStart)
         {
             return res.Failure(
-                new WrongFormatError(
-                    startValue.startPos,
-                    "The Start Number is not a Number",
-                    context
-                )
+                new WrongTypeError(startValue.startPos, "The Start Number is not a Number", context)
             );
         }
         if (endValue is not VNumber numEnd)
         {
             return res.Failure(
-                new WrongFormatError(startValue.startPos, "The End Number is not a Number", context)
+                new WrongTypeError(startValue.startPos, "The End Number is not a Number", context)
             );
         }
         if (stepValue is not VNumber numStep)
         {
             return res.Failure(
-                new WrongFormatError(
-                    startValue.startPos,
-                    "The Step Number is not a Number",
-                    context
-                )
+                new WrongTypeError(startValue.startPos, "The Step Number is not a Number", context)
             );
         }
 
@@ -376,7 +364,7 @@ public static class Interpreter
 
         if (context.symbolTable is null)
         {
-            return res.Failure(new InternalError("No symbol Table"));
+            return res.Failure(new InternalInterpreterError("No symbol Table"));
         }
         string varName = node.varNameTok.Value;
 
@@ -467,7 +455,7 @@ public static class Interpreter
         Value valueToCall = res.Regrister(Visit(node.nodeToCall, context));
         if (valueToCall is null)
         {
-            return res.Failure(new InternalError("cast failed for valueToCall "));
+            return res.Failure(new InternalInterpreterError("cast failed for valueToCall "));
         }
         if (res.ShouldReturn())
         {
@@ -566,7 +554,7 @@ public static class Interpreter
 
         if (context.symbolTable is null)
         {
-            return res.Failure(new InternalError("The symboltable is null"));
+            return res.Failure(new InternalInterpreterError("The symboltable is null"));
         }
 
         if (node.ChatchVarName is not null)

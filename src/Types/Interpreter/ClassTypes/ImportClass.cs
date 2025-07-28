@@ -19,7 +19,7 @@ public class ImportClass : Value
             ValueNull.Instance,
             new FuncNotFoundError(
                 argNodes.Count >= 1 ? argNodes[0].startPos : Position.Null,
-                $"No Function {name} found",
+                name,
                 new Context()
             )
         );

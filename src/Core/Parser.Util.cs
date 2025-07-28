@@ -40,7 +40,7 @@ public partial class Parser
     public static bool TryCastToken<T>(
         IToken token,
         out Token<T> result,
-        out InternalError error,
+        out InternalParserError error,
         [CallerMemberName] string membername = "NoMemberName"
     )
     {
@@ -53,7 +53,7 @@ public partial class Parser
         }
 
         result = null!;
-        error = new InternalError(
+        error = new InternalParserError(
             $"Casting the token ({token.GetType()}) to a Token<{typeof(T)}> failed in {membername} / Token: {token}"
         );
 
@@ -62,10 +62,9 @@ public partial class Parser
 
     private List<INode> MakeArgs(ParseResult res)
     {
-
         if (currentToken.IsNotType(TokenType.LPAREN))
         {
-            res.Failure(new ExpectedTokenError(currentToken.StartPos, "expected a '('"));
+            res.Failure(new ExpectedTokenError(currentToken.StartPos, "'('"));
             return [];
         }
 
@@ -98,7 +97,7 @@ public partial class Parser
 
         if (currentToken.IsNotType(TokenType.RPAREN))
         {
-            res.Failure(new ExpectedTokenError(currentToken.StartPos, "expected a ')' or a ','"));
+            res.Failure(new ExpectedTokenError(currentToken.StartPos, "')' or ','"));
             return [];
         }
 

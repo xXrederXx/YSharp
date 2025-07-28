@@ -14,7 +14,7 @@ public partial class Parser
 
         if (currentToken.IsNotMatchingKeyword(KeywordType.IF))
         {
-            return res.Failure(new ExpectedKeywordError(currentToken.StartPos, $"Expected IF"));
+            return res.Failure(new ExpectedKeywordError(currentToken.StartPos, $"IF"));
         }
         // currentToken.IsMatching(TokenType.KEYWORD, KeywordType.IF) is replaced with first run to avoid multiple ifs instead of elifs
         bool firstRun = true;
@@ -38,9 +38,7 @@ public partial class Parser
 
             if (currentToken.IsNotType(TokenType.NEWLINE))
             {
-                return res.Failure(
-                    new InvalidSyntaxError(currentToken.StartPos, "Newline expected")
-                );
+                return res.Failure(new ExpectedNewlineError(currentToken.StartPos));
             }
 
             AdvanceParser(res);
@@ -70,7 +68,7 @@ public partial class Parser
 
         if (currentToken.IsNotType(TokenType.NEWLINE))
         {
-            return res.Failure(new InvalidSyntaxError(currentToken.StartPos, "Newline expected"));
+            return res.Failure(new ExpectedNewlineError(currentToken.StartPos));
         }
 
         AdvanceParser(res);
@@ -97,12 +95,10 @@ public partial class Parser
 
         if (currentToken.IsNotType(TokenType.IDENTIFIER))
         {
-            return res.Failure(
-                new ExpectedTokenError(currentToken.StartPos, "Expected identifier")
-            );
+            return res.Failure(new ExpectedIdnetifierError(currentToken.StartPos));
         }
 
-        if (!TryCastToken(currentToken, out Token<string> varName, out InternalError error))
+        if (!TryCastToken(currentToken, out Token<string> varName, out InternalParserError error))
         {
             return res.Failure(error);
         }
@@ -111,7 +107,7 @@ public partial class Parser
 
         if (currentToken.IsNotType(TokenType.EQ))
         {
-            return res.Failure(new ExpectedTokenError(currentToken.StartPos, "Expected '='"));
+            return res.Failure(new ExpectedTokenError(currentToken.StartPos, "'='"));
         }
 
         AdvanceParser(res);
@@ -124,7 +120,7 @@ public partial class Parser
 
         if (currentToken.IsNotMatchingKeyword(KeywordType.TO))
         {
-            return res.Failure(new ExpectedKeywordError(currentToken.StartPos, "Expected TO"));
+            return res.Failure(new ExpectedKeywordError(currentToken.StartPos, "TO"));
         }
 
         AdvanceParser(res);
@@ -148,7 +144,7 @@ public partial class Parser
 
         if (currentToken.IsNotMatchingKeyword(KeywordType.THEN))
         {
-            return res.Failure(new ExpectedKeywordError(currentToken.StartPos, "Expected THEN"));
+            return res.Failure(new ExpectedKeywordError(currentToken.StartPos, "THEN"));
         }
 
         AdvanceParser(res);
@@ -200,7 +196,7 @@ public partial class Parser
 
         if (currentToken.IsNotType(TokenType.LSQUARE))
         {
-            return res.Failure(new ExpectedTokenError(StartPos, "Expected '['"));
+            return res.Failure(new ExpectedTokenError(StartPos, "'['"));
         }
 
         AdvanceParser(res);
@@ -230,9 +226,7 @@ public partial class Parser
 
             if (currentToken.IsNotType(TokenType.RSQUARE))
             {
-                return res.Failure(
-                    new ExpectedTokenError(currentToken.StartPos, "expected ',' or ']'")
-                );
+                return res.Failure(new ExpectedTokenError(currentToken.StartPos, "',' or ']'"));
             }
 
             AdvanceParser(res);
@@ -243,7 +237,7 @@ public partial class Parser
     private ParseResult IdentifierExpr()
     {
         ParseResult res = new();
-        if (!TryCastToken(currentToken, out Token<string> tok, out InternalError error))
+        if (!TryCastToken(currentToken, out Token<string> tok, out InternalParserError error))
         {
             return res.Failure(error);
         }
@@ -258,12 +252,10 @@ public partial class Parser
         AdvanceParser(res);
         if (currentToken.IsNotType(TokenType.IDENTIFIER))
         {
-            return res.Failure(
-                new ExpectedTokenError(currentToken.StartPos, "Expected IDENTIFIER")
-            );
+            return res.Failure(new ExpectedIdnetifierError(currentToken.StartPos));
         }
 
-        if (!TryCastToken(currentToken, out Token<string> varName, out InternalError errorNameCast))
+        if (!TryCastToken(currentToken, out Token<string> varName, out InternalParserError errorNameCast))
         {
             return res.Failure(errorNameCast);
         }
@@ -296,7 +288,7 @@ public partial class Parser
         Token<string> varNameTok;
         if (currentToken.IsType(TokenType.IDENTIFIER))
         {
-            if (!TryCastToken(currentToken, out Token<string> _varNameTok, out InternalError error))
+            if (!TryCastToken(currentToken, out Token<string> _varNameTok, out InternalParserError error))
             {
                 return res.Failure(error);
             }
@@ -304,7 +296,7 @@ public partial class Parser
             AdvanceParser(res);
             if (currentToken.IsNotType(TokenType.LPAREN))
             {
-                return res.Failure(new ExpectedTokenError(currentToken.StartPos, "expected '('"));
+                return res.Failure(new ExpectedTokenError(currentToken.StartPos, "'('"));
             }
         }
         else
@@ -313,7 +305,7 @@ public partial class Parser
             if (currentToken.IsNotType(TokenType.LPAREN))
             {
                 return res.Failure(
-                    new ExpectedTokenError(currentToken.StartPos, "expected identifier or '('")
+                    new InvalidSyntaxError(currentToken.StartPos, "Expected an identifier or '('")
                 );
             }
         }
@@ -332,9 +324,7 @@ public partial class Parser
 
                 if (currentToken.IsNotType(TokenType.IDENTIFIER))
                 {
-                    return res.Failure(
-                        new ExpectedTokenError(currentToken.StartPos, "expected identifier")
-                    );
+                    return res.Failure(new ExpectedIdnetifierError(currentToken.StartPos));
                 }
                 argNameTok.Add(currentToken);
                 AdvanceParser(res);
@@ -343,14 +333,14 @@ public partial class Parser
             if (currentToken.IsNotType(TokenType.RPAREN))
             {
                 return res.Failure(
-                    new ExpectedTokenError(currentToken.StartPos, "expected ',' or ')'")
+                    new InvalidSyntaxError(currentToken.StartPos, "Expected ',' or ')'")
                 );
             }
         }
         else if (currentToken.IsNotType(TokenType.RPAREN))
         {
             return res.Failure(
-                new ExpectedTokenError(currentToken.StartPos, "expected identifier or ')'")
+                new InvalidSyntaxError(currentToken.StartPos, "Expected an identifier or ')'")
             );
         }
 
@@ -371,7 +361,7 @@ public partial class Parser
         if (currentToken.IsNotType(TokenType.NEWLINE))
         {
             return res.Failure(
-                new ExpectedTokenError(currentToken.StartPos, "expected '->' or newline")
+                new InvalidSyntaxError(currentToken.StartPos, "Expected '->' or newline")
             );
         }
 
@@ -423,13 +413,10 @@ public partial class Parser
                 )
             );
         }
-        if (currentToken is not Token<string> varName)
+
+        if (!TryCastToken(currentToken, out Token<string> varName, out InternalParserError error))
         {
-            return res.Failure(
-                new InternalError(
-                    "Trying to cast the current token to a string token failed in VarAssignExpr"
-                )
-            );
+            return res.Failure(error);
         }
 
         AdvanceParser(res);
@@ -521,7 +508,7 @@ public partial class Parser
 
         if (currentToken.IsNotMatchingKeyword(KeywordType.TRY))
         {
-            return res.Failure(new ExpectedKeywordError(currentToken.StartPos, $"Expected TRY"));
+            return res.Failure(new ExpectedKeywordError(currentToken.StartPos, $"TRY"));
         }
         AdvanceParser(res);
 
@@ -578,7 +565,7 @@ public partial class Parser
                 )
             );
         }
-        if (!TryCastToken(currentToken, out Token<string> token, out InternalError error))
+        if (!TryCastToken(currentToken, out Token<string> token, out InternalParserError error))
         {
             return res.Failure(error);
         }
@@ -697,7 +684,7 @@ public partial class Parser
         return res.Failure(
             new InvalidSyntaxError(
                 tok.StartPos,
-                $"expected int, float, identifier, IF, FOR, WHILE, FUN, '(' or '[' but current token is of type {tok.Type}"
+                $"Expected anything else but current token is of type {tok.Type}"
             )
         );
     }
@@ -740,7 +727,7 @@ public partial class Parser
                 !TryCastToken(
                     currentToken,
                     out Token<TokenNoValueType> opTok,
-                    out InternalError error
+                    out InternalParserError error
                 )
             )
             {
@@ -770,7 +757,7 @@ public partial class Parser
                 !TryCastToken(
                     currentToken,
                     out Token<TokenNoValueType> opTok,
-                    out InternalError error
+                    out InternalParserError error
                 )
             )
             {
@@ -804,7 +791,7 @@ public partial class Parser
                 !TryCastToken(
                     currentToken,
                     out Token<TokenNoValueType> opTok,
-                    out InternalError error
+                    out InternalParserError error
                 )
             )
             {
@@ -889,7 +876,7 @@ public partial class Parser
                 !TryCastToken(
                     currentToken,
                     out Token<TokenNoValueType> opTok,
-                    out InternalError error
+                    out InternalParserError error
                 )
             )
             {
@@ -995,7 +982,7 @@ public partial class Parser
         ParseResult res = new();
         if (currentToken.StartPos.IsNull)
         {
-            return res.Failure(new InternalError("start pos is null"));
+            return res.Failure(new InternalParserError("start pos is null"));
         }
 
         Position StartPos = currentToken.StartPos;

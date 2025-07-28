@@ -12,16 +12,12 @@ public static class ValueHelper
         {
             return ErrorNull.Instance;
         }
-        return new NumArgsError(
-            Position.Null,
-            $"Should have {length} args not {argValue.Count}",
-            context
-        );
+        return new NumArgsError(Position.Null, length, argValue.Count, context);
     }
 
     public static Error IsRightType(List<Type> types, List<Value> argValue, Context context)
     {
-        if (!(types.Count == 1 || types.Count == argValue.Count))
+        if (types.Count != 1 && types.Count != argValue.Count)
         {
             return new InternalError("types must have one element or match size of argValue");
         }
