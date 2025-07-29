@@ -1,5 +1,3 @@
-using System;
-
 namespace YSharp.Types.Interpreter;
 
 public class SymbolTable
