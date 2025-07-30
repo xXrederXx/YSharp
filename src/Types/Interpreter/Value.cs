@@ -10,7 +10,7 @@ public class Value
 
     public Value() { }
 
-    public Value SetPos(Position startPos, Position endPos)
+    public Value SetPos(in Position startPos, in Position endPos)
     { // set the positions
         this.startPos = startPos;
         this.endPos = endPos;

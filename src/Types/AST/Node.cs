@@ -55,7 +55,7 @@ public class StringNode(Token<string> tok) : INode
 }
 
 // This node represents a list of elements
-public class ListNode(List<INode> elementNodes, Position posStart, Position posEnd) : INode
+public class ListNode(List<INode> elementNodes, in Position posStart, in Position posEnd) : INode
 {
     public readonly ImmutableList<INode> elementNodes = elementNodes.ToImmutableList();
 
@@ -265,7 +265,7 @@ public class CallNode(INode nodeToCall, List<INode> argNodes) : INode
 }
 
 // This node represents a return statement
-public class ReturnNode(INode? nodeToReturn, Position startPos, Position endPos) : INode
+public class ReturnNode(INode? nodeToReturn, in Position startPos, in Position endPos) : INode
 {
     public readonly INode? nodeToReturn = nodeToReturn;
 
@@ -276,7 +276,7 @@ public class ReturnNode(INode? nodeToReturn, Position startPos, Position endPos)
 }
 
 // This node represents a continue statement
-public class ContinueNode(Position startPos, Position endPos) : INode
+public class ContinueNode(in Position startPos, in Position endPos) : INode
 {
     public Position StartPos { get; set; } = startPos;
     public Position EndPos { get; set; } = endPos;
@@ -285,7 +285,7 @@ public class ContinueNode(Position startPos, Position endPos) : INode
 }
 
 // This node represents a break statement
-public class BreakNode(Position startPos, Position endPos) : INode
+public class BreakNode(in Position startPos, in Position endPos) : INode
 {
     public Position StartPos { get; set; } = startPos;
     public Position EndPos { get; set; } = endPos;
@@ -306,7 +306,7 @@ public class TryCatchNode(INode tryNode, INode catchNode, Token<string> catchVar
     public override string ToString() => $"Try {TryNode} Catch {CatchNode} as {ChatchVarName}";
 }
 
-public class ImportNode(Token<string> pathTok, Position startPos, Position endPos) : INode
+public class ImportNode(Token<string> pathTok, in Position startPos, in Position endPos) : INode
 {
     public Position StartPos { get; set; } = startPos;
     public Position EndPos { get; set; } = endPos;

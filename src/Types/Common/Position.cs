@@ -10,7 +10,7 @@ public readonly struct Position : IEquatable<Position>
     public readonly int Index;
 
     [FieldOffset(4)]
-    public readonly uint packed;
+    public readonly uint packed; 
 
     private const int LineShift = 18;
     private const int ColumnShift = 8;

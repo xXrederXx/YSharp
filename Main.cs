@@ -15,7 +15,7 @@ internal class Start
 {
     private static void Main(string[] args)
     {
-        RunTest();
+        TestRunner("After Position rework and using in");
     }
 
     private static void RunTest()

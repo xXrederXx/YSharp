@@ -97,7 +97,7 @@ public class Token<T> : IToken
     public Position EndPos { get; }
 
     // Constructor
-    public Token(TokenType type, T value, Position startPos, Position endPos)
+    public Token(TokenType type, T value, in Position startPos, in Position endPos)
     {
         Type = type;
         Value = value;
@@ -114,7 +114,7 @@ public class Token<T> : IToken
         }
     }
 
-    public Token(TokenType type, Position startPos, Position endPos)
+    public Token(TokenType type, in Position startPos, in Position endPos)
         : this(type, default(T)!, startPos, endPos)
     {
         if (typeof(T) != typeof(TokenNoValueType))

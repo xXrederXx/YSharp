@@ -29,8 +29,8 @@ public static class BenchReportWriter
 
     public static void UpdateFiles<T>(string changeDescription)
     {
-        UpdateDetails<T>(out int UsedVersion);
-        UpdateHistory<T>(changeDescription, UsedVersion);
+        // UpdateDetails<T>(out int UsedVersion);
+        UpdateHistory<T>(changeDescription, 1);
         //UpdateSummary<T>(changeDescription, UsedVersion);
     }
 

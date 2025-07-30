@@ -9,7 +9,7 @@ public class Context
     public readonly Position parentEntryPos;
     public SymbolTable? symbolTable;
 
-    public Context(string displayName, Context? parent, Position parentEntryPos)
+    public Context(string displayName, Context? parent, in Position parentEntryPos)
     {
         this.displayName = displayName;
         this.parentEntryPos = parentEntryPos;
