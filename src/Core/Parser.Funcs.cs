@@ -980,10 +980,6 @@ public partial class Parser
     private ParseResult Statements()
     {
         ParseResult res = new();
-        if (currentToken.StartPos.IsNull)
-        {
-            return res.Failure(new InternalParserError("start pos is null"));
-        }
 
         Position StartPos = currentToken.StartPos;
         List<INode> AllStatements = [];
@@ -1011,10 +1007,6 @@ public partial class Parser
             }
 
             AllStatements.Add(nextStatement);
-        }
-        if (currentToken.EndPos.IsNull)
-        {
-            return res.Success(new ListNode(AllStatements, StartPos, StartPos));
         }
         return res.Success(new ListNode(AllStatements, StartPos, currentToken.EndPos));
     }

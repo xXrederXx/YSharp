@@ -105,8 +105,7 @@ public class Token<T> : IToken
         if (!startPos.IsNull)
         {
             StartPos = startPos;
-            EndPos = StartPos; // If there is no end Position just assume it to be 1 char
-            EndPos.Advance(' ');
+            EndPos = StartPos.Advance(' ');
         }
 
         if (!endPos.IsNull)

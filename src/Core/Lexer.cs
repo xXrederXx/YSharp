@@ -3,6 +3,7 @@ using System.Text;
 using FastEnumUtility;
 using YSharp.Types.Common;
 using YSharp.Types.Lexer;
+using YSharp.Utils;
 
 namespace YSharp.Core;
 
@@ -19,7 +20,8 @@ public class Lexer
         this.text = text;
 
         // The .MaxValue enshures that the first advance call overflows to
-        pos = new Position(-1, 0, ushort.MaxValue, fileName);
+        byte FileId = FileNameRegistry.GetFileId(fileName);
+        pos = new Position(-1, 0, 0, FileId);
         Advance();
     }
 
@@ -27,7 +29,7 @@ public class Lexer
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private void Advance()
     {
-        pos.Advance(current_char);
+        pos = pos.Advance(current_char);
         current_char = pos.Index < text.Length ? text[pos.Index] : char.MaxValue;
     }
 
@@ -356,10 +358,7 @@ public class Lexer
             else
             {
                 // Not a valid token, return an error
-                return (
-                    new List<IToken>(),
-                    new IllegalCharError(pos, current_char)
-                );
+                return (new List<IToken>(), new IllegalCharError(pos, current_char));
             }
         }
         tokens.Add(new Token<TokenNoValueType>(TokenType.EOF, pos, pos)); // Add the End Of File token

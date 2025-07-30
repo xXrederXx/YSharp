@@ -1,75 +1,78 @@
-using YSharp.Utils;
+using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 
 namespace YSharp.Types.Common;
 
-public struct Position : IEquatable<Position>
+[StructLayout(LayoutKind.Explicit, Size = 8)]
+public readonly struct Position : IEquatable<Position>
 {
+    [FieldOffset(0)]
+    public readonly int Index;
+
+    [FieldOffset(4)]
+    public readonly uint packed;
+
+    private const int LineShift = 18;
+    private const int ColumnShift = 8;
+    private const int FileIdShift = 0;
+
+    private const uint LineMaskRaw = 0x3FFF; // 14 bits
+    private const uint ColumnMaskRaw = 0x3FF; // 10 bits
+    private const uint FileIdMaskRaw = 0xFF; // 8 bits
+
+    public ushort Line => (ushort)((packed >> LineShift) & LineMaskRaw);
+    public ushort Column => (ushort)((packed >> ColumnShift) & ColumnMaskRaw);
+    public byte FileId => (byte)((packed >> FileIdShift) & FileIdMaskRaw);
+
     public static readonly Position Null = new();
+    public readonly bool IsNull => packed == 0;
 
-    // Auto-properties for better memory layout
-    public int Index; // 4 bytes -> Up to 2,147,483,647
-    public ushort Line; // 2 bytes -> Up to 65,535
-    public ushort Column; // 2 bytes -> Up to 65,535
-    public readonly byte FileId; // 1 byte -> Up to 255
-
-    // Toatal 9 bytes
-
-    // Constructor for a valid position
-    public Position(int index, ushort line, ushort column, string fileName)
+    public Position(int index, ushort line, ushort column, byte fileId)
     {
+        if (line > LineMaskRaw)
+            throw new ArgumentOutOfRangeException(
+                nameof(line),
+                $"Max value is {LineMaskRaw} (14 bits)"
+            );
+        if (column > ColumnMaskRaw)
+            throw new ArgumentOutOfRangeException(
+                nameof(column),
+                $"Max value is {ColumnMaskRaw} (10 bits) / {column} > {ColumnMaskRaw}"
+            );
+
         Index = index;
-        Line = line;
-        Column = column;
-        FileId = FileNameRegistry.GetFileId(fileName);
+        packed = ((uint)line << LineShift) | ((uint)column << ColumnShift) | fileId;
     }
 
-    // Default constructor for a "null" position
-    public Position()
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public readonly Position Advance(char currentChar)
     {
-        Index = 0;
-        Line = 0;
-        Column = 0;
-        FileId = 0;
-    }
+        ushort line = Line;
+        ushort col = Column;
 
-    // Advance to the next character
-    public void Advance(char currentChar)
-    {
-        Index++;
-        Column++;
-        // Adjust for line breaks
         if (currentChar is '\n' or '\r')
         {
-            Line++;
-            Column = 0;
+            line++;
+            col = 0;
         }
+        else
+        {
+            col++;
+        }
+
+        return new Position(Index + 1, line, col, FileId);
     }
 
-    // String representation for debugging
     public override readonly string ToString() =>
         $"[Idx: {Index}, Ln: {Line}, Col: {Column}, FID: {FileId}]";
 
-    public override readonly bool Equals(object? obj)
-    {
-        return obj is Position posObj && Equals(posObj);
-    }
+    public override readonly bool Equals(object? obj) => obj is Position posObj && Equals(posObj);
 
-    public override readonly int GetHashCode()
-    {
-        return HashCode.Combine(Index, Line, Column, FileId);
-    }
+    public override readonly int GetHashCode() => HashCode.Combine(Index, packed);
 
-    public readonly bool Equals(Position other)
-    {
-        return Index == other.Index
-            && Line == other.Line
-            && Column == other.Column
-            && FileId == other.FileId;
-    }
+    public readonly bool Equals(Position other) => Index == other.Index && packed == other.packed;
 
     public static bool operator ==(Position left, Position right) => left.Equals(right);
 
     public static bool operator !=(Position left, Position right) => !left.Equals(right);
-
-    public readonly bool IsNull => FileId == 0;
 }
