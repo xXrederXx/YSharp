@@ -12,7 +12,7 @@ namespace YSharp.Benchmarks;
 public static class BenchHelp
 {
     public static readonly string SampleText =
-        "FUN func(a, b, c, d, e, f, g); PRINT(a + b + c); VAR x = d + e + f + g; PRINT(x); END; 1 + 2 FUN add(a, b); RETURN a + b;END;FUN adda(a, b);  RETURN a + b;END;;;1+2; VAR list = [1,2,3,4,5,6,6,7,7,8,8,8,9,9,9,4,42,3243,43,64535,6434,43,3]; 1 + 2 + 3+ 44 +45 + 3 + 43 +4";
+        "FUN func(a, b, c, d, e, f, g);\n PRINT(a + b + c); VAR x =d+ e + f + g; PRINT(x); END; 1 + 2 FUN add(a, b); RETURN a + b;END;FUN adda(a, b);  RETURN a + b;END;;;1+2; VAR list = [1,2,3,4,5,6,6,7,7,8,8,8,9,9,9,4,42,3243,43,64535,6434,43,3]; 1 + 2 + 3+ 44 +45 + 3 + 43 +4";
 
     public static readonly string Text5000Char;
     public static readonly string Text10000Char;
