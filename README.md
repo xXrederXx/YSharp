@@ -1,4 +1,4 @@
-# Welcome to YSharp Documentation
+# Welcome to YSharp
 
 **Version:** 0.1.0  
 **Author:** Gerry  
@@ -27,12 +27,12 @@ This language is ideal for scripting, learning programming fundamentals, and exp
 
 | Section                                   | Description                                                      |
 | ----------------------------------------- | ---------------------------------------------------------------- |
-| [Getting Started](getting-started/)       | Install the interpreter, run your first script, and use the REPL |
-| [Language Reference](language-reference/) | Learn the syntax, types, functions, variables, and control flow  |
-| [Built-ins](builtins/)                    | Full list of built-in functions and keywords                     |
-| [Guides](guides/)                         | Hands-on articles that solve real problems                       |
-| [Examples](examples/)                     | Sample programs you can study or copy                            |
-| [Limitations](limitations.md)             | Known limitations and missing features                           |
+| [Getting Started](./Docs/getting-started/)       | Install the interpreter, run your first script, and use the REPL |
+| [Language Reference](./Docs/language-reference/) | Learn the syntax, types, functions, variables, and control flow  |
+| [Built-ins](./Docs/builtins/)                    | Full list of built-in functions and keywords                     |
+| [Guides](./Docs/guides/)                         | Hands-on articles that solve real problems                       |
+| [Examples](./Docs/examples/)                     | Sample programs you can study or copy                            |
+| [Limitations](./Docs/limitations.md)             | Known limitations and missing features                           |
 
 
 ## ✅ Quick Example
@@ -66,4 +66,4 @@ This language is in development and under active improvement. Expect changes and
 
 ## 🧭 Start Here
 
-👉 [Getting Started →](getting-started/)
+👉 [Getting Started →](./Docs/getting-started/)
