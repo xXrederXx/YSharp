@@ -15,7 +15,7 @@ internal class Start
 {
     private static void Main(string[] args)
     {
-        TestRunner("After Position rework and using in");
+        BenchHelp.Run<RunTimeBench>("After Position into one ulong");
     }
 
     private static void RunTest()

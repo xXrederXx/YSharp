@@ -21,8 +21,8 @@ public class Lexer
 
         // The .MaxValue enshures that the first advance call overflows to
         byte FileId = FileNameRegistry.GetFileId(fileName);
-        pos = new Position(-1, 0, 0, FileId);
-        Advance();
+        pos = new Position(0, 0, 0, FileId);
+        current_char = pos.Index < text.Length ? text[pos.Index] : char.MaxValue;
     }
 
     // this uptades to the next charachter

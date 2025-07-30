@@ -7,28 +7,30 @@ namespace YSharp.Types.Common;
 public readonly struct Position : IEquatable<Position>
 {
     [FieldOffset(0)]
-    public readonly int Index;
+    private readonly ulong _data;
 
-    [FieldOffset(4)]
-    public readonly uint packed; 
-
+    private const int IndexShift = 32;
     private const int LineShift = 18;
     private const int ColumnShift = 8;
     private const int FileIdShift = 0;
 
-    private const uint LineMaskRaw = 0x3FFF; // 14 bits
-    private const uint ColumnMaskRaw = 0x3FF; // 10 bits
-    private const uint FileIdMaskRaw = 0xFF; // 8 bits
+    private const ulong IndexMaskRaw = 0xFFFFFFFFUL; // 32 bits
+    private const ulong LineMaskRaw = 0x3FFFUL; // 14 bits
+    private const ulong ColumnMaskRaw = 0x3FFUL; // 10 bits
+    private const ulong FileIdMaskRaw = 0xFFUL; // 8 bits
 
-    public ushort Line => (ushort)((packed >> LineShift) & LineMaskRaw);
-    public ushort Column => (ushort)((packed >> ColumnShift) & ColumnMaskRaw);
-    public byte FileId => (byte)((packed >> FileIdShift) & FileIdMaskRaw);
+    public int Index => (int)((_data >> IndexShift) & IndexMaskRaw);
+    public ushort Line => (ushort)((_data >> LineShift) & LineMaskRaw);
+    public ushort Column => (ushort)((_data >> ColumnShift) & ColumnMaskRaw);
+    public byte FileId => (byte)((_data >> FileIdShift) & FileIdMaskRaw);
 
     public static readonly Position Null = new();
-    public readonly bool IsNull => packed == 0;
+    public readonly bool IsNull => _data == 0;
 
     public Position(int index, ushort line, ushort column, byte fileId)
     {
+        if (index < 0)
+            throw new ArgumentOutOfRangeException(nameof(index), "Index must be non-negative.");
         if (line > LineMaskRaw)
             throw new ArgumentOutOfRangeException(
                 nameof(line),
@@ -40,8 +42,11 @@ public readonly struct Position : IEquatable<Position>
                 $"Max value is {ColumnMaskRaw} (10 bits) / {column} > {ColumnMaskRaw}"
             );
 
-        Index = index;
-        packed = ((uint)line << LineShift) | ((uint)column << ColumnShift) | fileId;
+        _data =
+            ((ulong)(uint)index << IndexShift)
+            | ((ulong)line << LineShift)
+            | ((ulong)column << ColumnShift)
+            | ((ulong)fileId << FileIdShift);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -68,9 +73,9 @@ public readonly struct Position : IEquatable<Position>
 
     public override readonly bool Equals(object? obj) => obj is Position posObj && Equals(posObj);
 
-    public override readonly int GetHashCode() => HashCode.Combine(Index, packed);
+    public override readonly int GetHashCode() => _data.GetHashCode();
 
-    public readonly bool Equals(Position other) => Index == other.Index && packed == other.packed;
+    public readonly bool Equals(Position other) => _data == other._data;
 
     public static bool operator ==(Position left, Position right) => left.Equals(right);
 
