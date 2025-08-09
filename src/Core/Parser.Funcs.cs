@@ -237,42 +237,64 @@ public partial class Parser
     private ParseResult IdentifierExpr()
     {
         ParseResult res = new();
-        if (!TryCastToken(currentToken, out Token<string> tok, out InternalParserError error))
+        INode parent = NodeNull.Instance;
+
+        if (
+            !TryCastToken(
+                currentToken,
+                out Token<string> identifierTok,
+                out InternalParserError error
+            )
+        )
         {
             return res.Failure(error);
         }
-
         AdvanceParser(res);
-        if (currentToken.IsNotType(TokenType.DOT)) // normal identifier
+
+        if (currentToken.IsType(TokenType.LPAREN))
         {
-            return res.Success(new VarAccessNode(tok));
+            List<INode> args = MakeArgs(res);
+            if (res.HasError)
+            {
+                return res;
+            }
+            parent = new CallNode(new VarAccessNode(identifierTok), args);
+        }
+        else
+        {
+            parent = new VarAccessNode(identifierTok);
         }
 
-        // there is a dot notaited identifier
-        AdvanceParser(res);
-        if (currentToken.IsNotType(TokenType.IDENTIFIER))
+        while (currentToken.IsType(TokenType.DOT))
         {
-            return res.Failure(new ExpectedIdnetifierError(currentToken.StartPos));
-        }
+            AdvanceParser(res);
+            if (
+                !TryCastToken(
+                    currentToken,
+                    out Token<string> dotIdentifierTok,
+                    out InternalParserError dotError
+                )
+            )
+            {
+                return res.Failure(dotError);
+            }
+            AdvanceParser(res);
 
-        if (!TryCastToken(currentToken, out Token<string> varName, out InternalParserError errorNameCast))
-        {
-            return res.Failure(errorNameCast);
+            if (currentToken.IsType(TokenType.LPAREN))
+            {
+                List<INode> args = MakeArgs(res);
+                if (res.HasError)
+                {
+                    return res;
+                }
+                parent = new DotCallNode(dotIdentifierTok, args, parent);
+            }
+            else
+            {
+                parent = new DotVarAccessNode(dotIdentifierTok, parent);
+            }
         }
-
-        AdvanceParser(res);
-        if (currentToken.IsNotType(TokenType.LPAREN)) // it is a variable
-        {
-            return res.Success(new DotVarAccessNode(varName, new VarAccessNode(tok)));
-        }
-
-        // it is a function
-        List<INode> args = MakeArgs(res);
-        if (res.HasError)
-        {
-            return res;
-        }
-        return res.Success(new DotCallNode(varName, args, new VarAccessNode(tok)));
+        return res.Success(parent);
     }
 
     private ParseResult FuncDef()
@@ -288,7 +310,13 @@ public partial class Parser
         Token<string> varNameTok;
         if (currentToken.IsType(TokenType.IDENTIFIER))
         {
-            if (!TryCastToken(currentToken, out Token<string> _varNameTok, out InternalParserError error))
+            if (
+                !TryCastToken(
+                    currentToken,
+                    out Token<string> _varNameTok,
+                    out InternalParserError error
+                )
+            )
             {
                 return res.Failure(error);
             }
@@ -689,33 +717,11 @@ public partial class Parser
         );
     }
 
-    private ParseResult Call()
-    {
-        ParseResult res = new();
-
-        INode atom = res.Register(Atom());
-        if (res.HasError)
-        {
-            return res;
-        }
-
-        if (currentToken.IsType(TokenType.LPAREN))
-        {
-            List<INode> args = MakeArgs(res);
-            if (res.HasError)
-            {
-                return res;
-            }
-            return res.Success(new CallNode(atom, args));
-        }
-        return res.Success(atom);
-    }
-
     private ParseResult Power()
     {
         ParseResult res = new();
 
-        INode left = res.Register(Call());
+        INode left = res.Register(Atom());
         if (res.HasError)
         {
             return res;
