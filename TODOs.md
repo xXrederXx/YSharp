@@ -4,7 +4,8 @@
 
 - Reduce object instantiation
 - Rework the dot notation in the parser
-
+- Make ELIF work
+  
 ## Implementation
 - [ ] Implement call logic in `Internal/Interpreter.cs` (see //TODO comment)
 - [ ] Implement execution methods for built-in functions in `Types/ValueTypes/FunctionTypes/BuiltInFunction.cs`
