@@ -9,7 +9,13 @@
 
   <ItemGroup>
     <PackageReference Include="BenchmarkDotNet" Version="0.15.2" />
+    <PackageReference Include="CsvHelper" Version="33.1.0" />
     <PackageReference Include="FastEnum" Version="2.0.5" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Docs\Benchmarks\" />
+    <Folder Include="Docs\Benchmarks\Data\" />
   </ItemGroup>
 
 </Project>
