@@ -16,11 +16,8 @@ public partial class Parser
         {
             return res.Failure(new ExpectedKeywordError(currentToken.StartPos, $"IF"));
         }
-        // currentToken.IsMatching(TokenType.KEYWORD, KeywordType.IF) is replaced with first run to avoid multiple ifs instead of elifs
-        bool firstRun = true;
-        while (firstRun || currentToken.IsMatchingKeyword(KeywordType.ELIF))
+        do
         {
-            firstRun = false;
             AdvanceParser(res);
 
             INode caseCondition = res.Register(Statement());
@@ -52,16 +49,18 @@ public partial class Parser
 
             cases.Add(new SubIfNode(caseCondition, caseBodyNode));
 
-            if (currentToken.IsMatchingKeyword(KeywordType.END))
+            if (currentToken.IsNotMatchingKeyword(KeywordType.END))
             {
-                AdvanceParser(res);
-                return res.Success(new IfNode(cases, elseCase));
+                return res.Failure(new ExpectedKeywordError(currentToken.StartPos, "END"));
             }
+            AdvanceParser(res);
+            SkipNewLines(res);
         }
+        while (currentToken.IsMatchingKeyword(KeywordType.ELIF));
 
         if (currentToken.IsNotMatchingKeyword(KeywordType.ELSE))
         {
-            return res.Failure(new ExpectedKeywordError(currentToken.StartPos, "END or ELSE"));
+            return res.Success(new IfNode(cases, elseCase));
         }
 
         AdvanceParser(res);
@@ -548,10 +547,7 @@ public partial class Parser
             return res;
         }
 
-        while (currentToken.IsType(TokenType.NEWLINE))
-        {
-            AdvanceParser(res);
-        }
+        SkipNewLines(res);
 
         if (currentToken.IsMatchingKeyword(KeywordType.CATCH))
         {
@@ -993,10 +989,7 @@ public partial class Parser
 
         while (currentToken.IsNotType(TokenType.EOF)) // repeat until no more lines are available
         {
-            while (currentToken.IsType(TokenType.NEWLINE)) // skip all new Lines
-            {
-                AdvanceParser(res);
-            }
+            SkipNewLines(res);
             if (currentToken.IsType(TokenType.EOF))
             {
                 break;

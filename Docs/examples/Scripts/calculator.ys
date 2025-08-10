@@ -1,23 +1,22 @@
 PRINT("Number 1")
-VAR x = INPUT()
-VAR x = x.ToNumber()
+VAR x = INPUT().ToNumber()
 PRINT("Operator")
 VAR op = INPUT()
 PRINT("Number 2")
-VAR y = INPUT()
-VAR y = y.ToNumber()
+VAR y = INPUT().ToNumber()
 
 IF op == "+" THEN
     PRINT(x + y)
 END
-
-IF op == "-" THEN
+ELIF op == "-" THEN
     PRINT(x - y)
 END
-
-IF op == "*" THEN
+ELIF op == "*" THEN
     PRINT(x * y)
 END
-IF op == "/" THEN
+ELIF op == "/" THEN
     PRINT(x / y)
+END
+ELSE
+    PRINT("Invalid Op")
 END

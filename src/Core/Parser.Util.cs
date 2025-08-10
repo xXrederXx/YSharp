@@ -105,4 +105,12 @@ public partial class Parser
 
         return argNodes; // empty node just for the parseresult.succses
     }
+
+    private void SkipNewLines(ParseResult res)
+    {
+        while (currentToken.IsType(TokenType.NEWLINE))
+        {
+            AdvanceParser(res);
+        }
+    }
 }
