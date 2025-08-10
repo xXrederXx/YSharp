@@ -17,13 +17,19 @@ public static class BenchReportWriter
     static BenchReportWriter()
     {
         if (!Directory.Exists(MdFolder))
+        {
             Directory.CreateDirectory(MdFolder);
+        }
 
         if (!File.Exists(SummaryPath))
+        {
             File.Create(SummaryPath).Dispose();
+        }
 
         if (!File.Exists(HistoryPath))
+        {
             File.Create(HistoryPath).Dispose();
+        }
     }
 
     public static void UpdateFiles<T>(string changeDescription)
@@ -33,34 +39,101 @@ public static class BenchReportWriter
 
     private static void UpdateDataFiles<T>()
     {
-        var newData = GetData<T>();
+        BenchData[] newData = GetLatestData<T>();
+        BenchData[] oldData;
+        BenchData[] bestTimeData;
+        BenchData[] bestMemData;
 
-        string oldData;
         string NewPath = NewDataPath<T>();
         string OldPath = OldDataPath<T>();
+        string bestTimePath = BestTimeDataPath<T>();
+        string BestMemPath = BestMemDataPath<T>();
 
-        if (!File.Exists(NewPath))
-            File.Create(NewPath).Dispose();
-        if (!File.Exists(OldPath))
-            File.Create(OldPath).Dispose();
+        CheckFileExist(NewPath);
+        CheckFileExist(OldPath);
+        CheckFileExist(bestTimePath);
+        CheckFileExist(BestMemPath);
 
+        // Get Old Data
         using (var reader = new StreamReader(NewPath))
-            oldData = reader.ReadToEnd();
+        {
+            oldData = StringToBenchDataList(reader.ReadToEnd());
+        }
 
+        using (var reader = new StreamReader(bestTimePath))
+        {
+            string text = reader.ReadToEnd();
+            if (text == string.Empty)
+            {
+                bestTimeData = newData;
+            }
+            else
+            {
+                bestTimeData = StringToBenchDataList(text);
+            }
+        }
+
+        using (var reader = new StreamReader(BestMemPath))
+        {
+            string text = reader.ReadToEnd();
+            if (text == string.Empty)
+            {
+                bestMemData = newData;
+            }
+            else
+            {
+                bestMemData = StringToBenchDataList(text);
+            }
+        }
+
+        if (ValueToDouble(newData.Last().Mean) < ValueToDouble(bestTimeData.Last().Mean))
+        {
+            bestTimeData = newData;
+        }
+        if (ValueToDouble(newData.Last().Allocated) < ValueToDouble(bestTimeData.Last().Allocated))
+        {
+            bestMemData = newData;
+        }
+
+        // Write new data
         using (var writer = new StreamWriter(OldPath))
-            writer.Write(oldData);
+        {
+            writer.Write(BenchDataListToString(oldData));
+        }
 
         using (var writer = new StreamWriter(NewPath))
-            writer.Write(ListToString(newData));
+        {
+            writer.Write(BenchDataListToString(newData));
+        }
+
+        using (var writer = new StreamWriter(bestTimePath))
+        {
+            writer.Write(BenchDataListToString(bestTimeData));
+        }
+
+        using (var writer = new StreamWriter(BestMemPath))
+        {
+            writer.Write(BenchDataListToString(bestMemData));
+        }
     }
 
-    private static string NewDataPath<T>() =>
-        Path.Combine(DataFolder, "new-" + typeof(T).Name + ".csv");
+    private static double ValueToDouble(string input)
+    {
+        string numericPart = new string(
+            input.TakeWhile(c => char.IsDigit(c) || c == '.' || c == ',').ToArray()
+        );
+        return double.Parse(numericPart, System.Globalization.CultureInfo.InvariantCulture);
+    }
 
-    private static string OldDataPath<T>() =>
-        Path.Combine(DataFolder, "old-" + typeof(T).Name + ".csv");
+    private static void CheckFileExist(string path)
+    {
+        if (!File.Exists(path))
+        {
+            File.Create(path).Dispose();
+        }
+    }
 
-    private static string ListToString(BenchData[] datas)
+    private static string BenchDataListToString(BenchData[] datas)
     {
         string str = "Method;Mean;Error;StdDev;Gen0;Gen1;Gen2;Allocated\n";
         foreach (BenchData bench in datas)
@@ -70,7 +143,23 @@ public static class BenchReportWriter
         return str;
     }
 
-    private static BenchData[] GetData<T>()
+    private static BenchData[] StringToBenchDataList(string data)
+    {
+        CsvConfiguration csvConfig = new CsvConfiguration(CultureInfo.CurrentCulture)
+        {
+            HasHeaderRecord = true,
+        };
+        BenchData[] records;
+        using (var reader = new StringReader(data))
+        using (var csv = new CsvReader(reader, csvConfig))
+        {
+            records = csv.GetRecords<BenchData>().ToArray();
+        }
+
+        return records;
+    }
+
+    private static BenchData[] GetLatestData<T>()
     {
         string path = Path.Combine(
             "BenchmarkDotNet.Artifacts",
@@ -82,20 +171,28 @@ public static class BenchReportWriter
         {
             return [];
         }
-
-        CsvConfiguration csvConfig = new CsvConfiguration(CultureInfo.CurrentCulture)
-        {
-            HasHeaderRecord = true,
-        };
-        BenchData[] records;
+        string text;
         using (var reader = new StreamReader(path))
-        using (var csv = new CsvReader(reader, csvConfig))
         {
-            records = csv.GetRecords<BenchData>().ToArray();
+            text = reader.ReadToEnd();
         }
+
+        BenchData[] records = StringToBenchDataList(text);
         System.Console.WriteLine(string.Join(", ", records.ToList()));
         return records;
     }
+
+    private static string BestTimeDataPath<T>() =>
+        Path.Combine(DataFolder, "best-time-" + typeof(T).Name + ".csv");
+
+    private static string BestMemDataPath<T>() =>
+        Path.Combine(DataFolder, "best-Mem-" + typeof(T).Name + ".csv");
+
+    private static string NewDataPath<T>() =>
+        Path.Combine(DataFolder, "new-" + typeof(T).Name + ".csv");
+
+    private static string OldDataPath<T>() =>
+        Path.Combine(DataFolder, "old-" + typeof(T).Name + ".csv");
 }
 
 record BenchData(
