@@ -113,4 +113,24 @@ public partial class Parser
             AdvanceParser(res);
         }
     }
+
+    private ParseResult ShortendVarAssignHelper(Token<string> varName, TokenType type)
+    {
+        ParseResult res = new();
+
+        AdvanceParser(res);
+        INode expr = res.Register(Expression()); // this gets the "value" of the variable
+        if (res.HasError)
+        {
+            return res;
+        }
+
+        // This converts varName += Expr to varName = varName + Expr
+        INode converted = new BinOpNode(
+            new VarAccessNode(varName),
+            new Token<TokenNoValueType>(type, expr.StartPos, expr.StartPos),
+            expr
+        );
+        return res.Success(new VarAssignNode(varName, converted));
+    }
 }

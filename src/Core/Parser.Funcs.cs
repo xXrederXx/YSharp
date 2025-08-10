@@ -55,8 +55,7 @@ public partial class Parser
             }
             AdvanceParser(res);
             SkipNewLines(res);
-        }
-        while (currentToken.IsMatchingKeyword(KeywordType.ELIF));
+        } while (currentToken.IsMatchingKeyword(KeywordType.ELIF));
 
         if (currentToken.IsNotMatchingKeyword(KeywordType.ELSE))
         {
@@ -401,26 +400,6 @@ public partial class Parser
         return res.Success(new FuncDefNode(varNameTok, argNameTok, body, false));
     }
 
-    private ParseResult ShortendVarAssignHelper(Token<string> varName, TokenType type)
-    {
-        ParseResult res = new();
-
-        AdvanceParser(res);
-        INode expr = res.Register(Expression()); // this gets the "value" of the variable
-        if (res.HasError)
-        {
-            return res;
-        }
-
-        // This converts varName += Expr to varName = varName + Expr
-        INode converted = new BinOpNode(
-            new VarAccessNode(varName),
-            new Token<TokenNoValueType>(type, expr.StartPos, expr.StartPos),
-            expr
-        );
-        return res.Success(new VarAssignNode(varName, converted));
-    }
-
     private ParseResult VarAssignExpr()
     {
         ParseResult res = new();
@@ -469,6 +448,7 @@ public partial class Parser
         // look if it is increment or decrement
         if (currentToken.IsType(TokenType.PP))
         {
+            AdvanceParser(res);
             return res.Success(
                 new VarAssignNode(
                     varName,
@@ -489,6 +469,7 @@ public partial class Parser
         }
         if (currentToken.IsType(TokenType.MM))
         {
+            AdvanceParser(res);
             return res.Success(
                 new VarAssignNode(
                     varName,
