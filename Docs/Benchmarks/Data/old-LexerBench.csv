@@ -1,5 +1,5 @@
 Method;Mean;Error;StdDev;Gen0;Gen1;Gen2;Allocated
-LexerBenchmarkS;118.6 μs;1.05 μs;0.93 μs;14.0381;3.6621;0.0000;229.53 KB
-LexerBenchmarkM;239.8 μs;2.72 μs;2.55 μs;28.0762;10.9863;0.0000;461.63 KB
-LexerBenchmarkL;3,340.9 μs;65.58 μs;104.02 μs;175.7813;171.8750;66.4063;2179.39 KB
-LexerBenchmarkXL;5,974.6 μs;113.99 μs;148.21 μs;335.9375;328.1250;125.0000;4357.43 KB
+LexerBenchmarkS;122.1 μs;0.51 μs;0.40 μs;13.9160;3.6621;0.0000;229.53 KB
+LexerBenchmarkM;251.6 μs;1.95 μs;1.83 μs;27.8320;10.7422;0.0000;461.63 KB
+LexerBenchmarkL;3,338.4 μs;66.74 μs;111.51 μs;175.7813;171.8750;66.4063;2179.39 KB
+LexerBenchmarkXL;6,128.3 μs;121.09 μs;188.51 μs;335.9375;328.1250;125.0000;4357.43 KB

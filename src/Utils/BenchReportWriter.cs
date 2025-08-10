@@ -52,13 +52,13 @@ public static class BenchReportWriter
             BenchData latest = latestData[i];
             BenchData diff = new BenchData(
                 latest.Method,
-                (ValueToDouble(latest.Mean) - ValueToDouble(old.Mean)).ToString() + "us",
-                (ValueToDouble(latest.Error) - ValueToDouble(old.Error)).ToString() + "us",
-                (ValueToDouble(latest.StdDev) - ValueToDouble(old.StdDev)).ToString() + "us",
-                (ValueToDouble(latest.Gen0) - ValueToDouble(old.Gen0)).ToString(),
-                (ValueToDouble(latest.Gen1) - ValueToDouble(old.Gen1)).ToString(),
-                (ValueToDouble(latest.Gen2) - ValueToDouble(old.Gen2)).ToString(),
-                (ValueToDouble(latest.Allocated) - ValueToDouble(old.Allocated)).ToString() + "KB"
+                (ValueToDouble(latest.Mean) - ValueToDouble(old.Mean)).ToString("F2") + "us",
+                (ValueToDouble(latest.Error) - ValueToDouble(old.Error)).ToString("F2") + "us",
+                (ValueToDouble(latest.StdDev) - ValueToDouble(old.StdDev)).ToString("F2") + "us",
+                (ValueToDouble(latest.Gen0) - ValueToDouble(old.Gen0)).ToString("F2"),
+                (ValueToDouble(latest.Gen1) - ValueToDouble(old.Gen1)).ToString("F2"),
+                (ValueToDouble(latest.Gen2) - ValueToDouble(old.Gen2)).ToString("F2"),
+                (ValueToDouble(latest.Allocated) - ValueToDouble(old.Allocated)).ToString("F2") + "KB"
             );
             differenceData[i] = diff;
         }
@@ -66,7 +66,7 @@ public static class BenchReportWriter
         StringBuilder sb = new StringBuilder();
         sb.AppendLine($"# {typeof(T).Name} Benchmark Summary");
         sb.AppendLine();
-        sb.AppendLine($"## Latest Bench Results ({DateTime.Now:yyyy-MM-dd})");
+        sb.AppendLine($"## Latest Bench Results ({DateTime.Now:dd-MM-yyyy})");
         sb.AppendLine();
         sb.Append(BenchDataListToMdString(latestData));
         sb.AppendLine();
@@ -265,7 +265,7 @@ record BenchData(
 {
     public const string CSVHeader = "Method;Mean;Error;StdDev;Gen0;Gen1;Gen2;Allocated\n";
     public const string MDHeader =
-        "|Method|Mean|Error|StdDev|Gen0|Gen1|Gen2|Allocated|\n|----------------------- |----------:|---------:|---------:|---------:|--------:|-----------:|";
+        "|Method|Mean|Error|StdDev|Gen0|Gen1|Gen2|Allocated|\n|----------------------- |----------:|---------:|---------:|---------:|--------:|-----------:|-----------:|\n";
 
     public string ToCSVString() =>
         $"{Method};{Mean};{Error};{StdDev};{Gen0};{Gen1};{Gen2};{Allocated}\n";
