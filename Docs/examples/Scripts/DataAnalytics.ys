@@ -1,0 +1,23 @@
+FUN GetRandSin(t:float) 
+    RETURN MATH.SIN(t/ 1) / 5.12 * 2
+END
+
+VAR data = []
+
+PRINT("Data Samples")
+
+VAR count = INPUT().ToNumber()
+
+FOR i = 0 TO count THEN
+    data.Add(GetRandSin(i))
+END
+
+PRINT("LIST")
+PRINT(data)
+
+PRINT("Avg")
+VAR sum = 0
+FOR i = 0 TO data.Count THEN
+    VAR sum += data.Get(i) 
+END
+PRINT(sum / data.Count)
