@@ -1,5 +1,6 @@
 using System.Globalization;
 using System.Reflection;
+using System.Text;
 using System.Text.RegularExpressions;
 using BenchmarkDotNet.Environments;
 using CsvHelper;
@@ -11,8 +12,6 @@ public static class BenchReportWriter
 {
     public const string MdFolder = "./Docs/Benchmarks";
     public const string DataFolder = "./Docs/Benchmarks/Data";
-    private static string SummaryPath => Path.Combine(MdFolder, "benchmarks_summary.md");
-    private static string HistoryPath => Path.Combine(MdFolder, "benchmarks_history.md");
 
     static BenchReportWriter()
     {
@@ -20,21 +19,64 @@ public static class BenchReportWriter
         {
             Directory.CreateDirectory(MdFolder);
         }
-
-        if (!File.Exists(SummaryPath))
+        if (!Directory.Exists(DataFolder))
         {
-            File.Create(SummaryPath).Dispose();
-        }
-
-        if (!File.Exists(HistoryPath))
-        {
-            File.Create(HistoryPath).Dispose();
+            Directory.CreateDirectory(DataFolder);
         }
     }
 
     public static void UpdateFiles<T>(string changeDescription)
     {
         UpdateDataFiles<T>();
+        UpdateMdFile<T>();
+    }
+
+    private static void UpdateMdFile<T>()
+    {
+        BenchData[] latestData;
+        using (var reader = new StreamReader(NewDataPath<T>()))
+        {
+            latestData = StringToBenchDataList(reader.ReadToEnd());
+        }
+        BenchData[] oldData;
+        using (var reader = new StreamReader(OldDataPath<T>()))
+        {
+            oldData = StringToBenchDataList(reader.ReadToEnd());
+        }
+
+        int count = latestData.Length < oldData.Length ? latestData.Length : oldData.Length;
+        BenchData[] differenceData = new BenchData[count];
+        for (int i = 0; i < count; i++)
+        {
+            BenchData old = oldData[i];
+            BenchData latest = latestData[i];
+            BenchData diff = new BenchData(
+                latest.Method,
+                (ValueToDouble(latest.Mean) - ValueToDouble(old.Mean)).ToString() + "us",
+                (ValueToDouble(latest.Error) - ValueToDouble(old.Error)).ToString() + "us",
+                (ValueToDouble(latest.StdDev) - ValueToDouble(old.StdDev)).ToString() + "us",
+                (ValueToDouble(latest.Gen0) - ValueToDouble(old.Gen0)).ToString(),
+                (ValueToDouble(latest.Gen1) - ValueToDouble(old.Gen1)).ToString(),
+                (ValueToDouble(latest.Gen2) - ValueToDouble(old.Gen2)).ToString(),
+                (ValueToDouble(latest.Allocated) - ValueToDouble(old.Allocated)).ToString() + "KB"
+            );
+            differenceData[i] = diff;
+        }
+
+        StringBuilder sb = new StringBuilder();
+        sb.AppendLine($"# {typeof(T).Name} Benchmark Summary");
+        sb.AppendLine();
+        sb.AppendLine($"## Latest Bench Results ({DateTime.Now:yyyy-MM-dd})");
+        sb.AppendLine();
+        sb.Append(BenchDataListToMdString(latestData));
+        sb.AppendLine();
+        sb.AppendLine($"## Differenc To Last Results");
+        sb.AppendLine();
+        sb.Append(BenchDataListToMdString(differenceData));
+
+        string path = Path.Combine(MdFolder, $"{typeof(T).Name}-bench-summary.md");
+        using (StreamWriter writer = new StreamWriter(path))
+            writer.Write(sb.ToString());
     }
 
     private static void UpdateDataFiles<T>()
@@ -122,7 +164,13 @@ public static class BenchReportWriter
         string numericPart = new string(
             input.TakeWhile(c => char.IsDigit(c) || c == '.' || c == ',').ToArray()
         );
-        return double.Parse(numericPart, System.Globalization.CultureInfo.InvariantCulture);
+        double value = double.Parse(numericPart, System.Globalization.CultureInfo.InvariantCulture);
+
+        if (input.Contains("MB"))
+            return value * 1024;
+        if (input.Contains("ms"))
+            return value * 1000;
+        return value;
     }
 
     private static void CheckFileExist(string path)
@@ -135,10 +183,20 @@ public static class BenchReportWriter
 
     private static string BenchDataListToString(BenchData[] datas)
     {
-        string str = "Method;Mean;Error;StdDev;Gen0;Gen1;Gen2;Allocated\n";
+        string str = BenchData.CSVHeader;
         foreach (BenchData bench in datas)
         {
-            str += bench.ToString();
+            str += bench.ToCSVString();
+        }
+        return str;
+    }
+
+    private static string BenchDataListToMdString(BenchData[] datas)
+    {
+        string str = BenchData.MDHeader;
+        foreach (BenchData bench in datas)
+        {
+            str += bench.ToMDString();
         }
         return str;
     }
@@ -178,7 +236,6 @@ public static class BenchReportWriter
         }
 
         BenchData[] records = StringToBenchDataList(text);
-        System.Console.WriteLine(string.Join(", ", records.ToList()));
         return records;
     }
 
@@ -206,6 +263,13 @@ record BenchData(
     string Allocated
 )
 {
-    public override string ToString() =>
+    public const string CSVHeader = "Method;Mean;Error;StdDev;Gen0;Gen1;Gen2;Allocated\n";
+    public const string MDHeader =
+        "|Method|Mean|Error|StdDev|Gen0|Gen1|Gen2|Allocated|\n|----------------------- |----------:|---------:|---------:|---------:|--------:|-----------:|";
+
+    public string ToCSVString() =>
         $"{Method};{Mean};{Error};{StdDev};{Gen0};{Gen1};{Gen2};{Allocated}\n";
+
+    public string ToMDString() =>
+        $"|{Method}|{Mean}|{Error}|{StdDev}|{Gen0}|{Gen1}|{Gen2}|{Allocated}|\n";
 }
