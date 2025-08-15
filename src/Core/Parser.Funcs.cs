@@ -10,7 +10,7 @@ public partial class Parser
     {
         ParseResult res = new();
         List<SubIfNode> cases = [];
-        INode elseCase = NodeNull.Instance;
+        BaseNode elseCase = NodeNull.Instance;
 
         if (currentToken.IsNotMatchingKeyword(KeywordType.IF))
         {
@@ -20,7 +20,7 @@ public partial class Parser
         {
             AdvanceParser(res);
 
-            INode caseCondition = res.Register(Statement());
+            BaseNode caseCondition = res.Register(Statement());
             if (res.HasError)
             {
                 return res;
@@ -40,7 +40,7 @@ public partial class Parser
 
             AdvanceParser(res);
 
-            INode caseBodyNode = res.Register(Statements());
+            BaseNode caseBodyNode = res.Register(Statements());
             if (res.HasError && res.Error is not EndKeywordError)
             {
                 return res;
@@ -110,7 +110,7 @@ public partial class Parser
 
         AdvanceParser(res);
 
-        INode startValue = res.Register(Expression());
+        BaseNode startValue = res.Register(Expression());
         if (res.HasError)
         {
             return res;
@@ -122,13 +122,13 @@ public partial class Parser
         }
 
         AdvanceParser(res);
-        INode endValue = res.Register(Expression());
+        BaseNode endValue = res.Register(Expression());
         if (res.HasError)
         {
             return res;
         }
 
-        INode? stepValue = null;
+        BaseNode? stepValue = null;
         if (currentToken.IsMatchingKeyword(KeywordType.STEP))
         {
             AdvanceParser(res);
@@ -147,7 +147,7 @@ public partial class Parser
 
         AdvanceParser(res);
 
-        INode body = GetBodyNode(res);
+        BaseNode body = GetBodyNode(res);
         if (HasErrorButEnd(res))
         {
             return res;
@@ -165,7 +165,7 @@ public partial class Parser
         }
         AdvanceParser(res);
 
-        INode condition = res.Register(Expression());
+        BaseNode condition = res.Register(Expression());
         if (res.HasError)
         {
             return res;
@@ -177,7 +177,7 @@ public partial class Parser
         }
 
         AdvanceParser(res);
-        INode body = GetBodyNode(res);
+        BaseNode body = GetBodyNode(res);
         if (HasErrorButEnd(res))
         {
             return res;
@@ -189,7 +189,7 @@ public partial class Parser
     private ParseResult ListExpr()
     {
         ParseResult res = new();
-        List<INode> elementNodes = [];
+        List<BaseNode> elementNodes = [];
         Position StartPos = currentToken.StartPos;
 
         if (currentToken.IsNotType(TokenType.LSQUARE))
@@ -235,7 +235,7 @@ public partial class Parser
     private ParseResult IdentifierExpr()
     {
         ParseResult res = new();
-        INode parent = NodeNull.Instance;
+        BaseNode parent = NodeNull.Instance;
 
         if (
             !TryCastToken(
@@ -251,7 +251,7 @@ public partial class Parser
 
         if (currentToken.IsType(TokenType.LPAREN))
         {
-            List<INode> args = MakeArgs(res);
+            List<BaseNode> args = MakeArgs(res);
             if (res.HasError)
             {
                 return res;
@@ -280,7 +280,7 @@ public partial class Parser
 
             if (currentToken.IsType(TokenType.LPAREN))
             {
-                List<INode> args = MakeArgs(res);
+                List<BaseNode> args = MakeArgs(res);
                 if (res.HasError)
                 {
                     return res;
@@ -381,7 +381,7 @@ public partial class Parser
         {
             AdvanceParser(res);
 
-            INode nodeToReturn = res.Register(Expression());
+            BaseNode nodeToReturn = res.Register(Expression());
             if (res.HasError)
             {
                 return res;
@@ -397,7 +397,7 @@ public partial class Parser
         }
 
         AdvanceParser(res);
-        INode body = res.Register(Statements());
+        BaseNode body = res.Register(Statements());
         if (HasErrorButEnd(res))
         {
             return res;
@@ -442,7 +442,7 @@ public partial class Parser
         };
         if (EqType is not null)
         {
-            INode converted = res.Register(ShortendVarAssignHelper(varName, (TokenType)EqType));
+            BaseNode converted = res.Register(ShortendVarAssignHelper(varName, (TokenType)EqType));
             if (res.HasError)
             {
                 return res;
@@ -514,7 +514,7 @@ public partial class Parser
         }
 
         AdvanceParser(res);
-        INode expr = res.Register(Expression()); // this gets the "value" of the variable
+        BaseNode expr = res.Register(Expression()); // this gets the "value" of the variable
         if (res.HasError)
         {
             return res;
@@ -533,8 +533,8 @@ public partial class Parser
         }
         AdvanceParser(res);
 
-        INode tryBlock = res.Register(Statements());
-        INode catchBlock = NodeNull.Instance;
+        BaseNode tryBlock = res.Register(Statements());
+        BaseNode catchBlock = NodeNull.Instance;
         Token<string> varName = new Token<string>(
             TokenType.NULL,
             "",
@@ -616,7 +616,7 @@ public partial class Parser
         // check identifier
         else if (tok.IsType(TokenType.IDENTIFIER))
         {
-            INode identifierExpr = res.Register(IdentifierExpr());
+            BaseNode identifierExpr = res.Register(IdentifierExpr());
             if (res.HasError)
             {
                 return res;
@@ -627,7 +627,7 @@ public partial class Parser
         else if (tok.IsType(TokenType.LPAREN))
         {
             AdvanceParser(res);
-            INode expr = res.Register(Expression());
+            BaseNode expr = res.Register(Expression());
             if (res.HasError)
             {
                 return res;
@@ -642,7 +642,7 @@ public partial class Parser
         }
         else if (tok.IsType(TokenType.LSQUARE))
         {
-            INode listExpression = res.Register(ListExpr());
+            BaseNode listExpression = res.Register(ListExpr());
             if (res.HasError)
             {
                 return res;
@@ -652,7 +652,7 @@ public partial class Parser
         // check keywords
         else if (tok.IsMatchingKeyword(KeywordType.IF))
         {
-            INode ifExpression = res.Register(IfExpr());
+            BaseNode ifExpression = res.Register(IfExpr());
             if (res.HasError)
             {
                 return res;
@@ -661,7 +661,7 @@ public partial class Parser
         }
         else if (tok.IsMatchingKeyword(KeywordType.FOR))
         {
-            INode forExpression = res.Register(ForExpr());
+            BaseNode forExpression = res.Register(ForExpr());
             if (res.HasError)
             {
                 return res;
@@ -670,7 +670,7 @@ public partial class Parser
         }
         else if (tok.IsMatchingKeyword(KeywordType.WHILE))
         {
-            INode whileExpression = res.Register(WhileExpr());
+            BaseNode whileExpression = res.Register(WhileExpr());
             if (res.HasError)
             {
                 return res;
@@ -679,7 +679,7 @@ public partial class Parser
         }
         else if (tok.IsMatchingKeyword(KeywordType.FUN))
         {
-            INode funcExpression = res.Register(FuncDef());
+            BaseNode funcExpression = res.Register(FuncDef());
             if (res.HasError)
             {
                 return res;
@@ -688,7 +688,7 @@ public partial class Parser
         }
         else if (tok.IsMatchingKeyword(KeywordType.TRY))
         {
-            INode tryCatch = res.Register(TryCatchExpr());
+            BaseNode tryCatch = res.Register(TryCatchExpr());
             if (res.HasError)
             {
                 return res;
@@ -697,7 +697,7 @@ public partial class Parser
         }
         else if (tok.IsMatchingKeyword(KeywordType.IMPORT))
         {
-            INode importNode = res.Register(ImportExpr());
+            BaseNode importNode = res.Register(ImportExpr());
             if (res.HasError)
             {
                 return res;
@@ -716,7 +716,7 @@ public partial class Parser
     {
         ParseResult res = new();
 
-        INode left = res.Register(Atom());
+        BaseNode left = res.Register(Atom());
         if (res.HasError)
         {
             return res;
@@ -736,7 +736,7 @@ public partial class Parser
             }
             AdvanceParser(res);
 
-            INode right = res.Register(Factor());
+            BaseNode right = res.Register(Factor());
             if (res.HasError)
             {
                 return res;
@@ -765,7 +765,7 @@ public partial class Parser
                 return res.Failure(error);
             }
             AdvanceParser(res);
-            INode factor = res.Register(Factor());
+            BaseNode factor = res.Register(Factor());
             if (res.HasError)
             {
                 return res;
@@ -780,7 +780,7 @@ public partial class Parser
     { // will return BinOpNode
         ParseResult res = new();
 
-        INode left = res.Register(Factor());
+        BaseNode left = res.Register(Factor());
         if (res.HasError)
         {
             return res;
@@ -800,7 +800,7 @@ public partial class Parser
             }
 
             AdvanceParser(res);
-            INode right = res.Register(Factor());
+            BaseNode right = res.Register(Factor());
             if (res.HasError)
             {
                 return res;
@@ -815,7 +815,7 @@ public partial class Parser
     {
         ParseResult res = new();
 
-        INode left = res.Register(Term());
+        BaseNode left = res.Register(Term());
         if (res.HasError)
         {
             return res;
@@ -826,7 +826,7 @@ public partial class Parser
             Token<TokenNoValueType> opTok = (Token<TokenNoValueType>)currentToken;
 
             AdvanceParser(res);
-            INode right = res.Register(Term());
+            BaseNode right = res.Register(Term());
             if (res.HasError)
             {
                 return res;
@@ -846,7 +846,7 @@ public partial class Parser
             IToken opTok = currentToken;
 
             AdvanceParser(res);
-            INode node = res.Register(CompExpr());
+            BaseNode node = res.Register(CompExpr());
             if (res.HasError)
             {
                 return res;
@@ -855,7 +855,7 @@ public partial class Parser
         }
 
         // Binary Operation
-        INode left = res.Register(ArithExpr());
+        BaseNode left = res.Register(ArithExpr());
         if (res.HasError)
         {
             return res;
@@ -887,7 +887,7 @@ public partial class Parser
             }
 
             AdvanceParser(res);
-            INode right = res.Register(ArithExpr());
+            BaseNode right = res.Register(ArithExpr());
             if (res.HasError)
             {
                 return res;
@@ -905,7 +905,7 @@ public partial class Parser
         // A variable assignement
         if (currentToken.IsMatchingKeyword(KeywordType.VAR))
         {
-            INode node = res.Register(VarAssignExpr());
+            BaseNode node = res.Register(VarAssignExpr());
             if (res.HasError)
             {
                 return res;
@@ -915,7 +915,7 @@ public partial class Parser
         }
 
         // Binary Operation
-        INode left = res.Register(CompExpr());
+        BaseNode left = res.Register(CompExpr());
         if (res.HasError)
         {
             return res;
@@ -929,7 +929,7 @@ public partial class Parser
             IToken opTok = currentToken;
 
             AdvanceParser(res);
-            INode right = res.Register(CompExpr());
+            BaseNode right = res.Register(CompExpr());
             if (res.HasError)
             {
                 return res;
@@ -948,7 +948,7 @@ public partial class Parser
         if (currentToken.IsMatchingKeyword(KeywordType.RETURN))
         {
             AdvanceParser(res);
-            INode? _expr = res.TryRegister(Expression());
+            BaseNode? _expr = res.TryRegister(Expression());
             if (_expr == null)
             {
                 Reverse(res.ToReverseCount);
@@ -970,7 +970,7 @@ public partial class Parser
             return res.Failure(new EndKeywordError(currentToken.StartPos));
         }
 
-        INode expr = res.Register(Expression());
+        BaseNode expr = res.Register(Expression());
 
         if (res.HasError)
         {
@@ -985,8 +985,8 @@ public partial class Parser
         ParseResult res = new();
 
         Position StartPos = currentToken.StartPos;
-        List<INode> AllStatements = [];
-        INode nextStatement;
+        List<BaseNode> AllStatements = [];
+        BaseNode nextStatement;
 
         while (currentToken.IsNotType(TokenType.EOF)) // repeat until no more lines are available
         {

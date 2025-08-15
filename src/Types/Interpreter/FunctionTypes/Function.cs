@@ -2,10 +2,10 @@ using YSharp.Types.AST;
 
 namespace YSharp.Types.Interpreter.FunctionTypes;
 
-public class VFunction(string? name, INode bodyNode, List<string> argNames, bool autoReturn)
+public class VFunction(string? name, BaseNode bodyNode, List<string> argNames, bool autoReturn)
     : VBaseFunction(name)
 {
-    public readonly INode bodyNode = bodyNode;
+    public readonly BaseNode bodyNode = bodyNode;
     public readonly List<string> argNames = argNames;
     public readonly bool autoReturn = autoReturn;
 

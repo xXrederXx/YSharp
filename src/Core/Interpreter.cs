@@ -10,7 +10,7 @@ namespace YSharp.Core;
 
 public static class Interpreter
 {
-    public static RunTimeResult Visit(INode node, Context context)
+    public static RunTimeResult Visit(BaseNode node, Context context)
     {
         return node switch
         {
@@ -37,7 +37,7 @@ public static class Interpreter
         };
     }
 
-    private static RunTimeResult Vistit_ErrorNode(INode node, Context ctx)
+    private static RunTimeResult Vistit_ErrorNode(BaseNode node, Context ctx)
     {
         Console.WriteLine("No method found for " + node.GetType() + ctx.ToString());
         return new RunTimeResult().Success(ValueNull.Instance);
@@ -60,10 +60,10 @@ public static class Interpreter
     private static RunTimeResult Visit_List(ListNode node, Context context)
     {
         RunTimeResult res = new();
-        List<Value> elements = new(node.elementNodes.Count);
-        for (int i = 0; i < node.elementNodes.Count; i++)
+        List<Value> elements = new(node.elementNodes.Length);
+        for (int i = 0; i < node.elementNodes.Length; i++)
         {
-            INode elementNode = node.elementNodes[i];
+            BaseNode elementNode = node.elementNodes[i];
             elements.Add(res.Regrister(Visit(elementNode, context)));
             if (res.ShouldReturn())
             {
@@ -227,10 +227,10 @@ public static class Interpreter
 
         string funcName = node.funcNameTok.Value;
 
-        List<Value> argValue = new(node.argNodes.Count);
-        for (int i = 0; i < node.argNodes.Count; i++)
+        List<Value> argValue = new(node.argNodes.Length);
+        for (int i = 0; i < node.argNodes.Length; i++)
         {
-            INode _node = node.argNodes[i];
+            BaseNode _node = node.argNodes[i];
             Value val = res.Regrister(Visit(_node, context));
             if (res.ShouldReturn())
             {
@@ -266,10 +266,10 @@ public static class Interpreter
     {
         RunTimeResult res = new();
 
-        for (int i = 0; i < node.cases.Count; i++)
+        for (int i = 0; i < node.cases.Length; i++)
         {
-            INode condition = node.cases[i].condition;
-            INode expr = node.cases[i].expression;
+            BaseNode condition = node.cases[i].condition;
+            BaseNode expr = node.cases[i].expression;
             Value conditionValue = res.Regrister(Visit(condition, context));
             if (res.ShouldReturn())
             {
@@ -426,10 +426,10 @@ public static class Interpreter
     {
         RunTimeResult res = new();
         string funcName = node.varNameTok.Value;
-        INode bodyNode = node.bodyNode;
+        BaseNode bodyNode = node.bodyNode;
 
-        List<string> argNames = new(node.argNameToks.Count);
-        for (int i = 0; i < node.argNameToks.Count; i++)
+        List<string> argNames = new(node.argNameToks.Length);
+        for (int i = 0; i < node.argNameToks.Length; i++)
         {
             Token<string> tok = (Token<string>)node.argNameToks[i];
             argNames.Add(tok.Value);
@@ -445,7 +445,7 @@ public static class Interpreter
     private static RunTimeResult Visit_CallNode(CallNode node, Context context)
     {
         RunTimeResult res = new();
-        List<Value> args = new(node.argNodes.Count);
+        List<Value> args = new(node.argNodes.Length);
 
         if (node.nodeToCall is VarAccessNode varAccessNode)
         { // just for error handeling
@@ -476,7 +476,7 @@ public static class Interpreter
 
         valueToCall.SetPos(node.StartPos, node.EndPos);
 
-        for (int i = 0; i < node.argNodes.Count; i++)
+        for (int i = 0; i < node.argNodes.Length; i++)
         {
             args.Add(res.Regrister(Visit(node.argNodes[i], context)));
             if (res.ShouldReturn())

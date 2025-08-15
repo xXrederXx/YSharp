@@ -6,9 +6,9 @@ namespace YSharp.Utils;
 public static class AstDotExporter
 {
     private static int _idCounter = 0;
-    private static readonly Dictionary<INode, int> _nodeIds = new();
+    private static readonly Dictionary<BaseNode, int> _nodeIds = new();
 
-    public static void ExportToDot(INode root, string outputPath)
+    public static void ExportToDot(BaseNode root, string outputPath)
     {
         _idCounter = 0;
         _nodeIds.Clear();
@@ -23,7 +23,7 @@ public static class AstDotExporter
         File.WriteAllText(outputPath, sb.ToString());
     }
 
-    private static int Traverse(INode node, StringBuilder sb)
+    private static int Traverse(BaseNode node, StringBuilder sb)
     {
         if (node == null)
             return -1;
@@ -64,7 +64,7 @@ public static class AstDotExporter
         return id;
     }
 
-    private static IEnumerable<(INode child, string label)> GetChildrenWithLabels(INode node)
+    private static IEnumerable<(BaseNode child, string label)> GetChildrenWithLabels(BaseNode node)
     {
         switch (node)
         {
@@ -111,13 +111,13 @@ public static class AstDotExporter
             case ReturnNode rn:
                 return rn.nodeToReturn != null
                     ? [(rn.nodeToReturn, "return")]
-                    : Enumerable.Empty<(INode, string)>();
+                    : Enumerable.Empty<(BaseNode, string)>();
             case TryCatchNode tc:
                 return [(tc.TryNode, "try"), (tc.CatchNode, "catch")];
             case ImportNode im:
-                return Enumerable.Empty<(INode, string)>();
+                return Enumerable.Empty<(BaseNode, string)>();
             default:
-                return Enumerable.Empty<(INode, string)>();
+                return Enumerable.Empty<(BaseNode, string)>();
         }
     }
 }

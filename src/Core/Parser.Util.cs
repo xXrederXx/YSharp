@@ -7,7 +7,7 @@ namespace YSharp.Core;
 
 public partial class Parser
 {
-    public INode GetBodyNode(ParseResult res)
+    public BaseNode GetBodyNode(ParseResult res)
     {
         if (currentToken.IsType(TokenType.NEWLINE))
         {
@@ -60,7 +60,7 @@ public partial class Parser
         return false;
     }
 
-    private List<INode> MakeArgs(ParseResult res)
+    private List<BaseNode> MakeArgs(ParseResult res)
     {
         if (currentToken.IsNotType(TokenType.LPAREN))
         {
@@ -76,7 +76,7 @@ public partial class Parser
         }
 
         // get argument
-        List<INode> argNodes = [];
+        List<BaseNode> argNodes = [];
         argNodes.Add(res.Register(Expression()));
         if (res.HasError)
         {
@@ -119,14 +119,14 @@ public partial class Parser
         ParseResult res = new();
 
         AdvanceParser(res);
-        INode expr = res.Register(Expression()); // this gets the "value" of the variable
+        BaseNode expr = res.Register(Expression()); // this gets the "value" of the variable
         if (res.HasError)
         {
             return res;
         }
 
         // This converts varName += Expr to varName = varName + Expr
-        INode converted = new BinOpNode(
+        BaseNode converted = new BinOpNode(
             new VarAccessNode(varName),
             new TokenNoValue(type, expr.StartPos, expr.StartPos),
             expr

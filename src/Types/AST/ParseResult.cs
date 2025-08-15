@@ -5,7 +5,7 @@ namespace YSharp.Types.AST;
 public class ParseResult
 {
     public Error Error { get; private set; } = ErrorNull.Instance;
-    public INode Node { get; private set; } = NodeNull.Instance;
+    public BaseNode Node { get; private set; } = NodeNull.Instance;
     public int ToReverseCount { get; private set; } = 0;
     public bool HasError => Error.IsError;
     private int _advanceCount = 0;
@@ -15,7 +15,7 @@ public class ParseResult
         Error = ErrorNull.Instance;
     }
 
-    public INode? TryRegister(ParseResult result)
+    public BaseNode? TryRegister(ParseResult result)
     {
         if (result.HasError)
         {
@@ -25,7 +25,7 @@ public class ParseResult
         return Register(result);
     }
 
-    public INode Register(ParseResult result)
+    public BaseNode Register(ParseResult result)
     {
         _advanceCount += result._advanceCount;
         Error = result.Error;
@@ -37,7 +37,7 @@ public class ParseResult
         _advanceCount++;
     }
 
-    public ParseResult Success(INode node)
+    public ParseResult Success(BaseNode node)
     {
         Node = node;
         return this;

@@ -4,25 +4,25 @@
 
 |Method|Mean|Error|StdDev|Gen0|Gen1|Gen2|Allocated|
 |----------------------- |----------:|---------:|---------:|---------:|--------:|-----------:|-----------:|
-|LexerBenchmarkS|102.3 μs|1.43 μs|1.34 μs|14.0381|3.6621|0.0000|229.53 KB|
-|LexerBenchmarkM|195.4 μs|1.45 μs|1.35 μs|28.0762|10.9863|0.0000|461.63 KB|
-|LexerBenchmarkL|3,085.5 μs|61.23 μs|122.29 μs|175.7813|171.8750|66.4063|2179.39 KB|
-|LexerBenchmarkXL|5,945.2 μs|117.17 μs|178.93 μs|343.7500|335.9375|132.8125|4357.43 KB|
+|LexerBenchmarkS|97.85 μs|0.641 μs|0.501 μs|14.0381|3.6621|0.0000|229.53 KB|
+|LexerBenchmarkM|210.47 μs|2.838 μs|2.654 μs|28.0762|10.9863|0.0000|461.63 KB|
+|LexerBenchmarkL|2,733.64 μs|52.810 μs|58.698 μs|175.7813|171.8750|66.4063|2179.38 KB|
+|LexerBenchmarkXL|6,009.14 μs|120.101 μs|258.530 μs|351.5625|343.7500|140.6250|4357.44 KB|
 
 ## Differenc To Best Time
 
 |Method|Mean|Error|StdDev|Gen0|Gen1|Gen2|Allocated|
 |----------------------- |----------:|---------:|---------:|---------:|--------:|-----------:|-----------:|
-|LexerBenchmarkS|5.35us|0.51us|0.62us|0.00|0.00|0.00|0.00KB|
-|LexerBenchmarkM|-7.24us|-0.70us|-0.45us|0.00|0.00|0.00|0.00KB|
-|LexerBenchmarkL|-45.41us|-0.32us|-7.53us|3.91|3.91|3.91|0.01KB|
-|LexerBenchmarkXL|18.81us|-1.17us|29.26us|-7.81|-7.81|-7.81|-0.01KB|
+|LexerBenchmarkS|0.90us|-0.28us|-0.22us|0.00|0.00|0.00|0.00KB|
+|LexerBenchmarkM|7.83us|0.69us|0.86us|0.00|0.00|0.00|0.00KB|
+|LexerBenchmarkL|-397.27us|-8.73us|-71.12us|3.91|3.91|3.91|0.00KB|
+|LexerBenchmarkXL|82.75us|1.76us|108.86us|0.00|0.00|0.00|0.00KB|
 
 ## Differenc To Best Memory
 
 |Method|Mean|Error|StdDev|Gen0|Gen1|Gen2|Allocated|
 |----------------------- |----------:|---------:|---------:|---------:|--------:|-----------:|-----------:|
-|LexerBenchmarkS|0.00us|0.00us|0.00us|0.00|0.00|0.00|0.00KB|
-|LexerBenchmarkM|0.00us|0.00us|0.00us|0.00|0.00|0.00|0.00KB|
-|LexerBenchmarkL|0.00us|0.00us|0.00us|0.00|0.00|0.00|0.00KB|
-|LexerBenchmarkXL|0.00us|0.00us|0.00us|0.00|0.00|0.00|0.00KB|
+|LexerBenchmarkS|-4.45us|-0.79us|-0.84us|0.00|0.00|0.00|0.00KB|
+|LexerBenchmarkM|15.07us|1.39us|1.30us|0.00|0.00|0.00|0.00KB|
+|LexerBenchmarkL|-351.86us|-8.42us|-63.59us|0.00|0.00|0.00|-0.01KB|
+|LexerBenchmarkXL|63.94us|2.93us|79.60us|7.81|7.81|7.81|0.01KB|
