@@ -3,6 +3,10 @@ using YSharp.Types.Common;
 
 namespace YSharp.Types.Lexer;
 
+/// <summary>
+/// A token is a class type which stores a StartPos and EndPos a Type and Optionaly a Value.
+/// It has various functions which can be helpful
+/// </summary>
 public interface IToken
 {
     TokenType Type { get; }
@@ -16,7 +20,10 @@ public interface IToken
     public bool IsNotType(ReadOnlySpan<TokenType> types);
 }
 
-// Token class optimized with enum and nullable reference types
+/// <summary>
+/// The token version with a Value
+/// </summary>
+/// <typeparam name="T">Type of the value</typeparam>
 public class Token<T> : IToken
 {
     public TokenType Type { get; }
@@ -57,25 +64,4 @@ public class Token<T> : IToken
     public bool IsNotType(TokenType type) => Type != type;
 
     public bool IsNotType(ReadOnlySpan<TokenType> types) => !IsType(types);
-}
-
-public sealed class TokenNoValue : Token<TokenNoValueType>
-{
-    public TokenNoValue(TokenType type, in Position startPos, in Position endPos)
-        : base(type, TokenNoValueType.Instance, startPos, endPos) { }
-}
-
-public sealed class NullToken : Token<TokenNoValueType>
-{
-    public static readonly NullToken Instance = new();
-
-    private NullToken()
-        : base(TokenType.NULL, TokenNoValueType.Instance, Position.Null, Position.Null) { }
-}
-
-public class TokenNoValueType
-{
-    public static readonly TokenNoValueType Instance = new();
-
-    private TokenNoValueType() { }
 }
