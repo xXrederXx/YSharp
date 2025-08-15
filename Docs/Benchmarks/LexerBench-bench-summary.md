@@ -4,16 +4,25 @@
 
 |Method|Mean|Error|StdDev|Gen0|Gen1|Gen2|Allocated|
 |----------------------- |----------:|---------:|---------:|---------:|--------:|-----------:|-----------:|
-|LexerBenchmarkS|130.4 μs|2.53 μs|4.09 μs|13.9160|3.6621|0.0000|229.53 KB|
-|LexerBenchmarkM|272.4 μs|5.34 μs|9.07 μs|27.8320|10.7422|0.0000|461.63 KB|
-|LexerBenchmarkL|3,570.7 μs|71.37 μs|165.41 μs|175.7813|171.8750|66.4063|2179.39 KB|
-|LexerBenchmarkXL|7,278.7 μs|153.56 μs|450.37 μs|343.7500|335.9375|132.8125|4357.44 KB|
+|LexerBenchmarkS|96.95 μs|0.923 μs|0.721 μs|14.0381|3.6621|0.0000|229.53 KB|
+|LexerBenchmarkM|202.64 μs|2.153 μs|1.798 μs|28.0762|10.9863|0.0000|461.63 KB|
+|LexerBenchmarkL|3,130.91 μs|61.545 μs|129.818 μs|171.8750|167.9688|62.5000|2179.38 KB|
+|LexerBenchmarkXL|5,926.39 μs|118.343 μs|149.666 μs|351.5625|343.7500|140.6250|4357.44 KB|
 
-## Differenc To Last Results
+## Differenc To Best Time
 
 |Method|Mean|Error|StdDev|Gen0|Gen1|Gen2|Allocated|
 |----------------------- |----------:|---------:|---------:|---------:|--------:|-----------:|-----------:|
-|LexerBenchmarkS|6.10us|0.08us|1.27us|0.00|0.00|0.00|0.00KB|
-|LexerBenchmarkM|5.30us|2.94us|6.83us|0.00|0.00|0.00|0.00KB|
-|LexerBenchmarkL|366.10us|10.49us|78.09us|-3.91|-3.91|-3.91|0.00KB|
-|LexerBenchmarkXL|1211.10us|33.08us|302.41us|7.81|7.81|7.81|0.01KB|
+|LexerBenchmarkS|0.00us|0.00us|0.00us|0.00|0.00|0.00|0.00KB|
+|LexerBenchmarkM|0.00us|0.00us|0.00us|0.00|0.00|0.00|0.00KB|
+|LexerBenchmarkL|0.00us|0.00us|0.00us|0.00|0.00|0.00|0.00KB|
+|LexerBenchmarkXL|0.00us|0.00us|0.00us|0.00|0.00|0.00|0.00KB|
+
+## Differenc To Best Memory
+
+|Method|Mean|Error|StdDev|Gen0|Gen1|Gen2|Allocated|
+|----------------------- |----------:|---------:|---------:|---------:|--------:|-----------:|-----------:|
+|LexerBenchmarkS|-27.35us|-1.53us|-2.10us|0.12|0.00|0.00|0.00KB|
+|LexerBenchmarkM|-64.46us|-0.25us|-0.44us|0.24|0.24|0.00|0.00KB|
+|LexerBenchmarkL|-73.69us|0.66us|42.50us|-7.81|-7.81|-7.81|-0.01KB|
+|LexerBenchmarkXL|-141.21us|-2.14us|1.71us|15.62|15.62|15.62|0.01KB|

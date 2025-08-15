@@ -3,78 +3,6 @@ using YSharp.Types.Common;
 
 namespace YSharp.Types.Lexer;
 
-// Token types optimized using enum
-public enum TokenType
-{
-    NULL,
-
-    // Types
-    INT,
-    FLOAT,
-    STRING,
-
-    // Arithmetic
-    PLUS,
-    MINUS,
-    MUL,
-    DIV,
-    POW,
-    LPAREN,
-    RPAREN,
-    EQ,
-
-    PP, // ++
-    MM, // --
-    PLEQ, // +=
-    MIEQ, // -=
-    MUEQ, // *=
-    DIEQ, // /=
-
-    // Comparison
-    EE, // ==
-    NE, // !=
-    LT, // <
-    GT, // >
-    LTE, // <=
-    GTE, // >=
-
-    // Other
-    IDENTIFIER,
-    KEYWORD,
-    COMMA,
-    DOT,
-    ARROW,
-    LSQUARE, // [
-    RSQUARE, // ]
-    NEWLINE,
-    EOF // End of file
-    ,
-}
-
-public enum KeywordType
-{
-    VAR,
-    AND,
-    OR,
-    NOT,
-    IF,
-    THEN,
-    ELIF,
-    ELSE,
-    FOR,
-    TO,
-    STEP,
-    WHILE,
-    FUN,
-    END,
-    RETURN,
-    CONTINUE,
-    BREAK,
-    TRY,
-    CATCH,
-    IMPORT,
-}
-
 public interface IToken
 {
     TokenType Type { get; }
@@ -83,9 +11,9 @@ public interface IToken
     public bool IsMatchingKeyword(KeywordType value);
     public bool IsNotMatchingKeyword(KeywordType value);
     public bool IsType(TokenType type);
-    public bool IsType(params TokenType[] types);
+    public bool IsType(ReadOnlySpan<TokenType> types);
     public bool IsNotType(TokenType type);
-    public bool IsNotType(params TokenType[] types);
+    public bool IsNotType(ReadOnlySpan<TokenType> types);
 }
 
 // Token class optimized with enum and nullable reference types
@@ -101,35 +29,8 @@ public class Token<T> : IToken
     {
         Type = type;
         Value = value;
-
-        if (!startPos.IsNull)
-        {
-            StartPos = startPos;
-            EndPos = StartPos.Advance(' ');
-        }
-
-        if (!endPos.IsNull)
-        {
-            EndPos = endPos;
-        }
-    }
-
-    public Token(TokenType type, in Position startPos, in Position endPos)
-        : this(type, default(T)!, startPos, endPos)
-    {
-        if (typeof(T) != typeof(TokenNoValueType))
-        {
-            throw new InvalidOperationException("You cant set no value but set a value type");
-        }
-    }
-
-    public Token(TokenType type)
-        : this(type, default(T)!, Position.Null, Position.Null)
-    {
-        if (typeof(T) != typeof(TokenNoValueType))
-        {
-            throw new InvalidOperationException("You cant set no value but set a value type");
-        }
+        StartPos = startPos;
+        EndPos = endPos;
     }
 
     // String Representation
@@ -145,26 +46,36 @@ public class Token<T> : IToken
 
     public bool IsType(TokenType type) => Type == type;
 
-    public bool IsType(params TokenType[] types)
+    public bool IsType(ReadOnlySpan<TokenType> types)
     {
-        foreach (TokenType type in types)
-        {
-            if (Type == type)
-            {
+        foreach (var t in types)
+            if (Type == t)
                 return true;
-            }
-        }
         return false;
     }
 
     public bool IsNotType(TokenType type) => Type != type;
 
-    public bool IsNotType(params TokenType[] types) => !IsType(types);
+    public bool IsNotType(ReadOnlySpan<TokenType> types) => !IsType(types);
+}
+
+public sealed class TokenNoValue : Token<TokenNoValueType>
+{
+    public TokenNoValue(TokenType type, in Position startPos, in Position endPos)
+        : base(type, TokenNoValueType.Instance, startPos, endPos) { }
+}
+
+public sealed class NullToken : Token<TokenNoValueType>
+{
+    public static readonly NullToken Instance = new();
+
+    private NullToken()
+        : base(TokenType.NULL, TokenNoValueType.Instance, Position.Null, Position.Null) { }
 }
 
 public class TokenNoValueType
 {
-    public static TokenNoValueType Instance = new();
+    public static readonly TokenNoValueType Instance = new();
 
     private TokenNoValueType() { }
 }

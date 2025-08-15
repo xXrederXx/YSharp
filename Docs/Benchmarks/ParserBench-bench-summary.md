@@ -4,16 +4,25 @@
 
 |Method|Mean|Error|StdDev|Gen0|Gen1|Gen2|Allocated|
 |----------------------- |----------:|---------:|---------:|---------:|--------:|-----------:|-----------:|
-|ParserBenchmarkS|148.3 μs|3.07 μs|8.86 μs|35.1563|8.3008|0.0000|577.43 KB|
-|ParserBenchmarkM|298.9 μs|5.20 μs|6.39 μs|71.2891|23.4375|0.0000|1169.43 KB|
-|ParserBenchmarkL|2,222.7 μs|42.47 μs|52.16 μs|371.0938|191.4063|27.3438|5850.73 KB|
-|ParserBenchmarkXL|4,764.1 μs|44.18 μs|36.89 μs|742.1875|429.6875|54.6875|11698.87 KB|
+|ParserBenchmarkS|120.2 μs|2.40 μs|2.76 μs|26.0010|6.4697|0.0000|425.51 KB|
+|ParserBenchmarkM|241.6 μs|2.21 μs|1.85 μs|52.4902|17.3340|0.0000|860.93 KB|
+|ParserBenchmarkL|1,880.0 μs|11.91 μs|11.14 μs|279.2969|187.5000|29.2969|4303.15 KB|
+|ParserBenchmarkXL|4,743.8 μs|90.96 μs|93.41 μs|554.6875|500.0000|54.6875|8604.34 KB|
 
-## Differenc To Last Results
+## Differenc To Best Time
 
 |Method|Mean|Error|StdDev|Gen0|Gen1|Gen2|Allocated|
 |----------------------- |----------:|---------:|---------:|---------:|--------:|-----------:|-----------:|
-|ParserBenchmarkS|16.80us|2.42us|8.28us|0.00|0.00|0.00|0.00KB|
-|ParserBenchmarkM|26.90us|1.92us|3.32us|0.00|0.00|0.00|0.00KB|
-|ParserBenchmarkL|255.90us|4.86us|15.22us|-1.95|-5.86|-1.95|0.00KB|
-|ParserBenchmarkXL|45.10us|18.51us|12.88us|0.00|0.00|0.00|0.00KB|
+|ParserBenchmarkS|-11.80us|1.01us|1.52us|-9.16|-1.83|0.00|-151.92KB|
+|ParserBenchmarkM|-33.20us|-0.52us|-0.57us|-18.80|-6.10|0.00|-308.50KB|
+|ParserBenchmarkL|-129.20us|-27.20us|-42.40us|-91.80|-3.91|1.95|-1547.58KB|
+|ParserBenchmarkXL|33.00us|57.52us|62.13us|-187.50|70.31|0.00|-3094.53KB|
+
+## Differenc To Best Memory
+
+|Method|Mean|Error|StdDev|Gen0|Gen1|Gen2|Allocated|
+|----------------------- |----------:|---------:|---------:|---------:|--------:|-----------:|-----------:|
+|ParserBenchmarkS|0.00us|0.00us|0.00us|0.00|0.00|0.00|0.00KB|
+|ParserBenchmarkM|0.00us|0.00us|0.00us|0.00|0.00|0.00|0.00KB|
+|ParserBenchmarkL|0.00us|0.00us|0.00us|0.00|0.00|0.00|0.00KB|
+|ParserBenchmarkXL|0.00us|0.00us|0.00us|0.00|0.00|0.00|0.00KB|

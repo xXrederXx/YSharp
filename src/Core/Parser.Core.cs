@@ -15,7 +15,7 @@ public partial class Parser
     public Parser(List<IToken> tokens)
     {
         this.tokens = tokens.ToImmutableArray();
-        currentToken = new Token<TokenNoValueType>(TokenType.NULL);
+        currentToken = NullToken.Instance;
         AdvanceParser();
     }
 

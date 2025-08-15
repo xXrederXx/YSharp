@@ -16,7 +16,7 @@ internal class Start
 {
     private static void Main(string[] args)
     {
-        BenchHelp.Run<RunTimeBench>();
+        TestRunner();
     }
 
     private static void RunTest()

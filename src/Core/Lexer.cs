@@ -36,7 +36,7 @@ public class Lexer
     private static bool IsValidIdentifierChar(char c) => char.IsLetterOrDigit(c) || c == '_';
 
     // this is used to make a number token of type int or float
-    private (Token<double>, Error) MakeNumber()
+    private (IToken, Error) MakeNumber()
     {
         bool hasDot = false;
         Position posStart = pos;
@@ -53,7 +53,7 @@ public class Lexer
             {
                 if (hasDot)
                 {
-                    return (new Token<double>(TokenType.NULL), new IllegalNumberFormat(posStart));
+                    return (NullToken.Instance, new IllegalNumberFormat(posStart));
                 }
 
                 hasDot = true;
@@ -99,19 +99,19 @@ public class Lexer
         return new Token<string>(TokenType.IDENTIFIER, idStr, posStart, pos);
     }
 
-    private (Token<TokenNoValueType>, Error) MakeNotEquals()
+    private (IToken, Error) MakeNotEquals()
     {
         Position posStart = pos;
         Advance();
 
         if (current_char == '=')
         {
-            return (new Token<TokenNoValueType>(TokenType.NE, posStart, pos), ErrorNull.Instance);
+            return (new TokenNoValue(TokenType.NE, posStart, pos), ErrorNull.Instance);
         }
-        return (new Token<TokenNoValueType>(TokenType.NULL), new ExpectedCharError(posStart, '='));
+        return (NullToken.Instance, new ExpectedCharError(posStart, '='));
     }
 
-    private Token<TokenNoValueType> MakeDecicion(
+    private TokenNoValue MakeDecicion(
         char checkChar,
         TokenType TTTrue,
         TokenType TTFalse
@@ -119,14 +119,14 @@ public class Lexer
     {
         Position posStart = pos;
         Advance();
-        return new Token<TokenNoValueType>(
+        return new TokenNoValue(
             current_char == checkChar ? TTTrue : TTFalse,
             posStart,
             pos
         );
     }
 
-    private (Token<string>, Error) MakeString()
+    private (IToken, Error) MakeString()
     {
         string value = string.Empty;
         Position startPos = pos;
@@ -152,7 +152,7 @@ public class Lexer
                 else
                 {
                     return (
-                        new Token<string>(TokenType.NULL),
+                        NullToken.Instance,
                         new IllegalEscapeCharError(startPos, current_char)
                     );
                 }
@@ -184,7 +184,7 @@ public class Lexer
         }
     }
 
-    private Token<TokenNoValueType> MakePlus()
+    private TokenNoValue MakePlus()
     {
         Position startPos = pos;
         Advance();
@@ -192,17 +192,17 @@ public class Lexer
         if (current_char == '+')
         { // it is ++
             Advance();
-            return new Token<TokenNoValueType>(TokenType.PP, startPos, pos);
+            return new TokenNoValue(TokenType.PP, startPos, pos);
         }
         if (current_char == '=')
         { // its +=
             Advance();
-            return new Token<TokenNoValueType>(TokenType.PLEQ, startPos, pos);
+            return new TokenNoValue(TokenType.PLEQ, startPos, pos);
         }
-        return new Token<TokenNoValueType>(TokenType.PLUS, startPos, pos);
+        return new TokenNoValue(TokenType.PLUS, startPos, pos);
     }
 
-    private Token<TokenNoValueType> MakeMinus()
+    private TokenNoValue MakeMinus()
     {
         Position startPos = pos;
         Advance();
@@ -210,19 +210,19 @@ public class Lexer
         if (current_char == '-')
         { // it is --
             Advance();
-            return new Token<TokenNoValueType>(TokenType.MM, startPos, pos);
+            return new TokenNoValue(TokenType.MM, startPos, pos);
         }
         if (current_char == '=')
         { // its -=
             Advance();
-            return new Token<TokenNoValueType>(TokenType.MIEQ, startPos, pos);
+            return new TokenNoValue(TokenType.MIEQ, startPos, pos);
         }
         if (current_char == '>')
         {
             Advance();
-            return new Token<TokenNoValueType>(TokenType.ARROW, startPos, pos);
+            return new TokenNoValue(TokenType.ARROW, startPos, pos);
         }
-        return new Token<TokenNoValueType>(TokenType.MINUS, startPos, pos);
+        return new TokenNoValue(TokenType.MINUS, startPos, pos);
     }
 
     // generates all tokens
@@ -249,17 +249,17 @@ public class Lexer
             }
             else if (current_char is ';' or '\n' or '\r')
             {
-                tokens.Add(new Token<TokenNoValueType>(TokenType.NEWLINE, pos, pos));
+                tokens.Add(new TokenNoValue(TokenType.NEWLINE, pos, pos));
                 Advance();
             }
             else if (current_char == '.')
             {
-                tokens.Add(new Token<TokenNoValueType>(TokenType.DOT, pos, pos));
+                tokens.Add(new TokenNoValue(TokenType.DOT, pos, pos));
                 Advance();
             }
             else if (char.IsDigit(current_char)) // Check for digits (int)
             {
-                (Token<double> tok, Error err) = MakeNumber();
+                (IToken tok, Error err) = MakeNumber();
                 if (err.IsError)
                 {
                     return ([], err);
@@ -272,7 +272,7 @@ public class Lexer
             }
             else if (current_char == '"')
             {
-                (Token<string> tok, Error err) = MakeString();
+                (IToken tok, Error err) = MakeString();
                 if (err.IsError)
                 {
                     return ([], err);
@@ -300,23 +300,23 @@ public class Lexer
             }
             else if (current_char == '^')
             {
-                tokens.Add(new Token<TokenNoValueType>(TokenType.POW, pos, pos));
+                tokens.Add(new TokenNoValue(TokenType.POW, pos, pos));
                 Advance();
             }
             else if (current_char == '(')
             {
-                tokens.Add(new Token<TokenNoValueType>(TokenType.LPAREN, pos, pos));
+                tokens.Add(new TokenNoValue(TokenType.LPAREN, pos, pos));
                 Advance();
             }
             else if (current_char == ')')
             {
-                tokens.Add(new Token<TokenNoValueType>(TokenType.RPAREN, pos, pos));
+                tokens.Add(new TokenNoValue(TokenType.RPAREN, pos, pos));
                 Advance();
             }
             // Comparison
             else if (current_char == '!')
             {
-                (Token<TokenNoValueType>, Error) res = MakeNotEquals();
+                (IToken, Error) res = MakeNotEquals();
                 if (res.Item2.IsError)
                 {
                     return ([], res.Item2);
@@ -342,17 +342,17 @@ public class Lexer
             // Other
             else if (current_char == ',')
             {
-                tokens.Add(new Token<TokenNoValueType>(TokenType.COMMA, pos, pos));
+                tokens.Add(new TokenNoValue(TokenType.COMMA, pos, pos));
                 Advance();
             }
             else if (current_char == '[')
             {
-                tokens.Add(new Token<TokenNoValueType>(TokenType.LSQUARE, pos, pos));
+                tokens.Add(new TokenNoValue(TokenType.LSQUARE, pos, pos));
                 Advance();
             }
             else if (current_char == ']')
             {
-                tokens.Add(new Token<TokenNoValueType>(TokenType.RSQUARE, pos, pos));
+                tokens.Add(new TokenNoValue(TokenType.RSQUARE, pos, pos));
                 Advance();
             }
             else
@@ -361,7 +361,7 @@ public class Lexer
                 return (new List<IToken>(), new IllegalCharError(pos, current_char));
             }
         }
-        tokens.Add(new Token<TokenNoValueType>(TokenType.EOF, pos, pos)); // Add the End Of File token
+        tokens.Add(new TokenNoValue(TokenType.EOF, pos, pos)); // Add the End Of File token
         return (tokens, ErrorNull.Instance);
     }
 }

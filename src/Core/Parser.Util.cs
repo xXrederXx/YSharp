@@ -128,7 +128,7 @@ public partial class Parser
         // This converts varName += Expr to varName = varName + Expr
         INode converted = new BinOpNode(
             new VarAccessNode(varName),
-            new Token<TokenNoValueType>(type, expr.StartPos, expr.StartPos),
+            new TokenNoValue(type, expr.StartPos, expr.StartPos),
             expr
         );
         return res.Success(new VarAssignNode(varName, converted));

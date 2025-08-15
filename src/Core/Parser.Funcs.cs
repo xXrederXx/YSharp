@@ -327,7 +327,12 @@ public partial class Parser
         }
         else
         {
-            varNameTok = new Token<string>(TokenType.NULL);
+            varNameTok = new Token<string>(
+                TokenType.NULL,
+                "",
+                currentToken.StartPos,
+                currentToken.EndPos
+            );
             if (currentToken.IsNotType(TokenType.LPAREN))
             {
                 return res.Failure(
@@ -454,7 +459,11 @@ public partial class Parser
                     varName,
                     new BinOpNode(
                         new VarAccessNode(varName),
-                        new Token<TokenNoValueType>(TokenType.PLUS),
+                        new TokenNoValue(
+                            TokenType.PLUS,
+                            currentToken.StartPos,
+                            currentToken.EndPos
+                        ),
                         new NumberNode(
                             new Token<double>(
                                 TokenType.INT,
@@ -475,7 +484,11 @@ public partial class Parser
                     varName,
                     new BinOpNode(
                         new VarAccessNode(varName),
-                        new Token<TokenNoValueType>(TokenType.MINUS),
+                        new TokenNoValue(
+                            TokenType.MINUS,
+                            currentToken.StartPos,
+                            currentToken.EndPos
+                        ),
                         new NumberNode(
                             new Token<double>(
                                 TokenType.INT,
@@ -522,7 +535,12 @@ public partial class Parser
 
         INode tryBlock = res.Register(Statements());
         INode catchBlock = NodeNull.Instance;
-        Token<string> varName = new Token<string>(TokenType.NULL);
+        Token<string> varName = new Token<string>(
+            TokenType.NULL,
+            "",
+            currentToken.StartPos,
+            currentToken.EndPos
+        );
         if (HasErrorButEnd(res))
         {
             return res;
@@ -585,7 +603,7 @@ public partial class Parser
         IToken tok = currentToken;
 
         // check tyoes
-        if (tok.IsType(TokenType.INT, TokenType.FLOAT))
+        if (tok.IsType([TokenType.INT, TokenType.FLOAT]))
         {
             AdvanceParser(res);
             return res.Success(new NumberNode((Token<double>)tok));
@@ -734,7 +752,7 @@ public partial class Parser
         ParseResult res = new();
 
         // if there is a plus or a minus it could be +5 or -5
-        if (currentToken.IsType(TokenType.PLUS, TokenType.MINUS))
+        if (currentToken.IsType([TokenType.PLUS, TokenType.MINUS]))
         {
             if (
                 !TryCastToken(
@@ -768,7 +786,7 @@ public partial class Parser
             return res;
         }
 
-        while (currentToken.IsType(TokenType.MUL, TokenType.DIV))
+        while (currentToken.IsType([TokenType.MUL, TokenType.DIV]))
         {
             if (
                 !TryCastToken(
@@ -803,7 +821,7 @@ public partial class Parser
             return res;
         }
 
-        while (currentToken.IsType(TokenType.PLUS, TokenType.MINUS))
+        while (currentToken.IsType([TokenType.PLUS, TokenType.MINUS]))
         {
             Token<TokenNoValueType> opTok = (Token<TokenNoValueType>)currentToken;
 
@@ -846,12 +864,14 @@ public partial class Parser
         // This checks for the comparison operators
         while (
             currentToken.IsType(
-                TokenType.EE,
-                TokenType.NE,
-                TokenType.GT,
-                TokenType.LT,
-                TokenType.GTE,
-                TokenType.LTE
+                [
+                    TokenType.EE,
+                    TokenType.NE,
+                    TokenType.GT,
+                    TokenType.LT,
+                    TokenType.GTE,
+                    TokenType.LTE,
+                ]
             )
         )
         {
