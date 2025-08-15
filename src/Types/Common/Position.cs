@@ -6,6 +6,7 @@ namespace YSharp.Types.Common;
 /// <summary>
 /// This struct stores information about Index, Line, Column and FileId.
 /// It does this by storing it into a single 64 bit ulong.
+/// It is already optimized for memory
 /// </summary>
 [StructLayout(LayoutKind.Explicit, Size = 8)]
 public readonly struct Position : IEquatable<Position>
