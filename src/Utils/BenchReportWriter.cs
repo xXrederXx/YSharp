@@ -43,25 +43,19 @@ public static class BenchReportWriter
         {
             oldData = StringToBenchDataList(reader.ReadToEnd());
         }
-
-        int count = latestData.Length < oldData.Length ? latestData.Length : oldData.Length;
-        BenchData[] differenceData = new BenchData[count];
-        for (int i = 0; i < count; i++)
+        BenchData[] bestMemData;
+        using (var reader = new StreamReader(BestMemDataPath<T>()))
         {
-            BenchData old = oldData[i];
-            BenchData latest = latestData[i];
-            BenchData diff = new BenchData(
-                latest.Method,
-                (ValueToDouble(latest.Mean) - ValueToDouble(old.Mean)).ToString("F2") + "us",
-                (ValueToDouble(latest.Error) - ValueToDouble(old.Error)).ToString("F2") + "us",
-                (ValueToDouble(latest.StdDev) - ValueToDouble(old.StdDev)).ToString("F2") + "us",
-                (ValueToDouble(latest.Gen0) - ValueToDouble(old.Gen0)).ToString("F2"),
-                (ValueToDouble(latest.Gen1) - ValueToDouble(old.Gen1)).ToString("F2"),
-                (ValueToDouble(latest.Gen2) - ValueToDouble(old.Gen2)).ToString("F2"),
-                (ValueToDouble(latest.Allocated) - ValueToDouble(old.Allocated)).ToString("F2") + "KB"
-            );
-            differenceData[i] = diff;
+            bestMemData = StringToBenchDataList(reader.ReadToEnd());
         }
+        BenchData[] bestTimeData;
+        using (var reader = new StreamReader(BestTimeDataPath<T>()))
+        {
+            bestTimeData = StringToBenchDataList(reader.ReadToEnd());
+        }
+
+        BenchData[] differenceDataMem = CalcTableDifference(latestData, bestMemData);
+        BenchData[] differenceDataTime = CalcTableDifference(latestData, bestTimeData);
 
         StringBuilder sb = new StringBuilder();
         sb.AppendLine($"# {typeof(T).Name} Benchmark Summary");
@@ -70,13 +64,47 @@ public static class BenchReportWriter
         sb.AppendLine();
         sb.Append(BenchDataListToMdString(latestData));
         sb.AppendLine();
-        sb.AppendLine($"## Differenc To Last Results");
+        sb.AppendLine($"## Differenc To Best Time");
         sb.AppendLine();
-        sb.Append(BenchDataListToMdString(differenceData));
+        sb.Append(BenchDataListToMdString(differenceDataTime));
+        sb.AppendLine();
+        sb.AppendLine($"## Differenc To Best Memory");
+        sb.AppendLine();
+        sb.Append(BenchDataListToMdString(differenceDataMem));
 
         string path = Path.Combine(MdFolder, $"{typeof(T).Name}-bench-summary.md");
         using (StreamWriter writer = new StreamWriter(path))
             writer.Write(sb.ToString());
+    }
+
+    private static BenchData[] CalcTableDifference(BenchData[] latestData, BenchData[] oldData)
+    {
+        int count = latestData.Length < oldData.Length ? latestData.Length : oldData.Length;
+        BenchData[] differenceData = new BenchData[count];
+        for (int i = 0; i < count; i++)
+        {
+            BenchData old = oldData[i];
+            BenchData latest = latestData[i];
+            BenchData diff = new BenchData()
+            {
+                Method = latest.Method,
+                Mean = (ValueToDouble(latest.Mean) - ValueToDouble(old.Mean)).ToString("F2") + "us",
+                Error =
+                    (ValueToDouble(latest.Error) - ValueToDouble(old.Error)).ToString("F2") + "us",
+                StdDev =
+                    (ValueToDouble(latest.StdDev) - ValueToDouble(old.StdDev)).ToString("F2")
+                    + "us",
+                Gen0 = (ValueToDouble(latest.Gen0) - ValueToDouble(old.Gen0)).ToString("F2"),
+                Gen1 = (ValueToDouble(latest.Gen1) - ValueToDouble(old.Gen1)).ToString("F2"),
+                Gen2 = (ValueToDouble(latest.Gen2) - ValueToDouble(old.Gen2)).ToString("F2"),
+                Allocated =
+                    (ValueToDouble(latest.Allocated) - ValueToDouble(old.Allocated)).ToString("F2")
+                    + "KB",
+            };
+            differenceData[i] = diff;
+        }
+
+        return differenceData;
     }
 
     private static void UpdateDataFiles<T>()
@@ -203,13 +231,16 @@ public static class BenchReportWriter
 
     private static BenchData[] StringToBenchDataList(string data)
     {
-        CsvConfiguration csvConfig = new CsvConfiguration(CultureInfo.CurrentCulture)
+        CsvConfiguration _csvConfig = new CsvConfiguration(CultureInfo.CurrentCulture)
         {
             HasHeaderRecord = true,
+            HeaderValidated = null,
+            MissingFieldFound = null,
+            ReadingExceptionOccurred = null,
         };
         BenchData[] records;
         using (var reader = new StringReader(data))
-        using (var csv = new CsvReader(reader, csvConfig))
+        using (var csv = new CsvReader(reader, _csvConfig))
         {
             records = csv.GetRecords<BenchData>().ToArray();
         }
@@ -252,17 +283,16 @@ public static class BenchReportWriter
         Path.Combine(DataFolder, "old-" + typeof(T).Name + ".csv");
 }
 
-record BenchData(
-    string Method,
-    string Mean,
-    string Error,
-    string StdDev,
-    string Gen0,
-    string Gen1,
-    string Gen2,
-    string Allocated
-)
+record BenchData
 {
+    public string Method { get; init; } = "";
+    public string Mean { get; init; } = "0 us";
+    public string Error { get; init; } = "0 us";
+    public string StdDev { get; init; } = "0 us";
+    public string Gen0 { get; init; } = "0";
+    public string Gen1 { get; init; } = "0";
+    public string Gen2 { get; init; } = "0";
+    public string Allocated { get; init; } = "0 KB";
     public const string CSVHeader = "Method;Mean;Error;StdDev;Gen0;Gen1;Gen2;Allocated\n";
     public const string MDHeader =
         "|Method|Mean|Error|StdDev|Gen0|Gen1|Gen2|Allocated|\n|----------------------- |----------:|---------:|---------:|---------:|--------:|-----------:|-----------:|\n";

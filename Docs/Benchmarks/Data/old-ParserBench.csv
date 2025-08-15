@@ -1,0 +1,5 @@
+Method;Mean;Error;StdDev;Gen0;Gen1;Gen2;Allocated
+ParserBenchmarkS;131.5 μs;0.65 μs;0.58 μs;35.1563;8.3008;0.0000;577.43 KB
+ParserBenchmarkM;272.0 μs;3.28 μs;3.07 μs;71.2891;23.4375;0.0000;1169.43 KB
+ParserBenchmarkL;1,966.8 μs;37.61 μs;36.94 μs;373.0469;197.2656;29.2969;5850.73 KB
+ParserBenchmarkXL;4,719.0 μs;25.67 μs;24.01 μs;742.1875;429.6875;54.6875;11698.87 KB
