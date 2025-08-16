@@ -22,16 +22,7 @@ public class VBaseFunction : Value
     protected Context GeneratContext()
     {
         Context newContext = new(name, context, startPos);
-
-        if (newContext.parent == null)
-        {
-            Console.WriteLine("Imposible, parent of child context is null");
-        }
-        else
-        {
-            newContext.symbolTable = new SymbolTable().parent = newContext.parent.symbolTable;
-        }
-
+        newContext.symbolTable = new SymbolTable() { parent = newContext.parent!.symbolTable };
         return newContext;
     }
 
