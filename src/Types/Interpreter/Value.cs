@@ -6,7 +6,7 @@ public class Value
 {
     public Position startPos;
     public Position endPos;
-    protected Context? context;
+    public Context? context;
 
     public Value() { }
 

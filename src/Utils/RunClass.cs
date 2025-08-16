@@ -3,8 +3,9 @@ using YSharp.Core;
 using YSharp.Types.AST;
 using YSharp.Types.Common;
 using YSharp.Types.Interpreter;
-using YSharp.Types.Interpreter.ClassTypes;
-using YSharp.Types.Interpreter.FunctionTypes;
+using YSharp.Types.Interpreter.Function;
+using YSharp.Types.Interpreter.Primatives;
+using YSharp.Types.Interpreter.Utils;
 using YSharp.Types.Lexer;
 
 namespace YSharp.Utils;

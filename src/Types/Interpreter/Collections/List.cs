@@ -1,6 +1,7 @@
 using YSharp.Types.Common;
+using YSharp.Types.Interpreter.Primatives;
 
-namespace YSharp.Types.Interpreter.ClassTypes;
+namespace YSharp.Types.Interpreter.Collection;
 
 public class VList(List<Value> elements) : Value
 {

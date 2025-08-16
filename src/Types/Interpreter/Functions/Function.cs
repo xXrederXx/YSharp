@@ -1,6 +1,6 @@
 using YSharp.Types.AST;
 
-namespace YSharp.Types.Interpreter.FunctionTypes;
+namespace YSharp.Types.Interpreter.Function;
 
 public class VFunction(string? name, BaseNode bodyNode, List<string> argNames, bool autoReturn)
     : VBaseFunction(name)

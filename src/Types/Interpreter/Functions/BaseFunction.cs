@@ -1,6 +1,6 @@
 using YSharp.Types.Common;
 
-namespace YSharp.Types.Interpreter.FunctionTypes;
+namespace YSharp.Types.Interpreter.Function;
 
 public class VBaseFunction : Value
 {

@@ -1,8 +1,9 @@
 using System.Reflection;
 using YSharp.Types.Common;
+using YSharp.Types.Interpreter.Primatives;
 using YSharp.Utils;
 
-namespace YSharp.Types.Interpreter.ClassTypes;
+namespace YSharp.Types.Interpreter.Other;
 
 public class ImportClass : Value
 {

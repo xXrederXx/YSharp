@@ -1,6 +1,6 @@
 using YSharp.Types.Common;
 
-namespace YSharp.Types.Interpreter.ClassTypes;
+namespace YSharp.Types.Interpreter.Primatives;
 
 public class VBool(bool value) : Value()
 {
