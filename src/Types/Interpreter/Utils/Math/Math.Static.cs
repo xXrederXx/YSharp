@@ -3,22 +3,55 @@ using YSharp.Types.Interpreter.Primitives;
 
 namespace YSharp.Types.Interpreter.Utils;
 
-public sealed class VMath : Value
+public sealed partial class VMath : Value
 {
-    public override ValueAndError GetVar(string name)
+    private static MethodTable<VMath> methodTable;
+    private static PropertyTable<VMath> propertyTable;
+
+    static VMath()
     {
-        return name switch
-        {
-            "PI" => (ValueAndError)(new VNumber(Math.PI), ErrorNull.Instance),
-            "E" => (ValueAndError)(new VNumber(Math.E), ErrorNull.Instance),
-            "TAU" => (ValueAndError)(new VNumber(Math.Tau), ErrorNull.Instance),
-            _ => base.GetVar(name),
-        };
+        methodTable = new MethodTable<VMath>(
+            [
+                ("ABS", (self, args) => GetMathFunc(self, "ABS", args)),
+                ("CEIL", (self, args) => GetMathFunc(self, "CEIL", args)),
+                ("FLOOR", (self, args) => GetMathFunc(self, "FLOOR", args)),
+                ("ROUND", (self, args) => GetMathFunc(self, "ROUND", args)),
+                ("SQRT", (self, args) => GetMathFunc(self, "SQRT", args)),
+                ("CBRT", (self, args) => GetMathFunc(self, "CBRT", args)),
+                ("SIN", (self, args) => GetMathFunc(self, "SIN", args)),
+                ("COS", (self, args) => GetMathFunc(self, "COS", args)),
+                ("TAN", (self, args) => GetMathFunc(self, "TAN", args)),
+                ("SINH", (self, args) => GetMathFunc(self, "SINH", args)),
+                ("COSH", (self, args) => GetMathFunc(self, "COSH", args)),
+                ("TANH", (self, args) => GetMathFunc(self, "TANH", args)),
+                ("ASIN", (self, args) => GetMathFunc(self, "ASIN", args)),
+                ("ACOS", (self, args) => GetMathFunc(self, "ACOS", args)),
+                ("ATAN", (self, args) => GetMathFunc(self, "ATAN", args)),
+                ("ASINH", (self, args) => GetMathFunc(self, "ASINH", args)),
+                ("ACOSH", (self, args) => GetMathFunc(self, "ACOSH", args)),
+                ("ATANH", (self, args) => GetMathFunc(self, "ATANH", args)),
+                ("LOG", (self, args) => GetMathFunc(self, "LOG", args)),
+                ("LOG2", (self, args) => GetMathFunc(self, "LOG2", args)),
+                ("LOG10", (self, args) => GetMathFunc(self, "LOG10", args)),
+            ]
+        );
+        propertyTable = new PropertyTable<VMath>(
+            [
+                ("PI", (self) => (new VNumber(Math.PI), ErrorNull.Instance)),
+                ("E", (self) => (new VNumber(Math.E), ErrorNull.Instance)),
+                ("TAU", (self) => (new VNumber(Math.Tau), ErrorNull.Instance)),
+            ]
+        );
     }
 
-    public override ValueAndError GetFunc(string name, List<Value> argNodes)
+    private static ValueAndError GetMathFunc(VMath self, string name, List<Value> argNodes)
     {
-        Error err = ValueHelper.CheckArgs(argNodes, 1, [typeof(VNumber)], context ?? new Context());
+        Error err = ValueHelper.CheckArgs(
+            argNodes,
+            1,
+            [typeof(VNumber)],
+            self.context ?? new Context()
+        );
         if (err.IsError)
         {
             return (ValueNull.Instance, err);
@@ -29,10 +62,7 @@ public sealed class VMath : Value
             "ABS" => (ValueAndError)
                 (new VNumber(Math.Abs(((VNumber)argNodes[0]).value)), ErrorNull.Instance),
             "CEIL" => (ValueAndError)
-                (
-                    new VNumber(Math.Ceiling(((VNumber)argNodes[0]).value)),
-                    ErrorNull.Instance
-                ),
+                (new VNumber(Math.Ceiling(((VNumber)argNodes[0]).value)), ErrorNull.Instance),
             "FLOOR" => (ValueAndError)
                 (new VNumber(Math.Floor(((VNumber)argNodes[0]).value)), ErrorNull.Instance),
             "ROUND" => (ValueAndError)
@@ -71,12 +101,7 @@ public sealed class VMath : Value
                 (new VNumber(Math.Log2(((VNumber)argNodes[0]).value)), ErrorNull.Instance),
             "LOG10" => (ValueAndError)
                 (new VNumber(Math.Log10(((VNumber)argNodes[0]).value)), ErrorNull.Instance),
-            _ => base.GetFunc(name, argNodes),
+            _ => throw new NotImplementedException($"You called this with {name} but didnt implement it")
         };
-    }
-
-    public override Value Copy()
-    {
-        return new VMath();
     }
 }
