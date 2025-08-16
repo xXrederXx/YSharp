@@ -1,5 +1,5 @@
 using YSharp.Types.Common;
-using YSharp.Types.Interpreter.Primatives;
+using YSharp.Types.Interpreter.Primitives;
 
 namespace YSharp.Types.Interpreter.Collection;
 
