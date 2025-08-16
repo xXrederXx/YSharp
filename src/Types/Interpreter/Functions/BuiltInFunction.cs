@@ -13,7 +13,7 @@ public static class BuiltInFunctionsTable
     public static readonly VBuiltInFunction time = new("time");
 }
 
-public class VBuiltInFunction : VBaseFunction
+public sealed class VBuiltInFunction : VBaseFunction
 {
     private readonly Dictionary<string, List<string>> functionArgs = [];
 

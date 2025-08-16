@@ -2,8 +2,12 @@ using YSharp.Types.AST;
 
 namespace YSharp.Types.Interpreter.Function;
 
-public class VFunction(string? name, BaseNode bodyNode, List<string> argNames, bool autoReturn)
-    : VBaseFunction(name)
+public sealed class VFunction(
+    string? name,
+    BaseNode bodyNode,
+    List<string> argNames,
+    bool autoReturn
+) : VBaseFunction(name)
 {
     public readonly BaseNode bodyNode = bodyNode;
     public readonly List<string> argNames = argNames;

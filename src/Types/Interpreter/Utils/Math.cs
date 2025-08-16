@@ -3,7 +3,7 @@ using YSharp.Types.Interpreter.Primitives;
 
 namespace YSharp.Types.Interpreter.Utils;
 
-public class VMath : Value
+public sealed class VMath : Value
 {
     public override ValueAndError GetVar(string name)
     {

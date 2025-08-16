@@ -5,7 +5,7 @@ using YSharp.Utils;
 
 namespace YSharp.Types.Interpreter.Other;
 
-public class ImportClass : Value
+public sealed class ImportClass : Value
 {
     public readonly ExposedClassData data;
 
