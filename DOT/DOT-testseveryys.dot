@@ -1,7 +1,7 @@
 digraph AST {
 rankdir=LR;
   node0 [label="LIST" shape="Msquare"];
-  node1 [label="Assign intVar" shape="ellipse"];
+  node1 [label="Assign intVar" shape="ellipse"]; 
   node2 [label="10" shape="rect"];
   node1 -> node2 [label="value"];
   node0 -> node1 [label="elem[0]"];
