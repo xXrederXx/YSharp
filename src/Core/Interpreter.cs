@@ -3,6 +3,7 @@ using YSharp.Types.Common;
 using YSharp.Types.Interpreter;
 using YSharp.Types.Interpreter.Collection;
 using YSharp.Types.Interpreter.Function;
+using YSharp.Types.Interpreter.Internal;
 using YSharp.Types.Interpreter.Primitives;
 using YSharp.Types.Lexer;
 using YSharp.Utils;

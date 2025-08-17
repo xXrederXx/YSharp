@@ -1,4 +1,4 @@
-using YSharp.Types.Interpreter;
+using YSharp.Types.Interpreter.Internal;
 using YSharp.Utils;
 
 namespace YSharp.Types.Common;

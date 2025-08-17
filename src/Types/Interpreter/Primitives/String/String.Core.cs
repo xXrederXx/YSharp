@@ -1,3 +1,5 @@
+using YSharp.Types.Interpreter.Internal;
+
 namespace YSharp.Types.Interpreter.Primitives;
 
 public sealed partial class VString(string value) : Value

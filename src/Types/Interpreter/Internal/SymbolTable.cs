@@ -1,4 +1,4 @@
-namespace YSharp.Types.Interpreter;
+namespace YSharp.Types.Interpreter.Internal;
 
 public class SymbolTable
 {

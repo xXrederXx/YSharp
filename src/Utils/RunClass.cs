@@ -4,6 +4,7 @@ using YSharp.Types.AST;
 using YSharp.Types.Common;
 using YSharp.Types.Interpreter;
 using YSharp.Types.Interpreter.Function;
+using YSharp.Types.Interpreter.Internal;
 using YSharp.Types.Interpreter.Primitives;
 using YSharp.Types.Interpreter.Utils;
 using YSharp.Types.Lexer;

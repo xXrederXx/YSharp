@@ -1,5 +1,6 @@
 using System.Reflection;
 using YSharp.Types.Common;
+using YSharp.Types.Interpreter.Internal;
 using YSharp.Types.Interpreter.Primitives;
 using YSharp.Utils;
 

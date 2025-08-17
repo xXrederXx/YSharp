@@ -1,6 +1,6 @@
 using YSharp.Types.Common;
 
-namespace YSharp.Types.Interpreter;
+namespace YSharp.Types.Interpreter.Internal;
 
 public class Context
 {

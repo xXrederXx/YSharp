@@ -1,3 +1,5 @@
+using YSharp.Types.Interpreter.Internal;
+
 namespace YSharp.Types.Interpreter.Utils;
 
 public sealed partial class VMath : Value

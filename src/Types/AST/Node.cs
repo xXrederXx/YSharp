@@ -1,4 +1,3 @@
-using System.Collections.Immutable;
 using YSharp.Types.Common;
 using YSharp.Types.Lexer;
 
