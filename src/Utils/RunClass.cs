@@ -14,6 +14,7 @@ namespace YSharp.Utils;
 internal class RunClass
 {
     private readonly SymbolTable globalSymbolTable = new();
+    public static bool DoExportAstDot;
 
     public RunClass()
     {
@@ -42,6 +43,16 @@ internal class RunClass
 
         // create a Parser and parse all the tokens
         ParseResult ast = new Parser(tokens).Parse();
+        if (DoExportAstDot)
+        {
+            if (!Directory.Exists("./DOT"))
+                Directory.CreateDirectory("./DOT");
+            AstDotExporter.ExportToDot(
+                ast.Node,
+                $"./DOT/DOT-{string.Concat(fn.Where(c => char.IsLetterOrDigit(c)))}.dot"
+            );
+        }
+
         if (ast.HasError)
         {
             return (new VNumber(0), ast.Error);

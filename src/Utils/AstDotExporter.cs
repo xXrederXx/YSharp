@@ -1,6 +1,7 @@
 using System.Text;
+using DotNetGraph.Core;
+using DotNetGraph.Extensions;
 using YSharp.Types.AST;
-
 namespace YSharp.Utils;
 
 public static class AstDotExporter

@@ -1,0 +1,10 @@
+digraph AST {
+rankdir=LR;
+  node0 [label="ListNode"];
+  node1 [label="CallNode"];
+  node2 [label="StringNode\nSTRING:tests/every.ys"];
+  node1 -> node2 [label="arg[0]"];
+  node3 [label="VarAccessNode\nIDENTIFIER:RUN"];
+  node1 -> node3 [label="callee"];
+  node0 -> node1 [label="elem[0]"];
+}
