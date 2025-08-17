@@ -454,52 +454,12 @@ public partial class Parser
         if (currentToken.IsType(TokenType.PP))
         {
             AdvanceParser(res);
-            return res.Success(
-                new VarAssignNode(
-                    varName,
-                    new BinOpNode(
-                        new VarAccessNode(varName),
-                        new TokenNoValue(
-                            TokenType.PLUS,
-                            currentToken.StartPos,
-                            currentToken.EndPos
-                        ),
-                        new NumberNode(
-                            new Token<double>(
-                                TokenType.INT,
-                                1,
-                                currentToken.StartPos,
-                                currentToken.EndPos
-                            )
-                        )
-                    )
-                )
-            );
+            return res.Success(new SuffixAssignNode(varName, true));
         }
         if (currentToken.IsType(TokenType.MM))
         {
             AdvanceParser(res);
-            return res.Success(
-                new VarAssignNode(
-                    varName,
-                    new BinOpNode(
-                        new VarAccessNode(varName),
-                        new TokenNoValue(
-                            TokenType.MINUS,
-                            currentToken.StartPos,
-                            currentToken.EndPos
-                        ),
-                        new NumberNode(
-                            new Token<double>(
-                                TokenType.INT,
-                                1,
-                                currentToken.StartPos,
-                                currentToken.EndPos
-                            )
-                        )
-                    )
-                )
-            );
+            return res.Success(new SuffixAssignNode(varName, false));
         }
 
         // normal variable assign

@@ -35,6 +35,7 @@ public static class Interpreter
             BreakNode => Visit_BreakNode(),
             TryCatchNode n => Visit_TryCatchNode(n, context),
             ImportNode n => Visit_ImportNode(n, context),
+            SuffixAssignNode n => Visit_SuffixAssignNode(n, context),
             _ => Vistit_ErrorNode(node, context),
         };
     }
@@ -611,5 +612,40 @@ public static class Interpreter
         //TODO: Implement call logic
 
         return res;
+    }
+
+    private static RunTimeResult Visit_SuffixAssignNode(SuffixAssignNode node, Context context)
+    {
+        RunTimeResult res = new();
+        string varName = node.varName;
+
+        if (context.symbolTable is null)
+        {
+            return res.Failure(new InternalInterpreterError("Symbol Table is null"));
+        }
+
+        Value oldVal = context.symbolTable.Get(varName);
+        if (oldVal is not VNumber numNode)
+        {
+            return res.Failure(
+                new WrongTypeError(
+                    node.StartPos,
+                    "You can only use this operateor for Numbers",
+                    context
+                )
+            );
+        }
+
+        ValueAndError newValue;
+        if (node.isAdd)
+            newValue = numNode.AddedTo(new VNumber(1));
+        else
+            newValue = numNode.SubedTo(new VNumber(1));
+
+        if (newValue.Error.IsError)
+            return res.Failure(newValue.Error);
+
+        context.symbolTable.Set(varName, newValue.Value);
+        return res.Success(newValue.Value);
     }
 }

@@ -363,3 +363,16 @@ public sealed class ImportNode : BaseNode
 
     public override string ToString() => $"Import {PathTok}";
 }
+
+public sealed class SuffixAssignNode : BaseNode
+{
+    public string varName;
+    public bool isAdd;
+
+    public SuffixAssignNode(Token<string> varName, bool isAdd)
+        : base(varName.StartPos, varName.EndPos)
+    {
+        this.varName = varName.Value;
+        this.isAdd = isAdd;
+    }
+}

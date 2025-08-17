@@ -13,27 +13,27 @@ VAR x /= 6
 PRINT("Asigning works, starting test comparisons (x) = " + x.ToString())
 
 IF (x == x) THEN
-	VAR x+=1
+	VAR x++
 END
 
 IF (x != 69) THEN
-	VAR x+=1
+	VAR x++
 END
 
 IF (x <= x) THEN
-	VAR x+=1
+	VAR x++
 END
 
 IF (x >= 69) THEN
-	VAR x+=1
+	VAR x++
 END
 
 IF (x < x) THEN
-	VAR x+=1
+	VAR x++
 END
 
 IF (x > 69) THEN
-	VAR x+=1
+	VAR x++
 END
 PRINT("End test comparisons (x) = " + x.ToString())
 
