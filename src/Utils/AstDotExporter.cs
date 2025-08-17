@@ -124,7 +124,7 @@ public static class AstDotExporter
             case CallNode cn:
                 return cn
                     .argNodes.Select((n, i) => (n, $"arg[{i}]"))
-                    .Append((cn.nodeToCall, "callee"));
+                    .Prepend((cn.nodeToCall, "callee"));
             case ReturnNode rn:
                 return rn.nodeToReturn != null
                     ? [(rn.nodeToReturn, "return")]

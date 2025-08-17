@@ -17,7 +17,7 @@ PRINT(data)
 
 PRINT("Avg")
 VAR sum = 0
-FOR i = 0 TO data.Count THEN
+FOR i = 0 TO data.Length THEN
     VAR sum += data.Get(i) 
 END
-PRINT(sum / data.Count)
+PRINT(sum / data.Length)
