@@ -49,8 +49,11 @@ FUN addTimes(a, b , x)
 		IF (i == 2) THEN
 			CONTINUE
 		END
-		IF (i == 10) THEN
+		ELIF (i == 10) THEN
 			BREAK
+		END
+		ELSE
+			VAR y = "Y" + "M" + "C" + "A" * (5 * 10 - 50 + x)
 		END
 		VAR end += b
 	END

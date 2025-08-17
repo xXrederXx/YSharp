@@ -1,7 +1,7 @@
 using System.Text;
-using DotNetGraph.Core;
-using DotNetGraph.Extensions;
+using FastEnumUtility;
 using YSharp.Types.AST;
+
 namespace YSharp.Utils;
 
 public static class AstDotExporter
@@ -34,27 +34,41 @@ public static class AstDotExporter
 
         int id = _idCounter++;
         _nodeIds[node] = id;
-        string label = node.GetType().Name;
 
         // Add token info for relevant node types
-        label += node switch
+        string label = node switch
         {
-            NumberNode n => $"\\n{n.tok}",
-            StringNode s => $"\\n{s.tok}",
-            VarAccessNode v => $"\\n{v.varNameTok}",
-            VarAssignNode va => $"\\n{va.varNameTok}",
-            BinOpNode bin => $"\\n{bin.opTok}",
-            UnaryOpNode un => $"\\n{un.opTok}",
-            DotVarAccessNode dv => $"\\n{dv.varNameTok}",
-            DotCallNode dc => $"\\n{dc.funcNameTok}",
-            ForNode fn => $"\\n{fn.varNameTok}",
-            FuncDefNode fd => fd.varNameTok != null ? $"\\n{fd.varNameTok}" : "",
-            TryCatchNode tc => $"\\n{tc.ChatchVarName}",
-            ImportNode im => $"\\n{im.PathTok}",
-            _ => string.Empty,
+            NumberNode n => $"{n.tok.Value}",
+            StringNode n => $"\\\"{n.tok.Value}\\\"",
+            VarAccessNode n => $"Accsess {n.varNameTok.Value}",
+            VarAssignNode n => $"Assign {n.varNameTok.Value}",
+            BinOpNode n => $"BinOp: {n.opTok.Type.FastToString()}",
+            UnaryOpNode n => $"UnOp: {n.opTok.Type.FastToString()}",
+            DotVarAccessNode n => $"DotAccsess: {n.varNameTok.Value}",
+            DotCallNode n => $"DotCall: {n.funcNameTok.Value}",
+            ForNode n => $"For: {n.varNameTok}",
+            FuncDefNode n => n.varNameTok != null
+                ? $"DEF: {n.varNameTok.Value}()"
+                : "<anonymous-func>",
+            TryCatchNode n => $"TryCatch: {n.ChatchVarName}",
+            ImportNode n => $"Import: {n.PathTok}",
+            SuffixAssignNode n => $"SufAssign: {n.varName} (Add? {n.isAdd})",
+            CallNode n => $"CALL",
+            IfNode n => $"IF",
+            ListNode n => $"LIST",
+            _ => node.GetType().Name,
+        };
+        string shape = node switch
+        {
+            IfNode => "diamond",
+            NumberNode => "rect",
+            StringNode => "rect",
+            ListNode => "Msquare",
+            BinOpNode => "hexagon",
+            _ => "ellipse",
         };
 
-        sb.AppendLine($"  node{id} [label=\"{label}\"];");
+        sb.AppendLine($"  node{id} [label=\"{label}\" shape=\"{shape}\"];");
 
         foreach (var (child, edgeLabel) in GetChildrenWithLabels(node))
         {
@@ -92,7 +106,9 @@ public static class AstDotExporter
                             (c.expression, $"case[{i}]-expr"),
                         }
                 );
-                return cases.Append((ifn.elseNode, "else"));
+                if (ifn.elseNode is not NodeNull)
+                    cases.Append((ifn.elseNode, "else"));
+                return cases;
             case ForNode fn:
                 return new[]
                 {
