@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using CommandLine;
 using YSharp.Benchmarks;
 using YSharp.Core;
 using YSharp.Types.AST;
@@ -9,17 +10,40 @@ using YSharp.Utils;
 
 namespace YSharp;
 
-// The main entrance Point
+public class CliArgs
+{
+    [Option(
+        'b',
+        "run-bench",
+        Required = false,
+        HelpText = "This flag is used to run the benchmarks"
+    )]
+    public bool RunBench { get; set; }
+
+    [Option('t', "run-test", Required = false, HelpText = "This flag is used to run the tests")]
+    public bool RunTest { get; set; }
+}
+
 internal class Start
 {
     private static void Main(string[] args)
     {
-        TestRunner();
+        Action func = ConsoleRunner;
+        CommandLine
+            .Parser.Default.ParseArguments<CliArgs>(args)
+            .WithParsed(cliargs =>
+            {
+                if (cliargs.RunTest)
+                    func = RunTest;
+                if (cliargs.RunBench)
+                    func = TestRunner;
+                func.Invoke();
+            });
     }
 
     private static void RunTest()
     {
-        (Value, Error) res = new RunClass().Run("<stdin>", "RUN(\"tests/every.ys\")");
+        (Value, Types.Common.Error) res = new RunClass().Run("<stdin>", "RUN(\"tests/every.ys\")");
 
         if (res.Item2.IsError)
         {
@@ -27,12 +51,12 @@ internal class Start
         }
     }
 
-    private static void TestRunner(string change = "-")
+    private static void TestRunner()
     {
-        BenchHelp.Run<LexerBench>(change);
-        BenchHelp.Run<ParserBench>(change);
-        BenchHelp.Run<InterpreterBench>(change);
-        BenchHelp.Run<RunTimeBench>(change);
+        BenchHelp.Run<LexerBench>();
+        BenchHelp.Run<ParserBench>();
+        BenchHelp.Run<InterpreterBench>();
+        BenchHelp.Run<RunTimeBench>();
     }
 
     private static void ConsoleRunner()
@@ -57,7 +81,7 @@ internal class Start
                 continue;
             }
 
-            (Value, Error) res = runClass.Run("<stdin>", inp); // run the app
+            (Value, Types.Common.Error) res = runClass.Run("<stdin>", inp); // run the app
 
             if (res.Item2.IsError)
             {
