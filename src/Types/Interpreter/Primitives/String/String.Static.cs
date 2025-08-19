@@ -1,4 +1,5 @@
 using YSharp.Types.Common;
+using YSharp.Types.Interpreter.Collection;
 using YSharp.Types.Interpreter.Internal;
 
 namespace YSharp.Types.Interpreter.Primitives;
@@ -10,10 +11,43 @@ public sealed partial class VString
 
     static VString()
     {
-        methodTable = new MethodTable<VString>([("ToNumber", ToNumber), ("ToBool", ToBool)]);
+        methodTable = new MethodTable<VString>([("ToNumber", ToNumber), ("ToBool", ToBool), ("ToUpper", ToUpper), ("ToLower", ToLower), ("Split", Split)]);
         propertyTable = new PropertyTable<VString>([("Length", GetLength)]);
     }
+    private static ValueAndError Split(VString self, List<Value> args)
+    {
+        Error err = ValueHelper.CheckArgs(args, 1, [typeof(VString)], self.context); // format argument
+        if (err.IsError)
+        {
+            return (ValueNull.Instance, err);
+        }
+        if (args[0] is not VString splitStr)
+        {
+            return (ValueNull.Instance, new InternalInterpreterError("The splitStr is not Vstring even though Chech args said it is"));
+        }
 
+        return (new VList(self.value.Split(splitStr.value).Select(x => (Value)new VString(x)).ToList()), ErrorNull.Instance);
+    }
+    private static ValueAndError ToUpper(VString self, List<Value> args)
+    {
+        Error err = ValueHelper.CheckArgs(args, 0, [], self.context); // format argument
+        if (err.IsError)
+        {
+            return (ValueNull.Instance, err);
+        }
+
+        return (new VString(self.value.ToUpper()), ErrorNull.Instance);
+    }
+    private static ValueAndError ToLower(VString self, List<Value> args)
+    {
+        Error err = ValueHelper.CheckArgs(args, 0, [], self.context); // format argument
+        if (err.IsError)
+        {
+            return (ValueNull.Instance, err);
+        }
+
+        return (new VString(self.value.ToUpper()), ErrorNull.Instance);
+    }
     private static ValueAndError ToNumber(VString self, List<Value> args)
     {
         Error err = ValueHelper.CheckArgs(args, 0, [typeof(VString)], self.context); // format argument
