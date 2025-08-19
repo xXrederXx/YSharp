@@ -1,14 +1,8 @@
-- Add a Node for the var++ and var--
-  - Update Parser to create this
-  - Update Interpreter to execute it
-
-- Reduce object instantiation
-- Rework the dot notation in the parser
-- Make ELIF work
-  
 ## Implementation
 - [ ] Implement call logic in `Internal/Interpreter.cs` (see //TODO comment)
 - [ ] Implement execution methods for built-in functions in `Types/ValueTypes/FunctionTypes/BuiltInFunction.cs`
+- [ ] Implement IMPORT logic
+- [ ] Make Try Catch work
 - [ ] Complete method in `Utility/BenchReportWriter.cs` that throws NotImplementedException
 
 ## Error Handling
@@ -32,3 +26,12 @@
 
 ## Performance
 - [ ] Review and optimize code marked as "optimized" for performance
+
+## Optimizing AST
+- [ ] Create an Optimizer for the AST
+- [ ] Add cli arg to toggle AST optimizer
+- [ ] Implement Constant-folding
+- [ ] Implement Dead-Code Elimination
+
+## Add Functionalety
+- [ ] Add more Builtins
