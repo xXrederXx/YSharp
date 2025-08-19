@@ -25,10 +25,21 @@ public sealed partial class VNumber : Value
         {
             return (ValueNull.Instance, err);
         }
-
-        string format = self.value.ToString(((VString)args[0]).value);
+        string format = ConvertToCSFormat(((VString)args[0]).value);
+        string formatedStr = self.value.ToString(format);
         //TODO: Add format exeption
-        return (new VString(format), ErrorNull.Instance);
+        return (new VString(formatedStr), ErrorNull.Instance);
+    }
+
+    private static string ConvertToCSFormat(string value)
+    {
+        // TODO: Implement these types
+        // B -> Binary
+        // H -> Hex
+        // D -> Decimal
+        // F -> Floating-point
+        // S -> Scientific
+        return value;
     }
 
     private static ValueAndError ToBool(VNumber self, List<Value> args)
