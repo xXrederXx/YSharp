@@ -15,6 +15,7 @@ internal class RunClass
 {
     private readonly SymbolTable globalSymbolTable = new();
     public static bool DoExportAstDot;
+    public static int OptimizationLevel;
 
     public RunClass()
     {
@@ -43,6 +44,10 @@ internal class RunClass
 
         // create a Parser and parse all the tokens
         ParseResult ast = new Parser(tokens).Parse();
+        if (OptimizationLevel > 0)
+        {
+            ast = Optimizer.Visit(ast.Node);
+        }
         if (DoExportAstDot)
         {
             if (!Directory.Exists("./DOT"))

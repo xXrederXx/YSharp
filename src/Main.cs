@@ -25,6 +25,9 @@ public class CliArgs
         HelpText = "This flag is used render a DOT graph of the AST"
     )]
     public bool RenderDot { get; set; }
+
+    [Option('o', "optimization", Required =false, Default =0)]
+    public int Optimization { get; set; }
 }
 
 internal class Start
@@ -41,6 +44,7 @@ internal class Start
                 if (cliargs.RunBench)
                     func = TestRunner;
                 RunClass.DoExportAstDot = cliargs.RenderDot;
+                RunClass.OptimizationLevel = cliargs.Optimization;
                 func.Invoke();
             });
     }
