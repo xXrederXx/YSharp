@@ -76,6 +76,11 @@ public static class Optimizer
             return res;
         }
 
+        if (left is StringNode leftStr && right is StringNode rightStr && node.opTok.Type == TokenType.PLUS)
+        {
+            return res.Success(new StringNode(new Token<string>(leftStr.tok.Type, leftStr.tok.Value + rightStr.tok.Value, leftStr.StartPos, rightStr.EndPos)));
+        }
+
         if (left is not NumberNode leftNum || right is not NumberNode rightNum)
         {
             return res.Success(new BinOpNode(left, node.opTok, right));
