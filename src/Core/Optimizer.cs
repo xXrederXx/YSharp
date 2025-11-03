@@ -29,6 +29,7 @@ public static class Optimizer
             TryCatchNode n => Visit_TryCatchNode(n),
             ImportNode n => Visit_ImportNode(n),
             SuffixAssignNode n => Visit_SuffixAssignNode(n),
+            NodeNull n => new ParseResult().Success(n),
             _ => Vistit_ErrorNode(node),
         };
     }

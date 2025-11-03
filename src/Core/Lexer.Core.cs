@@ -1,6 +1,5 @@
 using System.Runtime.CompilerServices;
 using System.Text;
-using FastEnumUtility;
 using YSharp.Types.Common;
 using YSharp.Types.Lexer;
 using YSharp.Utils;
