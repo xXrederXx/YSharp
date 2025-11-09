@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using Xunit;
+using YSharp.Types.Common;
 using YSharp.Utils;
 
 public class Error1xxxTest
@@ -14,6 +15,6 @@ public class Error1xxxTest
         // When
         var res = runClass.Run("TEST", inp);
         // Then
-
+        Assert.Equal(new InvalidSyntaxError(Position.Null, "").ErrorIndex, res.Item2.ErrorIndex);
     }
 }

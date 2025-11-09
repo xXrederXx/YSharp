@@ -4,17 +4,6 @@ namespace YSharp.Types.Common;
 public class CliArgs
 {
     [Option(
-        'b',
-        "run-bench",
-        Required = false,
-        HelpText = "This flag is used to run the benchmarks"
-    )]
-    public bool RunBench { get; set; }
-
-    [Option('t', "run-test", Required = false, HelpText = "This flag is used to run the tests")]
-    public bool RunTest { get; set; }
-
-    [Option(
         'd',
         "dot",
         Required = false,

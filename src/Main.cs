@@ -1,5 +1,4 @@
 ﻿using CommandLine;
-using YSharp.Benchmarks;
 using YSharp.Types.Common;
 using YSharp.Types.Interpreter;
 using YSharp.Utils;
@@ -14,32 +13,10 @@ internal class Start
             .Parser.Default.ParseArguments<CliArgs>(args)
             .WithParsed(cliargs =>
             {
-                if (cliargs.RunTest)
-                    func = RunTest;
-                if (cliargs.RunBench)
-                    func = TestRunner;
                 RunClass.DoExportAstDot = cliargs.RenderDot;
                 RunClass.OptimizationLevel = cliargs.Optimization;
                 func.Invoke();
             });
-    }
-
-    private static void RunTest()
-    {
-        (Value, Types.Common.Error) res = new RunClass().Run("<stdin>", "RUN(\"tests/every.ys\")");
-
-        if (res.Item2.IsError)
-        {
-            Console.WriteLine(res.Item2);
-        }
-    }
-
-    private static void TestRunner()
-    {
-        BenchHelp.Run<LexerBench>();
-        BenchHelp.Run<ParserBench>();
-        BenchHelp.Run<InterpreterBench>();
-        BenchHelp.Run<RunTimeBench>();
     }
 
     private static void ConsoleRunner()
