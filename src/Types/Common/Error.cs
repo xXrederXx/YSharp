@@ -6,12 +6,12 @@ namespace YSharp.Types.Common;
 public class Error(int index, string message, Position start)
 {
     private readonly string Message = message;
-    public readonly int ErrorIndex = index;
+    public readonly int ErrorCode = index;
     public readonly Position StartPosition = start;
     public bool IsError => this is not ErrorNull;
 
     public override string ToString() =>
-        $"{FileNameRegistry.GetFileName(StartPosition.FileId)}({StartPosition.Line + 1}, {StartPosition.Column + 1}): ERROR YS{ErrorIndex:D4} {Message}";
+        $"{FileNameRegistry.GetFileName(StartPosition.FileId)}({StartPosition.Line + 1}, {StartPosition.Column + 1}): ERROR YS{ErrorCode:D4} {Message}";
 }
 
 public class RunTimeError(Position posStart, string details, Context? context, int errorIndex = 300)
