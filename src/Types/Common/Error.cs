@@ -3,7 +3,7 @@ using YSharp.Utils;
 
 namespace YSharp.Types.Common;
 
-public class Error(int index, string message, Position start)
+public abstract class Error(int index, string message, Position start)
 {
     private readonly string Message = message;
     public readonly int ErrorCode = index;
