@@ -4,7 +4,7 @@ using YSharp.Types.Interpreter;
 using YSharp.Utils;
 
 namespace YSharp;
-internal class Start
+internal static class Start
 {
     private static void Main(string[] args)
     {
@@ -21,9 +21,6 @@ internal class Start
 
     private static void ConsoleRunner()
     {
-        /* Console.WriteLine("Type 'e' now to enable log");
-        bool logTextEnabled = Console.ReadLine() == "e"; */
-
         RunClass runClass = new();
         Console.WriteLine("Type 'b' anytime to break");
 
@@ -47,10 +44,6 @@ internal class Start
             {
                 Console.WriteLine(res.Item2);
             }
-            /* if (logTextEnabled)
-            {
-                Console.WriteLine(res.Item1 + "\n" + res.Item2); // log the results
-            } */
         }
     }
 }

@@ -102,7 +102,6 @@ public sealed partial class Lexer
 
     private (IToken, Error) MakeString()
     {
-        string value = string.Empty;
         Position startPos = pos;
 
         Dictionary<char, char> escapeChars = new()
@@ -121,7 +120,7 @@ public sealed partial class Lexer
                 Advance();
                 if (escapeChars.TryGetValue(current_char, out char _char))
                 {
-                    value += _char;
+                    stringBuilder.Append(_char);
                 }
                 else
                 {
@@ -133,12 +132,14 @@ public sealed partial class Lexer
             }
             else
             {
-                value += current_char;
+                stringBuilder.Append(current_char);
             }
 
             Advance();
         }
         Advance();
+        string value = stringBuilder.ToString();
+        stringBuilder.Clear();
         return (new Token<string>(TokenType.STRING, value, startPos, pos), ErrorNull.Instance);
     }
 
@@ -164,12 +165,12 @@ public sealed partial class Lexer
         Advance();
 
         if (current_char == '+')
-        { // it is ++
+        {
             Advance();
             return new TokenNoValue(TokenType.PP, startPos, pos);
         }
         if (current_char == '=')
-        { // its +=
+        {
             Advance();
             return new TokenNoValue(TokenType.PLEQ, startPos, pos);
         }
