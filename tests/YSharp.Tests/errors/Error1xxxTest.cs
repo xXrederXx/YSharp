@@ -15,6 +15,6 @@ public class Error1xxxTest
         // When
         var res = runClass.Run("TEST", inp);
         // Then
-        Assert.Equal(new InvalidSyntaxError(Position.Null, "").ErrorIndex, res.Item2.ErrorIndex);
+        Assert.Equal(new InvalidSyntaxError(Position.Null, "").ErrorCode, res.Item2.ErrorCode);
     }
 }
