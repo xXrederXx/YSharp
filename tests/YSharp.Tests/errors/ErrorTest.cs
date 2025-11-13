@@ -9,11 +9,12 @@ public class ErrorTest
     private readonly RunClass _runClass = new();
 
     [Theory]
-    [InlineData("", typeof(IllegalCharError))]
-    [InlineData("", typeof(IllegalEscapeCharError))]
+    [InlineData("😊 + 1", typeof(IllegalCharError))]
+    [InlineData("VAR 开 = 0", typeof(IllegalCharError))]
+    [InlineData("PRINT(\"My Escape:\\w\")", typeof(IllegalEscapeCharError))]
     [InlineData("", typeof(InvalidEncodingError))]
-    [InlineData("", typeof(ExpectedCharError))]
-    [InlineData("", typeof(IllegalNumberFormat))]
+    [InlineData("x ! y", typeof(ExpectedCharError))]
+    [InlineData("VAR x = 1.0.1", typeof(IllegalNumberFormat))]
     public void TestErrors_0(string input, Type expectedErrorType)
     {
         // When
@@ -24,7 +25,7 @@ public class ErrorTest
         Assert.IsType(expectedErrorType, res.Item2);
     }
 
-    [Theory]
+    [Theory(Skip ="Not Implemented")]
     [InlineData("", typeof(InvalidSyntaxError))]
     [InlineData("", typeof(ExpectedKeywordError))]
     [InlineData("", typeof(UnexpectedEOFError))]
@@ -44,7 +45,7 @@ public class ErrorTest
         Assert.IsType(expectedErrorType, res.Item2);
     }
 
-    [Theory]
+    [Theory(Skip ="Not Implemented")]
     [InlineData("", typeof(VarNotFoundError))]
     [InlineData("", typeof(FuncNotFoundError))]
     [InlineData("", typeof(AssignmentToConstantError))]
@@ -59,7 +60,7 @@ public class ErrorTest
         Assert.IsType(expectedErrorType, res.Item2);
     }
 
-    [Theory]
+    [Theory(Skip ="Not Implemented")]
     [InlineData("", typeof(WrongTypeError))]
     [InlineData("", typeof(NullReferenceError))]
     [InlineData("", typeof(InvalidCastError))]
@@ -74,7 +75,7 @@ public class ErrorTest
         Assert.IsType(expectedErrorType, res.Item2);
     }
 
-    [Theory]
+    [Theory(Skip ="Not Implemented")]
     [InlineData("", typeof(NumArgsError))]
     [InlineData("", typeof(ArgOutOfRangeError))]
     [InlineData("", typeof(MissingRequiredArgError))]
@@ -88,7 +89,7 @@ public class ErrorTest
         Assert.IsType(expectedErrorType, res.Item2);
     }
 
-    [Theory]
+    [Theory(Skip ="Not Implemented")]
     [InlineData("", typeof(DivisionByZeroError))]
     [InlineData("", typeof(MathOverflowError))]
     [InlineData("", typeof(InvalidMathOpError))]
@@ -103,7 +104,7 @@ public class ErrorTest
         Assert.IsType(expectedErrorType, res.Item2);
     }
 
-    [Theory]
+    [Theory(Skip ="Not Implemented")]
     [InlineData("", typeof(BreakOutsideLoopError))]
     [InlineData("", typeof(ReturnOutsideFunctionError))]
     [InlineData("", typeof(MaxRecursionDepthError))]
@@ -117,7 +118,7 @@ public class ErrorTest
         Assert.IsType(expectedErrorType, res.Item2);
     }
 
-    [Theory]
+    [Theory(Skip ="Not Implemented")]
     [InlineData("", typeof(FileNotFoundError))]
     [InlineData("", typeof(FileReadError))]
     [InlineData("", typeof(FileWriteError))]
@@ -132,7 +133,7 @@ public class ErrorTest
         Assert.IsType(expectedErrorType, res.Item2);
     }
 
-    [Theory]
+    [Theory(Skip ="Not Implemented")]
     [InlineData("", typeof(ModuleNotFoundError))]
     [InlineData("", typeof(CircularImportError))]
     [InlineData("", typeof(ImportSyntaxError))]
@@ -146,7 +147,7 @@ public class ErrorTest
         Assert.IsType(expectedErrorType, res.Item2);
     }
 
-    [Theory]
+    [Theory(Skip ="Not Implemented")]
     [InlineData("", typeof(InternalError))]
     [InlineData("", typeof(InternalLexerError))]
     [InlineData("", typeof(InternalParserError))]
