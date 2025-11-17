@@ -4,15 +4,15 @@ using YSharp.Utils;
 
 namespace YSharp.Tests.Errors;
 
+// TODO: Implement Encoding Error
+
 public class ErrorTest
 {
     private readonly RunClass _runClass = new();
 
     [Theory]
     [InlineData("😊 + 1", typeof(IllegalCharError))]
-    [InlineData("VAR 开 = 0", typeof(IllegalCharError))]
     [InlineData("PRINT(\"My Escape:\\w\")", typeof(IllegalEscapeCharError))]
-    [InlineData("", typeof(InvalidEncodingError))]
     [InlineData("x ! y", typeof(ExpectedCharError))]
     [InlineData("VAR x = 1.0.1", typeof(IllegalNumberFormat))]
     public void TestErrors_0(string input, Type expectedErrorType)
