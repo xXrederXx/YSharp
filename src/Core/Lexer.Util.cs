@@ -93,8 +93,18 @@ public sealed partial class Lexer
     {
         Position posStart = pos;
         Advance();
+        if (current_char == checkChar)
+        {
+            Advance();
+            return new TokenNoValue(
+                TTTrue,
+                posStart,
+                pos
+            );
+        }
+
         return new TokenNoValue(
-            current_char == checkChar ? TTTrue : TTFalse,
+            TTFalse,
             posStart,
             pos
         );

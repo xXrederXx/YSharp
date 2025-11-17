@@ -101,12 +101,10 @@ public sealed partial class Lexer
             else if (current_char == '*')
             {
                 tokens.Add(MakeDecicion('=', TokenType.MUEQ, TokenType.MUL));
-                Advance();
             }
             else if (current_char == '/')
             {
                 tokens.Add(MakeDecicion('=', TokenType.DIEQ, TokenType.DIV));
-                Advance();
             }
             else if (current_char == '^')
             {
@@ -137,17 +135,14 @@ public sealed partial class Lexer
             else if (current_char == '=')
             {
                 tokens.Add(MakeDecicion('=', TokenType.EE, TokenType.EQ));
-                Advance();
             }
             else if (current_char == '<')
             {
                 tokens.Add(MakeDecicion('=', TokenType.LTE, TokenType.LT));
-                Advance();
             }
             else if (current_char == '>')
             {
                 tokens.Add(MakeDecicion('=', TokenType.GTE, TokenType.GT));
-                Advance();
             }
             // Other
             else if (current_char == ',')
