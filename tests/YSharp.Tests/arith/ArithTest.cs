@@ -54,7 +54,11 @@ public class ErrorTest
     [InlineData(0.5, -0.354)]
     public void Test_Sub(double x, double y)
     {
-        Check_Arith(_runClass.Run("TEST", $"{x:f}-{y:f}"), x - y);
+        (Value val, Error err) res = _runClass.Run("TEST", $"{x:f}-{y:f}");
+        if (y < 0)
+            Assert.IsType<InvalidSyntaxError>(res.err);
+        else
+            Check_Arith(res, x - y);
     }
 
     [Theory]
