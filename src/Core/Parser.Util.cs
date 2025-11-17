@@ -40,7 +40,7 @@ public partial class Parser
     public static bool TryCastToken<T>(
         IToken token,
         out Token<T> result,
-        out InternalParserError error,
+        out InternalTokenCastError<T> error,
         [CallerMemberName] string membername = "NoMemberName"
     )
     {
@@ -53,8 +53,8 @@ public partial class Parser
         }
 
         result = null!;
-        error = new InternalParserError(
-            $"Casting the token ({token.GetType()}) to a Token<{typeof(T)}> failed in {membername} / Token: {token}"
+        error = new InternalTokenCastError<T>(
+            token, membername
         );
 
         return false;
@@ -97,7 +97,7 @@ public partial class Parser
 
         if (currentToken.IsNotType(TokenType.RPAREN))
         {
-            res.Failure(new ExpectedTokenError(currentToken.StartPos, "')' or ','"));
+            res.Failure(new UnmatchedBracketError(currentToken.StartPos, ')'));
             return [];
         }
 

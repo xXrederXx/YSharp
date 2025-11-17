@@ -96,7 +96,7 @@ public partial class Parser
             return res.Failure(new ExpectedIdnetifierError(currentToken.StartPos));
         }
 
-        if (!TryCastToken(currentToken, out Token<string> varName, out InternalParserError error))
+        if (!TryCastToken(currentToken, out Token<string> varName, out InternalTokenCastError<string> error))
         {
             return res.Failure(error);
         }
@@ -224,7 +224,7 @@ public partial class Parser
 
             if (currentToken.IsNotType(TokenType.RSQUARE))
             {
-                return res.Failure(new ExpectedTokenError(currentToken.StartPos, "',' or ']'"));
+                return res.Failure(new UnmatchedBracketError(currentToken.StartPos, ']'));
             }
 
             AdvanceParser(res);
@@ -241,7 +241,7 @@ public partial class Parser
             !TryCastToken(
                 currentToken,
                 out Token<string> identifierTok,
-                out InternalParserError error
+                out InternalTokenCastError<string> error
             )
         )
         {
@@ -270,7 +270,7 @@ public partial class Parser
                 !TryCastToken(
                     currentToken,
                     out Token<string> dotIdentifierTok,
-                    out InternalParserError dotError
+                    out InternalTokenCastError<string> dotError
                 )
             )
             {
@@ -312,7 +312,7 @@ public partial class Parser
                 !TryCastToken(
                     currentToken,
                     out Token<string> _varNameTok,
-                    out InternalParserError error
+                    out InternalTokenCastError<string> error
                 )
             )
             {
@@ -425,7 +425,7 @@ public partial class Parser
             );
         }
 
-        if (!TryCastToken(currentToken, out Token<string> varName, out InternalParserError error))
+        if (!TryCastToken(currentToken, out Token<string> varName, out InternalTokenCastError<string> error))
         {
             return res.Failure(error);
         }
@@ -548,7 +548,7 @@ public partial class Parser
                 )
             );
         }
-        if (!TryCastToken(currentToken, out Token<string> token, out InternalParserError error))
+        if (!TryCastToken(currentToken, out Token<string> token, out InternalTokenCastError<string> error))
         {
             return res.Failure(error);
         }
@@ -688,7 +688,7 @@ public partial class Parser
                 !TryCastToken(
                     currentToken,
                     out Token<TokenNoValueType> opTok,
-                    out InternalParserError error
+                    out InternalTokenCastError<TokenNoValueType> error
                 )
             )
             {
@@ -718,7 +718,7 @@ public partial class Parser
                 !TryCastToken(
                     currentToken,
                     out Token<TokenNoValueType> opTok,
-                    out InternalParserError error
+                    out InternalTokenCastError<TokenNoValueType> error
                 )
             )
             {
@@ -752,7 +752,7 @@ public partial class Parser
                 !TryCastToken(
                     currentToken,
                     out Token<TokenNoValueType> opTok,
-                    out InternalParserError error
+                    out InternalTokenCastError<TokenNoValueType> error
                 )
             )
             {
@@ -839,7 +839,7 @@ public partial class Parser
                 !TryCastToken(
                     currentToken,
                     out Token<TokenNoValueType> opTok,
-                    out InternalParserError error
+                    out InternalTokenCastError<TokenNoValueType> error
                 )
             )
             {

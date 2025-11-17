@@ -19,7 +19,7 @@ public static class ValueHelper
     {
         if (types.Count != 1 && types.Count != argValue.Count)
         {
-            return new InternalError("types must have one element or match size of argValue");
+            return new InternalInterpreterError("An error occured when trying to check the args passed into a function. But it failed when trying to check the types. The problem was that the args in the internal function didnt match a criteria. ");
         }
         bool oneType = types.Count == 1;
         for (int i = 0; i < argValue.Count; i++)

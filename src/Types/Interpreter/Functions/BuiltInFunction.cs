@@ -94,7 +94,7 @@ public sealed class VBuiltInFunction : VBaseFunction
     {
         if (execContext.symbolTable == null)
         {
-            return new RunTimeResult().Failure(new InternalError("symboltable is null"));
+            return new RunTimeResult().Failure(new InternalSymbolTableError(execContext));
         }
 
         Value fileNameValue = execContext.symbolTable.Get("fileName");
@@ -134,7 +134,7 @@ public sealed class VBuiltInFunction : VBaseFunction
     {
         if (execContext.symbolTable == null)
         {
-            return new RunTimeResult().Failure(new InternalError("symboltable is null"));
+            return new RunTimeResult().Failure(new InternalSymbolTableError(execContext));
         }
 
         Value fileNameValue = execContext.symbolTable.Get("fileName");

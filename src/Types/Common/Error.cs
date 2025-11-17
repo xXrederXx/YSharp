@@ -1,4 +1,5 @@
 using YSharp.Types.Interpreter.Internal;
+using YSharp.Types.Lexer;
 using YSharp.Utils;
 
 namespace YSharp.Types.Common;
@@ -65,19 +66,24 @@ public class EndKeywordError(Position posStart) : Error(690, "End keyword there"
 
 //* 0000–0999: Lexical Errors
 public class IllegalCharError(Position posStart, char illegalChar)
-    : Error(0001, $"Illegal character '{illegalChar}'", posStart) { }
+    : Error(0001, $"Illegal character '{illegalChar}'", posStart)
+{ }
 
 public class IllegalEscapeCharError(Position posStart, char illegalChar)
-    : Error(0002, $"'{illegalChar}' is not a valid escape character", posStart) { }
+    : Error(0002, $"'{illegalChar}' is not a valid escape character", posStart)
+{ }
 
 public class InvalidEncodingError(Position posStart, string encoding)
-    : Error(0003, $"Unsupported encoding: '{encoding}'", posStart) { }
+    : Error(0003, $"Unsupported encoding: '{encoding}'", posStart)
+{ }
 
 public class ExpectedCharError(Position posStart, char expectedChar)
-    : Error(0004, $"Expected the character '{expectedChar}'", posStart) { }
+    : Error(0004, $"Expected the character '{expectedChar}'", posStart)
+{ }
 
 public class IllegalNumberFormat(Position posStart)
-    : Error(0005, "You can't have 2 dots in a number", posStart) { }
+    : Error(0005, "You can't have 2 dots in a number", posStart)
+{ }
 
 
 //* 1000–1999: Syntax & Structure Errors
@@ -86,28 +92,36 @@ public class InvalidSyntaxError(Position posStart, string details)
 { }
 
 public class ExpectedKeywordError(Position posStart, string keyword)
-    : Error(1001, $"Expected keyword '{keyword}'", posStart) { }
+    : Error(1001, $"Expected keyword '{keyword}'", posStart)
+{ }
 
 public class UnexpectedEOFError(Position posStart)
-    : Error(1002, "Unexpected end of file", posStart) { }
+    : Error(1002, "Unexpected end of file", posStart)
+{ }
 
 public class UnexpectedIndentError(Position posStart)
-    : Error(1003, "Unexpected indent", posStart) { }
+    : Error(1003, "Unexpected indent", posStart)
+{ }
 
 public class ExpectedBlockError(Position posStart)
-    : Error(1004, "Expected an indented code block", posStart) { }
+    : Error(1004, "Expected an indented code block", posStart)
+{ }
 
 public class UnmatchedBracketError(Position posStart, char bracket)
-    : Error(1005, $"Unmatched bracket '{bracket}'", posStart) { }
+    : Error(1005, $"Unmatched bracket '{bracket}'", posStart)
+{ }
 
 public class ExpectedTokenError(Position posStart, string expectedToken)
-    : Error(1006, $"Expected the Token {expectedToken}", posStart) { }
+    : Error(1006, $"Expected the Token {expectedToken}", posStart)
+{ }
 
 public class ExpectedNewlineError(Position posStart)
-    : Error(1007, $"Expected a Newline", posStart) { }
+    : Error(1007, $"Expected a Newline", posStart)
+{ }
 
 public class ExpectedIdnetifierError(Position posStart)
-    : Error(1008, $"Expected an Identifier", posStart) { }
+    : Error(1008, $"Expected an Identifier", posStart)
+{ }
 
 //* 2000–2999: Semantic Errors
 public class VarNotFoundError(Position posStart, string varName, Context? context)
@@ -192,13 +206,17 @@ public class ImportSyntaxError(Position posStart, string details, Context? conte
     : RunTimeError(posStart, details, context, 8002);
 
 //* 9000–9999: Internal / System Errors
-public class InternalError(string details) : Error(9000, details, Position.Null) { }
+public class InternalError(int code, string details) : Error(code, details, Position.Null) { }
 
-public class InternalLexerError(string details) : Error(9001, details, Position.Null) { }
+public class InternalLexerError(string details) : InternalError(9001, details) { }
 
-public class InternalParserError(string details) : Error(9002, details, Position.Null) { }
+public class InternalParserError(string details) : InternalError(9002, details) { }
 
-public class InternalInterpreterError(string details) : Error(9003, details, Position.Null) { }
+public class InternalInterpreterError(string details) : InternalError(9003, details) { }
 
 public class AssertionFailedError(Position posStart, string message)
-    : Error(9004, $"Assertion failed: {message}", posStart) { }
+    : Error(9004, $"Assertion failed: {message}", posStart)
+{ }
+
+public class InternalSymbolTableError(Context context) : InternalError(9005, "The current Symbol Table is null\n" + context.ToString()) { }
+public class InternalTokenCastError<T>(IToken token, string membername) : InternalError(9006, $"Casting the token ({token.GetType()}) to a Token<{typeof(T)}> failed in {membername} / Token: {token}") { }

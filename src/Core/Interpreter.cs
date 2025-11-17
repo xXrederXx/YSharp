@@ -165,7 +165,7 @@ public static class Interpreter
         if (context.symbolTable is null)
         {
             return res.Failure(
-                new InternalInterpreterError("There is no SymbolTable in this context")
+                new InternalSymbolTableError(context)
             );
         }
 
@@ -194,7 +194,9 @@ public static class Interpreter
 
         if (context.symbolTable is null)
         {
-            return res.Failure(new InternalInterpreterError("Symbol Table is null"));
+            return res.Failure(
+                new InternalSymbolTableError(context)
+            );
         }
 
         context.symbolTable.Set(varName, value);
@@ -367,7 +369,9 @@ public static class Interpreter
 
         if (context.symbolTable is null)
         {
-            return res.Failure(new InternalInterpreterError("No symbol Table"));
+            return res.Failure(
+                new InternalSymbolTableError(context)
+            );
         }
         string varName = node.varNameTok.Value;
 
@@ -557,7 +561,9 @@ public static class Interpreter
 
         if (context.symbolTable is null)
         {
-            return res.Failure(new InternalInterpreterError("The symboltable is null"));
+            return res.Failure(
+                new InternalSymbolTableError(context)
+            );
         }
 
         if (node.ChatchVarName is not null)
@@ -621,7 +627,9 @@ public static class Interpreter
 
         if (context.symbolTable is null)
         {
-            return res.Failure(new InternalInterpreterError("Symbol Table is null"));
+            return res.Failure(
+                new InternalSymbolTableError(context)
+            );
         }
 
         Value oldVal = context.symbolTable.Get(varName);
