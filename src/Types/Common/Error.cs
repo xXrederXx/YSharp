@@ -53,7 +53,7 @@ public class ErrorNull : Error
     public static readonly ErrorNull Instance = new();
 
     private ErrorNull()
-        : base(0, string.Empty, Position.Null) { }
+        : base(0, string.Empty, Position.Null);
 
     public override string ToString() => string.Empty;
 }
@@ -62,7 +62,7 @@ public class ErrorNull : Error
 
 //Y0S690 -> Internal Use not accualy an error
 // TODO: Find way around this
-public class EndKeywordError(Position posStart) : Error(690, "End keyword there", posStart) { }
+public class EndKeywordError(Position posStart) : Error(690, "End keyword there", posStart);
 
 //* 0000–0999: Lexical Errors
 public class IllegalCharError(Position posStart, char illegalChar)
@@ -206,17 +206,17 @@ public class ImportSyntaxError(Position posStart, string details, Context? conte
     : RunTimeError(posStart, details, context, 8002);
 
 //* 9000–9999: Internal / System Errors
-public class InternalError(int code, string details) : Error(code, details, Position.Null) { }
+public class InternalError(int code, string details) : Error(code, details, Position.Null);
 
-public class InternalLexerError(string details) : InternalError(9001, details) { }
+public class InternalLexerError(string details) : InternalError(9001, details);
 
-public class InternalParserError(string details) : InternalError(9002, details) { }
+public class InternalParserError(string details) : InternalError(9002, details);
 
-public class InternalInterpreterError(string details) : InternalError(9003, details) { }
+public class InternalInterpreterError(string details) : InternalError(9003, details);
 
 public class AssertionFailedError(Position posStart, string message)
     : Error(9004, $"Assertion failed: {message}", posStart)
 { }
 
-public class InternalSymbolTableError(Context context) : InternalError(9005, "The current Symbol Table is null\n" + context.ToString()) { }
-public class InternalTokenCastError<T>(IToken token, string membername) : InternalError(9006, $"Casting the token ({token.GetType()}) to a Token<{typeof(T)}> failed in {membername} / Token: {token}") { }
+public class InternalSymbolTableError(Context context) : InternalError(9005, "The current Symbol Table is null\n" + context.ToString());
+public class InternalTokenCastError<T>(IToken token, string membername) : InternalError(9006, $"Casting the token ({token.GetType()}) to a Token<{typeof(T)}> failed in {membername} / Token: {token}");
