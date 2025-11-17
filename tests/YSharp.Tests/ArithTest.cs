@@ -5,7 +5,7 @@ using YSharp.Types.Interpreter.Collection;
 using YSharp.Types.Interpreter.Primitives;
 using YSharp.Utils;
 
-namespace YSharp.Tests.Arith;
+namespace YSharp.Tests;
 
 
 public class ErrorTest
