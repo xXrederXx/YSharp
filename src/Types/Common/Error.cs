@@ -53,7 +53,7 @@ public class ErrorNull : Error
     public static readonly ErrorNull Instance = new();
 
     private ErrorNull()
-        : base(0, string.Empty, Position.Null);
+        : base(0, string.Empty, Position.Null) {}
 
     public override string ToString() => string.Empty;
 }
