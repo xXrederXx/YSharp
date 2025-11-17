@@ -18,11 +18,75 @@ public class ErrorTest
     [InlineData(0.5, 20)]
     [InlineData(0.5, -20)]
     [InlineData(0.5, -0.354)]
-    public void Test_Integer_Arith_Pretty(double x, double y)
+    public void Test_Add_Pretty(double x, double y)
     {
         Check_Arith(_runClass.Run("TEST", $"{x:f} + {y:f}"), x + y);
+    }
+
+    [Theory]
+    [InlineData(0, 2)]
+    [InlineData(100, 2)]
+    [InlineData(0.5, 20)]
+    [InlineData(0.5, -20)]
+    [InlineData(0.5, -0.354)]
+    public void Test_Add(double x, double y)
+    {
+        Check_Arith(_runClass.Run("TEST", $"{x:f}+{y:f}"), x + y);
+    }
+
+
+    [Theory]
+    [InlineData(0, 2)]
+    [InlineData(100, 2)]
+    [InlineData(0.5, 20)]
+    [InlineData(0.5, -20)]
+    [InlineData(0.5, -0.354)]
+    public void Test_Sub_Pretty(double x, double y)
+    {
         Check_Arith(_runClass.Run("TEST", $"{x:f} - {y:f}"), x - y);
+    }
+
+    [Theory]
+    [InlineData(0, 2)]
+    [InlineData(100, 2)]
+    [InlineData(0.5, 20)]
+    [InlineData(0.5, -20)]
+    [InlineData(0.5, -0.354)]
+    public void Test_Sub(double x, double y)
+    {
+        Check_Arith(_runClass.Run("TEST", $"{x:f}-{y:f}"), x - y);
+    }
+
+    [Theory]
+    [InlineData(0, 2)]
+    [InlineData(100, 2)]
+    [InlineData(0.5, 20)]
+    [InlineData(0.5, -20)]
+    [InlineData(0.5, -0.354)]
+    public void Test_Mult_Pretty(double x, double y)
+    {
         Check_Arith(_runClass.Run("TEST", $"{x:f} * {y:f}"), x * y);
+    }
+
+    [Theory]
+    [InlineData(0, 2)]
+    [InlineData(100, 2)]
+    [InlineData(0.5, 20)]
+    [InlineData(0.5, -20)]
+    [InlineData(0.5, -0.354)]
+    public void Test_Mult(double x, double y)
+    {
+        Check_Arith(_runClass.Run("TEST", $"{x:f}*{y:f}"), x * y);
+    }
+
+    [Theory]
+    [InlineData(0, 2)]
+    [InlineData(100, 2)]
+    [InlineData(0.5, 20)]
+    [InlineData(0.5, -20)]
+    [InlineData(0.5, -0.354)]
+    public void Test_Div_Pretty(double x, double y)
+    {
         Check_Arith(_runClass.Run("TEST", $"{x:f} / {y:f}"), x / y);
     }
 
@@ -32,11 +96,8 @@ public class ErrorTest
     [InlineData(0.5, 20)]
     [InlineData(0.5, -20)]
     [InlineData(0.5, -0.354)]
-    public void Test_Integer_Arith(double x, double y)
+    public void Test_Div(double x, double y)
     {
-        Check_Arith(_runClass.Run("TEST", $"{x:f}+{y:f}"), x + y);
-        Check_Arith(_runClass.Run("TEST", $"{x:f}-{y:f}"), x - y);
-        Check_Arith(_runClass.Run("TEST", $"{x:f}*{y:f}"), x * y);
         Check_Arith(_runClass.Run("TEST", $"{x:f}/{y:f}"), x / y);
     }
 
