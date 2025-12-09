@@ -15,7 +15,7 @@ public abstract class Error(int index, string message, Position start)
         $"{FileNameRegistry.GetFileName(StartPosition.FileId)}({StartPosition.Line + 1}, {StartPosition.Column + 1}): ERROR YS{ErrorCode:D4} {Message}";
 }
 
-public class RunTimeError(Position posStart, string details, Context? context, int errorIndex = 300)
+public abstract class RunTimeError(Position posStart, string details, Context? context, int errorIndex)
     : Error(errorIndex, details, posStart)
 {
     private readonly Context? context = context;
@@ -204,6 +204,9 @@ public class CircularImportError(Position posStart, string moduleName, Context? 
 
 public class ImportSyntaxError(Position posStart, string details, Context? context)
     : RunTimeError(posStart, details, context, 8002);
+
+public class InvalidLoadedModuleError(Position posStart, string details, Context? context)
+    : RunTimeError(posStart, details, context, 8003);
 
 //* 9000–9999: Internal / System Errors
 public class InternalError(int code, string details) : Error(code, details, Position.Null);

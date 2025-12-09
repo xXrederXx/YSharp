@@ -612,7 +612,7 @@ public static class Interpreter
         List<ExposedClassData> exposeds = ImportUtil.Load(filePath, out string err);
         if (err != string.Empty)
         {
-            return res.Failure(new RunTimeError(n.StartPos, err, context));
+            return res.Failure(new InvalidLoadedModuleError(n.StartPos, err, context));
         }
 
         //TODO: Implement call logic

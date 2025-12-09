@@ -74,7 +74,7 @@ public sealed class VBuiltInFunction : VBaseFunction
         if (execContext.symbolTable == null)
         {
             return new RunTimeResult().Failure(
-                new RunTimeError(Position.Null, "Symbol table is null", context)
+                new InternalSymbolTableError(context)
             );
         }
         string value = execContext.symbolTable.Get("value").ToString() ?? " - ";
@@ -101,7 +101,7 @@ public sealed class VBuiltInFunction : VBaseFunction
         if (fileNameValue is not VString)
         {
             return new RunTimeResult().Failure(
-                new RunTimeError(startPos, "first arg must be string", execContext)
+                new WrongTypeError(startPos, "first arg must be string", execContext)
             );
         }
         string fileName = ((VString)fileNameValue).value;
@@ -114,9 +114,9 @@ public sealed class VBuiltInFunction : VBaseFunction
         catch (Exception e)
         {
             return new RunTimeResult().Failure(
-                new RunTimeError(
+                new FileReadError(
                     startPos,
-                    $"Failed to load script '{fileName}'\n" + e.ToString(),
+                    $"Failed to read script '{fileName}'\n" + e.ToString(),
                     execContext
                 )
             );
@@ -141,7 +141,7 @@ public sealed class VBuiltInFunction : VBaseFunction
         if (fileNameValue.GetType() != typeof(VString))
         {
             return new RunTimeResult().Failure(
-                new RunTimeError(startPos, "first arg must be string", execContext)
+                new WrongTypeError(startPos, "first arg must be string", execContext)
             );
         }
         string fileName = ((VString)fileNameValue).value;
@@ -153,7 +153,7 @@ public sealed class VBuiltInFunction : VBaseFunction
         catch (Exception e)
         {
             return new RunTimeResult().Failure(
-                new RunTimeError(
+                new FileReadError(
                     startPos,
                     $"Failed to load script '{fileName}'\n" + e.ToString(),
                     execContext
