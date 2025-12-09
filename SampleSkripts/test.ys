@@ -23,4 +23,4 @@ END
 VAR zigzag = 1000
 CountTo(zigzag)
 VAR list = [1, 2]
-PRINT(list.Count)
+PRINT(list.Length)
