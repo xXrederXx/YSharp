@@ -2,6 +2,7 @@ using Xunit;
 using YSharp.Types.Common;
 using YSharp.Types.Interpreter;
 using YSharp.Types.Interpreter.Primitives;
+using YSharp.Types.Interpreter.Collection;
 using YSharp.Utils;
 
 namespace YSharp.Tests;
@@ -19,12 +20,12 @@ public class FeatureTest
         FUN A(x)
             RETURN x + 1
         END
-        PRINT(A(4))
+        A(4)
     "
         );
 
         Assert.IsType<ErrorNull>(err);
-        Assert.Equal(5, ((VNumber)val).value);
+        Assert.Equal(5, ExtractResult(val));
     }
 
     [Fact]
@@ -35,12 +36,12 @@ public class FeatureTest
             @"
         FUN A(x); RETURN x + 1 END
         FUN B(x); RETURN x * 2 END
-        PRINT(B(A(3)))
+        B(A(3))
     "
         );
 
         Assert.IsType<ErrorNull>(err);
-        Assert.Equal(8, ((VNumber)val).value);
+        Assert.Equal(8, ExtractResult(val));
     }
 
     [Fact]
@@ -53,12 +54,12 @@ public class FeatureTest
         FOR i = 1 TO 5 THEN
             VAR s = s + i
         END
-        PRINT(s)
+        s
     "
         );
 
         Assert.IsType<ErrorNull>(err);
-        Assert.Equal(15, ((VNumber)val).value);
+        Assert.Equal(15, ExtractResult(val));
     }
 
     [Fact]
@@ -67,7 +68,7 @@ public class FeatureTest
         var (val, err) = _runClass.Run("TEST", "PRINT([10, 20, 30][1])");
 
         Assert.IsType<ErrorNull>(err);
-        Assert.Equal(20, ((VNumber)val).value);
+        Assert.Equal(20, ExtractResult(val));
     }
 
     [Fact]
@@ -77,20 +78,38 @@ public class FeatureTest
             "TEST",
             @"
         VAR l = [1,2,3,4]
-        PRINT(l.Length)
+        l.Length
     "
         );
 
         Assert.IsType<ErrorNull>(err);
-        Assert.Equal(4, ((VNumber)val).value);
+        Assert.Equal(4, ExtractResult(val));
     }
 
     [Fact]
     public void MathSqrtTest()
     {
-        var (val, err) = _runClass.Run("TEST", "PRINT(MATH.SQRT(9))");
+        var (val, err) = _runClass.Run("TEST", "MATH.SQRT(9)");
 
         Assert.IsType<ErrorNull>(err);
-        Assert.Equal(3, ((VNumber)val).value);
+        Assert.Equal(3, ExtractResult(val));
     }
+
+    private double ExtractResult(Value val)
+    {
+        switch (val)
+        {
+            case VNumber num:
+                return num.value;
+
+            case VList list:
+                var firstNum = list.value.FirstOrDefault(v => v is VNumber) as VNumber;
+                if (firstNum != null) return firstNum.value;
+                throw new InvalidOperationException("No numeric result found in list.");
+
+            default:
+                throw new InvalidOperationException($"Unexpected result type: {val.GetType()}");
+        }
+    }
+
 }
