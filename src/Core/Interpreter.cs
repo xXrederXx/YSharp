@@ -92,7 +92,6 @@ public static class Interpreter{
         }
 
         Value valueToCall = res.Regrister(Visit(node.nodeToCall, context));
-        if (valueToCall is null) return res.Failure(new InternalInterpreterError("cast failed for valueToCall "));
 
         if (res.ShouldReturn()) return res;
 
