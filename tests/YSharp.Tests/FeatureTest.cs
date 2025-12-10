@@ -50,16 +50,20 @@ public class FeatureTest
         var (val, err) = _runClass.Run(
             "TEST",
             @"
-        VAR s = 0
-        FOR i = 1 TO 5 THEN
-            VAR s = s + i
+        FUN x()
+            VAR s = 0
+            FOR i = 1 TO 5 THEN
+                VAR s = s + i
+            END
+            RETURN s
         END
-        s
+        x()
+        
     "
         );
 
         Assert.IsType<ErrorNull>(err);
-        Assert.Equal(15, ExtractResult(val));
+        Assert.Equal(10, ExtractResult(val));
     }
 
     [Fact]
@@ -111,5 +115,4 @@ public class FeatureTest
                 throw new InvalidOperationException($"Unexpected result type: {val.GetType()}");
         }
     }
-
 }
