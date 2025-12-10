@@ -35,3 +35,6 @@
 
 ## Add Functionalety
 - [ ] Add more Builtins
+
+## Bugs
+- [ ] Make file name regeristy thread safe

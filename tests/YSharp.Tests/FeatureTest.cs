@@ -65,7 +65,7 @@ public class FeatureTest
     [Fact]
     public void ListIndex()
     {
-        var (val, err) = _runClass.Run("TEST", "PRINT([10, 20, 30][1])");
+        var (val, err) = _runClass.Run("TEST", "PRINT([10, 20, 30 ].get(1)");
 
         Assert.IsType<ErrorNull>(err);
         Assert.Equal(20, ExtractResult(val));
