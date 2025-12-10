@@ -91,7 +91,7 @@ public static class Interpreter{
             varAccessNode.fromCall = true;
         }
 
-        Value? valueToCall = res.Regrister(Visit(node.nodeToCall, context));
+        Value valueToCall = res.Regrister(Visit(node.nodeToCall, context));
 
         if (res.ShouldReturn()) return res;
 
