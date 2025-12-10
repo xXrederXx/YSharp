@@ -29,13 +29,13 @@
 - [ ] Review and optimize code marked as "optimized" for performance
 
 ## Optimizing AST
-- [ ] Create an Optimizer for the AST
-- [ ] Add cli arg to toggle AST optimizer
-- [ ] Implement Constant-folding
+- [x] Create an Optimizer for the AST
+- [x] Add cli arg to toggle AST optimizer
+- [x] Implement Constant-folding
 - [ ] Implement Dead-Code Elimination
 
 ## Add Functionalety
 - [ ] Add more Builtins
 
 ## Bugs
-- [ ] Make file name regeristy thread safe
+- [x] Make file name regeristy thread safe
