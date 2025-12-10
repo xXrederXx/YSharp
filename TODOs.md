@@ -23,6 +23,7 @@
 ## Cleanup
 - [ ] Remove or refactor temporary code, workarounds, and deprecated logic
 - [ ] Clean up commented-out or unused code
+- [ ] In Interpreter (111) Remove double type check (Maybe by using interfaces)
 
 ## Performance
 - [ ] Review and optimize code marked as "optimized" for performance
