@@ -3,14 +3,13 @@ using YSharp.Types.Interpreter.Internal;
 
 namespace YSharp.Types.Interpreter.Primitives;
 
-public sealed partial class VDateTime
-{
+public sealed partial class VDateTime{
     public override ValueAndError AddedTo(Value other)
     {
         Value? val = other switch
         {
             VDateTime dateOther => AddToDate(this, dateOther),
-            _ => null,
+            _ => null
         };
         if (val is null)
             return base.AddedTo(other);
@@ -24,7 +23,7 @@ public sealed partial class VDateTime
         Value? val = other switch
         {
             VDateTime dateOther => SubToDate(this, dateOther),
-            _ => null,
+            _ => null
         };
         if (val is null)
             return base.AddedTo(other);

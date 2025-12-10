@@ -11,11 +11,10 @@ using YSharp.Types.Lexer;
 
 namespace YSharp.Utils;
 
-public class RunClass
-{
-    private readonly SymbolTable globalSymbolTable = new();
+public class RunClass{
     public static bool DoExportAstDot;
     public static int OptimizationLevel;
+    private readonly SymbolTable globalSymbolTable = new();
 
     public RunClass()
     {
@@ -37,17 +36,11 @@ public class RunClass
         (List<IToken> tokens, Error LexerError) = new Lexer(text, fn).MakeTokens();
 
         // look if the lexer threw an Error
-        if (LexerError.IsError)
-        {
-            return (new VNumber(0), LexerError);
-        }
+        if (LexerError.IsError) return (new VNumber(0), LexerError);
 
         // create a Parser and parse all the tokens
         ParseResult ast = new Parser(tokens).Parse();
-        if (OptimizationLevel > 0)
-        {
-            ast = Optimizer.Visit(ast.Node);
-        }
+        if (OptimizationLevel > 0) ast = Optimizer.Visit(ast.Node);
         if (DoExportAstDot)
         {
             if (!Directory.Exists("./DOT"))
@@ -58,12 +51,9 @@ public class RunClass
             );
         }
 
-        if (ast.HasError)
-        {
-            return (new VNumber(0), ast.Error);
-        }
+        if (ast.HasError) return (new VNumber(0), ast.Error);
 
-        Context context = new("<program>", null, new()) { symbolTable = globalSymbolTable };
+        Context context = new("<program>", null, new Position()) { symbolTable = globalSymbolTable };
         RunTimeResult result = Interpreter.Visit(ast.Node, context);
 
         // return the node and Error
@@ -86,10 +76,7 @@ public class RunClass
         sw.Restart();
         (List<IToken>, Error) tokens = lexer.MakeTokens();
 
-        if (tokens.Item2.IsError)
-        {
-            return (new VNumber(0), tokens.Item2, times);
-        }
+        if (tokens.Item2.IsError) return (new VNumber(0), tokens.Item2, times);
         sw.Stop();
         times.Add(sw.ElapsedTicks);
 
@@ -103,16 +90,13 @@ public class RunClass
         sw.Restart();
         ParseResult ast = parser.Parse(); // ast = abstract syntax tree
 
-        if (ast.Error.IsError)
-        {
-            return (new VNumber(0), ast.Error, times);
-        }
+        if (ast.Error.IsError) return (new VNumber(0), ast.Error, times);
         sw.Stop();
         times.Add(sw.ElapsedTicks);
 
         // 6: init context
         sw.Restart();
-        Context context = new("<program>", null, new()) { symbolTable = globalSymbolTable };
+        Context context = new("<program>", null, new Position()) { symbolTable = globalSymbolTable };
         sw.Stop();
         times.Add(sw.ElapsedTicks);
 

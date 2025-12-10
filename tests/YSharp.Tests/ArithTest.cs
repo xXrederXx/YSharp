@@ -7,10 +7,19 @@ using YSharp.Utils;
 
 namespace YSharp.Tests;
 
-
-public class ErrorTest
-{
+public class ErrorTest{
     private readonly RunClass _runClass = new();
+
+    [Theory]
+    [InlineData(0, 2)]
+    [InlineData(100, 2)]
+    [InlineData(0.5, 20)]
+    [InlineData(0.5, -20)]
+    [InlineData(0.5, -0.354)]
+    public void Test_Add(double x, double y)
+    {
+        Check_Arith(_runClass.Run("TEST", $"{x:f}+{y:f}"), x + y);
+    }
 
     [Theory]
     [InlineData(0, 2)]
@@ -29,21 +38,9 @@ public class ErrorTest
     [InlineData(0.5, 20)]
     [InlineData(0.5, -20)]
     [InlineData(0.5, -0.354)]
-    public void Test_Add(double x, double y)
+    public void Test_Div(double x, double y)
     {
-        Check_Arith(_runClass.Run("TEST", $"{x:f}+{y:f}"), x + y);
-    }
-
-
-    [Theory]
-    [InlineData(0, 2)]
-    [InlineData(100, 2)]
-    [InlineData(0.5, 20)]
-    [InlineData(0.5, -20)]
-    [InlineData(0.5, -0.354)]
-    public void Test_Sub_Pretty(double x, double y)
-    {
-        Check_Arith(_runClass.Run("TEST", $"{x:f} - {y:f}"), x - y);
+        Check_Arith(_runClass.Run("TEST", $"{x:f}/{y:f}"), x / y);
     }
 
     [Theory]
@@ -52,24 +49,16 @@ public class ErrorTest
     [InlineData(0.5, 20)]
     [InlineData(0.5, -20)]
     [InlineData(0.5, -0.354)]
-    public void Test_Sub(double x, double y)
+    public void Test_Div_Pretty(double x, double y)
     {
-        (Value val, Error err) res = _runClass.Run("TEST", $"{x:f}-{y:f}");
-        if (y < 0)
-            Assert.IsType<InvalidSyntaxError>(res.err);
-        else
-            Check_Arith(res, x - y);
+        Check_Arith(_runClass.Run("TEST", $"{x:f} / {y:f}"), x / y);
     }
 
-    [Theory]
-    [InlineData(0, 2)]
-    [InlineData(100, 2)]
-    [InlineData(0.5, 20)]
-    [InlineData(0.5, -20)]
-    [InlineData(0.5, -0.354)]
-    public void Test_Mult_Pretty(double x, double y)
+    [Fact]
+    public void Test_Divide_By_Zero()
     {
-        Check_Arith(_runClass.Run("TEST", $"{x:f} * {y:f}"), x * y);
+        (Value _, Error err) = _runClass.Run("TEST", "1 / 0");
+        Assert.IsType<DivisionByZeroError>(err);
     }
 
     [Theory]
@@ -89,9 +78,9 @@ public class ErrorTest
     [InlineData(0.5, 20)]
     [InlineData(0.5, -20)]
     [InlineData(0.5, -0.354)]
-    public void Test_Div_Pretty(double x, double y)
+    public void Test_Mult_Pretty(double x, double y)
     {
-        Check_Arith(_runClass.Run("TEST", $"{x:f} / {y:f}"), x / y);
+        Check_Arith(_runClass.Run("TEST", $"{x:f} * {y:f}"), x * y);
     }
 
     [Theory]
@@ -100,16 +89,25 @@ public class ErrorTest
     [InlineData(0.5, 20)]
     [InlineData(0.5, -20)]
     [InlineData(0.5, -0.354)]
-    public void Test_Div(double x, double y)
+    public void Test_Sub(double x, double y)
     {
-        Check_Arith(_runClass.Run("TEST", $"{x:f}/{y:f}"), x / y);
+        (Value val, Error err) res = _runClass.Run("TEST", $"{x:f}-{y:f}");
+        if (y < 0)
+            Assert.IsType<InvalidSyntaxError>(res.err);
+        else
+            Check_Arith(res, x - y);
     }
 
-    [Fact]
-    public void Test_Divide_By_Zero()
+
+    [Theory]
+    [InlineData(0, 2)]
+    [InlineData(100, 2)]
+    [InlineData(0.5, 20)]
+    [InlineData(0.5, -20)]
+    [InlineData(0.5, -0.354)]
+    public void Test_Sub_Pretty(double x, double y)
     {
-        (Value _, Error err) = _runClass.Run("TEST", "1 / 0");
-        Assert.IsType<DivisionByZeroError>(err);
+        Check_Arith(_runClass.Run("TEST", $"{x:f} - {y:f}"), x - y);
     }
 
     private void Check_Arith((Value, Error) res, double expected)
@@ -117,9 +115,6 @@ public class ErrorTest
         Assert.NotNull(res.Item2);
         Assert.IsType<ErrorNull>(res.Item2);
         Assert.IsType<VNumber>(((VList)res.Item1).value[0]);
-        if (res.Item1 is VNumber num)
-        {
-            Assert.Equal(expected, num.value);
-        }
+        if (res.Item1 is VNumber num) Assert.Equal(expected, num.value);
     }
 }

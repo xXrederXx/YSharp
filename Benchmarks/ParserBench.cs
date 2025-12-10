@@ -1,37 +1,37 @@
 using BenchmarkDotNet.Attributes;
 using YSharp.Core;
+using YSharp.Types.AST;
 
 namespace YSharp.Benchmarks;
 
 [SimpleJob]
 [MemoryDiagnoser]
-public class ParserBench
-{
+public class ParserBench{
     [Benchmark]
-    public void ParserBenchmarkS()
+    public void ParserBenchmarkL()
     {
-        Parser parser = new(BenchHelp.TokenS);
-        var tokens = parser.Parse();
+        Parser parser = new(BenchHelp.TokenL);
+        ParseResult tokens = parser.Parse();
     }
 
     [Benchmark]
     public void ParserBenchmarkM()
     {
         Parser parser = new(BenchHelp.TokenM);
-        var tokens = parser.Parse();
+        ParseResult tokens = parser.Parse();
     }
 
     [Benchmark]
-    public void ParserBenchmarkL()
+    public void ParserBenchmarkS()
     {
-        Parser parser = new(BenchHelp.TokenL);
-        var tokens = parser.Parse();
+        Parser parser = new(BenchHelp.TokenS);
+        ParseResult tokens = parser.Parse();
     }
 
     [Benchmark]
     public void ParserBenchmarkXL()
     {
         Parser parser = new(BenchHelp.TokenXL);
-        var tokens = parser.Parse();
+        ParseResult tokens = parser.Parse();
     }
 }

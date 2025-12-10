@@ -4,10 +4,9 @@ using YSharp.Types.Interpreter.Primitives;
 
 namespace YSharp.Types.Interpreter.Utils;
 
-public sealed partial class VMath : Value
-{
-    private static MethodTable<VMath> methodTable;
-    private static PropertyTable<VMath> propertyTable;
+public sealed partial class VMath : Value{
+    private static readonly MethodTable<VMath> methodTable;
+    private static readonly PropertyTable<VMath> propertyTable;
 
     static VMath()
     {
@@ -33,14 +32,14 @@ public sealed partial class VMath : Value
                 ("ATANH", (self, args) => GetMathFunc(self, "ATANH", args)),
                 ("LOG", (self, args) => GetMathFunc(self, "LOG", args)),
                 ("LOG2", (self, args) => GetMathFunc(self, "LOG2", args)),
-                ("LOG10", (self, args) => GetMathFunc(self, "LOG10", args)),
+                ("LOG10", (self, args) => GetMathFunc(self, "LOG10", args))
             ]
         );
         propertyTable = new PropertyTable<VMath>(
             [
-                ("PI", (self) => (new VNumber(Math.PI), ErrorNull.Instance)),
-                ("E", (self) => (new VNumber(Math.E), ErrorNull.Instance)),
-                ("TAU", (self) => (new VNumber(Math.Tau), ErrorNull.Instance)),
+                ("PI", self => (new VNumber(Math.PI), ErrorNull.Instance)),
+                ("E", self => (new VNumber(Math.E), ErrorNull.Instance)),
+                ("TAU", self => (new VNumber(Math.Tau), ErrorNull.Instance))
             ]
         );
     }
@@ -53,10 +52,7 @@ public sealed partial class VMath : Value
             [typeof(VNumber)],
             self.context ?? new Context()
         );
-        if (err.IsError)
-        {
-            return (ValueNull.Instance, err);
-        }
+        if (err.IsError) return (ValueNull.Instance, err);
 
         return name switch
         {

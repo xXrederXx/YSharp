@@ -1,13 +1,7 @@
 namespace YSharp.Types.Interpreter.Primitives;
 
-public sealed partial class VBool(bool value) : Value()
-{
+public sealed partial class VBool(bool value) : Value{
     public bool value { get; set; } = value;
-
-    public override bool IsTrue()
-    {
-        return value;
-    }
 
     public override VBool Copy()
     {
@@ -17,8 +11,7 @@ public sealed partial class VBool(bool value) : Value()
         return copy;
     }
 
-    public override string ToString()
-    {
-        return value.ToString();
-    }
+    public override bool IsTrue() => value;
+
+    public override string ToString() => value.ToString();
 }

@@ -4,10 +4,9 @@ using YSharp.Types.Interpreter.Primitives;
 
 namespace YSharp.Types.Interpreter.Collection;
 
-public sealed partial class VList : Value
-{
-    private static MethodTable<VList> methodTable;
-    private static PropertyTable<VList> propertyTable;
+public sealed partial class VList : Value{
+    private static readonly MethodTable<VList> methodTable;
+    private static readonly PropertyTable<VList> propertyTable;
 
     static VList()
     {
@@ -15,13 +14,17 @@ public sealed partial class VList : Value
         propertyTable = new PropertyTable<VList>([("Length", GetLength)]);
     }
 
+    private static ValueAndError Add(VList self, List<Value> args)
+    {
+        self.value.AddRange(args);
+        return (ValueNull.Instance, ErrorNull.Instance);
+    }
+
     private static (int, Error) ConvertToUsableIndex(VList self, List<Value> argValues)
-    { // converts a value to a csharp usable index
+    {
+        // converts a value to a csharp usable index
         Error err = ValueHelper.CheckArgs(argValues, 1, [typeof(VNumber)], self.context);
-        if (err.IsError)
-        {
-            return (0, err);
-        }
+        if (err.IsError) return (0, err);
 
         int index = (int)((VNumber)argValues[0]).value;
 
@@ -37,10 +40,7 @@ public sealed partial class VList : Value
             );
         }
 
-        if (index < 0)
-        {
-            index = self.value.Count + index; // -1 would be last element
-        }
+        if (index < 0) index = self.value.Count + index; // -1 would be last element
 
         if (index < 0)
         {
@@ -57,45 +57,21 @@ public sealed partial class VList : Value
         return (index, ErrorNull.Instance);
     }
 
-    private static ValueAndError GetLength(VList self) =>
-        (new VNumber(self.value.Count), ErrorNull.Instance);
-
-    private static ValueAndError Add(VList self, List<Value> args)
-    {
-        self.value.AddRange(args);
-        return (ValueNull.Instance, ErrorNull.Instance);
-    }
-
     private static ValueAndError Get(VList self, List<Value> args)
     {
         (int, Error) index = ConvertToUsableIndex(self, args);
-        if (index.Item2.IsError)
-        {
-            return (ValueNull.Instance, index.Item2);
-        }
+        if (index.Item2.IsError) return (ValueNull.Instance, index.Item2);
 
         return (self.value[index.Item1], ErrorNull.Instance);
     }
 
-    private static ValueAndError Remove(VList self, List<Value> args)
-    {
-        (int, Error) index = ConvertToUsableIndex(self, args);
-        if (index.Item2.IsError)
-        {
-            return (ValueNull.Instance, index.Item2);
-        }
-
-        self.value.RemoveAt(index.Item1);
-        return (ValueNull.Instance, ErrorNull.Instance);
-    }
+    private static ValueAndError GetLength(VList self) =>
+        (new VNumber(self.value.Count), ErrorNull.Instance);
 
     private static ValueAndError IndexOf(VList self, List<Value> args)
     {
         Error err = ValueHelper.IsRightLength(1, args, self.context);
-        if (err.IsError)
-        {
-            return (ValueNull.Instance, err);
-        }
+        if (err.IsError) return (ValueNull.Instance, err);
 
         int index = args[0] switch
         {
@@ -105,9 +81,18 @@ public sealed partial class VList : Value
             VList list => self.value.FindIndex(v =>
                 v is VList l && l.value.SequenceEqual(list.value)
             ),
-            _ => -1,
+            _ => -1
         };
 
         return (new VNumber(index), ErrorNull.Instance);
+    }
+
+    private static ValueAndError Remove(VList self, List<Value> args)
+    {
+        (int, Error) index = ConvertToUsableIndex(self, args);
+        if (index.Item2.IsError) return (ValueNull.Instance, index.Item2);
+
+        self.value.RemoveAt(index.Item1);
+        return (ValueNull.Instance, ErrorNull.Instance);
     }
 }

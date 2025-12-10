@@ -2,21 +2,18 @@ using YSharp.Types.Common;
 
 namespace YSharp.Types.Interpreter.Internal;
 
-public class RunTimeResult
-{
-    public Value value = ValueNull.Instance;
+public class RunTimeResult{
     public Error error = ErrorNull.Instance;
     public Value funcReturnValue = ValueNull.Instance;
-    public bool loopContinue = false;
-    public bool loopBreak = false;
+    public bool loopBreak;
+    public bool loopContinue;
+    public Value value = ValueNull.Instance;
 
-    public void Reset()
+    public RunTimeResult Failure(Error error)
     {
-        value = ValueNull.Instance;
-        error = ErrorNull.Instance;
-        funcReturnValue = ValueNull.Instance;
-        loopContinue = false;
-        loopBreak = false;
+        Reset();
+        this.error = error;
+        return this;
     }
 
     public Value Regrister(RunTimeResult res)
@@ -34,26 +31,23 @@ public class RunTimeResult
         return ShouldReturn();
     }
 
+    public void Reset()
+    {
+        value = ValueNull.Instance;
+        error = ErrorNull.Instance;
+        funcReturnValue = ValueNull.Instance;
+        loopContinue = false;
+        loopBreak = false;
+    }
+
+    public bool ShouldReturn() => error.IsError || funcReturnValue is not ValueNull || loopContinue || loopBreak;
+
     public RunTimeResult Success(Value value)
     {
         if (error.IsError)
-            Console.WriteLine("error deleted:\n" + error.ToString());
+            Console.WriteLine("error deleted:\n" + error);
         Reset();
         this.value = value;
-        return this;
-    }
-
-    public RunTimeResult SuccessReturn(Value value)
-    {
-        Reset();
-        funcReturnValue = value;
-        return this;
-    }
-
-    public RunTimeResult SuccessContinue()
-    {
-        Reset();
-        loopContinue = true;
         return this;
     }
 
@@ -64,16 +58,17 @@ public class RunTimeResult
         return this;
     }
 
-    public RunTimeResult Failure(Error error)
+    public RunTimeResult SuccessContinue()
     {
         Reset();
-        this.error = error;
+        loopContinue = true;
         return this;
     }
 
-    public bool ShouldReturn()
+    public RunTimeResult SuccessReturn(Value value)
     {
-        return error.IsError || funcReturnValue is not ValueNull || loopContinue || loopBreak;
+        Reset();
+        funcReturnValue = value;
+        return this;
     }
 }
-

@@ -2,27 +2,22 @@ using YSharp.Types.Common;
 
 namespace YSharp.Types.AST;
 
-public class ParseResult
-{
+public class ParseResult{
     public Error Error { get; private set; } = ErrorNull.Instance;
-    public BaseNode Node { get; private set; } = NodeNull.Instance;
-    public int ToReverseCount { get; private set; } = 0;
     public bool HasError => Error.IsError;
-    private int _advanceCount = 0;
+    public BaseNode Node { get; private set; } = NodeNull.Instance;
+    public int ToReverseCount { get; private set; }
+    private int _advanceCount;
 
-    public void ResetError()
+    public void Advance()
     {
-        Error = ErrorNull.Instance;
+        _advanceCount++;
     }
 
-    public BaseNode? TryRegister(ParseResult result)
+    public ParseResult Failure(Error error)
     {
-        if (result.HasError)
-        {
-            ToReverseCount = result._advanceCount;
-            return null;
-        }
-        return Register(result);
+        if (!HasError || _advanceCount == 0) Error = error;
+        return this;
     }
 
     public BaseNode Register(ParseResult result)
@@ -32,9 +27,9 @@ public class ParseResult
         return result.Node;
     }
 
-    public void Advance()
+    public void ResetError()
     {
-        _advanceCount++;
+        Error = ErrorNull.Instance;
     }
 
     public ParseResult Success(BaseNode node)
@@ -43,15 +38,17 @@ public class ParseResult
         return this;
     }
 
-    public ParseResult Failure(Error error)
-    {
-        if (!HasError || _advanceCount == 0)
-        {
-            Error = error;
-        }
-        return this;
-    }
-
     public override string ToString() =>
         $"Node: {Node} / Error: {Error} / AdvanceCount: {_advanceCount}";
+
+    public BaseNode? TryRegister(ParseResult result)
+    {
+        if (result.HasError)
+        {
+            ToReverseCount = result._advanceCount;
+            return null;
+        }
+
+        return Register(result);
+    }
 }

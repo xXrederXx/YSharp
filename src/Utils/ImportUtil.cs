@@ -22,9 +22,7 @@ the .csproj file should look similar to this:
 
 */
 
-public static class ImportUtil
-{
-    private const string ExposeAttributeName = "Expose";
+public static class ImportUtil{
     public static readonly string DefaultPath;
 
     static ImportUtil()
@@ -102,6 +100,11 @@ public static class ImportUtil
         return new ExposedClassData(publicMethods, publicFields, publicProperties, classInstance);
     }
 
+    private static bool HasAttribute(ICustomAttributeProvider provider, string attribute)
+    {
+        return provider.GetCustomAttributes(false).Any(attr => attr.GetType().Name == attribute);
+    }
+
     private static string TryGetAssamblyFromPath(string filePath, out Assembly? assembly)
     {
         assembly = null;
@@ -124,10 +127,7 @@ public static class ImportUtil
         }
     }
 
-    private static bool HasAttribute(ICustomAttributeProvider provider, string attribute)
-    {
-        return provider.GetCustomAttributes(false).Any(attr => attr.GetType().Name == attribute);
-    }
+    private const string ExposeAttributeName = "Expose";
 }
 
 public class ExposedClassData(
@@ -135,10 +135,9 @@ public class ExposedClassData(
     FieldInfo[] Fields,
     PropertyInfo[] Properties,
     object? instance = null
-)
-{
-    public readonly MethodInfo[] methods = Methods;
+){
     public readonly FieldInfo[] fields = Fields;
-    public readonly PropertyInfo[] properties = Properties;
     public readonly object? instance = instance;
+    public readonly MethodInfo[] methods = Methods;
+    public readonly PropertyInfo[] properties = Properties;
 }

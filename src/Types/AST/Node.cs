@@ -4,20 +4,19 @@ using YSharp.Types.Lexer;
 namespace YSharp.Types.AST;
 
 // Interface definition
-public class BaseNode
-{
+public class BaseNode{
+    public Position EndPos;
+
+    public Position StartPos;
+
     public BaseNode(in Position startPos, in Position endPos)
     {
         StartPos = startPos;
         EndPos = endPos;
     }
-
-    public Position StartPos;
-    public Position EndPos;
 }
 
-public sealed class NodeNull : BaseNode
-{
+public sealed class NodeNull : BaseNode{
     public static readonly NodeNull Instance = new();
 
     private NodeNull()
@@ -27,8 +26,7 @@ public sealed class NodeNull : BaseNode
 }
 
 // NumberNode implements INode
-public sealed class NumberNode : BaseNode
-{
+public sealed class NumberNode : BaseNode{
     public readonly Token<double> tok;
 
     public NumberNode(Token<double> tok)
@@ -41,8 +39,7 @@ public sealed class NumberNode : BaseNode
 }
 
 // This node represents a string token
-public sealed class StringNode : BaseNode
-{
+public sealed class StringNode : BaseNode{
     public readonly Token<string> tok;
 
     public StringNode(Token<string> tok)
@@ -55,8 +52,7 @@ public sealed class StringNode : BaseNode
 }
 
 // This node represents a list of elements
-public sealed class ListNode : BaseNode
-{
+public sealed class ListNode : BaseNode{
     public readonly BaseNode[] elementNodes;
 
     public ListNode(List<BaseNode> elementNodes, in Position posStart, in Position posEnd)
@@ -72,8 +68,7 @@ public sealed class ListNode : BaseNode
 }
 
 // This node represents a binary operation
-public sealed class BinOpNode : BaseNode
-{
+public sealed class BinOpNode : BaseNode{
     public readonly BaseNode leftNode;
     public readonly IToken opTok;
     public readonly BaseNode rightNode;
@@ -90,10 +85,9 @@ public sealed class BinOpNode : BaseNode
 }
 
 // This node represents a unary operation
-public sealed class UnaryOpNode : BaseNode
-{
-    public readonly IToken opTok;
+public sealed class UnaryOpNode : BaseNode{
     public readonly BaseNode node;
+    public readonly IToken opTok;
 
     public UnaryOpNode(IToken opTok, BaseNode node)
         : base(opTok.StartPos, node.EndPos)
@@ -106,8 +100,7 @@ public sealed class UnaryOpNode : BaseNode
 }
 
 // This node represents a variable access
-public sealed class VarAccessNode : BaseNode
-{
+public sealed class VarAccessNode : BaseNode{
     public readonly Token<string> varNameTok;
     public bool fromCall = false;
 
@@ -121,10 +114,9 @@ public sealed class VarAccessNode : BaseNode
 }
 
 // This node represents a variable assignment
-public sealed class VarAssignNode : BaseNode
-{
-    public readonly Token<string> varNameTok;
+public sealed class VarAssignNode : BaseNode{
     public readonly BaseNode valueNode;
+    public readonly Token<string> varNameTok;
 
     public VarAssignNode(Token<string> varNameTok, BaseNode valueNode)
         : base(varNameTok.StartPos, valueNode.EndPos)
@@ -133,17 +125,13 @@ public sealed class VarAssignNode : BaseNode
         this.valueNode = valueNode;
     }
 
-    public override string ToString()
-    {
-        return varNameTok.Value + " = " + valueNode;
-    }
+    public override string ToString() => varNameTok.Value + " = " + valueNode;
 }
 
 // This node represents a dot (.) variable access
-public sealed class DotVarAccessNode : BaseNode
-{
-    public readonly Token<string> varNameTok;
+public sealed class DotVarAccessNode : BaseNode{
     public readonly BaseNode parent;
+    public readonly Token<string> varNameTok;
 
     public DotVarAccessNode(Token<string> varNameTok, BaseNode parent)
         : base(varNameTok.StartPos, varNameTok.EndPos)
@@ -156,10 +144,9 @@ public sealed class DotVarAccessNode : BaseNode
 }
 
 // This node represents a function call using dot notation
-public sealed class DotCallNode : BaseNode
-{
-    public readonly Token<string> funcNameTok;
+public sealed class DotCallNode : BaseNode{
     public readonly BaseNode[] argNodes;
+    public readonly Token<string> funcNameTok;
     public readonly BaseNode parent;
 
     public DotCallNode(Token<string> funcNameTok, List<BaseNode> argNodes, BaseNode parent)
@@ -174,8 +161,7 @@ public sealed class DotCallNode : BaseNode
         $"Calling {funcNameTok} on {parent} with args: {string.Join(", ", argNodes.Select(x => x.ToString()))}";
 }
 
-public sealed class SubIfNode : BaseNode
-{
+public sealed class SubIfNode : BaseNode{
     public readonly BaseNode condition;
     public readonly BaseNode expression;
 
@@ -190,8 +176,7 @@ public sealed class SubIfNode : BaseNode
 }
 
 // This node represents an if statement
-public sealed class IfNode : BaseNode
-{
+public sealed class IfNode : BaseNode{
     public readonly SubIfNode[] cases;
     public readonly BaseNode elseNode;
 
@@ -210,14 +195,13 @@ public sealed class IfNode : BaseNode
 }
 
 // This node represents a for loop
-public sealed class ForNode : BaseNode
-{
-    public readonly Token<string> varNameTok;
-    public readonly BaseNode startValueNode;
-    public readonly BaseNode endValueNode;
-    public readonly BaseNode? stepValueNode;
+public sealed class ForNode : BaseNode{
     public readonly BaseNode bodyNode;
+    public readonly BaseNode endValueNode;
     public readonly bool retNull;
+    public readonly BaseNode startValueNode;
+    public readonly BaseNode? stepValueNode;
+    public readonly Token<string> varNameTok;
 
     public ForNode(
         Token<string> varNameTok,
@@ -242,10 +226,9 @@ public sealed class ForNode : BaseNode
 }
 
 // This node represents a while loop
-public sealed class WhileNode : BaseNode
-{
-    public readonly BaseNode conditionNode;
+public sealed class WhileNode : BaseNode{
     public readonly BaseNode bodyNode;
+    public readonly BaseNode conditionNode;
     public readonly bool retNull;
 
     public WhileNode(BaseNode conditionNode, BaseNode bodyNode, bool retNull)
@@ -260,12 +243,11 @@ public sealed class WhileNode : BaseNode
 }
 
 // This node represents a function definition
-public sealed class FuncDefNode : BaseNode
-{
-    public readonly Token<string> varNameTok;
+public sealed class FuncDefNode : BaseNode{
     public readonly IToken[] argNameToks;
     public readonly BaseNode bodyNode;
     public readonly bool retNull;
+    public readonly Token<string> varNameTok;
 
     public FuncDefNode(
         Token<string> varNameTok,
@@ -286,10 +268,9 @@ public sealed class FuncDefNode : BaseNode
 }
 
 // This node represents a function call
-public sealed class CallNode : BaseNode
-{
-    public readonly BaseNode nodeToCall;
+public sealed class CallNode : BaseNode{
     public readonly BaseNode[] argNodes;
+    public readonly BaseNode nodeToCall;
 
     public CallNode(BaseNode nodeToCall, List<BaseNode> argNodes)
         : base(nodeToCall.StartPos, argNodes.Count > 0 ? argNodes[^1].EndPos : nodeToCall.EndPos)
@@ -303,8 +284,7 @@ public sealed class CallNode : BaseNode
 }
 
 // This node represents a return statement
-public sealed class ReturnNode : BaseNode
-{
+public sealed class ReturnNode : BaseNode{
     public readonly BaseNode? nodeToReturn;
 
     public ReturnNode(BaseNode? nodeToReturn, in Position startPos, in Position endPos)
@@ -317,57 +297,52 @@ public sealed class ReturnNode : BaseNode
 }
 
 // This node represents a continue statement
-public sealed class ContinueNode : BaseNode
-{
+public sealed class ContinueNode : BaseNode{
     public ContinueNode(in Position startPos, in Position endPos)
         : base(startPos, endPos) { }
 
-    public override string ToString() => $"Continue Node";
+    public override string ToString() => "Continue Node";
 }
 
 // This node represents a break statement
-public sealed class BreakNode : BaseNode
-{
+public sealed class BreakNode : BaseNode{
     public BreakNode(in Position startPos, in Position endPos)
         : base(startPos, endPos) { }
 
-    public override string ToString() => $"Break Node";
+    public override string ToString() => "Break Node";
 }
 
-public sealed class TryCatchNode : BaseNode
-{
-    public readonly BaseNode TryNode;
+public sealed class TryCatchNode : BaseNode{
     public readonly BaseNode CatchNode;
     public readonly Token<string> ChatchVarName;
+    public readonly BaseNode TryNode;
 
     public TryCatchNode(BaseNode tryNode, BaseNode catchNode, Token<string> catchVarName)
         : base(tryNode.StartPos, catchNode is NodeNull _ ? tryNode.EndPos : catchNode.EndPos)
     {
-        this.TryNode = tryNode;
-        this.CatchNode = catchNode;
-        this.ChatchVarName = catchVarName;
+        TryNode = tryNode;
+        CatchNode = catchNode;
+        ChatchVarName = catchVarName;
     }
 
     public override string ToString() => $"Try {TryNode} Catch {CatchNode} as {ChatchVarName}";
 }
 
-public sealed class ImportNode : BaseNode
-{
+public sealed class ImportNode : BaseNode{
     public Token<string> PathTok;
 
     public ImportNode(Token<string> pathTok, in Position startPos, in Position endPos)
         : base(startPos, endPos)
     {
-        this.PathTok = pathTok;
+        PathTok = pathTok;
     }
 
     public override string ToString() => $"Import {PathTok}";
 }
 
-public sealed class SuffixAssignNode : BaseNode
-{
-    public string varName;
+public sealed class SuffixAssignNode : BaseNode{
     public bool isAdd;
+    public string varName;
 
     public SuffixAssignNode(Token<string> varName, bool isAdd)
         : base(varName.StartPos, varName.EndPos)

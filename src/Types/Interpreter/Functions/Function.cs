@@ -8,36 +8,10 @@ public sealed class VFunction(
     BaseNode bodyNode,
     List<string> argNames,
     bool autoReturn
-) : VBaseFunction(name)
-{
-    public readonly BaseNode bodyNode = bodyNode;
+) : VBaseFunction(name){
     public readonly List<string> argNames = argNames;
     public readonly bool autoReturn = autoReturn;
-
-    /// <summary>
-    /// This executes the code in the function.
-    /// </summary>
-    /// <param name="args"></param>
-    /// <returns>A Runtime Result</returns>
-    public RunTimeResult Execute(List<Value> args)
-    {
-        RunTimeResult res = new();
-        Context execContext = GeneratContext();
-
-        res.Regrister(CheckAndPopulateArgs(argNames, args, execContext));
-        if (res.ShouldReturn())
-        {
-            return res;
-        }
-
-        Value value = res.Regrister(Core.Interpreter.Visit(bodyNode, execContext));
-        if (res.ShouldReturn() && res.funcReturnValue is ValueNull)
-        {
-            return res;
-        }
-        Value retValue = autoReturn ? value : res.funcReturnValue;
-        return res.Success(retValue);
-    }
+    public readonly BaseNode bodyNode = bodyNode;
 
     public override VFunction Copy()
     {
@@ -47,8 +21,24 @@ public sealed class VFunction(
         return copy;
     }
 
-    public override string ToString()
+    /// <summary>
+    ///     This executes the code in the function.
+    /// </summary>
+    /// <param name="args"></param>
+    /// <returns>A Runtime Result</returns>
+    public RunTimeResult Execute(List<Value> args)
     {
-        return $"<func {name}>";
+        RunTimeResult res = new();
+        Context execContext = GeneratContext();
+
+        res.Regrister(CheckAndPopulateArgs(argNames, args, execContext));
+        if (res.ShouldReturn()) return res;
+
+        Value value = res.Regrister(Core.Interpreter.Visit(bodyNode, execContext));
+        if (res.ShouldReturn() && res.funcReturnValue is ValueNull) return res;
+        Value retValue = autoReturn ? value : res.funcReturnValue;
+        return res.Success(retValue);
     }
+
+    public override string ToString() => $"<func {name}>";
 }

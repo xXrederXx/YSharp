@@ -1,14 +1,13 @@
 namespace YSharp.Utils;
 
-public static class FileNameRegistry
-{
-    private static readonly Dictionary<string, byte> _nameToId = new();
+public static class FileNameRegistry{
     private static readonly string[] _idToName = new string[256];
+    private static readonly Dictionary<string, byte> _nameToId = new();
     private static byte _nextId = 1; // 0 = "null"
 
     public static byte GetFileId(string name)
     {
-        if (_nameToId.TryGetValue(name, out var id)) return id;
+        if (_nameToId.TryGetValue(name, out byte id)) return id;
         if (_nextId == 0) throw new InvalidOperationException("File ID overflow (256 max)");
 
         id = _nextId++;
@@ -19,4 +18,3 @@ public static class FileNameRegistry
 
     public static string GetFileName(byte id) => _idToName[id] ?? string.Empty;
 }
-

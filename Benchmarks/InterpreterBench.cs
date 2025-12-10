@@ -6,14 +6,13 @@ namespace YSharp.Benchmarks;
 
 [SimpleJob]
 [MemoryDiagnoser]
-public class InterpreterBench
-{
+public class InterpreterBench{
     [Benchmark]
-    public void InterpreterBenchmarkS()
+    public void InterpreterBenchmarkL()
     {
         Interpreter.Visit(
-            BenchHelp.astS.Node,
-            new Context() { symbolTable = BenchHelp.GetSymbolTable() }
+            BenchHelp.astL.Node,
+            new Context { symbolTable = BenchHelp.GetSymbolTable() }
         );
     }
 
@@ -22,16 +21,16 @@ public class InterpreterBench
     {
         Interpreter.Visit(
             BenchHelp.astM.Node,
-            new Context() { symbolTable = BenchHelp.GetSymbolTable() }
+            new Context { symbolTable = BenchHelp.GetSymbolTable() }
         );
     }
 
     [Benchmark]
-    public void InterpreterBenchmarkL()
+    public void InterpreterBenchmarkS()
     {
         Interpreter.Visit(
-            BenchHelp.astL.Node,
-            new Context() { symbolTable = BenchHelp.GetSymbolTable() }
+            BenchHelp.astS.Node,
+            new Context { symbolTable = BenchHelp.GetSymbolTable() }
         );
     }
 
@@ -40,7 +39,7 @@ public class InterpreterBench
     {
         Interpreter.Visit(
             BenchHelp.astXL.Node,
-            new Context() { symbolTable = BenchHelp.GetSymbolTable() }
+            new Context { symbolTable = BenchHelp.GetSymbolTable() }
         );
     }
 }

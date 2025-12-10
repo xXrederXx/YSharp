@@ -5,13 +5,12 @@ namespace YSharp.Benchmarks;
 
 [SimpleJob]
 [MemoryDiagnoser]
-public class RunTimeBench
-{
+public class RunTimeBench{
     [Benchmark]
-    public void RTBenchmarkS()
+    public void RTBenchmarkL()
     {
         RunClass runClass = new();
-        runClass.Run("BENCHMARK", BenchHelp.Text5000Char);
+        runClass.Run("BENCHMARK", BenchHelp.Text50000Char);
     }
 
     [Benchmark]
@@ -22,10 +21,10 @@ public class RunTimeBench
     }
 
     [Benchmark]
-    public void RTBenchmarkL()
+    public void RTBenchmarkS()
     {
         RunClass runClass = new();
-        runClass.Run("BENCHMARK", BenchHelp.Text50000Char);
+        runClass.Run("BENCHMARK", BenchHelp.Text5000Char);
     }
 
     [Benchmark]

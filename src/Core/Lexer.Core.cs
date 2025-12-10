@@ -6,12 +6,11 @@ using YSharp.Utils;
 
 namespace YSharp.Core;
 
-public sealed partial class Lexer
-{
-    private readonly string text;
-    private Position pos;
-    private char current_char = char.MaxValue;
+public sealed partial class Lexer{
     private readonly StringBuilder stringBuilder = new();
+    private readonly string text;
+    private char current_char = char.MaxValue;
+    private Position pos;
 
     // Initalizer
     public Lexer(string text, string fileName)
@@ -24,16 +23,6 @@ public sealed partial class Lexer
         current_char = pos.Index < text.Length ? text[pos.Index] : char.MaxValue;
     }
 
-    // this uptades to the next charachter
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private void Advance()
-    {
-        pos = pos.Advance(current_char);
-        current_char = pos.Index < text.Length ? text[pos.Index] : char.MaxValue;
-    }
-
-    private static bool IsValidIdentifierChar(char c) => char.IsLetterOrDigit(c) || c == '_';
-
 
     // generates all tokens
     public (List<IToken>, Error) MakeTokens()
@@ -41,7 +30,6 @@ public sealed partial class Lexer
         List<IToken> tokens = [];
 
         while (current_char != char.MaxValue)
-        {
             if (current_char is ' ' or '\t')
             {
                 // Discards spaces and tabs
@@ -70,42 +58,26 @@ public sealed partial class Lexer
             else if (char.IsDigit(current_char)) // Check for digits (int)
             {
                 (IToken tok, Error err) = MakeNumber();
-                if (err.IsError)
-                {
-                    return ([], err);
-                }
+                if (err.IsError) return ([], err);
                 tokens.Add(tok);
             }
             else if (char.IsLetter(current_char)) // Check for letters
-            {
                 tokens.Add(MakeIdentifier());
-            }
             else if (current_char == '"')
             {
                 (IToken tok, Error err) = MakeString();
-                if (err.IsError)
-                {
-                    return ([], err);
-                }
+                if (err.IsError) return ([], err);
                 tokens.Add(tok);
             }
             // Arithmetic
             else if (current_char == '+')
-            {
                 tokens.Add(MakePlus());
-            }
             else if (current_char == '-')
-            {
                 tokens.Add(MakeMinus());
-            }
             else if (current_char == '*')
-            {
                 tokens.Add(MakeDecicion('=', TokenType.MUEQ, TokenType.MUL));
-            }
             else if (current_char == '/')
-            {
                 tokens.Add(MakeDecicion('=', TokenType.DIEQ, TokenType.DIV));
-            }
             else if (current_char == '^')
             {
                 tokens.Add(new TokenNoValue(TokenType.POW, pos, pos));
@@ -125,25 +97,16 @@ public sealed partial class Lexer
             else if (current_char == '!')
             {
                 (IToken, Error) res = MakeNotEquals();
-                if (res.Item2.IsError)
-                {
-                    return ([], res.Item2);
-                }
+                if (res.Item2.IsError) return ([], res.Item2);
                 tokens.Add(res.Item1);
                 Advance();
             }
             else if (current_char == '=')
-            {
                 tokens.Add(MakeDecicion('=', TokenType.EE, TokenType.EQ));
-            }
             else if (current_char == '<')
-            {
                 tokens.Add(MakeDecicion('=', TokenType.LTE, TokenType.LT));
-            }
             else if (current_char == '>')
-            {
                 tokens.Add(MakeDecicion('=', TokenType.GTE, TokenType.GT));
-            }
             // Other
             else if (current_char == ',')
             {
@@ -165,8 +128,18 @@ public sealed partial class Lexer
                 // Not a valid token, return an error
                 return (new List<IToken>(), new IllegalCharError(pos, current_char));
             }
-        }
+
         tokens.Add(new TokenNoValue(TokenType.EOF, pos, pos)); // Add the End Of File token
         return (tokens, ErrorNull.Instance);
+    }
+
+    private static bool IsValidIdentifierChar(char c) => char.IsLetterOrDigit(c) || c == '_';
+
+    // this uptades to the next charachter
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private void Advance()
+    {
+        pos = pos.Advance(current_char);
+        current_char = pos.Index < text.Length ? text[pos.Index] : char.MaxValue;
     }
 }

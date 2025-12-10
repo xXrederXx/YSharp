@@ -1,6 +1,9 @@
+using BenchmarkDotNet.Reports;
 using BenchmarkDotNet.Running;
 using YSharp.Core;
 using YSharp.Types.AST;
+using YSharp.Types.Common;
+using YSharp.Types.Interpreter;
 using YSharp.Types.Interpreter.Function;
 using YSharp.Types.Interpreter.Internal;
 using YSharp.Types.Interpreter.Primitives;
@@ -10,25 +13,26 @@ using YSharp.Utils;
 
 namespace YSharp.Benchmarks;
 
-public static class BenchHelp
-{
+public static class BenchHelp{
+    public static readonly ParseResult astL;
+    public static readonly ParseResult astM;
+
+    public static readonly ParseResult astS;
+    public static readonly ParseResult astXL;
+
     public static readonly string SampleText =
         "FUN func(a, b, c, d, e, f, g);\n PRINT(a + b + c); VAR x =d+ e + f + g; PRINT(x); END; 1 + 2 FUN add(a, b); RETURN a + b;END;FUN adda(a, b);  RETURN a + b;END;;;1+2; VAR list = [1,2,3,4,5,6,6,7,7,8,8,8,9,9,9,4,42,3243,43,64535,6434,43,3]; 1 + 2 + 3+ 44 +45 + 3 + 43 +4";
 
-    public static readonly string Text5000Char;
+    public static readonly string Text100000Char;
     public static readonly string Text10000Char;
     public static readonly string Text50000Char;
-    public static readonly string Text100000Char;
+
+    public static readonly string Text5000Char;
+    public static readonly List<IToken> TokenL;
+    public static readonly List<IToken> TokenM;
 
     public static readonly List<IToken> TokenS;
-    public static readonly List<IToken> TokenM;
-    public static readonly List<IToken> TokenL;
     public static readonly List<IToken> TokenXL;
-
-    public static readonly ParseResult astS;
-    public static readonly ParseResult astM;
-    public static readonly ParseResult astL;
-    public static readonly ParseResult astXL;
 
     static BenchHelp()
     {
@@ -72,28 +76,44 @@ public static class BenchHelp
         return SampleSymbolTable;
     }
 
-    private static void CheckString(string str)
+    public static void LogData()
     {
-        RunClass runClass = new();
-        var res = runClass.Run("BENCH-HELPER-CHECK", str);
-        if (res.Item2.IsError)
-        {
-            System.Console.WriteLine(
-                $"DID NOT PASS BENCH-HELPER-CHECK \n\n ERROR: \n\t{res.Item2} \n\n TEXT: \n {BetterString(str)}"
-            );
-        }
+        Console.WriteLine("\nBENCH HELPER DATA");
+        Console.WriteLine(
+            $"SAMPLE TEXT ({SampleText.Length} Char):\n{BetterString(SampleText)}"
+        );
+
+        Console.WriteLine("\nTEXT VARIANTS:");
+        Console.WriteLine(
+            $"\tSHORT ({Text5000Char.Length} Char): \n\t {BetterString(Text5000Char)}"
+        );
+        Console.WriteLine(
+            $"\tMEDIUM ({Text10000Char.Length} Char): \n\t {BetterString(Text10000Char)}"
+        );
+        Console.WriteLine(
+            $"\tLONG ({Text50000Char.Length} Char): \n\t {BetterString(Text50000Char)}"
+        );
+        Console.WriteLine(
+            $"\tEXTREME ({Text100000Char.Length} Char): \n\t {BetterString(Text100000Char)}"
+        );
+
+        Console.WriteLine("\nTOKEN LIST VARIANTS:");
+        Console.WriteLine($"\tSHORT -> {TokenS.Count} Tokens (LAST: {TokenS[^2]})");
+        Console.WriteLine($"\tMEDIUM -> {TokenM.Count} Tokens (LAST: {TokenM[^2]})");
+        Console.WriteLine($"\tLONG -> {TokenL.Count} Tokens (LAST: {TokenL[^2]})");
+        Console.WriteLine($"\tEXTREME -> {TokenXL.Count} Tokens (LAST: {TokenXL[^2]})");
+
+        Console.WriteLine("\nAST VARIANTS:");
+        Console.WriteLine($"\tSHORT -> {astS.Node.ToString()?.Length}");
+        Console.WriteLine($"\tMEDIUM -> {astM.Node.ToString()?.Length}");
+        Console.WriteLine($"\tLONG -> {astL.Node.ToString()?.Length}");
+        Console.WriteLine($"\tEXTREME -> {astXL.Node.ToString()?.Length}");
     }
 
-    private static string GetText(int length)
+    public static void Run<T>(string changeDescription = "-")
     {
-        string text = "";
-        while (text.Length < length)
-        {
-            text += SampleText;
-        }
-        text = text.Substring(0, length);
-        text = text.Substring(0, text.LastIndexOf(';'));
-        return text;
+        Summary summary = BenchmarkRunner.Run<T>();
+        BenchReportWriter.UpdateFiles<T>(changeDescription);
     }
 
     private static string BetterString(string str, int length = 120)
@@ -107,43 +127,24 @@ public static class BenchHelp
         return start + " ...... " + end;
     }
 
-    public static void LogData()
+    private static void CheckString(string str)
     {
-        System.Console.WriteLine("\nBENCH HELPER DATA");
-        System.Console.WriteLine(
-            $"SAMPLE TEXT ({SampleText.Length} Char):\n{BetterString(SampleText)}"
-        );
-
-        System.Console.WriteLine($"\nTEXT VARIANTS:");
-        System.Console.WriteLine(
-            $"\tSHORT ({Text5000Char.Length} Char): \n\t {BetterString(Text5000Char)}"
-        );
-        System.Console.WriteLine(
-            $"\tMEDIUM ({Text10000Char.Length} Char): \n\t {BetterString(Text10000Char)}"
-        );
-        System.Console.WriteLine(
-            $"\tLONG ({Text50000Char.Length} Char): \n\t {BetterString(Text50000Char)}"
-        );
-        System.Console.WriteLine(
-            $"\tEXTREME ({Text100000Char.Length} Char): \n\t {BetterString(Text100000Char)}"
-        );
-
-        System.Console.WriteLine($"\nTOKEN LIST VARIANTS:");
-        System.Console.WriteLine($"\tSHORT -> {TokenS.Count} Tokens (LAST: {TokenS[^2]})");
-        System.Console.WriteLine($"\tMEDIUM -> {TokenM.Count} Tokens (LAST: {TokenM[^2]})");
-        System.Console.WriteLine($"\tLONG -> {TokenL.Count} Tokens (LAST: {TokenL[^2]})");
-        System.Console.WriteLine($"\tEXTREME -> {TokenXL.Count} Tokens (LAST: {TokenXL[^2]})");
-
-        System.Console.WriteLine($"\nAST VARIANTS:");
-        System.Console.WriteLine($"\tSHORT -> {astS.Node.ToString()?.Length}");
-        System.Console.WriteLine($"\tMEDIUM -> {astM.Node.ToString()?.Length}");
-        System.Console.WriteLine($"\tLONG -> {astL.Node.ToString()?.Length}");
-        System.Console.WriteLine($"\tEXTREME -> {astXL.Node.ToString()?.Length}");
+        RunClass runClass = new();
+        (Value, Error) res = runClass.Run("BENCH-HELPER-CHECK", str);
+        if (res.Item2.IsError)
+        {
+            Console.WriteLine(
+                $"DID NOT PASS BENCH-HELPER-CHECK \n\n ERROR: \n\t{res.Item2} \n\n TEXT: \n {BetterString(str)}"
+            );
+        }
     }
 
-    public static void Run<T>(string changeDescription = "-")
+    private static string GetText(int length)
     {
-        BenchmarkDotNet.Reports.Summary summary = BenchmarkRunner.Run<T>();
-        BenchReportWriter.UpdateFiles<T>(changeDescription);
+        string text = "";
+        while (text.Length < length) text += SampleText;
+        text = text.Substring(0, length);
+        text = text.Substring(0, text.LastIndexOf(';'));
+        return text;
     }
 }

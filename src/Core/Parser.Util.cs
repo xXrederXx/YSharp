@@ -5,38 +5,7 @@ using YSharp.Types.Lexer;
 
 namespace YSharp.Core;
 
-public partial class Parser
-{
-    public BaseNode GetBodyNode(ParseResult res)
-    {
-        if (currentToken.IsType(TokenType.NEWLINE))
-        {
-            AdvanceParser(res);
-            return res.Register(Statements());
-        }
-        else
-        {
-            return res.Register(Statement());
-        }
-    }
-
-    public bool HasErrorButEnd(ParseResult res)
-    {
-        if (res.HasError && res.Error is not EndKeywordError)
-        {
-            return true;
-        }
-        res.ResetError();
-
-        if (currentToken.IsNotMatchingKeyword(KeywordType.END))
-        {
-            res.Failure(new ExpectedKeywordError(currentToken.StartPos, "END"));
-            return true;
-        }
-        AdvanceParser(res);
-        return false;
-    }
-
+public partial class Parser{
     public static bool TryCastToken<T>(
         IToken token,
         out Token<T> result,
@@ -60,6 +29,32 @@ public partial class Parser
         return false;
     }
 
+    public BaseNode GetBodyNode(ParseResult res)
+    {
+        if (currentToken.IsType(TokenType.NEWLINE))
+        {
+            AdvanceParser(res);
+            return res.Register(Statements());
+        }
+
+        return res.Register(Statement());
+    }
+
+    public bool HasErrorButEnd(ParseResult res)
+    {
+        if (res.HasError && res.Error is not EndKeywordError) return true;
+        res.ResetError();
+
+        if (currentToken.IsNotMatchingKeyword(KeywordType.END))
+        {
+            res.Failure(new ExpectedKeywordError(currentToken.StartPos, "END"));
+            return true;
+        }
+
+        AdvanceParser(res);
+        return false;
+    }
+
     private List<BaseNode> MakeArgs(ParseResult res)
     {
         if (currentToken.IsNotType(TokenType.LPAREN))
@@ -78,10 +73,7 @@ public partial class Parser
         // get argument
         List<BaseNode> argNodes = [];
         argNodes.Add(res.Register(Expression()));
-        if (res.HasError)
-        {
-            return [];
-        }
+        if (res.HasError) return [];
 
         // get the rest of the arguments which are seperated by commas
         while (currentToken.IsType(TokenType.COMMA))
@@ -89,10 +81,7 @@ public partial class Parser
             AdvanceParser(res);
 
             argNodes.Add(res.Register(Expression()));
-            if (res.HasError)
-            {
-                return [];
-            }
+            if (res.HasError) return [];
         }
 
         if (currentToken.IsNotType(TokenType.RPAREN))
@@ -106,24 +95,13 @@ public partial class Parser
         return argNodes; // empty node just for the parseresult.succses
     }
 
-    private void SkipNewLines(ParseResult res)
-    {
-        while (currentToken.IsType(TokenType.NEWLINE))
-        {
-            AdvanceParser(res);
-        }
-    }
-
     private ParseResult ShortendVarAssignHelper(Token<string> varName, TokenType type)
     {
         ParseResult res = new();
 
         AdvanceParser(res);
         BaseNode expr = res.Register(Expression()); // this gets the "value" of the variable
-        if (res.HasError)
-        {
-            return res;
-        }
+        if (res.HasError) return res;
 
         // This converts varName += Expr to varName = varName + Expr
         BaseNode converted = new BinOpNode(
@@ -132,5 +110,10 @@ public partial class Parser
             expr
         );
         return res.Success(new VarAssignNode(varName, converted));
+    }
+
+    private void SkipNewLines(ParseResult res)
+    {
+        while (currentToken.IsType(TokenType.NEWLINE)) AdvanceParser(res);
     }
 }
