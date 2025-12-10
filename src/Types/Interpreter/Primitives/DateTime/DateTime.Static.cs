@@ -3,7 +3,8 @@ using YSharp.Types.Interpreter.Internal;
 
 namespace YSharp.Types.Interpreter.Primitives;
 
-public sealed partial class VDateTime{
+public sealed partial class VDateTime
+{
     private static readonly PropertyTable<VDateTime> propertyTable;
 
     static VDateTime()

@@ -11,7 +11,8 @@ using YSharp.Types.Lexer;
 
 namespace YSharp.Utils;
 
-public class RunClass{
+public class RunClass
+{
     public static bool DoExportAstDot;
     public static int OptimizationLevel;
     private readonly SymbolTable globalSymbolTable = new();

@@ -13,7 +13,8 @@ using YSharp.Utils;
 
 namespace YSharp.Benchmarks;
 
-public static class BenchHelp{
+public static class BenchHelp
+{
     public static readonly ParseResult astL;
     public static readonly ParseResult astM;
 

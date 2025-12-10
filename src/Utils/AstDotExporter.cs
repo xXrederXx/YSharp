@@ -4,7 +4,8 @@ using YSharp.Types.AST;
 
 namespace YSharp.Utils;
 
-public static class AstDotExporter{
+public static class AstDotExporter
+{
     private static readonly Dictionary<BaseNode, int> _nodeIds = new();
     private static int _idCounter;
 

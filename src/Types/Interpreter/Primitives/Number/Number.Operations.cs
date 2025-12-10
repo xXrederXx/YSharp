@@ -3,7 +3,8 @@ using YSharp.Types.Interpreter.Internal;
 
 namespace YSharp.Types.Interpreter.Primitives;
 
-public sealed partial class VNumber : Value{
+public sealed partial class VNumber : Value
+{
     public override ValueAndError AddedTo(Value other)
     {
         Value? val = other switch

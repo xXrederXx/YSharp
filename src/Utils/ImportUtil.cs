@@ -22,7 +22,8 @@ the .csproj file should look similar to this:
 
 */
 
-public static class ImportUtil{
+public static class ImportUtil
+{
     public static readonly string DefaultPath;
 
     static ImportUtil()
@@ -135,7 +136,8 @@ public class ExposedClassData(
     FieldInfo[] Fields,
     PropertyInfo[] Properties,
     object? instance = null
-){
+)
+{
     public readonly FieldInfo[] fields = Fields;
     public readonly object? instance = instance;
     public readonly MethodInfo[] methods = Methods;

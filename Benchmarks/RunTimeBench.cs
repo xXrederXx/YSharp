@@ -5,7 +5,8 @@ namespace YSharp.Benchmarks;
 
 [SimpleJob]
 [MemoryDiagnoser]
-public class RunTimeBench{
+public class RunTimeBench
+{
     [Benchmark]
     public void RTBenchmarkL()
     {

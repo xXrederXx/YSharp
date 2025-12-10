@@ -3,7 +3,8 @@ using YSharp.Types.Common;
 namespace YSharp.Types.Interpreter.Internal;
 
 public class PropertyTable<T>
-    where T : Value{
+    where T : Value
+{
     private readonly Dictionary<string, Func<T, ValueAndError>> Properties;
 
     public PropertyTable(ReadOnlySpan<(string, Func<T, ValueAndError>)> properties)

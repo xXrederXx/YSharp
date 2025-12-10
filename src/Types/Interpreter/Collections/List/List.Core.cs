@@ -2,7 +2,8 @@ using YSharp.Types.Interpreter.Internal;
 
 namespace YSharp.Types.Interpreter.Collection;
 
-public sealed partial class VList(List<Value> elements) : Value{
+public sealed partial class VList(List<Value> elements) : Value
+{
     public List<Value> value { get; set; } = elements;
 
     public override Value Copy()

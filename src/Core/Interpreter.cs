@@ -10,7 +10,8 @@ using YSharp.Utils;
 
 namespace YSharp.Core;
 
-public static class Interpreter{
+public static class Interpreter
+{
     public static RunTimeResult Visit(BaseNode node, Context context)
     {
         return node switch
@@ -93,12 +94,12 @@ public static class Interpreter{
 
         Value valueToCall = res.Regrister(Visit(node.nodeToCall, context));
         if (res.ShouldReturn()) return res;
-        
-        if(valueToCall is not VBaseFunction function)
+
+        if (valueToCall is not VBaseFunction function)
             return res.Failure(new InternalInterpreterError(
                 "The type of valueToCall is not supported. Type: " +
                 valueToCall.GetType()));
-        
+
         valueToCall = function.Copy().SetPos(node.StartPos, node.EndPos);
 
         for (int i = 0; i < node.argNodes.Length; i++)

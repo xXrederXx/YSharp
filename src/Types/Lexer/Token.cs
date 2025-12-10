@@ -8,7 +8,8 @@ namespace YSharp.Types.Lexer;
 ///     A token is a class type which stores a StartPos and EndPos a Type and Optionaly a Value.
 ///     It has various functions which can be helpful
 /// </summary>
-public interface IToken{
+public interface IToken
+{
     Position EndPos { get; }
     Position StartPos { get; }
     TokenType Type { get; }
@@ -24,7 +25,8 @@ public interface IToken{
 ///     The token version with a Value
 /// </summary>
 /// <typeparam name="T">Type of the value</typeparam>
-public class Token<T> : IToken{
+public class Token<T> : IToken
+{
     public Position EndPos { get; }
     public Position StartPos { get; }
     public TokenType Type { get; }

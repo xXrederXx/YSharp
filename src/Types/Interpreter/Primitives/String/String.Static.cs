@@ -4,7 +4,8 @@ using YSharp.Types.Interpreter.Internal;
 
 namespace YSharp.Types.Interpreter.Primitives;
 
-public sealed partial class VString{
+public sealed partial class VString
+{
     private static readonly MethodTable<VString> methodTable;
     private static readonly PropertyTable<VString> propertyTable;
 

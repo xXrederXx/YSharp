@@ -2,7 +2,8 @@ using CommandLine;
 
 namespace YSharp.Types.Common;
 
-public class CliArgs{
+public class CliArgs
+{
     [Option('o', "optimization", Required = false, Default = 0)]
     public int Optimization { get; set; }
 

@@ -5,7 +5,8 @@ using YSharp.Utils;
 
 namespace YSharp.Tests;
 
-public class VarTest{
+public class VarTest
+{
     private readonly RunClass _runClass = new();
 
     [Theory]

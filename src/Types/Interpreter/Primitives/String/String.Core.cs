@@ -2,7 +2,8 @@ using YSharp.Types.Interpreter.Internal;
 
 namespace YSharp.Types.Interpreter.Primitives;
 
-public sealed partial class VString(string value) : Value{
+public sealed partial class VString(string value) : Value
+{
     public string value { get; set; } = value;
 
     public override Value Copy()

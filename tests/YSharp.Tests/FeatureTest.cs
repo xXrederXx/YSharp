@@ -7,7 +7,8 @@ using YSharp.Utils;
 
 namespace YSharp.Tests;
 
-public class FeatureTest{
+public class FeatureTest
+{
     private readonly RunClass _runClass = new();
 
     [Fact]

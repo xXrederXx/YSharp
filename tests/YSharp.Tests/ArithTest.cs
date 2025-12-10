@@ -7,7 +7,8 @@ using YSharp.Utils;
 
 namespace YSharp.Tests;
 
-public class ErrorTest{
+public class ErrorTest
+{
     private readonly RunClass _runClass = new();
 
     [Theory]

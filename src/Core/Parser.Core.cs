@@ -6,7 +6,8 @@ using YSharp.Types.Lexer;
 namespace YSharp.Core;
 
 // the parser which is used to make the abstract syntax tree
-public partial class Parser{
+public partial class Parser
+{
     public IToken currentToken;
     public int tokIndex = -1;
     private readonly ImmutableArray<IToken> tokens;

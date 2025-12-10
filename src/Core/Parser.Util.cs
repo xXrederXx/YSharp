@@ -5,7 +5,8 @@ using YSharp.Types.Lexer;
 
 namespace YSharp.Core;
 
-public partial class Parser{
+public partial class Parser
+{
     public static bool TryCastToken<T>(
         IToken token,
         out Token<T> result,

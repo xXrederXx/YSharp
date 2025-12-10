@@ -4,7 +4,8 @@ using YSharp.Types.Lexer;
 
 namespace YSharp.Core;
 
-public partial class Parser{
+public partial class Parser
+{
     private ParseResult ArithExpr()
     {
         ParseResult res = new();

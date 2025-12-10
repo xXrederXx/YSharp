@@ -3,7 +3,8 @@ using YSharp.Types.Lexer;
 
 namespace YSharp.Core;
 
-public static class Optimizer{
+public static class Optimizer
+{
     public static ParseResult Visit(BaseNode node)
     {
         return node switch

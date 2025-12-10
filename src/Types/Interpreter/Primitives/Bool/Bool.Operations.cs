@@ -3,7 +3,8 @@ using YSharp.Types.Interpreter.Internal;
 
 namespace YSharp.Types.Interpreter.Primitives;
 
-public sealed partial class VBool : Value{
+public sealed partial class VBool : Value
+{
     public override ValueAndError AndedTo(Value other)
     {
         if (other is VBool _other) return (new VBool(value && _other.value), ErrorNull.Instance);

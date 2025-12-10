@@ -3,7 +3,8 @@ using YSharp.Types.Interpreter.Internal;
 
 namespace YSharp.Types.Interpreter.Function;
 
-public abstract class VBaseFunction : Value{
+public abstract class VBaseFunction : Value
+{
     public readonly string name;
 
     public VBaseFunction(string? name)

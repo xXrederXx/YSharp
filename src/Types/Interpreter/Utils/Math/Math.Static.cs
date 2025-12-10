@@ -4,7 +4,8 @@ using YSharp.Types.Interpreter.Primitives;
 
 namespace YSharp.Types.Interpreter.Utils;
 
-public sealed partial class VMath : Value{
+public sealed partial class VMath : Value
+{
     private static readonly MethodTable<VMath> methodTable;
     private static readonly PropertyTable<VMath> propertyTable;
 

@@ -6,7 +6,8 @@ namespace YSharp.Benchmarks;
 
 [SimpleJob]
 [MemoryDiagnoser]
-public class ParserBench{
+public class ParserBench
+{
     [Benchmark]
     public void ParserBenchmarkL()
     {

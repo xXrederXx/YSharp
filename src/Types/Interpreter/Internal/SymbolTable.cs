@@ -1,6 +1,7 @@
 namespace YSharp.Types.Interpreter.Internal;
 
-public class SymbolTable{
+public class SymbolTable
+{
     public SymbolTable? parent = null;
     public Dictionary<string, Value> symbols = [];
 

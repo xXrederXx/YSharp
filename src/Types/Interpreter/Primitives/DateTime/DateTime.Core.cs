@@ -2,7 +2,8 @@ using YSharp.Types.Interpreter.Internal;
 
 namespace YSharp.Types.Interpreter.Primitives;
 
-public sealed partial class VDateTime(DateTime? dateTime = null) : Value{
+public sealed partial class VDateTime(DateTime? dateTime = null) : Value
+{
     public DateTime dateTime = dateTime ?? DateTime.Now;
 
     public override VDateTime Copy()

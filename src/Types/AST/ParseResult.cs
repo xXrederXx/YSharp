@@ -2,7 +2,8 @@ using YSharp.Types.Common;
 
 namespace YSharp.Types.AST;
 
-public class ParseResult{
+public class ParseResult
+{
     public Error Error { get; private set; } = ErrorNull.Instance;
     public bool HasError => Error.IsError;
     public BaseNode Node { get; private set; } = NodeNull.Instance;

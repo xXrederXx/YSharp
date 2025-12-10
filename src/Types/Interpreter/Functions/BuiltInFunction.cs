@@ -5,7 +5,8 @@ using YSharp.Utils;
 
 namespace YSharp.Types.Interpreter.Function;
 
-public static class BuiltInFunctionsTable{
+public static class BuiltInFunctionsTable
+{
     public static readonly VBuiltInFunction input = new("input");
     public static readonly VBuiltInFunction print = new("print");
     public static readonly VBuiltInFunction run = new("run");
@@ -13,7 +14,8 @@ public static class BuiltInFunctionsTable{
     public static readonly VBuiltInFunction timetorun = new("timetorun");
 }
 
-public sealed class VBuiltInFunction : VBaseFunction{
+public sealed class VBuiltInFunction : VBaseFunction
+{
     private readonly Dictionary<string, List<string>> functionArgs = [];
 
     public VBuiltInFunction(string name)

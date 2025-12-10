@@ -9,7 +9,8 @@ namespace YSharp.Types.Common;
 ///     It is already optimized for memory
 /// </summary>
 [StructLayout(LayoutKind.Explicit, Size = 8)]
-public readonly struct Position : IEquatable<Position>{
+public readonly struct Position : IEquatable<Position>
+{
     /// <summary>
     ///     Returns the saved Column as an Int with a max value of 2^10
     /// </summary>

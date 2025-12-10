@@ -1,6 +1,7 @@
 namespace YSharp.Types.Interpreter.Primitives;
 
-public sealed partial class VBool(bool value) : Value{
+public sealed partial class VBool(bool value) : Value
+{
     public bool value { get; set; } = value;
 
     public override VBool Copy()

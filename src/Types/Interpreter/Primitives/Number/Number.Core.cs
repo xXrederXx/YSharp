@@ -2,7 +2,8 @@ using YSharp.Types.Interpreter.Internal;
 
 namespace YSharp.Types.Interpreter.Primitives;
 
-public sealed partial class VNumber(double value) : Value{
+public sealed partial class VNumber(double value) : Value
+{
     public double value { get; set; } = value;
 
     public override VNumber Copy()

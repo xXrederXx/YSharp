@@ -4,7 +4,8 @@ using YSharp.Types.Lexer;
 
 namespace YSharp.Core;
 
-public sealed partial class Lexer{
+public sealed partial class Lexer
+{
     private TokenNoValue MakeDecicion(
         char checkChar,
         TokenType TTTrue,

@@ -1,7 +1,8 @@
 namespace YSharp.Types.Lexer;
 
 // Token types optimized using enum
-public enum TokenType{
+public enum TokenType
+{
     NULL,
 
     // Types

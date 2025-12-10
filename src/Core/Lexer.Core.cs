@@ -6,7 +6,8 @@ using YSharp.Utils;
 
 namespace YSharp.Core;
 
-public sealed partial class Lexer{
+public sealed partial class Lexer
+{
     private readonly StringBuilder stringBuilder = new();
     private readonly string text;
     private char current_char = char.MaxValue;

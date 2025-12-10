@@ -5,7 +5,8 @@ using CsvHelper.Configuration;
 
 namespace YSharp.Utils;
 
-public static class BenchReportWriter{
+public static class BenchReportWriter
+{
     static BenchReportWriter()
     {
         if (!Directory.Exists(MdFolder)) Directory.CreateDirectory(MdFolder);
@@ -253,7 +254,8 @@ public static class BenchReportWriter{
     public const string DataFolder = "./Docs/Benchmarks/Data";
 }
 
-internal record BenchData{
+internal record BenchData
+{
     public string Allocated { get; init; } = "0 KB";
     public string Error { get; init; } = "0 us";
     public string Gen0 { get; init; } = "0";

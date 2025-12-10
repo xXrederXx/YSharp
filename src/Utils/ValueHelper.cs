@@ -4,7 +4,8 @@ using YSharp.Types.Interpreter.Internal;
 
 namespace YSharp.Types;
 
-public static class ValueHelper{
+public static class ValueHelper
+{
     public static Error CheckArgs(
         List<Value> argValue,
         int length,

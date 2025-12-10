@@ -6,7 +6,8 @@ using Error = YSharp.Types.Common.Error;
 
 namespace YSharp;
 
-internal static class Start{
+internal static class Start
+{
     private static void ConsoleRunner()
     {
         RunClass runClass = new();

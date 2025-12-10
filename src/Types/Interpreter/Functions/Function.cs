@@ -8,7 +8,8 @@ public sealed class VFunction(
     BaseNode bodyNode,
     List<string> argNames,
     bool autoReturn
-) : VBaseFunction(name){
+) : VBaseFunction(name)
+{
     public override VFunction Copy()
     {
         VFunction copy = new(name, bodyNode, argNames, autoReturn);

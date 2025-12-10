@@ -3,7 +3,8 @@ using YSharp.Types.Interpreter.Internal;
 
 namespace YSharp.Types.Interpreter;
 
-public class Value{
+public class Value
+{
     public Context? context;
     public Position endPos;
     public Position startPos;
@@ -81,7 +82,8 @@ public class Value{
     }
 }
 
-public class ValueNull : Value{
+public class ValueNull : Value
+{
     public static readonly ValueNull Instance = new();
 
     private ValueNull() { }

@@ -2,7 +2,8 @@ using YSharp.Types.Common;
 
 namespace YSharp.Types.Interpreter.Internal;
 
-public class Context{
+public class Context
+{
     public readonly string displayName;
     public readonly Context? parent;
     public readonly Position parentEntryPos;

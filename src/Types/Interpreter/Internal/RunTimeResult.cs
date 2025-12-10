@@ -2,7 +2,8 @@ using YSharp.Types.Common;
 
 namespace YSharp.Types.Interpreter.Internal;
 
-public class RunTimeResult{
+public class RunTimeResult
+{
     public Error error = ErrorNull.Instance;
     public Value funcReturnValue = ValueNull.Instance;
     public bool loopBreak;

@@ -3,7 +3,8 @@ using YSharp.Types.Interpreter.Internal;
 
 namespace YSharp.Types.Interpreter.Primitives;
 
-public sealed partial class VNumber : Value{
+public sealed partial class VNumber : Value
+{
     private static readonly MethodTable<VNumber> methodTable;
 
     static VNumber()

@@ -4,7 +4,8 @@ using YSharp.Types.Interpreter.Primitives;
 
 namespace YSharp.Types.Interpreter.Collection;
 
-public sealed partial class VList : Value{
+public sealed partial class VList : Value
+{
     private static readonly MethodTable<VList> methodTable;
     private static readonly PropertyTable<VList> propertyTable;
 

@@ -6,7 +6,8 @@ using YSharp.Utils;
 
 namespace YSharp.Types.Interpreter.Other;
 
-public sealed class ImportClass : Value{
+public sealed class ImportClass : Value
+{
     public readonly ExposedClassData data;
 
     public ImportClass(ExposedClassData Data)
@@ -99,4 +100,4 @@ public sealed class ImportClass : Value{
     }
 }
 
-internal interface IDefaultConvertableValue<T>{ }
+internal interface IDefaultConvertableValue<T> { }

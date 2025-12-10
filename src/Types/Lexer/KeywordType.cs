@@ -1,6 +1,7 @@
 namespace YSharp.Types.Lexer;
 
-public enum KeywordType{
+public enum KeywordType
+{
     VAR,
     AND,
     OR,
