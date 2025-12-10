@@ -91,16 +91,27 @@ public static class Interpreter{
             varAccessNode.fromCall = true;
         }
 
-        Value valueToCall = res.Regrister(Visit(node.nodeToCall, context));
+        Value? valueToCall = res.Regrister(Visit(node.nodeToCall, context));
 
         if (res.ShouldReturn()) return res;
 
-        if (valueToCall is VBuiltInFunction BIfunction)
-            valueToCall = BIfunction.Copy();
-        else if (valueToCall is VFunction function)
-            valueToCall = function.Copy();
-        else
-            Console.WriteLine("Type of valueToCall not supported :" + valueToCall.GetType());
+        switch (valueToCall)
+        {
+            case VBuiltInFunction function:
+                valueToCall = function.Copy();
+                break;
+
+            case VFunction function:
+                valueToCall = function.Copy();
+                break;
+
+            default:
+                return res.Failure(new InternalInterpreterError(
+                    "The type of valueToCall is not supported. Type: " +
+                    valueToCall.GetType()));
+        }
+
+
 
         valueToCall.SetPos(node.StartPos, node.EndPos);
 
