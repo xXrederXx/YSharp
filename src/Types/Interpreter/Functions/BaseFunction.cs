@@ -15,7 +15,6 @@ public abstract class VBaseFunction : Value
             this.name = name;
     }
 
-    public abstract VBaseFunction Copy();
     public abstract RunTimeResult Execute(List<Value> args);
 
     protected static RunTimeResult CheckAndPopulateArgs(
