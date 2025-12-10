@@ -9,10 +9,6 @@ public sealed class VFunction(
     List<string> argNames,
     bool autoReturn
 ) : VBaseFunction(name){
-    public readonly List<string> argNames = argNames;
-    public readonly bool autoReturn = autoReturn;
-    public readonly BaseNode bodyNode = bodyNode;
-
     public override VFunction Copy()
     {
         VFunction copy = new(name, bodyNode, argNames, autoReturn);
@@ -26,7 +22,7 @@ public sealed class VFunction(
     /// </summary>
     /// <param name="args"></param>
     /// <returns>A Runtime Result</returns>
-    public RunTimeResult Execute(List<Value> args)
+    public override RunTimeResult Execute(List<Value> args)
     {
         RunTimeResult res = new();
         Context execContext = GeneratContext();

@@ -26,14 +26,14 @@ public sealed class VBuiltInFunction : VBaseFunction{
         functionArgs.Add("time", new List<string>([]));
     }
 
-    public static RunTimeResult ExecInput(Context execContext)
+    private static RunTimeResult ExecInput(Context execContext)
     {
         Console.Write("> ");
         string inp = Console.ReadLine() ?? "";
         return new RunTimeResult().Success(new VString(inp));
     }
 
-    public static RunTimeResult ExecTime() => new RunTimeResult().Success(new VDateTime());
+    private static RunTimeResult ExecTime() => new RunTimeResult().Success(new VDateTime());
 
     public override VBuiltInFunction Copy()
     {
@@ -43,7 +43,7 @@ public sealed class VBuiltInFunction : VBaseFunction{
         return copy;
     }
 
-    public RunTimeResult ExecPrint(Context execContext)
+    private RunTimeResult ExecPrint(Context execContext)
     {
         if (execContext.symbolTable == null)
         {
@@ -58,7 +58,7 @@ public sealed class VBuiltInFunction : VBaseFunction{
         return new RunTimeResult().Success(ValueNull.Instance);
     }
 
-    public RunTimeResult ExecRun(Context execContext)
+    private RunTimeResult ExecRun(Context execContext)
     {
         if (execContext.symbolTable == null)
             return new RunTimeResult().Failure(new InternalSymbolTableError(execContext));
@@ -95,7 +95,7 @@ public sealed class VBuiltInFunction : VBaseFunction{
         return new RunTimeResult().Success(ValueNull.Instance);
     }
 
-    public RunTimeResult ExecTimeToRun(Context execContext)
+    private RunTimeResult ExecTimeToRun(Context execContext)
     {
         if (execContext.symbolTable == null)
             return new RunTimeResult().Failure(new InternalSymbolTableError(execContext));
@@ -134,7 +134,7 @@ public sealed class VBuiltInFunction : VBaseFunction{
         return new RunTimeResult().Success(new VString(str));
     }
 
-    public RunTimeResult Execute(List<Value> args)
+    public override RunTimeResult Execute(List<Value> args)
     {
         RunTimeResult res = new();
         Context execContext = GeneratContext();

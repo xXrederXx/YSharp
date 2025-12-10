@@ -92,28 +92,14 @@ public static class Interpreter{
         }
 
         Value valueToCall = res.Regrister(Visit(node.nodeToCall, context));
-
         if (res.ShouldReturn()) return res;
-
-        switch (valueToCall)
-        {
-            case VBuiltInFunction function:
-                valueToCall = function.Copy();
-                break;
-
-            case VFunction function:
-                valueToCall = function.Copy();
-                break;
-
-            default:
-                return res.Failure(new InternalInterpreterError(
-                    "The type of valueToCall is not supported. Type: " +
-                    valueToCall.GetType()));
-        }
-
-
-
-        valueToCall.SetPos(node.StartPos, node.EndPos);
+        
+        if(valueToCall is not VBaseFunction function)
+            return res.Failure(new InternalInterpreterError(
+                "The type of valueToCall is not supported. Type: " +
+                valueToCall.GetType()));
+        
+        valueToCall = function.Copy().SetPos(node.StartPos, node.EndPos);
 
         for (int i = 0; i < node.argNodes.Length; i++)
         {
@@ -122,9 +108,9 @@ public static class Interpreter{
         }
 
         Value ret;
-        if (valueToCall is VBuiltInFunction _BIfunction)
+        if (valueToCall is VBaseFunction _BIfunction)
             ret = res.Regrister(_BIfunction.Execute(args));
-        else if (valueToCall is VFunction _function)
+        else if (valueToCall is VBaseFunction _function)
             ret = res.Regrister(_function.Execute(args));
         else
             ret = ValueNull.Instance;

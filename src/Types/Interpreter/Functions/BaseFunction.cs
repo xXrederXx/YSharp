@@ -3,7 +3,7 @@ using YSharp.Types.Interpreter.Internal;
 
 namespace YSharp.Types.Interpreter.Function;
 
-public class VBaseFunction : Value{
+public abstract class VBaseFunction : Value{
     public readonly string name;
 
     public VBaseFunction(string? name)
@@ -13,6 +13,9 @@ public class VBaseFunction : Value{
         else
             this.name = name;
     }
+
+    public abstract VBaseFunction Copy();
+    public abstract RunTimeResult Execute(List<Value> args);
 
     protected static RunTimeResult CheckAndPopulateArgs(
         List<string> argNames,
