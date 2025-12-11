@@ -4,8 +4,7 @@ using YSharp.Types.AST;
 
 namespace YSharp.Utils;
 
-public static class AstDotExporter
-{
+public static class AstDotExporter{
     private static readonly Dictionary<BaseNode, int> _nodeIds = new();
     private static int _idCounter;
 
@@ -51,7 +50,7 @@ public static class AstDotExporter
                     }
                 );
                 if (ifn.elseNode is not NodeNull)
-                    cases.Append((ifn.elseNode, "else"));
+                    cases = cases.Append((ifn.elseNode, "else"));
                 return cases;
             case ForNode fn:
                 return new[]
@@ -84,11 +83,8 @@ public static class AstDotExporter
 
     private static int Traverse(BaseNode node, StringBuilder sb)
     {
-        if (node == null)
-            return -1;
-
-        if (_nodeIds.ContainsKey(node))
-            return _nodeIds[node];
+        if (_nodeIds.TryGetValue(node, out int value))
+            return value;
 
         int id = _idCounter++;
         _nodeIds[node] = id;
