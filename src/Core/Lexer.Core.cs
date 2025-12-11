@@ -10,7 +10,7 @@ public sealed partial class Lexer
 {
     private readonly StringBuilder stringBuilder = new();
     private readonly string text;
-    private char current_char = char.MaxValue;
+    private char currentChar = char.MaxValue;
     private Position pos;
 
     // Initalizer
@@ -19,9 +19,9 @@ public sealed partial class Lexer
         this.text = text;
 
         // The .MaxValue enshures that the first advance call overflows to
-        byte FileId = FileNameRegistry.GetFileId(fileName);
-        pos = new Position(0, 0, 0, FileId);
-        current_char = pos.Index < text.Length ? text[pos.Index] : char.MaxValue;
+        byte fileId = FileNameRegistry.GetFileId(fileName);
+        pos = new Position(0, 0, 0, fileId);
+        currentChar = pos.Index < text.Length ? text[pos.Index] : char.MaxValue;
     }
 
 
@@ -30,96 +30,96 @@ public sealed partial class Lexer
     {
         List<IToken> tokens = [];
 
-        while (current_char != char.MaxValue)
-            if (current_char is ' ' or '\t')
+        while (currentChar != char.MaxValue)
+            if (currentChar is ' ' or '\t')
             {
                 // Discards spaces and tabs
                 Advance();
             }
-            else if (current_char == '#')
+            else if (currentChar == '#')
             {
                 Advance();
                 SkipComment();
             }
-            else if (current_char == ':')
+            else if (currentChar == ':')
             {
                 Advance();
                 SkipTypeAnotation();
             }
-            else if (current_char is ';' or '\n' or '\r')
+            else if (currentChar is ';' or '\n' or '\r')
             {
                 tokens.Add(new TokenNoValue(TokenType.NEWLINE, pos, pos));
                 Advance();
             }
-            else if (current_char == '.')
+            else if (currentChar == '.')
             {
                 tokens.Add(new TokenNoValue(TokenType.DOT, pos, pos));
                 Advance();
             }
-            else if (char.IsDigit(current_char)) // Check for digits (int)
+            else if (char.IsDigit(currentChar)) // Check for digits (int)
             {
                 (IToken tok, Error err) = MakeNumber();
                 if (err.IsError) return ([], err);
                 tokens.Add(tok);
             }
-            else if (char.IsLetter(current_char)) // Check for letters
+            else if (char.IsLetter(currentChar)) // Check for letters
                 tokens.Add(MakeIdentifier());
-            else if (current_char == '"')
+            else if (currentChar == '"')
             {
                 (IToken tok, Error err) = MakeString();
                 if (err.IsError) return ([], err);
                 tokens.Add(tok);
             }
             // Arithmetic
-            else if (current_char == '+')
+            else if (currentChar == '+')
                 tokens.Add(MakePlus());
-            else if (current_char == '-')
+            else if (currentChar == '-')
                 tokens.Add(MakeMinus());
-            else if (current_char == '*')
+            else if (currentChar == '*')
                 tokens.Add(MakeDecicion('=', TokenType.MUEQ, TokenType.MUL));
-            else if (current_char == '/')
+            else if (currentChar == '/')
                 tokens.Add(MakeDecicion('=', TokenType.DIEQ, TokenType.DIV));
-            else if (current_char == '^')
+            else if (currentChar == '^')
             {
                 tokens.Add(new TokenNoValue(TokenType.POW, pos, pos));
                 Advance();
             }
-            else if (current_char == '(')
+            else if (currentChar == '(')
             {
                 tokens.Add(new TokenNoValue(TokenType.LPAREN, pos, pos));
                 Advance();
             }
-            else if (current_char == ')')
+            else if (currentChar == ')')
             {
                 tokens.Add(new TokenNoValue(TokenType.RPAREN, pos, pos));
                 Advance();
             }
             // Comparison
-            else if (current_char == '!')
+            else if (currentChar == '!')
             {
                 (IToken, Error) res = MakeNotEquals();
                 if (res.Item2.IsError) return ([], res.Item2);
                 tokens.Add(res.Item1);
                 Advance();
             }
-            else if (current_char == '=')
+            else if (currentChar == '=')
                 tokens.Add(MakeDecicion('=', TokenType.EE, TokenType.EQ));
-            else if (current_char == '<')
+            else if (currentChar == '<')
                 tokens.Add(MakeDecicion('=', TokenType.LTE, TokenType.LT));
-            else if (current_char == '>')
+            else if (currentChar == '>')
                 tokens.Add(MakeDecicion('=', TokenType.GTE, TokenType.GT));
             // Other
-            else if (current_char == ',')
+            else if (currentChar == ',')
             {
                 tokens.Add(new TokenNoValue(TokenType.COMMA, pos, pos));
                 Advance();
             }
-            else if (current_char == '[')
+            else if (currentChar == '[')
             {
                 tokens.Add(new TokenNoValue(TokenType.LSQUARE, pos, pos));
                 Advance();
             }
-            else if (current_char == ']')
+            else if (currentChar == ']')
             {
                 tokens.Add(new TokenNoValue(TokenType.RSQUARE, pos, pos));
                 Advance();
@@ -127,7 +127,7 @@ public sealed partial class Lexer
             else
             {
                 // Not a valid token, return an error
-                return (new List<IToken>(), new IllegalCharError(pos, current_char));
+                return (new List<IToken>(), new IllegalCharError(pos, currentChar));
             }
 
         tokens.Add(new TokenNoValue(TokenType.EOF, pos, pos)); // Add the End Of File token
@@ -140,7 +140,7 @@ public sealed partial class Lexer
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private void Advance()
     {
-        pos = pos.Advance(current_char);
-        current_char = pos.Index < text.Length ? text[pos.Index] : char.MaxValue;
+        pos = pos.Advance(currentChar);
+        currentChar = pos.Index < text.Length ? text[pos.Index] : char.MaxValue;
     }
 }

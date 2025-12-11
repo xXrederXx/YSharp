@@ -14,7 +14,7 @@ public sealed partial class Lexer
     {
         Position posStart = pos;
         Advance();
-        if (current_char == checkChar)
+        if (currentChar == checkChar)
         {
             Advance();
             return new TokenNoValue(
@@ -35,9 +35,9 @@ public sealed partial class Lexer
     {
         Position posStart = pos;
 
-        while (IsValidIdentifierChar(current_char))
+        while (IsValidIdentifierChar(currentChar))
         {
-            stringBuilder.Append(current_char);
+            stringBuilder.Append(currentChar);
             Advance();
         }
 
@@ -54,21 +54,21 @@ public sealed partial class Lexer
         Position startPos = pos;
         Advance();
 
-        if (current_char == '-')
+        if (currentChar == '-')
         {
             // it is --
             Advance();
             return new TokenNoValue(TokenType.MM, startPos, pos);
         }
 
-        if (current_char == '=')
+        if (currentChar == '=')
         {
             // its -=
             Advance();
             return new TokenNoValue(TokenType.MIEQ, startPos, pos);
         }
 
-        if (current_char == '>')
+        if (currentChar == '>')
         {
             Advance();
             return new TokenNoValue(TokenType.ARROW, startPos, pos);
@@ -82,7 +82,7 @@ public sealed partial class Lexer
         Position posStart = pos;
         Advance();
 
-        if (current_char == '=') return (new TokenNoValue(TokenType.NE, posStart, pos), ErrorNull.Instance);
+        if (currentChar == '=') return (new TokenNoValue(TokenType.NE, posStart, pos), ErrorNull.Instance);
         return (NullToken.Instance, new ExpectedCharError(posStart, '='));
     }
 
@@ -92,16 +92,16 @@ public sealed partial class Lexer
         bool hasDot = false;
         Position posStart = pos;
 
-        while (char.IsDigit(current_char) || current_char == '.' || current_char == '_')
+        while (char.IsDigit(currentChar) || currentChar == '.' || currentChar == '_')
         {
             // while the char is a number or a dot
-            if (current_char == '_')
+            if (currentChar == '_')
             {
                 Advance();
                 continue;
             }
 
-            if (current_char == '.')
+            if (currentChar == '.')
             {
                 if (hasDot) return (NullToken.Instance, new IllegalNumberFormat(posStart));
 
@@ -111,7 +111,7 @@ public sealed partial class Lexer
             else
             {
                 // just a number
-                stringBuilder.Append(current_char);
+                stringBuilder.Append(currentChar);
             }
 
             Advance();
@@ -136,13 +136,13 @@ public sealed partial class Lexer
         Position startPos = pos;
         Advance();
 
-        if (current_char == '+')
+        if (currentChar == '+')
         {
             Advance();
             return new TokenNoValue(TokenType.PP, startPos, pos);
         }
 
-        if (current_char == '=')
+        if (currentChar == '=')
         {
             Advance();
             return new TokenNoValue(TokenType.PLEQ, startPos, pos);
@@ -164,23 +164,23 @@ public sealed partial class Lexer
         };
 
         Advance();
-        while (current_char != char.MaxValue && current_char != '"')
+        while (currentChar != char.MaxValue && currentChar != '"')
         {
-            if (current_char == '\\')
+            if (currentChar == '\\')
             {
                 Advance();
-                if (escapeChars.TryGetValue(current_char, out char _char))
+                if (escapeChars.TryGetValue(currentChar, out char _char))
                     stringBuilder.Append(_char);
                 else
                 {
                     return (
                         NullToken.Instance,
-                        new IllegalEscapeCharError(startPos, current_char)
+                        new IllegalEscapeCharError(startPos, currentChar)
                     );
                 }
             }
             else
-                stringBuilder.Append(current_char);
+                stringBuilder.Append(currentChar);
 
             Advance();
         }
@@ -193,11 +193,11 @@ public sealed partial class Lexer
 
     private void SkipComment()
     {
-        while (current_char is not '\n' and not '\r' and not ';' and not '#' and not char.MaxValue) Advance();
+        while (currentChar is not '\n' and not '\r' and not ';' and not '#' and not char.MaxValue) Advance();
     }
 
     private void SkipTypeAnotation()
     {
-        while (IsValidIdentifierChar(current_char) || current_char == ' ') Advance();
+        while (IsValidIdentifierChar(currentChar) || currentChar == ' ') Advance();
     }
 }
