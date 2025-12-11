@@ -6,8 +6,7 @@ using Error = YSharp.Types.Common.Error;
 
 namespace YSharp;
 
-internal static class Start
-{
+internal static class Start{
     private static void ConsoleRunner()
     {
         RunClass runClass = new();
@@ -27,15 +26,24 @@ internal static class Start
         }
     }
 
+    private static void ScriptRunner(string path)
+    {
+        RunClass runClass = new();
+        // intrnr = internal runner
+        (Value, Error) res = runClass.Run("<intrnr>",$"RUN(\"{path.Replace("\\", "\\\\")}\")"); // run the app
+        if (res.Item2.IsError) Console.WriteLine(res.Item2);
+    }
+
     private static void Main(string[] args)
     {
-        Action func = ConsoleRunner;
         Parser.Default.ParseArguments<CliArgs>(args)
             .WithParsed(cliargs =>
             {
-                RunClass.DoExportAstDot = cliargs.RenderDot;
-                RunClass.OptimizationLevel = cliargs.Optimization;
-                func.Invoke();
+                RunClass.args = cliargs;
+                if (cliargs.ScriptPath is null)
+                    ConsoleRunner();
+                else
+                    ScriptRunner(cliargs.ScriptPath);
             });
     }
 }

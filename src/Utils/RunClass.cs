@@ -13,8 +13,7 @@ namespace YSharp.Utils;
 
 public class RunClass
 {
-    public static bool DoExportAstDot;
-    public static int OptimizationLevel;
+    public static CliArgs args;
     private readonly SymbolTable globalSymbolTable = new();
 
     public RunClass()
@@ -41,8 +40,8 @@ public class RunClass
 
         // create a Parser and parse all the tokens
         ParseResult ast = new Parser(tokens).Parse();
-        if (OptimizationLevel > 0) ast = Optimizer.Visit(ast.Node);
-        if (DoExportAstDot)
+        if (args.Optimization > 0) ast = Optimizer.Visit(ast.Node);
+        if (args.RenderDot)
         {
             if (!Directory.Exists("./DOT"))
                 Directory.CreateDirectory("./DOT");

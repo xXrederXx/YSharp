@@ -14,4 +14,13 @@ public class CliArgs
         HelpText = "This flag is used render a DOT graph of the AST"
     )]
     public bool RenderDot { get; set; }
+    
+    [Option(
+        'p',
+        "path",
+        Required = false,
+        HelpText = "Specify a path to a file which will be executed",
+        Default = null
+    )]
+    public string? ScriptPath { get; set; }
 }
