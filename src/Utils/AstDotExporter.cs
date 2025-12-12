@@ -28,49 +28,49 @@ public static class AstDotExporter{
         switch (node)
         {
             case ListNode ln:
-                return ln.elementNodes.Select((n, i) => (n, $"elem[{i}]"));
+                return ln.ElementNodes.Select((n, i) => (n, $"elem[{i}]"));
             case BinOpNode bin:
-                return [(bin.leftNode, "left"), (bin.rightNode, "right")];
+                return [(bin.LeftNode, "left"), (bin.RightNode, "right")];
             case UnaryOpNode un:
-                return [(un.node, "operand")];
+                return [(un.Node, "operand")];
             case VarAssignNode va:
-                return [(va.valueNode, "value")];
+                return [(va.ValueNode, "value")];
             case DotVarAccessNode dv:
-                return [(dv.parent, "parent")];
+                return [(dv.Parent, "parent")];
             case DotCallNode dc:
-                return dc.argNodes.Select((n, i) => (n, $"arg[{i}]")).Append((dc.parent, "parent"));
+                return dc.ArgNodes.Select((n, i) => (n, $"arg[{i}]")).Append((parent: dc.Parent, "parent"));
             case SubIfNode sif:
-                return [(sif.condition, "condition"), (sif.expression, "expression")];
+                return [(sif.Condition, "condition"), (sif.Expression, "expression")];
             case IfNode ifn:
-                IEnumerable<(BaseNode, string)> cases = ifn.cases.SelectMany((c, i) =>
+                IEnumerable<(BaseNode, string)> cases = ifn.Cases.SelectMany((c, i) =>
                     new[]
                     {
-                        (c.condition, $"case[{i}]-cond"),
-                        (c.expression, $"case[{i}]-expr")
+                        (condition: c.Condition, $"case[{i}]-cond"),
+                        (expression: c.Expression, $"case[{i}]-expr")
                     }
                 );
-                if (ifn.elseNode is not NodeNull)
-                    cases = cases.Append((ifn.elseNode, "else"));
+                if (ifn.ElseNode is not NodeNull)
+                    cases = cases.Append((elseNode: ifn.ElseNode, "else"));
                 return cases;
             case ForNode fn:
                 return new[]
                 {
-                    (fn.startValueNode, "start"),
-                    (fn.endValueNode, "end"),
-                    (fn.stepValueNode, "step"),
-                    (fn.bodyNode, "body")
+                    (startValueNode: fn.StartValueNode, "start"),
+                    (endValueNode: fn.EndValueNode, "end"),
+                    (stepValueNode: fn.StepValueNode, "step"),
+                    (bodyNode: fn.BodyNode, "body")
                 }.Where(t => t.Item1 != null)!;
             case WhileNode wn:
-                return [(wn.conditionNode, "condition"), (wn.bodyNode, "body")];
+                return [(wn.ConditionNode, "condition"), (wn.BodyNode, "body")];
             case FuncDefNode fd:
-                return [(fd.bodyNode, "body")];
+                return [(fd.BodyNode, "body")];
             case CallNode cn:
                 return cn
-                    .argNodes.Select((n, i) => (n, $"arg[{i}]"))
-                    .Prepend((cn.nodeToCall, "callee"));
+                    .ArgNodes.Select((n, i) => (n, $"arg[{i}]"))
+                    .Prepend((nodeToCall: cn.NodeToCall, "callee"));
             case ReturnNode rn:
-                return rn.nodeToReturn != null
-                    ? [(rn.nodeToReturn, "return")]
+                return rn.NodeToReturn != null
+                    ? [(rn.NodeToReturn, "return")]
                     : Enumerable.Empty<(BaseNode, string)>();
             case TryCatchNode tc:
                 return [(tc.TryNode, "try"), (tc.CatchNode, "catch")];
@@ -92,21 +92,21 @@ public static class AstDotExporter{
         // Add token info for relevant node types
         string label = node switch
         {
-            NumberNode n => $"{n.tok.Value}",
-            StringNode n => $"\\\"{n.tok.Value}\\\"",
-            VarAccessNode n => $"Accsess {n.varNameTok.Value}",
-            VarAssignNode n => $"Assign {n.varNameTok.Value}",
-            BinOpNode n => $"BinOp: {n.opTok.Type.FastToString()}",
-            UnaryOpNode n => $"UnOp: {n.opTok.Type.FastToString()}",
-            DotVarAccessNode n => $"DotAccsess: {n.varNameTok.Value}",
-            DotCallNode n => $"DotCall: {n.funcNameTok.Value}",
-            ForNode n => $"For: {n.varNameTok}",
-            FuncDefNode n => n.varNameTok != null
-                ? $"DEF: {n.varNameTok.Value}()"
+            NumberNode n => $"{n.Tok.Value}",
+            StringNode n => $"\\\"{n.Tok.Value}\\\"",
+            VarAccessNode n => $"Accsess {n.VarNameTok.Value}",
+            VarAssignNode n => $"Assign {n.VarNameTok.Value}",
+            BinOpNode n => $"BinOp: {n.OpTok.Type.FastToString()}",
+            UnaryOpNode n => $"UnOp: {n.OpTok.Type.FastToString()}",
+            DotVarAccessNode n => $"DotAccsess: {n.VarNameTok.Value}",
+            DotCallNode n => $"DotCall: {n.FuncNameTok.Value}",
+            ForNode n => $"For: {n.VarNameTok}",
+            FuncDefNode n => n.VarNameTok != null
+                ? $"DEF: {n.VarNameTok.Value}()"
                 : "<anonymous-func>",
-            TryCatchNode n => $"TryCatch: {n.ChatchVarName}",
+            TryCatchNode n => $"TryCatch: {n.CatchVarName}",
             ImportNode n => $"Import: {n.PathTok}",
-            SuffixAssignNode n => $"SufAssign: {n.varName} (Add? {n.isAdd})",
+            SuffixAssignNode n => $"SufAssign: {n.VarName} (Add? {n.IsAdd})",
             CallNode n => "CALL",
             IfNode n => "IF",
             ListNode n => "LIST",
