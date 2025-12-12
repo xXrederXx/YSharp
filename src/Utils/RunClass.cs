@@ -13,7 +13,7 @@ namespace YSharp.Utils;
 
 public class RunClass
 {
-    public static CliArgs args;
+    public static CliArgs args = new CliArgs() {Optimization = 0, RenderDot = false, ScriptPath = null};
     private readonly SymbolTable globalSymbolTable = new();
 
     public RunClass()
