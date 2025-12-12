@@ -8,7 +8,7 @@ using YSharp.Types.Interpreter.Internal;
 using YSharp.Types.Interpreter.Primitives;
 using YSharp.Types.Interpreter.Utils;
 using YSharp.Types.Lexer;
-using YSharp.Utils.Dot;
+using YSharp.Utils.Debug.Dot;
 
 namespace YSharp.Utils;
 

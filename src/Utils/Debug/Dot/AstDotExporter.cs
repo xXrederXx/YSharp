@@ -2,7 +2,7 @@ using System.Text;
 using FastEnumUtility;
 using YSharp.Types.AST;
 
-namespace YSharp.Utils.Dot;
+namespace YSharp.Utils.Debug.Dot;
 
 public static class AstDotExporter{
     private static readonly Dictionary<BaseNode, int> _nodeIds = new();
