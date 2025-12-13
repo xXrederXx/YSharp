@@ -1,3 +1,5 @@
+using YSharp.Utils.Dot;
+
 namespace YSharp.Types.AST;
 
 public sealed class WhileNode : BaseNode
@@ -5,6 +7,12 @@ public sealed class WhileNode : BaseNode
     public readonly BaseNode BodyNode;
     public readonly BaseNode ConditionNode;
     public readonly bool RetNull;
+    public override NodeDebugInfo DebugInfo =>
+        new(
+            "while",
+            NodeDebugShape.Ellipse,
+            [(ConditionNode.DebugInfo, "condition"), (BodyNode.DebugInfo, "body")]
+        );
 
     public WhileNode(BaseNode conditionNode, BaseNode bodyNode, bool retNull)
         : base(conditionNode.StartPos, bodyNode.EndPos)

@@ -1,9 +1,21 @@
+using YSharp.Utils.Dot;
+
 namespace YSharp.Types.AST;
 
 public sealed class IfNode : BaseNode
 {
     public readonly SubIfNode[] Cases;
     public readonly BaseNode ElseNode;
+
+    public override NodeDebugInfo DebugInfo =>
+        new(
+            "if",
+            NodeDebugShape.Diamond,
+            Cases
+                .Select((x, i) => (x.DebugInfo, $"case[{i}]"))
+                .Append((ElseNode.DebugInfo, "else"))
+                .ToList()
+        );
 
     public IfNode(List<SubIfNode> cases, BaseNode elseNode)
         : base(

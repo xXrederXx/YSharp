@@ -1,10 +1,18 @@
 using YSharp.Types.Common;
+using YSharp.Utils.Dot;
 
 namespace YSharp.Types.AST;
 
 public sealed class ReturnNode : BaseNode
 {
     public readonly BaseNode? NodeToReturn;
+
+    public override NodeDebugInfo DebugInfo =>
+        new(
+            "return",
+            NodeDebugShape.Ellipse,
+            NodeToReturn is not null ? [(NodeToReturn.DebugInfo, "to return")] : []
+        );
 
     public ReturnNode(BaseNode? nodeToReturn, in Position startPos, in Position endPos)
         : base(startPos, endPos)

@@ -1,4 +1,6 @@
+using YSharp.Types.Common;
 using YSharp.Types.Lexer;
+using YSharp.Utils.Dot;
 
 namespace YSharp.Types.AST;
 
@@ -10,6 +12,25 @@ public sealed class ForNode : BaseNode
     public readonly BaseNode StartValueNode;
     public readonly BaseNode? StepValueNode;
     public readonly Token<string> VarNameTok;
+    public override NodeDebugInfo DebugInfo =>
+        new(
+            $"for ({VarNameTok.Value})",
+            NodeDebugShape.Ellipse,
+            [
+                (StartValueNode.DebugInfo, "start"),
+                StepValueNode is not null
+                    ? (StepValueNode.DebugInfo, "step")
+                    : (
+                        new NumberNode(
+                            new Token<double>(TokenType.FLOAT, 1, Position.Null, Position.Null)
+                        ).DebugInfo,
+                        "step"
+                    ),
+                (EndValueNode.DebugInfo, "end"),
+                (BodyNode.DebugInfo, "body"),
+                (StartValueNode.DebugInfo, "start"),
+            ]
+        );
 
     public ForNode(
         Token<string> varNameTok,

@@ -1,4 +1,5 @@
 using YSharp.Types.Lexer;
+using YSharp.Utils.Dot;
 
 namespace YSharp.Types.AST;
 
@@ -8,6 +9,11 @@ public sealed class FuncDefNode : BaseNode
     public readonly BaseNode BodyNode;
     public readonly bool RetNull;
     public readonly Token<string> VarNameTok;
+    public override NodeDebugInfo DebugInfo => new(
+        $"DEF: {VarNameTok.Value}",
+        NodeDebugShape.Ellipse,
+        [(BodyNode.DebugInfo, "body")]
+    );
 
     public FuncDefNode(
         Token<string> varNameTok,

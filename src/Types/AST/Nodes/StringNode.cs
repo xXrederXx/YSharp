@@ -1,10 +1,14 @@
 using YSharp.Types.Lexer;
+using YSharp.Utils.Dot;
 
 namespace YSharp.Types.AST;
 
 public sealed class StringNode : BaseNode
 {
     public readonly Token<string> Tok;
+
+    public override NodeDebugInfo DebugInfo =>
+        new($"\\\"{Tok.Value}\\\"", NodeDebugShape.Rectangle, []);
 
     public StringNode(Token<string> tok)
         : base(tok.StartPos, tok.EndPos)

@@ -1,10 +1,12 @@
 using YSharp.Types.Lexer;
+using YSharp.Utils.Dot;
 
 namespace YSharp.Types.AST;
 
 public sealed class NumberNode : BaseNode
 {
     public readonly Token<double> Tok;
+    public override NodeDebugInfo DebugInfo => new($"{Tok.Value}", NodeDebugShape.Rectangle, []);
 
     public NumberNode(Token<double> tok)
         : base(tok.StartPos, tok.EndPos)
