@@ -1,9 +1,9 @@
 using Xunit;
-using YSharp.Types.Common;
-using YSharp.Types.Interpreter;
-using YSharp.Types.Interpreter.Collection;
-using YSharp.Types.Interpreter.Primitives;
-using YSharp.Utils;
+using YSharp.Common;
+using YSharp.Runtime;
+using YSharp.Runtime.Collections.List;
+using YSharp.Runtime.Primatives.Number;
+using YSharp.Util;
 
 namespace YSharp.Tests;
 
@@ -99,7 +99,6 @@ public class ErrorTest
             Check_Arith(res, x - y);
     }
 
-
     [Theory]
     [InlineData(0, 2)]
     [InlineData(100, 2)]
@@ -116,6 +115,7 @@ public class ErrorTest
         Assert.NotNull(res.Item2);
         Assert.IsType<ErrorNull>(res.Item2);
         Assert.IsType<VNumber>(((VList)res.Item1).value[0]);
-        if (res.Item1 is VNumber num) Assert.Equal(expected, num.value);
+        if (res.Item1 is VNumber num)
+            Assert.Equal(expected, num.value);
     }
 }

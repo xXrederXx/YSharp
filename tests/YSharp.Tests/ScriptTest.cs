@@ -1,9 +1,9 @@
 using Xunit;
-using YSharp.Types.Common;
-using YSharp.Types.Interpreter;
-using YSharp.Types.Interpreter.Collection;
-using YSharp.Types.Interpreter.Primitives;
-using YSharp.Utils;
+using YSharp.Common;
+using YSharp.Runtime;
+using YSharp.Runtime.Collections.List;
+using YSharp.Runtime.Primatives.Number;
+using YSharp.Util;
 
 namespace YSharp.Tests;
 

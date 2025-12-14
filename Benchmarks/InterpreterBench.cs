@@ -1,6 +1,6 @@
+using YSharp.Runtime;
+using BenchmarkDotNet;
 using BenchmarkDotNet.Attributes;
-using YSharp.Core;
-using YSharp.Types.Interpreter.Internal;
 
 namespace YSharp.Benchmarks;
 

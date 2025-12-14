@@ -1,15 +1,13 @@
 using BenchmarkDotNet.Reports;
 using BenchmarkDotNet.Running;
-using YSharp.Core;
-using YSharp.Types.AST;
-using YSharp.Types.Common;
-using YSharp.Types.Interpreter;
-using YSharp.Types.Interpreter.Function;
-using YSharp.Types.Interpreter.Internal;
-using YSharp.Types.Interpreter.Primitives;
-using YSharp.Types.Interpreter.Utils;
-using YSharp.Types.Lexer;
-using YSharp.Utils;
+using YSharp.Common;
+using YSharp.Lexer;
+using YSharp.Parser;
+using YSharp.Runtime;
+using YSharp.Runtime.Functions;
+using YSharp.Runtime.Primatives.Bool;
+using YSharp.Runtime.Utils.Math;
+using YSharp.Util;
 
 namespace YSharp.Benchmarks;
 
@@ -47,17 +45,17 @@ public static class BenchHelp
         CheckString(Text50000Char);
         CheckString(Text100000Char);
 
-        TokenS = new Lexer(Text5000Char, "BenchHelp").MakeTokens().Item1;
-        TokenM = new Lexer(Text10000Char, "BenchHelp").MakeTokens().Item1;
-        TokenL = new Lexer(Text50000Char, "BenchHelp").MakeTokens().Item1;
-        TokenXL = new Lexer(Text100000Char, "BenchHelp").MakeTokens().Item1;
+        TokenS = new Lexer.Lexer(Text5000Char, "BenchHelp").MakeTokens().Item1;
+        TokenM = new Lexer.Lexer(Text10000Char, "BenchHelp").MakeTokens().Item1;
+        TokenL = new Lexer.Lexer(Text50000Char, "BenchHelp").MakeTokens().Item1;
+        TokenXL = new Lexer.Lexer(Text100000Char, "BenchHelp").MakeTokens().Item1;
 
-        Parser parserS = new(TokenS);
+        Parser.Parser parserS = new(TokenS);
         astS = parserS.Parse();
-        Parser parserM = new(TokenM);
+        Parser.Parser parserM = new(TokenM);
         astM = parserM.Parse();
-        astL = new Parser(TokenL).Parse();
-        astXL = new Parser(TokenXL).Parse();
+        astL = new Parser.Parser(TokenL).Parse();
+        astXL = new Parser.Parser(TokenXL).Parse();
     }
 
     public static SymbolTable GetSymbolTable()

@@ -1,7 +1,7 @@
 using Xunit;
-using YSharp.Types.Common;
-using YSharp.Types.Interpreter;
-using YSharp.Utils;
+using YSharp.Common;
+using YSharp.Runtime;
+using YSharp.Util;
 
 namespace YSharp.Tests;
 

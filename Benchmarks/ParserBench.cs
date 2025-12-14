@@ -1,6 +1,5 @@
+using YSharp.Parser;
 using BenchmarkDotNet.Attributes;
-using YSharp.Core;
-using YSharp.Types.AST;
 
 namespace YSharp.Benchmarks;
 
@@ -11,28 +10,28 @@ public class ParserBench
     [Benchmark]
     public void ParserBenchmarkL()
     {
-        Parser parser = new(BenchHelp.TokenL);
+        Parser.Parser parser = new(BenchHelp.TokenL);
         ParseResult tokens = parser.Parse();
     }
 
     [Benchmark]
     public void ParserBenchmarkM()
     {
-        Parser parser = new(BenchHelp.TokenM);
+        Parser.Parser parser = new(BenchHelp.TokenM);
         ParseResult tokens = parser.Parse();
     }
 
     [Benchmark]
     public void ParserBenchmarkS()
     {
-        Parser parser = new(BenchHelp.TokenS);
+        Parser.Parser parser = new(BenchHelp.TokenS);
         ParseResult tokens = parser.Parse();
     }
 
     [Benchmark]
     public void ParserBenchmarkXL()
     {
-        Parser parser = new(BenchHelp.TokenXL);
+        Parser.Parser parser = new(BenchHelp.TokenXL);
         ParseResult tokens = parser.Parse();
     }
 }
