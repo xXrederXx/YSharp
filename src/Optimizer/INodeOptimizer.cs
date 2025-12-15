@@ -1,7 +1,7 @@
 using YSharp.Parser.Nodes;
-
-interface INodeOptimizer<TIn, TOut> where TIn : BaseNode where TOut : BaseNode
+namespace YSharp.Optimizer;
+interface INodeOptimizer
 {
-    bool IsOptimizable(TIn node);
-    TOut OptimizeNode(TIn node);
+    bool IsOptimizable(BaseNode node);
+    BaseNode OptimizeNode(BaseNode node);
 }

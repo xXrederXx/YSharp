@@ -3,14 +3,14 @@ using YSharp.Parser.Nodes;
 
 namespace YSharp.Optimizer.NodeOptimizers;
 
-public sealed class NumberConstantFolder : INodeOptimizer<BinOpNode, NumberNode>
+public sealed class NumberConstantFolder : NodeOptimizer<BinOpNode, NumberNode>
 {
-    public bool IsOptimizable(BinOpNode node)
+    public override bool IsOptimizable(BinOpNode node)
     {
         return node.LeftNode is NumberNode && node.RightNode is NumberNode;
     }
 
-    public NumberNode OptimizeNode(BinOpNode node)
+    public override NumberNode OptimizeNode(BinOpNode node)
     {
         NumberNode left = (NumberNode)node.LeftNode;
         NumberNode right = (NumberNode)node.RightNode;
@@ -27,6 +27,8 @@ public sealed class NumberConstantFolder : INodeOptimizer<BinOpNode, NumberNode>
             TokenType.POW => Math.Pow(num1, num2),
         };
 
-        return new NumberNode(new Token<double>(TokenType.FLOAT, result, node.StartPos, node.EndPos));
+        return new NumberNode(
+            new Token<double>(TokenType.FLOAT, result, node.StartPos, node.EndPos)
+        );
     }
 }

@@ -3,14 +3,16 @@ using YSharp.Parser.Nodes;
 
 namespace YSharp.Optimizer.NodeOptimizers;
 
-public sealed class StringConstantFolder : INodeOptimizer<BinOpNode, StringNode>
+public sealed class StringConstantFolder : NodeOptimizer<BinOpNode, StringNode>
 {
-    public bool IsOptimizable(BinOpNode node)
+    public override bool IsOptimizable(BinOpNode node)
     {
-        return node.LeftNode is StringNode && node.RightNode is StringNode && node.OpTok.Type == TokenType.PLUS;
+        return node.LeftNode is StringNode
+            && node.RightNode is StringNode
+            && node.OpTok.Type == TokenType.PLUS;
     }
 
-    public StringNode OptimizeNode(BinOpNode node)
+    public override StringNode OptimizeNode(BinOpNode node)
     {
         StringNode left = (StringNode)node.LeftNode;
         StringNode right = (StringNode)node.RightNode;
@@ -18,6 +20,8 @@ public sealed class StringConstantFolder : INodeOptimizer<BinOpNode, StringNode>
         string leftStr = left.Tok.Value;
         string rightStr = right.Tok.Value;
 
-        return new StringNode(new Token<string>(TokenType.STRING, leftStr + rightStr, node.StartPos, node.EndPos));
+        return new StringNode(
+            new Token<string>(TokenType.STRING, leftStr + rightStr, node.StartPos, node.EndPos)
+        );
     }
 }

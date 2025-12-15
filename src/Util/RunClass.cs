@@ -40,7 +40,7 @@ public class RunClass
 
         // create a Parser and parse all the tokens
         ParseResult ast = new Parser.Parser(tokens).Parse();
-        if (args.Optimization > 0) ast = Optimizer.Optimizer.Visit(ast.Node);
+        if (args.Optimization > 0) ast = new ParseResult().Success(Optimizer.Optimizer.Visit(ast.Node));
         if (args.RenderDot)
         {
             if (!Directory.Exists("./DOT"))

@@ -7,12 +7,15 @@ namespace YSharp.Optimizer;
 
 public static class Optimizer
 {
-    private static NumberConstantFolder numberConstantFolder = new NumberConstantFolder();
-    private static StringConstantFolder stringConstantFolder = new StringConstantFolder();
+    private static readonly List<INodeOptimizer> optimizers =
+    [
+        new NumberConstantFolder(),
+        new StringConstantFolder(),
+    ];
 
     public static BaseNode Visit(BaseNode node)
     {
-        return node switch
+        BaseNode rebuilt =  node switch
         {
             NumberNode n => Visit_Number(n),
             StringNode n => Visit_String(n),
@@ -37,20 +40,19 @@ public static class Optimizer
             NodeNull n => n,
             _ => Vistit_ErrorNode(node),
         };
+        foreach (var optimizer in optimizers.Where(x => x.IsOptimizable(rebuilt)))
+        {
+            rebuilt = optimizer.OptimizeNode(rebuilt);
+        }
+        return rebuilt;
     }
 
     private static BaseNode Visit_BinaryOp(BinOpNode node)
     {
         BaseNode left = Visit(node.LeftNode);
         BaseNode right = Visit(node.RightNode);
-        BinOpNode binOpNode = new(left, node.OpTok, right);
-
-        if (stringConstantFolder.IsOptimizable(binOpNode))
-            return stringConstantFolder.OptimizeNode(binOpNode);
-
-        if (numberConstantFolder.IsOptimizable(binOpNode))
-            return numberConstantFolder.OptimizeNode(binOpNode);
-        return binOpNode;
+        BaseNode rebuilt = new BinOpNode(left, node.OpTok, right);
+        return rebuilt;
     }
 
     private static BaseNode Visit_BreakNode(BreakNode node) => node;
@@ -118,7 +120,6 @@ public static class Optimizer
 
     private static BaseNode Visit_IfNode(IfNode node)
     {
-        ParseResult res = new();
         List<SubIfNode> subifs = [];
         for (int i = 0; i < node.Cases.Length; i++)
         {
