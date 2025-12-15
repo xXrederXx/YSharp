@@ -43,13 +43,14 @@ public static class Optimizer
     {
         BaseNode left = Visit(node.LeftNode);
         BaseNode right = Visit(node.RightNode);
+        BinOpNode binOpNode = new(left, node.OpTok, right);
 
-        if (stringConstantFolder.IsOptimizable(node))
-            return stringConstantFolder.OptimizeNode(node);
+        if (stringConstantFolder.IsOptimizable(binOpNode))
+            return stringConstantFolder.OptimizeNode(binOpNode);
 
-        if (numberConstantFolder.IsOptimizable(node))
-            return numberConstantFolder.OptimizeNode(node);
-        return new BinOpNode(left, node.OpTok, right);
+        if (numberConstantFolder.IsOptimizable(binOpNode))
+            return numberConstantFolder.OptimizeNode(binOpNode);
+        return binOpNode;
     }
 
     private static BaseNode Visit_BreakNode(BreakNode node) => node;
