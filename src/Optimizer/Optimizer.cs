@@ -9,7 +9,7 @@ public static class Optimizer
 {
     private static NumberConstantFolder numberConstantFolder = new NumberConstantFolder();
     private static StringConstantFolder stringConstantFolder = new StringConstantFolder();
-    public static ParseResult Visit(BaseNode node)
+    public static BaseNode Visit(BaseNode node)
     {
         return node switch
         {
@@ -33,81 +33,71 @@ public static class Optimizer
             TryCatchNode n => Visit_TryCatchNode(n),
             ImportNode n => Visit_ImportNode(n),
             SuffixAssignNode n => Visit_SuffixAssignNode(n),
-            NodeNull n => new ParseResult().Success(n),
+            NodeNull n => n,
             _ => Vistit_ErrorNode(node),
         };
     }
 
-    private static ParseResult Visit_BinaryOp(BinOpNode node)
+    private static BaseNode Visit_BinaryOp(BinOpNode node)
     {
-        ParseResult res = new();
-        BaseNode left = res.Register(Visit(node.LeftNode));
-        BaseNode right = res.Register(Visit(node.RightNode));
-
-        if (res.HasError)
-            return res;
+        BaseNode left = (Visit(node.LeftNode));
+        BaseNode right = (Visit(node.RightNode));
 
         if (stringConstantFolder.IsOptimizable(node))
-            return res.Success(stringConstantFolder.OptimizeNode(node));
+            return (stringConstantFolder.OptimizeNode(node));
 
         if (numberConstantFolder.IsOptimizable(node))
-            return res.Success(numberConstantFolder.OptimizeNode(node));
-        return res.Success(new BinOpNode(left, node.OpTok, right));
+            return (numberConstantFolder.OptimizeNode(node));
+        return (new BinOpNode(left, node.OpTok, right));
     }
 
-    private static ParseResult Visit_BreakNode(BreakNode node) => new ParseResult().Success(node);
+    private static BaseNode Visit_BreakNode(BreakNode node) => node;
 
-    private static ParseResult Visit_CallNode(CallNode node)
+    private static BaseNode Visit_CallNode(CallNode node)
     {
-        ParseResult res = new();
-        BaseNode nodeToCall = res.Register(Visit(node.NodeToCall));
+        BaseNode nodeToCall = (Visit(node.NodeToCall));
         List<BaseNode> args = new(node.ArgNodes.Length);
         for (int i = 0; i < node.ArgNodes.Length; i++)
         {
-            args.Add(res.Register(Visit(node.ArgNodes[i])));
-            if (res.HasError)
-                return res;
+            args.Add((Visit(node.ArgNodes[i])));
+
         }
 
-        return res.Success(new CallNode(nodeToCall, args));
+        return (new CallNode(nodeToCall, args));
     }
 
-    private static ParseResult Visit_ContinueNode(ContinueNode node) =>
-        new ParseResult().Success(node);
-
-    private static ParseResult Visit_DotCallNode(DotCallNode node)
+    private static BaseNode Visit_ContinueNode(ContinueNode node) =>
+        node;
+    private static BaseNode Visit_DotCallNode(DotCallNode node)
     {
-        ParseResult res = new();
+
         List<BaseNode> argBaseNode = new(node.ArgNodes.Length);
         for (int i = 0; i < node.ArgNodes.Length; i++)
         {
             BaseNode _node = node.ArgNodes[i];
-            BaseNode val = res.Register(Visit(_node));
-            if (res.HasError)
-                return res;
+            BaseNode val = (Visit(_node));
+
             argBaseNode.Add(val);
         }
 
-        return res.Success(new DotCallNode(node.FuncNameTok, argBaseNode, node.Parent));
+        return (new DotCallNode(node.FuncNameTok, argBaseNode, node.Parent));
     }
 
-    private static ParseResult Visit_DotVarAccessNode(DotVarAccessNode node) =>
-        new ParseResult().Success(node);
+    private static BaseNode Visit_DotVarAccessNode(DotVarAccessNode node) =>
+        node;
 
-    private static ParseResult Visit_ForNode(ForNode node)
+    private static BaseNode Visit_ForNode(ForNode node)
     {
-        ParseResult res = new();
-        BaseNode startBaseNode = res.Register(Visit(node.StartValueNode));
-        BaseNode endBaseNode = res.Register(Visit(node.EndValueNode));
-        BaseNode bodyBaseNode = res.Register(Visit(node.BodyNode));
+        BaseNode startBaseNode = (Visit(node.StartValueNode));
+        BaseNode endBaseNode = (Visit(node.EndValueNode));
+        BaseNode bodyBaseNode = (Visit(node.BodyNode));
         BaseNode? stepBaseNode = node.StepValueNode is null
             ? node.StepValueNode
-            : res.Register(Visit(node.StepValueNode));
+            : (Visit(node.StepValueNode));
 
-        if (res.HasError)
-            return res;
 
-        return res.Success(
+
+        return (
             new ForNode(
                 node.VarNameTok,
                 startBaseNode,
@@ -119,108 +109,99 @@ public static class Optimizer
         );
     }
 
-    private static ParseResult Visit_FuncDefNode(FuncDefNode node)
+    private static BaseNode Visit_FuncDefNode(FuncDefNode node)
     {
-        ParseResult res = new();
-        BaseNode bodyNode = res.Register(Visit(node.BodyNode));
+        BaseNode bodyNode = (Visit(node.BodyNode));
 
-        return res.Success(
+        return (
             new FuncDefNode(node.VarNameTok, node.ArgNameTokens.ToList(), bodyNode, node.RetNull)
         );
     }
 
-    private static ParseResult Visit_IfNode(IfNode node)
+    private static BaseNode Visit_IfNode(IfNode node)
     {
         ParseResult res = new();
         List<SubIfNode> subifs = [];
         for (int i = 0; i < node.Cases.Length; i++)
         {
-            BaseNode condition = res.Register(Visit(node.Cases[i].Condition));
-            BaseNode expr = res.Register(Visit(node.Cases[i].Expression));
-            if (res.HasError)
-                return res;
+            BaseNode condition = (Visit(node.Cases[i].Condition));
+            BaseNode expr = (Visit(node.Cases[i].Expression));
+
             subifs.Add(new SubIfNode(condition, expr));
         }
 
-        BaseNode elseBaseNode = res.Register(Visit(node.ElseNode));
+        BaseNode elseBaseNode = (Visit(node.ElseNode));
 
-        return res.Success(new IfNode(subifs, elseBaseNode));
+        return (new IfNode(subifs, elseBaseNode));
     }
 
-    private static ParseResult Visit_ImportNode(ImportNode node) => new ParseResult().Success(node);
+    private static BaseNode Visit_ImportNode(ImportNode node) => node;
 
-    private static ParseResult Visit_List(ListNode node)
+    private static BaseNode Visit_List(ListNode node)
     {
-        ParseResult res = new();
         List<BaseNode> elements = new(node.ElementNodes.Length);
         for (int i = 0; i < node.ElementNodes.Length; i++)
         {
             BaseNode elementNode = node.ElementNodes[i];
-            elements.Add(res.Register(Visit(elementNode)));
-            if (res.HasError)
-                return res;
+            elements.Add((Visit(elementNode)));
+
         }
 
-        return res.Success(new ListNode(elements, node.StartPos, node.EndPos));
+        return (new ListNode(elements, node.StartPos, node.EndPos));
     }
 
-    private static ParseResult Visit_Number(NumberNode node) => new ParseResult().Success(node);
+    private static BaseNode Visit_Number(NumberNode node) => node;
 
-    private static ParseResult Visit_ReturnNode(ReturnNode node)
+    private static BaseNode Visit_ReturnNode(ReturnNode node)
     {
-        ParseResult res = new();
         BaseNode? BaseNode = node.NodeToReturn is null
             ? node.NodeToReturn
-            : res.Register(Visit(node.NodeToReturn));
-        return res.Success(new ReturnNode(BaseNode, node.StartPos, node.EndPos));
+            : (Visit(node.NodeToReturn));
+        return (new ReturnNode(BaseNode, node.StartPos, node.EndPos));
     }
 
-    private static ParseResult Visit_String(StringNode node) => new ParseResult().Success(node);
+    private static BaseNode Visit_String(StringNode node) => (node);
 
-    private static ParseResult Visit_SuffixAssignNode(SuffixAssignNode node) =>
-        new ParseResult().Success(node);
+    private static BaseNode Visit_SuffixAssignNode(SuffixAssignNode node) =>
+        (node);
 
-    private static ParseResult Visit_TryCatchNode(TryCatchNode node)
+    private static BaseNode Visit_TryCatchNode(TryCatchNode node)
+    {
+        BaseNode tryNode = (Visit(node.TryNode));
+        BaseNode catchNode = (Visit(node.CatchNode));
+        return (new TryCatchNode(tryNode, catchNode, node.CatchVarName));
+    }
+
+    private static BaseNode Visit_UnaryOp(UnaryOpNode node)
+    {
+        BaseNode BaseNode = (Visit(node.Node));
+
+
+        return (new UnaryOpNode(node.OpTok, BaseNode));
+    }
+
+    private static BaseNode Visit_VarAccessNode(VarAccessNode node) =>
+        (node);
+
+    private static BaseNode Visit_VarAssignNode(VarAssignNode node)
     {
         ParseResult res = new();
-        BaseNode tryNode = res.Register(Visit(node.TryNode));
-        BaseNode catchNode = res.Register(Visit(node.CatchNode));
-        return res.Success(new TryCatchNode(tryNode, catchNode, node.CatchVarName));
+        BaseNode BaseNode = (Visit(node.ValueNode));
+
+        return (new VarAssignNode(node.VarNameTok, BaseNode));
     }
 
-    private static ParseResult Visit_UnaryOp(UnaryOpNode node)
+    private static BaseNode Visit_WhileNode(WhileNode node)
     {
         ParseResult res = new();
-        BaseNode BaseNode = res.Register(Visit(node.Node));
-        if (res.HasError)
-            return res;
-
-        return res.Success(new UnaryOpNode(node.OpTok, BaseNode));
+        BaseNode conditionNode = (Visit(node.ConditionNode));
+        BaseNode bodyNode = (Visit(node.BodyNode));
+        return (new WhileNode(conditionNode, bodyNode, node.RetNull));
     }
 
-    private static ParseResult Visit_VarAccessNode(VarAccessNode node) =>
-        new ParseResult().Success(node);
-
-    private static ParseResult Visit_VarAssignNode(VarAssignNode node)
-    {
-        ParseResult res = new();
-        BaseNode BaseNode = res.Register(Visit(node.ValueNode));
-        if (res.HasError)
-            return res;
-        return res.Success(new VarAssignNode(node.VarNameTok, BaseNode));
-    }
-
-    private static ParseResult Visit_WhileNode(WhileNode node)
-    {
-        ParseResult res = new();
-        BaseNode conditionNode = res.Register(Visit(node.ConditionNode));
-        BaseNode bodyNode = res.Register(Visit(node.BodyNode));
-        return res.Success(new WhileNode(conditionNode, bodyNode, node.RetNull));
-    }
-
-    private static ParseResult Vistit_ErrorNode(BaseNode node)
+    private static BaseNode Vistit_ErrorNode(BaseNode node)
     {
         Console.WriteLine("No method found for " + node.GetType());
-        return new ParseResult().Success(node);
+        return (node);
     }
 }
