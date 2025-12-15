@@ -9,6 +9,7 @@ public static class Optimizer
 {
     private static NumberConstantFolder numberConstantFolder = new NumberConstantFolder();
     private static StringConstantFolder stringConstantFolder = new StringConstantFolder();
+
     public static BaseNode Visit(BaseNode node)
     {
         return node switch
@@ -40,81 +41,77 @@ public static class Optimizer
 
     private static BaseNode Visit_BinaryOp(BinOpNode node)
     {
-        BaseNode left = (Visit(node.LeftNode));
-        BaseNode right = (Visit(node.RightNode));
+        BaseNode left = Visit(node.LeftNode);
+        BaseNode right = Visit(node.RightNode);
 
         if (stringConstantFolder.IsOptimizable(node))
-            return (stringConstantFolder.OptimizeNode(node));
+            return stringConstantFolder.OptimizeNode(node);
 
         if (numberConstantFolder.IsOptimizable(node))
-            return (numberConstantFolder.OptimizeNode(node));
-        return (new BinOpNode(left, node.OpTok, right));
+            return numberConstantFolder.OptimizeNode(node);
+        return new BinOpNode(left, node.OpTok, right);
     }
 
     private static BaseNode Visit_BreakNode(BreakNode node) => node;
 
     private static BaseNode Visit_CallNode(CallNode node)
     {
-        BaseNode nodeToCall = (Visit(node.NodeToCall));
+        BaseNode nodeToCall = Visit(node.NodeToCall);
         List<BaseNode> args = new(node.ArgNodes.Length);
         for (int i = 0; i < node.ArgNodes.Length; i++)
         {
-            args.Add((Visit(node.ArgNodes[i])));
-
+            args.Add(Visit(node.ArgNodes[i]));
         }
 
-        return (new CallNode(nodeToCall, args));
+        return new CallNode(nodeToCall, args);
     }
 
-    private static BaseNode Visit_ContinueNode(ContinueNode node) =>
-        node;
+    private static BaseNode Visit_ContinueNode(ContinueNode node) => node;
+
     private static BaseNode Visit_DotCallNode(DotCallNode node)
     {
-
         List<BaseNode> argBaseNode = new(node.ArgNodes.Length);
         for (int i = 0; i < node.ArgNodes.Length; i++)
         {
             BaseNode _node = node.ArgNodes[i];
-            BaseNode val = (Visit(_node));
+            BaseNode val = Visit(_node);
 
             argBaseNode.Add(val);
         }
 
-        return (new DotCallNode(node.FuncNameTok, argBaseNode, node.Parent));
+        return new DotCallNode(node.FuncNameTok, argBaseNode, node.Parent);
     }
 
-    private static BaseNode Visit_DotVarAccessNode(DotVarAccessNode node) =>
-        node;
+    private static BaseNode Visit_DotVarAccessNode(DotVarAccessNode node) => node;
 
     private static BaseNode Visit_ForNode(ForNode node)
     {
-        BaseNode startBaseNode = (Visit(node.StartValueNode));
-        BaseNode endBaseNode = (Visit(node.EndValueNode));
-        BaseNode bodyBaseNode = (Visit(node.BodyNode));
+        BaseNode startBaseNode = Visit(node.StartValueNode);
+        BaseNode endBaseNode = Visit(node.EndValueNode);
+        BaseNode bodyBaseNode = Visit(node.BodyNode);
         BaseNode? stepBaseNode = node.StepValueNode is null
             ? node.StepValueNode
-            : (Visit(node.StepValueNode));
+            : Visit(node.StepValueNode);
 
-
-
-        return (
-            new ForNode(
-                node.VarNameTok,
-                startBaseNode,
-                endBaseNode,
-                stepBaseNode,
-                bodyBaseNode,
-                node.RetNull
-            )
+        return new ForNode(
+            node.VarNameTok,
+            startBaseNode,
+            endBaseNode,
+            stepBaseNode,
+            bodyBaseNode,
+            node.RetNull
         );
     }
 
     private static BaseNode Visit_FuncDefNode(FuncDefNode node)
     {
-        BaseNode bodyNode = (Visit(node.BodyNode));
+        BaseNode bodyNode = Visit(node.BodyNode);
 
-        return (
-            new FuncDefNode(node.VarNameTok, node.ArgNameTokens.ToList(), bodyNode, node.RetNull)
+        return new FuncDefNode(
+            node.VarNameTok,
+            node.ArgNameTokens.ToList(),
+            bodyNode,
+            node.RetNull
         );
     }
 
@@ -124,15 +121,15 @@ public static class Optimizer
         List<SubIfNode> subifs = [];
         for (int i = 0; i < node.Cases.Length; i++)
         {
-            BaseNode condition = (Visit(node.Cases[i].Condition));
-            BaseNode expr = (Visit(node.Cases[i].Expression));
+            BaseNode condition = Visit(node.Cases[i].Condition);
+            BaseNode expr = Visit(node.Cases[i].Expression);
 
             subifs.Add(new SubIfNode(condition, expr));
         }
 
-        BaseNode elseBaseNode = (Visit(node.ElseNode));
+        BaseNode elseBaseNode = Visit(node.ElseNode);
 
-        return (new IfNode(subifs, elseBaseNode));
+        return new IfNode(subifs, elseBaseNode);
     }
 
     private static BaseNode Visit_ImportNode(ImportNode node) => node;
@@ -143,11 +140,10 @@ public static class Optimizer
         for (int i = 0; i < node.ElementNodes.Length; i++)
         {
             BaseNode elementNode = node.ElementNodes[i];
-            elements.Add((Visit(elementNode)));
-
+            elements.Add(Visit(elementNode));
         }
 
-        return (new ListNode(elements, node.StartPos, node.EndPos));
+        return new ListNode(elements, node.StartPos, node.EndPos);
     }
 
     private static BaseNode Visit_Number(NumberNode node) => node;
@@ -156,52 +152,49 @@ public static class Optimizer
     {
         BaseNode? BaseNode = node.NodeToReturn is null
             ? node.NodeToReturn
-            : (Visit(node.NodeToReturn));
-        return (new ReturnNode(BaseNode, node.StartPos, node.EndPos));
+            : Visit(node.NodeToReturn);
+        return new ReturnNode(BaseNode, node.StartPos, node.EndPos);
     }
 
-    private static BaseNode Visit_String(StringNode node) => (node);
+    private static BaseNode Visit_String(StringNode node) => node;
 
-    private static BaseNode Visit_SuffixAssignNode(SuffixAssignNode node) =>
-        (node);
+    private static BaseNode Visit_SuffixAssignNode(SuffixAssignNode node) => node;
 
     private static BaseNode Visit_TryCatchNode(TryCatchNode node)
     {
-        BaseNode tryNode = (Visit(node.TryNode));
-        BaseNode catchNode = (Visit(node.CatchNode));
-        return (new TryCatchNode(tryNode, catchNode, node.CatchVarName));
+        BaseNode tryNode = Visit(node.TryNode);
+        BaseNode catchNode = Visit(node.CatchNode);
+        return new TryCatchNode(tryNode, catchNode, node.CatchVarName);
     }
 
     private static BaseNode Visit_UnaryOp(UnaryOpNode node)
     {
-        BaseNode BaseNode = (Visit(node.Node));
+        BaseNode BaseNode = Visit(node.Node);
 
-
-        return (new UnaryOpNode(node.OpTok, BaseNode));
+        return new UnaryOpNode(node.OpTok, BaseNode);
     }
 
-    private static BaseNode Visit_VarAccessNode(VarAccessNode node) =>
-        (node);
+    private static BaseNode Visit_VarAccessNode(VarAccessNode node) => node;
 
     private static BaseNode Visit_VarAssignNode(VarAssignNode node)
     {
         ParseResult res = new();
-        BaseNode BaseNode = (Visit(node.ValueNode));
+        BaseNode BaseNode = Visit(node.ValueNode);
 
-        return (new VarAssignNode(node.VarNameTok, BaseNode));
+        return new VarAssignNode(node.VarNameTok, BaseNode);
     }
 
     private static BaseNode Visit_WhileNode(WhileNode node)
     {
         ParseResult res = new();
-        BaseNode conditionNode = (Visit(node.ConditionNode));
-        BaseNode bodyNode = (Visit(node.BodyNode));
-        return (new WhileNode(conditionNode, bodyNode, node.RetNull));
+        BaseNode conditionNode = Visit(node.ConditionNode);
+        BaseNode bodyNode = Visit(node.BodyNode);
+        return new WhileNode(conditionNode, bodyNode, node.RetNull);
     }
 
     private static BaseNode Vistit_ErrorNode(BaseNode node)
     {
         Console.WriteLine("No method found for " + node.GetType());
-        return (node);
+        return node;
     }
 }
