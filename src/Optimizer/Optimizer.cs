@@ -1,4 +1,5 @@
 using YSharp.Lexer;
+using YSharp.Optimizer.NodeOptimizers;
 using YSharp.Parser;
 using YSharp.Parser.Nodes;
 
@@ -6,6 +7,8 @@ namespace YSharp.Optimizer;
 
 public static class Optimizer
 {
+    private static NumberConstantFolder numberConstantFolder = new NumberConstantFolder();
+    private static StringConstantFolder stringConstantFolder = new StringConstantFolder();
     public static ParseResult Visit(BaseNode node)
     {
         return node switch
@@ -44,53 +47,11 @@ public static class Optimizer
         if (res.HasError)
             return res;
 
-        if (
-            left is StringNode leftStr
-            && right is StringNode rightStr
-            && node.OpTok.Type == TokenType.PLUS
-        )
-            return res.Success(
-                new StringNode(
-                    new Token<string>(
-                        leftStr.Tok.Type,
-                        leftStr.Tok.Value + rightStr.Tok.Value,
-                        leftStr.StartPos,
-                        rightStr.EndPos
-                    )
-                )
-            );
+        if (stringConstantFolder.IsOptimizable(node))
+            return res.Success(stringConstantFolder.OptimizeNode(node));
 
-        if (left is not NumberNode leftNum || right is not NumberNode rightNum)
-            return res.Success(new BinOpNode(left, node.OpTok, right));
-
-        double num1 = leftNum.Tok.Value;
-        double num2 = rightNum.Tok.Value;
-        if (num2 == 0)
-            return res.Success(new BinOpNode(left, node.OpTok, right));
-
-        double? result = node.OpTok.Type switch
-        {
-            TokenType.PLUS => num1 + num2,
-            TokenType.MINUS => num1 - num2,
-            TokenType.MUL => num1 * num2,
-            TokenType.DIV => num1 / num2,
-            TokenType.POW => Math.Pow(num1, num2),
-            _ => null,
-        };
-        if (result is not null)
-        {
-            return res.Success(
-                new NumberNode(
-                    new Token<double>(
-                        TokenType.FLOAT,
-                        (double)result,
-                        leftNum.StartPos,
-                        rightNum.EndPos
-                    )
-                )
-            );
-        }
-
+        if (numberConstantFolder.IsOptimizable(node))
+            return res.Success(numberConstantFolder.OptimizeNode(node));
         return res.Success(new BinOpNode(left, node.OpTok, right));
     }
 
