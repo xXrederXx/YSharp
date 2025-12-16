@@ -193,14 +193,9 @@ public static class Interpreter
 
         if (res.ShouldReturn()) return res;
 
-        Value stepValue;
-        if (node.StepValueNode is not null)
-        {
-            stepValue = res.Regrister(Visit(node.StepValueNode, context));
-            if (res.ShouldReturn()) return res;
-        }
-        else
-            stepValue = new VNumber(1);
+        Value stepValue = res.Regrister(Visit(node.StepValueNode, context));
+        if (res.ShouldReturn()) return res;
+
 
         double StartNumber;
         double EndNumber;

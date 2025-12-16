@@ -10,7 +10,7 @@ public sealed class ForNode : BaseNode
     public readonly BaseNode EndValueNode;
     public readonly bool RetNull;
     public readonly BaseNode StartValueNode;
-    public readonly BaseNode? StepValueNode;
+    public readonly BaseNode StepValueNode;
     public readonly Token<string> VarNameTok;
     public override NodeDebugInfo DebugInfo =>
         new(
@@ -18,14 +18,7 @@ public sealed class ForNode : BaseNode
             NodeDebugShape.Ellipse,
             [
                 (StartValueNode.DebugInfo, "start"),
-                StepValueNode is not null
-                    ? (StepValueNode.DebugInfo, "step")
-                    : (
-                        new NumberNode(
-                            new Token<double>(TokenType.FLOAT, 1, Position.Null, Position.Null)
-                        ).DebugInfo,
-                        "step"
-                    ),
+                (StepValueNode.DebugInfo, "step"),
                 (EndValueNode.DebugInfo, "end"),
                 (BodyNode.DebugInfo, "body"),
                 (StartValueNode.DebugInfo, "start"),
@@ -45,7 +38,7 @@ public sealed class ForNode : BaseNode
         this.VarNameTok = varNameTok;
         this.StartValueNode = startValueNode;
         this.EndValueNode = endValueNode;
-        this.StepValueNode = stepValueNode;
+        this.StepValueNode = stepValueNode ?? new NumberNode(new Token<double>(TokenType.FLOAT, 1, Position.Null, Position.Null));
         this.BodyNode = bodyNode;
         this.RetNull = retNull;
     }
