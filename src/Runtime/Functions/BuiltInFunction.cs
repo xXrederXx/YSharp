@@ -51,7 +51,7 @@ public sealed class VBuiltInFunction : VBaseFunction
         if (execContext.symbolTable == null)
         {
             return new RunTimeResult().Failure(
-                new InternalSymbolTableError(context)
+                new InternalSymbolTableError(execContext)
             );
         }
 
