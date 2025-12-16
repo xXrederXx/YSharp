@@ -11,6 +11,7 @@ public static class Optimizer
     [
         new NumberConstantFolder(),
         new StringConstantFolder(),
+        new UnaryConstantFolder()
     ];
 
     public static BaseNode Visit(BaseNode node)
