@@ -12,7 +12,7 @@
 - [ ] Refactor `Types/Node.cs` to use properties instead of fields
 - [ ] Review and optimize token and position handling in `Types/InternalTypes/Token.cs` and `Types/InternalTypes/Position.cs`
 - [x] Use Interfaces for AstDotExporter
-- [ ] Make ForNode step not nullable
+- [x] Make ForNode step not nullable
 
 ## Testing
 - [ ] Expand and automate tests in the `tests/` directory to cover all features and edge cases
