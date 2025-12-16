@@ -1,3 +1,4 @@
+using FastEnumUtility;
 using YSharp.Lexer;
 using YSharp.Parser.Nodes;
 
@@ -7,7 +8,13 @@ public sealed class NumberConstantFolder : NodeOptimizer<BinOpNode, NumberNode>
 {
     public override bool IsOptimizable(BinOpNode node)
     {
-        return node.LeftNode is NumberNode && node.RightNode is NumberNode;
+        return node.LeftNode is NumberNode &&
+            node.RightNode is NumberNode &&
+            node.OpTok.Type is TokenType.PLUS or
+                TokenType.MINUS or
+                TokenType.MUL or
+                TokenType.DIV or
+                TokenType.POW;
     }
 
     public override NumberNode OptimizeNode(BinOpNode node)
@@ -25,6 +32,7 @@ public sealed class NumberConstantFolder : NodeOptimizer<BinOpNode, NumberNode>
             TokenType.MUL => num1 * num2,
             TokenType.DIV => num1 / num2,
             TokenType.POW => Math.Pow(num1, num2),
+            _ => throw new InvalidOperationException("Tokentype not supportet. Type: " + node.OpTok.Type.FastToString())
         };
 
         return new NumberNode(
