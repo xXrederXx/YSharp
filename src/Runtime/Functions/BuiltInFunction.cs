@@ -41,8 +41,8 @@ public sealed class VBuiltInFunction : VBaseFunction
     public override VBuiltInFunction Copy()
     {
         VBuiltInFunction copy = new(name);
-        copy.SetPos(startPos, endPos);
-        copy.SetContext(context);
+        copy.SetPos(StartPos, EndPos);
+        copy.SetContext(Context);
         return copy;
     }
 
@@ -70,7 +70,7 @@ public sealed class VBuiltInFunction : VBaseFunction
         if (fileNameValue is not VString)
         {
             return new RunTimeResult().Failure(
-                new WrongTypeError(startPos, "first arg must be string", execContext)
+                new WrongTypeError(StartPos, "first arg must be string", execContext)
             );
         }
 
@@ -85,7 +85,7 @@ public sealed class VBuiltInFunction : VBaseFunction
         {
             return new RunTimeResult().Failure(
                 new FileReadError(
-                    startPos,
+                    StartPos,
                     $"Failed to read script '{fileName}'\n" + e,
                     execContext
                 )
@@ -107,7 +107,7 @@ public sealed class VBuiltInFunction : VBaseFunction
         if (fileNameValue.GetType() != typeof(VString))
         {
             return new RunTimeResult().Failure(
-                new WrongTypeError(startPos, "first arg must be string", execContext)
+                new WrongTypeError(StartPos, "first arg must be string", execContext)
             );
         }
 
@@ -121,7 +121,7 @@ public sealed class VBuiltInFunction : VBaseFunction
         {
             return new RunTimeResult().Failure(
                 new FileReadError(
-                    startPos,
+                    StartPos,
                     $"Failed to load script '{fileName}'\n" + e,
                     execContext
                 )

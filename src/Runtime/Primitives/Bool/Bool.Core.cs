@@ -8,8 +8,8 @@ public sealed partial class VBool(bool value) : Value
     public override VBool Copy()
     {
         VBool copy = new(value);
-        copy.SetPos(startPos, endPos);
-        copy.SetContext(context);
+        copy.SetPos(StartPos, EndPos);
+        copy.SetContext(Context);
         return copy;
     }
 

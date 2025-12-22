@@ -46,7 +46,7 @@ public sealed partial class VMath : Value
             argNodes,
             1,
             [typeof(VNumber)],
-            self.context ?? new Context()
+            self.Context ?? new Context()
         );
         if (err.IsError)
             return (ValueNull.Instance, err);

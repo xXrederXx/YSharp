@@ -17,5 +17,5 @@ public class PropertyTable<T>
     public ValueAndError Get(string name, T self) =>
         Properties.TryGetValue(name, out Func<T, ValueAndError>? func)
             ? func(self)
-            : (ValueNull.Instance, new VarNotFoundError(Position.Null, name, self.context));
+            : (ValueNull.Instance, new VarNotFoundError(Position.Null, name, self.Context));
 }

@@ -26,7 +26,7 @@ public sealed partial class VList : Value
     private static (int, Error) ConvertToUsableIndex(VList self, List<Value> argValues)
     {
         // converts a value to a csharp usable index
-        Error err = ValueHelper.CheckArgs(argValues, 1, [typeof(VNumber)], self.context);
+        Error err = ValueHelper.CheckArgs(argValues, 1, [typeof(VNumber)], self.Context);
         if (err.IsError) return (0, err);
 
         int index = (int)((VNumber)argValues[0]).value;
@@ -36,9 +36,9 @@ public sealed partial class VList : Value
             return (
                 0,
                 new ArgOutOfRangeError(
-                    argValues[0].startPos,
+                    argValues[0].StartPos,
                     "Index was out of range. Must be less than size of list.",
-                    self.context
+                    self.Context
                 )
             );
         }
@@ -50,9 +50,9 @@ public sealed partial class VList : Value
             return (
                 0,
                 new ArgOutOfRangeError(
-                    argValues[0].startPos,
+                    argValues[0].StartPos,
                     "Index was out of range. Negative size cant be greater than size of list.",
-                    self.context
+                    self.Context
                 )
             );
         }
@@ -73,7 +73,7 @@ public sealed partial class VList : Value
 
     private static ValueAndError IndexOf(VList self, List<Value> args)
     {
-        Error err = ValueHelper.IsRightLength(1, args, self.context);
+        Error err = ValueHelper.IsRightLength(1, args, self.Context);
         if (err.IsError) return (ValueNull.Instance, err);
 
         int index = args[0] switch

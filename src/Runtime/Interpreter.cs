@@ -204,21 +204,21 @@ public static class Interpreter
         if (startValue is not VNumber numStart)
         {
             return res.Failure(
-                new WrongTypeError(startValue.startPos, "The Start Number is not a Number", context)
+                new WrongTypeError(startValue.StartPos, "The Start Number is not a Number", context)
             );
         }
 
         if (endValue is not VNumber numEnd)
         {
             return res.Failure(
-                new WrongTypeError(startValue.startPos, "The End Number is not a Number", context)
+                new WrongTypeError(startValue.StartPos, "The End Number is not a Number", context)
             );
         }
 
         if (stepValue is not VNumber numStep)
         {
             return res.Failure(
-                new WrongTypeError(startValue.startPos, "The Step Number is not a Number", context)
+                new WrongTypeError(startValue.StartPos, "The Step Number is not a Number", context)
             );
         }
 

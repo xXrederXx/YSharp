@@ -7,8 +7,8 @@ public sealed partial class VNumber(double value) : Value
     public override VNumber Copy()
     {
         VNumber copy = new(value);
-        copy.SetPos(startPos, endPos);
-        copy.SetContext(context);
+        copy.SetPos(StartPos, EndPos);
+        copy.SetContext(Context);
         return copy;
     }
 

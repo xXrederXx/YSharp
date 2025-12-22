@@ -14,7 +14,7 @@ public sealed partial class VDateTime
         if (val is null)
             return base.AddedTo(other);
 
-        val.SetContext(context);
+        val.SetContext(Context);
         return (val, ErrorNull.Instance);
     }
 
@@ -28,7 +28,7 @@ public sealed partial class VDateTime
         if (val is null)
             return base.AddedTo(other);
 
-        val.SetContext(context);
+        val.SetContext(Context);
         return (val, ErrorNull.Instance);
     }
 }

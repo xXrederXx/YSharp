@@ -8,8 +8,8 @@ public sealed partial class VList(List<Value> elements) : Value
     public override Value Copy()
     {
         VList copy = new(value);
-        copy.SetPos(startPos, endPos);
-        copy.SetContext(context);
+        copy.SetPos(StartPos, EndPos);
+        copy.SetContext(Context);
         return copy;
     }
 

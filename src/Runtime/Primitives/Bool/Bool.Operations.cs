@@ -26,7 +26,7 @@ public sealed partial class VBool : Value
     public override ValueAndError Notted()
     {
         VBool? ret = new(!value);
-        ret.SetContext(context);
+        ret.SetContext(Context);
         return (ret, ErrorNull.Instance);
     }
 

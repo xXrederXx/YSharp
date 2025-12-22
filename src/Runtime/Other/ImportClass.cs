@@ -24,7 +24,7 @@ public sealed class ImportClass : Value
         ValueAndError returnVE = new(
             ValueNull.Instance,
             new FuncNotFoundError(
-                argNodes.Count >= 1 ? argNodes[0].startPos : Position.Null,
+                argNodes.Count >= 1 ? argNodes[0].StartPos : Position.Null,
                 name,
                 new Context()
             )

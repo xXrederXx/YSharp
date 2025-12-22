@@ -16,7 +16,7 @@ public sealed partial class VString
         if (val is null)
             return base.AddedTo(other);
 
-        val.SetContext(context);
+        val.SetContext(Context);
         return (val, ErrorNull.Instance);
     }
 
@@ -44,7 +44,7 @@ public sealed partial class VString
         if (val is null)
             return base.MuledTo(other);
 
-        val.SetContext(context);
+        val.SetContext(Context);
         return (val, ErrorNull.Instance);
     }
 }

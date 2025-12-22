@@ -7,8 +7,8 @@ public sealed partial class VDateTime(DateTime? dateTime = null) : Value
     public override VDateTime Copy()
     {
         VDateTime copy = new(dateTime);
-        copy.SetPos(startPos, endPos);
-        copy.SetContext(context);
+        copy.SetPos(StartPos, EndPos);
+        copy.SetContext(Context);
         return copy;
     }
 

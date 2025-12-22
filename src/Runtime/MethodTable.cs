@@ -17,5 +17,5 @@ public class MethodTable<T>
     public ValueAndError Invoke(string name, T self, List<Value> args) =>
         Methods.TryGetValue(name, out Func<T, List<Value>, ValueAndError>? func)
             ? func(self, args)
-            : (ValueNull.Instance, new FuncNotFoundError(Position.Null, name, self.context));
+            : (ValueNull.Instance, new FuncNotFoundError(Position.Null, name, self.Context));
 }

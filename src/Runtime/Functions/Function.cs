@@ -12,8 +12,8 @@ public sealed class VFunction(
     public override VFunction Copy()
     {
         VFunction copy = new(name, bodyNode, argNames, autoReturn);
-        copy.SetContext(context);
-        copy.SetPos(startPos, endPos);
+        copy.SetContext(Context);
+        copy.SetPos(StartPos, EndPos);
         return copy;
     }
 

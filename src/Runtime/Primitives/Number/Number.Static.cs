@@ -26,18 +26,18 @@ public sealed partial class VNumber : Value
 
     private static ValueAndError DivToNum(VNumber self, VNumber other)
     {
-        if (other.value == 0) return (ValueNull.Instance, new DivisionByZeroError(other.startPos, self.context));
-        return (new VNumber(self.value / other.value).SetContext(self.context), ErrorNull.Instance);
+        if (other.value == 0) return (ValueNull.Instance, new DivisionByZeroError(other.StartPos, self.Context));
+        return (new VNumber(self.value / other.value).SetContext(self.Context), ErrorNull.Instance);
     }
 
     private static VNumber MulToNum(VNumber self, VNumber other) => new(self.value * other.value);
 
     private static ValueAndError MyToString(VNumber self, List<Value> args)
     {
-        Error err = ValueHelper.CheckArgs(args, 0, [], self.context); // no argument
+        Error err = ValueHelper.CheckArgs(args, 0, [], self.Context); // no argument
         if (!err.IsError) return (new VString(self.value.ToString()), ErrorNull.Instance);
 
-        err = ValueHelper.CheckArgs(args, 1, [typeof(VString)], self.context); // format argument
+        err = ValueHelper.CheckArgs(args, 1, [typeof(VString)], self.Context); // format argument
         if (err.IsError) return (ValueNull.Instance, err);
         string format = ConvertToCSFormat(((VString)args[0]).value);
         string formatedStr = self.value.ToString(format);
@@ -51,7 +51,7 @@ public sealed partial class VNumber : Value
 
     private static ValueAndError ToBool(VNumber self, List<Value> args)
     {
-        Error err = ValueHelper.CheckArgs(args, 0, [], self.context);
+        Error err = ValueHelper.CheckArgs(args, 0, [], self.Context);
         if (!err.IsError) return (ValueNull.Instance, err);
 
         return (new VBool(self.IsTrue()), ErrorNull.Instance);

@@ -7,8 +7,8 @@ public sealed partial class VString(string value) : Value
     public override Value Copy()
     {
         VString copy = new(value);
-        copy.SetPos(startPos, endPos);
-        copy.SetContext(context);
+        copy.SetPos(StartPos, EndPos);
+        copy.SetContext(Context);
         return copy;
     }
 

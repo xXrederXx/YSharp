@@ -29,7 +29,7 @@ public sealed partial class VString
 
     private static ValueAndError Split(VString self, List<Value> args)
     {
-        Error err = ValueHelper.CheckArgs(args, 1, [typeof(VString)], self.context); // format argument
+        Error err = ValueHelper.CheckArgs(args, 1, [typeof(VString)], self.Context); // format argument
         if (err.IsError) return (ValueNull.Instance, err);
         if (args[0] is not VString splitStr)
             return (ValueNull.Instance,
@@ -41,7 +41,7 @@ public sealed partial class VString
 
     private static ValueAndError ToBool(VString self, List<Value> args)
     {
-        Error err = ValueHelper.CheckArgs(args, 0, [], self.context); // no argument
+        Error err = ValueHelper.CheckArgs(args, 0, [], self.Context); // no argument
         if (!err.IsError) return (ValueNull.Instance, err);
 
         return (new VBool(self.IsTrue()), ErrorNull.Instance);
@@ -49,7 +49,7 @@ public sealed partial class VString
 
     private static ValueAndError ToLower(VString self, List<Value> args)
     {
-        Error err = ValueHelper.CheckArgs(args, 0, [], self.context); // format argument
+        Error err = ValueHelper.CheckArgs(args, 0, [], self.Context); // format argument
         if (err.IsError) return (ValueNull.Instance, err);
 
         return (new VString(self.value.ToUpper()), ErrorNull.Instance);
@@ -57,7 +57,7 @@ public sealed partial class VString
 
     private static ValueAndError ToNumber(VString self, List<Value> args)
     {
-        Error err = ValueHelper.CheckArgs(args, 0, [typeof(VString)], self.context); // format argument
+        Error err = ValueHelper.CheckArgs(args, 0, [typeof(VString)], self.Context); // format argument
         if (err.IsError) return (ValueNull.Instance, err);
 
         if (double.TryParse(self.value, out double res)) return (new VNumber(res), ErrorNull.Instance);
@@ -65,16 +65,16 @@ public sealed partial class VString
         return (
             ValueNull.Instance,
             new WrongFormatError(
-                self.startPos,
+                self.StartPos,
                 self.value + " can't be converted to Number",
-                self.context
+                self.Context
             )
         );
     }
 
     private static ValueAndError ToUpper(VString self, List<Value> args)
     {
-        Error err = ValueHelper.CheckArgs(args, 0, [], self.context); // format argument
+        Error err = ValueHelper.CheckArgs(args, 0, [], self.Context); // format argument
         if (err.IsError) return (ValueNull.Instance, err);
 
         return (new VString(self.value.ToUpper()), ErrorNull.Instance);
