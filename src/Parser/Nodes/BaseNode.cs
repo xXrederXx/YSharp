@@ -5,9 +5,9 @@ namespace YSharp.Parser.Nodes;
 
 public abstract class BaseNode : INodeDescriptor
 {
-    public Position EndPos;
+    public readonly Position EndPos;
 
-    public Position StartPos;
+    public readonly Position StartPos;
 
     public abstract NodeDebugInfo DebugInfo { get; }
 
