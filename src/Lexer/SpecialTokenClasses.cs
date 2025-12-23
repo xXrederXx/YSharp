@@ -2,23 +2,24 @@ using YSharp.Common;
 
 namespace YSharp.Lexer;
 
-public sealed class TokenNoValue : Token<TokenNoValueType>
+public class TokenNoValue : IToken
 {
+    public Position EndPos { get; }
+    public Position StartPos { get; }
+    public TokenType Type { get; }
+
     public TokenNoValue(TokenType type, in Position startPos, in Position endPos)
-        : base(type, TokenNoValueType.Instance, startPos, endPos) { }
+    {
+        Type = type;
+        StartPos = startPos;
+        EndPos = endPos;
+    }
 }
 
-public sealed class NullToken : Token<TokenNoValueType>
+public sealed class NullToken : TokenNoValue
 {
     public static readonly NullToken Instance = new();
 
     private NullToken()
-        : base(TokenType.NULL, TokenNoValueType.Instance, Position.Null, Position.Null) { }
-}
-
-public class TokenNoValueType
-{
-    public static readonly TokenNoValueType Instance = new();
-
-    private TokenNoValueType() { }
+        : base(TokenType.NULL, Position.Null, Position.Null) { }
 }

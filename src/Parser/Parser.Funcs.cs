@@ -1,10 +1,8 @@
-
 using YSharp.Common;
 using YSharp.Lexer;
 using YSharp.Parser.Nodes;
 
 namespace YSharp.Parser;
-
 
 public partial class Parser
 {
@@ -13,15 +11,17 @@ public partial class Parser
         ParseResult res = new();
 
         BaseNode left = res.Register(Term());
-        if (res.HasError) return res;
+        if (res.HasError)
+            return res;
 
-        while (currentToken.IsType([TokenType.PLUS, TokenType.MINUS]))
+        while (currentToken.IsOneOf([TokenType.PLUS, TokenType.MINUS]))
         {
-            Token<TokenNoValueType> opTok = (Token<TokenNoValueType>)currentToken;
+            TokenNoValue opTok = (TokenNoValue)currentToken;
 
             AdvanceParser(res);
             BaseNode right = res.Register(Term());
-            if (res.HasError) return res;
+            if (res.HasError)
+                return res;
 
             left = new BinOpNode(left, opTok, right);
         }
@@ -37,7 +37,7 @@ public partial class Parser
         IToken tok = currentToken;
 
         // check tyoes
-        if (tok.IsType([TokenType.INT, TokenType.FLOAT]))
+        if (tok.IsOneOf([TokenType.INT, TokenType.FLOAT]))
         {
             AdvanceParser(res);
             return res.Success(new NumberNode((Token<double>)tok));
@@ -53,7 +53,8 @@ public partial class Parser
         if (tok.IsType(TokenType.IDENTIFIER))
         {
             BaseNode identifierExpr = res.Register(IdentifierExpr());
-            if (res.HasError) return res;
+            if (res.HasError)
+                return res;
             return res.Success(identifierExpr);
         }
         // check other symbols
@@ -62,7 +63,8 @@ public partial class Parser
         {
             AdvanceParser(res);
             BaseNode expr = res.Register(Expression());
-            if (res.HasError) return res;
+            if (res.HasError)
+                return res;
 
             if (currentToken.IsType(TokenType.RPAREN))
             {
@@ -76,51 +78,61 @@ public partial class Parser
         if (tok.IsType(TokenType.LSQUARE))
         {
             BaseNode listExpression = res.Register(ListExpr());
-            if (res.HasError) return res;
+            if (res.HasError)
+                return res;
             return res.Success(listExpression);
         }
         // check keywords
-
-        if (tok.IsMatchingKeyword(KeywordType.IF))
+        Token<KeywordType>? keywordTok = tok as Token<KeywordType>;
+        if (keywordTok is not null)
         {
-            BaseNode ifExpression = res.Register(IfExpr());
-            if (res.HasError) return res;
-            return res.Success(ifExpression);
-        }
+            if (keywordTok.ValueEquals(KeywordType.IF))
+            {
+                BaseNode ifExpression = res.Register(IfExpr());
+                if (res.HasError)
+                    return res;
+                return res.Success(ifExpression);
+            }
 
-        if (tok.IsMatchingKeyword(KeywordType.FOR))
-        {
-            BaseNode forExpression = res.Register(ForExpr());
-            if (res.HasError) return res;
-            return res.Success(forExpression);
-        }
+            if (keywordTok.ValueEquals(KeywordType.FOR))
+            {
+                BaseNode forExpression = res.Register(ForExpr());
+                if (res.HasError)
+                    return res;
+                return res.Success(forExpression);
+            }
 
-        if (tok.IsMatchingKeyword(KeywordType.WHILE))
-        {
-            BaseNode whileExpression = res.Register(WhileExpr());
-            if (res.HasError) return res;
-            return res.Success(whileExpression);
-        }
+            if (keywordTok.ValueEquals(KeywordType.WHILE))
+            {
+                BaseNode whileExpression = res.Register(WhileExpr());
+                if (res.HasError)
+                    return res;
+                return res.Success(whileExpression);
+            }
 
-        if (tok.IsMatchingKeyword(KeywordType.FUN))
-        {
-            BaseNode funcExpression = res.Register(FuncDef());
-            if (res.HasError) return res;
-            return res.Success(funcExpression);
-        }
+            if (keywordTok.ValueEquals(KeywordType.FUN))
+            {
+                BaseNode funcExpression = res.Register(FuncDef());
+                if (res.HasError)
+                    return res;
+                return res.Success(funcExpression);
+            }
 
-        if (tok.IsMatchingKeyword(KeywordType.TRY))
-        {
-            BaseNode tryCatch = res.Register(TryCatchExpr());
-            if (res.HasError) return res;
-            return res.Success(tryCatch);
-        }
+            if (keywordTok.ValueEquals(KeywordType.TRY))
+            {
+                BaseNode tryCatch = res.Register(TryCatchExpr());
+                if (res.HasError)
+                    return res;
+                return res.Success(tryCatch);
+            }
 
-        if (tok.IsMatchingKeyword(KeywordType.IMPORT))
-        {
-            BaseNode importNode = res.Register(ImportExpr());
-            if (res.HasError) return res;
-            return res.Success(importNode);
+            if (keywordTok.ValueEquals(KeywordType.IMPORT))
+            {
+                BaseNode importNode = res.Register(ImportExpr());
+                if (res.HasError)
+                    return res;
+                return res.Success(importNode);
+            }
         }
 
         return res.Failure(
@@ -135,46 +147,47 @@ public partial class Parser
     {
         ParseResult res = new();
 
-        if (currentToken.IsMatchingKeyword(KeywordType.NOT))
+        if (IsCurrentTokenKeyword(KeywordType.NOT))
         {
             IToken opTok = currentToken;
 
             AdvanceParser(res);
             BaseNode node = res.Register(CompExpr());
-            if (res.HasError) return res;
+            if (res.HasError)
+                return res;
             return res.Success(new UnaryOpNode(opTok, node));
         }
 
         // Binary Operation
         BaseNode left = res.Register(ArithExpr());
-        if (res.HasError) return res;
+        if (res.HasError)
+            return res;
 
         // This checks for the comparison operators
         while (
-            currentToken.IsType(
-                [
-                    TokenType.EE,
-                    TokenType.NE,
-                    TokenType.GT,
-                    TokenType.LT,
-                    TokenType.GTE,
-                    TokenType.LTE
-                ]
-            )
+            currentToken.IsOneOf([
+                TokenType.EE,
+                TokenType.NE,
+                TokenType.GT,
+                TokenType.LT,
+                TokenType.GTE,
+                TokenType.LTE,
+            ])
         )
         {
             if (
-                !TryCastToken(
+                !TryCastTokenNoValue(
                     currentToken,
-                    out Token<TokenNoValueType> opTok,
-                    out InternalTokenCastError<TokenNoValueType> error
+                    out TokenNoValue opTok,
+                    out InternalTokenCastError<TokenNoValue> error
                 )
             )
                 return res.Failure(error);
 
             AdvanceParser(res);
             BaseNode right = res.Register(ArithExpr());
-            if (res.HasError) return res;
+            if (res.HasError)
+                return res;
 
             left = new BinOpNode(left, opTok, right);
         }
@@ -187,28 +200,28 @@ public partial class Parser
         ParseResult res = new();
 
         // A variable assignement
-        if (currentToken.IsMatchingKeyword(KeywordType.VAR))
+        if (IsCurrentTokenKeyword(KeywordType.VAR))
         {
             BaseNode node = res.Register(VarAssignExpr());
-            if (res.HasError) return res;
+            if (res.HasError)
+                return res;
 
             return res.Success(node);
         }
 
         // Binary Operation
         BaseNode left = res.Register(CompExpr());
-        if (res.HasError) return res;
+        if (res.HasError)
+            return res;
 
-        while (
-            currentToken.IsMatchingKeyword(KeywordType.AND)
-            || currentToken.IsMatchingKeyword(KeywordType.OR)
-        )
+        while (IsCurrentTokenKeyword(KeywordType.AND) || IsCurrentTokenKeyword(KeywordType.OR))
         {
             IToken opTok = currentToken;
 
             AdvanceParser(res);
             BaseNode right = res.Register(CompExpr());
-            if (res.HasError) return res;
+            if (res.HasError)
+                return res;
 
             left = new BinOpNode(left, opTok, right);
         }
@@ -221,19 +234,20 @@ public partial class Parser
         ParseResult res = new();
 
         // if there is a plus or a minus it could be +5 or -5
-        if (currentToken.IsType([TokenType.PLUS, TokenType.MINUS]))
+        if (currentToken.IsOneOf([TokenType.PLUS, TokenType.MINUS]))
         {
             if (
-                !TryCastToken(
+                !TryCastTokenNoValue(
                     currentToken,
-                    out Token<TokenNoValueType> opTok,
-                    out InternalTokenCastError<TokenNoValueType> error
+                    out TokenNoValue opTok,
+                    out InternalTokenCastError<TokenNoValue> error
                 )
             )
                 return res.Failure(error);
             AdvanceParser(res);
             BaseNode factor = res.Register(Factor());
-            if (res.HasError) return res;
+            if (res.HasError)
+                return res;
             return res.Success(new UnaryOpNode(opTok, factor));
         }
 
@@ -244,7 +258,7 @@ public partial class Parser
     {
         ParseResult res = new();
 
-        if (currentToken.IsNotMatchingKeyword(KeywordType.FOR))
+        if (IsCurrentTokenNotKeyword(KeywordType.FOR))
             return res.Failure(new ExpectedKeywordError(currentToken.StartPos, "FOR"));
 
         AdvanceParser(res);
@@ -252,7 +266,13 @@ public partial class Parser
         if (currentToken.IsNotType(TokenType.IDENTIFIER))
             return res.Failure(new ExpectedIdnetifierError(currentToken.StartPos));
 
-        if (!TryCastToken(currentToken, out Token<string> varName, out InternalTokenCastError<string> error))
+        if (
+            !TryCastToken(
+                currentToken,
+                out Token<string> varName,
+                out InternalTokenCastError<string> error
+            )
+        )
             return res.Failure(error);
 
         AdvanceParser(res);
@@ -263,38 +283,42 @@ public partial class Parser
         AdvanceParser(res);
 
         BaseNode startValue = res.Register(Expression());
-        if (res.HasError) return res;
+        if (res.HasError)
+            return res;
 
-        if (currentToken.IsNotMatchingKeyword(KeywordType.TO))
+        if (IsCurrentTokenNotKeyword(KeywordType.TO))
             return res.Failure(new ExpectedKeywordError(currentToken.StartPos, "TO"));
 
         AdvanceParser(res);
         BaseNode endValue = res.Register(Expression());
-        if (res.HasError) return res;
+        if (res.HasError)
+            return res;
 
         BaseNode? stepValue = null;
-        if (currentToken.IsMatchingKeyword(KeywordType.STEP))
+        if (IsCurrentTokenKeyword(KeywordType.STEP))
         {
             AdvanceParser(res);
 
             stepValue = res.Register(Expression());
-            if (res.HasError) return res;
+            if (res.HasError)
+                return res;
         }
 
-        if (currentToken.IsNotMatchingKeyword(KeywordType.THEN))
+        if (IsCurrentTokenNotKeyword(KeywordType.THEN))
             return res.Failure(new ExpectedKeywordError(currentToken.StartPos, "THEN"));
 
         AdvanceParser(res);
 
         BaseNode body = GetBodyNode(res);
-        if (HasErrorButEnd(res)) return res;
+        if (HasErrorButEnd(res))
+            return res;
         return res.Success(new ForNode(varName, startValue, endValue, stepValue, body, false));
     }
 
     private ParseResult FuncDef()
     {
         ParseResult res = new();
-        if (currentToken.IsNotMatchingKeyword(KeywordType.FUN))
+        if (IsCurrentTokenNotKeyword(KeywordType.FUN))
             return res.Failure(new ExpectedKeywordError(currentToken.StartPos, "FUN"));
 
         AdvanceParser(res);
@@ -371,7 +395,8 @@ public partial class Parser
             AdvanceParser(res);
 
             BaseNode nodeToReturn = res.Register(Expression());
-            if (res.HasError) return res;
+            if (res.HasError)
+                return res;
             return res.Success(new FuncDefNode(varNameTok, argNameTok, nodeToReturn, true));
         }
 
@@ -384,7 +409,8 @@ public partial class Parser
 
         AdvanceParser(res);
         BaseNode body = res.Register(Statements());
-        if (HasErrorButEnd(res)) return res;
+        if (HasErrorButEnd(res))
+            return res;
         return res.Success(new FuncDefNode(varNameTok, argNameTok, body, false));
     }
 
@@ -406,7 +432,8 @@ public partial class Parser
         if (currentToken.IsType(TokenType.LPAREN))
         {
             List<BaseNode> args = MakeArgs(res);
-            if (res.HasError) return res;
+            if (res.HasError)
+                return res;
             parent = new CallNode(new VarAccessNode(identifierTok), args);
         }
         else
@@ -428,7 +455,8 @@ public partial class Parser
             if (currentToken.IsType(TokenType.LPAREN))
             {
                 List<BaseNode> args = MakeArgs(res);
-                if (res.HasError) return res;
+                if (res.HasError)
+                    return res;
                 parent = new DotCallNode(dotIdentifierTok, args, parent);
             }
             else
@@ -444,16 +472,17 @@ public partial class Parser
         List<SubIfNode> cases = [];
         BaseNode elseCase = NodeNull.Instance;
 
-        if (currentToken.IsNotMatchingKeyword(KeywordType.IF))
+        if (IsCurrentTokenNotKeyword(KeywordType.IF))
             return res.Failure(new ExpectedKeywordError(currentToken.StartPos, "IF"));
         do
         {
             AdvanceParser(res);
 
             BaseNode caseCondition = res.Register(Statement());
-            if (res.HasError) return res;
+            if (res.HasError)
+                return res;
 
-            if (currentToken.IsNotMatchingKeyword(KeywordType.THEN))
+            if (IsCurrentTokenNotKeyword(KeywordType.THEN))
                 return res.Failure(new ExpectedKeywordError(currentToken.StartPos, "THEN"));
 
             AdvanceParser(res);
@@ -464,18 +493,20 @@ public partial class Parser
             AdvanceParser(res);
 
             BaseNode caseBodyNode = res.Register(Statements());
-            if (res.HasError && res.Error is not EndKeywordError) return res;
+            if (res.HasError && res.Error is not EndKeywordError)
+                return res;
             res.ResetError();
 
             cases.Add(new SubIfNode(caseCondition, caseBodyNode));
 
-            if (currentToken.IsNotMatchingKeyword(KeywordType.END))
+            if (IsCurrentTokenNotKeyword(KeywordType.END))
                 return res.Failure(new ExpectedKeywordError(currentToken.StartPos, "END"));
             AdvanceParser(res);
             SkipNewLines(res);
-        } while (currentToken.IsMatchingKeyword(KeywordType.ELIF));
+        } while (IsCurrentTokenKeyword(KeywordType.ELIF));
 
-        if (currentToken.IsNotMatchingKeyword(KeywordType.ELSE)) return res.Success(new IfNode(cases, elseCase));
+        if (IsCurrentTokenNotKeyword(KeywordType.ELSE))
+            return res.Success(new IfNode(cases, elseCase));
 
         AdvanceParser(res);
 
@@ -485,7 +516,8 @@ public partial class Parser
         AdvanceParser(res);
 
         elseCase = res.Register(Statements());
-        if (HasErrorButEnd(res)) return res;
+        if (HasErrorButEnd(res))
+            return res;
 
         return res.Success(new IfNode(cases, elseCase));
     }
@@ -494,7 +526,7 @@ public partial class Parser
     {
         ParseResult res = new();
         Position startPos = currentToken.StartPos;
-        if (currentToken.IsNotMatchingKeyword(KeywordType.IMPORT))
+        if (IsCurrentTokenNotKeyword(KeywordType.IMPORT))
             return res.Failure(new ExpectedKeywordError(currentToken.StartPos, "IMPORT"));
 
         AdvanceParser(res);
@@ -509,7 +541,13 @@ public partial class Parser
             );
         }
 
-        if (!TryCastToken(currentToken, out Token<string> token, out InternalTokenCastError<string> error))
+        if (
+            !TryCastToken(
+                currentToken,
+                out Token<string> token,
+                out InternalTokenCastError<string> error
+            )
+        )
             return res.Failure(error);
         return res.Success(new ImportNode(token, startPos, currentToken.EndPos));
     }
@@ -520,7 +558,8 @@ public partial class Parser
         List<BaseNode> elementNodes = [];
         Position StartPos = currentToken.StartPos;
 
-        if (currentToken.IsNotType(TokenType.LSQUARE)) return res.Failure(new ExpectedTokenError(StartPos, "'['"));
+        if (currentToken.IsNotType(TokenType.LSQUARE))
+            return res.Failure(new ExpectedTokenError(StartPos, "'['"));
 
         AdvanceParser(res);
 
@@ -529,14 +568,16 @@ public partial class Parser
         else
         {
             elementNodes.Add(res.Register(Expression()));
-            if (res.HasError) return res;
+            if (res.HasError)
+                return res;
 
             while (currentToken.IsType(TokenType.COMMA))
             {
                 AdvanceParser(res);
 
                 elementNodes.Add(res.Register(Expression()));
-                if (res.HasError) return res;
+                if (res.HasError)
+                    return res;
             }
 
             if (currentToken.IsNotType(TokenType.RSQUARE))
@@ -553,22 +594,24 @@ public partial class Parser
         ParseResult res = new();
 
         BaseNode left = res.Register(Atom());
-        if (res.HasError) return res;
+        if (res.HasError)
+            return res;
 
         while (currentToken.IsType(TokenType.POW))
         {
             if (
-                !TryCastToken(
+                !TryCastTokenNoValue(
                     currentToken,
-                    out Token<TokenNoValueType> opTok,
-                    out InternalTokenCastError<TokenNoValueType> error
+                    out TokenNoValue opTok,
+                    out InternalTokenCastError<TokenNoValue> error
                 )
             )
                 return res.Failure(error);
             AdvanceParser(res);
 
             BaseNode right = res.Register(Factor());
-            if (res.HasError) return res;
+            if (res.HasError)
+                return res;
 
             left = new BinOpNode(left, opTok, right);
         }
@@ -581,32 +624,34 @@ public partial class Parser
         ParseResult res = new();
         Position startPos = currentToken.StartPos;
 
-        if (currentToken.IsMatchingKeyword(KeywordType.RETURN))
+        if (IsCurrentTokenKeyword(KeywordType.RETURN))
         {
             AdvanceParser(res);
             BaseNode? _expr = res.TryRegister(Expression());
-            if (_expr == null) Reverse(res.ToReverseCount);
+            if (_expr == null)
+                Reverse(res.ToReverseCount);
             return res.Success(new ReturnNode(_expr, startPos, currentToken.StartPos));
         }
 
-        if (currentToken.IsMatchingKeyword(KeywordType.CONTINUE))
+        if (IsCurrentTokenKeyword(KeywordType.CONTINUE))
         {
             AdvanceParser(res);
             return res.Success(new ContinueNode(startPos, currentToken.StartPos));
         }
 
-        if (currentToken.IsMatchingKeyword(KeywordType.BREAK))
+        if (IsCurrentTokenKeyword(KeywordType.BREAK))
         {
             AdvanceParser(res);
             return res.Success(new BreakNode(startPos, currentToken.StartPos));
         }
 
-        if (currentToken.IsMatchingKeyword(KeywordType.END))
+        if (IsCurrentTokenKeyword(KeywordType.END))
             return res.Failure(new EndKeywordError(currentToken.StartPos));
 
         BaseNode expr = res.Register(Expression());
 
-        if (res.HasError) return res;
+        if (res.HasError)
+            return res;
 
         return res.Success(expr);
     }
@@ -622,7 +667,8 @@ public partial class Parser
         while (currentToken.IsNotType(TokenType.EOF)) // repeat until no more lines are available
         {
             SkipNewLines(res);
-            if (currentToken.IsType(TokenType.EOF)) break;
+            if (currentToken.IsType(TokenType.EOF))
+                break;
 
             nextStatement = res.Register(Statement());
             if (res.HasError)
@@ -644,22 +690,24 @@ public partial class Parser
         ParseResult res = new();
 
         BaseNode left = res.Register(Factor());
-        if (res.HasError) return res;
+        if (res.HasError)
+            return res;
 
-        while (currentToken.IsType([TokenType.MUL, TokenType.DIV]))
+        while (currentToken.IsOneOf([TokenType.MUL, TokenType.DIV]))
         {
             if (
-                !TryCastToken(
+                !TryCastTokenNoValue(
                     currentToken,
-                    out Token<TokenNoValueType> opTok,
-                    out InternalTokenCastError<TokenNoValueType> error
+                    out TokenNoValue opTok,
+                    out InternalTokenCastError<TokenNoValue> error
                 )
             )
                 return res.Failure(error);
 
             AdvanceParser(res);
             BaseNode right = res.Register(Factor());
-            if (res.HasError) return res;
+            if (res.HasError)
+                return res;
 
             left = new BinOpNode(left, opTok, right);
         }
@@ -671,23 +719,19 @@ public partial class Parser
     {
         ParseResult res = new();
 
-        if (currentToken.IsNotMatchingKeyword(KeywordType.TRY))
+        if (IsCurrentTokenNotKeyword(KeywordType.TRY))
             return res.Failure(new ExpectedKeywordError(currentToken.StartPos, "TRY"));
         AdvanceParser(res);
 
         BaseNode tryBlock = res.Register(Statements());
         BaseNode catchBlock = NodeNull.Instance;
-        Token<string> varName = new(
-            TokenType.NULL,
-            "",
-            currentToken.StartPos,
-            currentToken.EndPos
-        );
-        if (HasErrorButEnd(res)) return res;
+        Token<string> varName = new(TokenType.NULL, "", currentToken.StartPos, currentToken.EndPos);
+        if (HasErrorButEnd(res))
+            return res;
 
         SkipNewLines(res);
 
-        if (currentToken.IsMatchingKeyword(KeywordType.CATCH))
+        if (IsCurrentTokenKeyword(KeywordType.CATCH))
         {
             AdvanceParser(res);
 
@@ -698,7 +742,8 @@ public partial class Parser
             }
 
             catchBlock = res.Register(Statements());
-            if (HasErrorButEnd(res)) return res;
+            if (HasErrorButEnd(res))
+                return res;
         }
 
         return res.Success(new TryCatchNode(tryBlock, catchBlock, varName));
@@ -708,7 +753,7 @@ public partial class Parser
     {
         ParseResult res = new();
 
-        if (currentToken.IsNotMatchingKeyword(KeywordType.VAR))
+        if (IsCurrentTokenNotKeyword(KeywordType.VAR))
             return res.Failure(new ExpectedKeywordError(currentToken.StartPos, "VAR"));
 
         AdvanceParser(res);
@@ -722,7 +767,13 @@ public partial class Parser
             );
         }
 
-        if (!TryCastToken(currentToken, out Token<string> varName, out InternalTokenCastError<string> error))
+        if (
+            !TryCastToken(
+                currentToken,
+                out Token<string> varName,
+                out InternalTokenCastError<string> error
+            )
+        )
             return res.Failure(error);
 
         AdvanceParser(res);
@@ -733,12 +784,13 @@ public partial class Parser
             TokenType.MIEQ => TokenType.MINUS,
             TokenType.MUEQ => TokenType.MUL,
             TokenType.DIEQ => TokenType.DIV,
-            _ => null
+            _ => null,
         };
         if (EqType is not null)
         {
             BaseNode converted = res.Register(ShortendVarAssignHelper(varName, (TokenType)EqType));
-            if (res.HasError) return res;
+            if (res.HasError)
+                return res;
             return res.Success(new VarAssignNode(varName, converted));
         }
 
@@ -768,7 +820,8 @@ public partial class Parser
 
         AdvanceParser(res);
         BaseNode expr = res.Register(Expression()); // this gets the "value" of the variable
-        if (res.HasError) return res;
+        if (res.HasError)
+            return res;
 
         return res.Success(new VarAssignNode(varName, expr));
     }
@@ -777,19 +830,21 @@ public partial class Parser
     {
         ParseResult res = new();
 
-        if (currentToken.IsNotMatchingKeyword(KeywordType.WHILE))
+        if (IsCurrentTokenNotKeyword(KeywordType.WHILE))
             return res.Failure(new ExpectedKeywordError(currentToken.StartPos, "WHILE"));
         AdvanceParser(res);
 
         BaseNode condition = res.Register(Expression());
-        if (res.HasError) return res;
+        if (res.HasError)
+            return res;
 
-        if (currentToken.IsNotMatchingKeyword(KeywordType.THEN))
+        if (IsCurrentTokenNotKeyword(KeywordType.THEN))
             return res.Failure(new ExpectedKeywordError(currentToken.StartPos, "THEN"));
 
         AdvanceParser(res);
         BaseNode body = GetBodyNode(res);
-        if (HasErrorButEnd(res)) return res;
+        if (HasErrorButEnd(res))
+            return res;
 
         return res.Success(new WhileNode(condition, body, true));
     }

@@ -9,7 +9,6 @@ using YSharp.Util;
 
 namespace YSharp.Runtime;
 
-
 public static class Interpreter
 {
     public static RunTimeResult Visit(BaseNode node, Context context)
@@ -36,7 +35,7 @@ public static class Interpreter
             TryCatchNode n => Visit_TryCatchNode(n, context),
             ImportNode n => Visit_ImportNode(n, context),
             SuffixAssignNode n => Visit_SuffixAssignNode(n, context),
-            _ => Vistit_ErrorNode(node, context)
+            _ => Vistit_ErrorNode(node, context),
         };
     }
 
@@ -46,13 +45,19 @@ public static class Interpreter
         Value left = res.Regrister(Visit(node.LeftNode, context));
         Value right = res.Regrister(Visit(node.RightNode, context));
 
-        if (res.ShouldReturn()) return res;
+        if (res.ShouldReturn())
+            return res;
 
         ValueAndError KeywordHandeler()
         {
-            if (node.OpTok.IsMatchingKeyword(KeywordType.AND)) return left.AndedTo(right);
+            if (node.OpTok is Token<KeywordType> keywordTok)
+            {
+                if (keywordTok.ValueEquals(KeywordType.AND))
+                    return left.AndedTo(right);
 
-            if (node.OpTok.IsMatchingKeyword(KeywordType.OR)) return left.OredTo(right);
+                if (keywordTok.ValueEquals(KeywordType.OR))
+                    return left.OredTo(right);
+            }
 
             throw new Exception("operator token type is wrong: " + node.OpTok.Type);
         }
@@ -71,10 +76,11 @@ public static class Interpreter
             TokenType.LTE => left.GetComparisonLTE(right),
             TokenType.GTE => left.GetComparisonGTE(right),
             TokenType.KEYWORD => KeywordHandeler(),
-            _ => throw new Exception("operator token type is wrong: " + node.OpTok.Type)
+            _ => throw new Exception("operator token type is wrong: " + node.OpTok.Type),
         };
 
-        if (result.Error.IsError) return res.Failure(result.Error);
+        if (result.Error.IsError)
+            return res.Failure(result.Error);
 
         return res.Success(result.Value.SetPos(node.StartPos, node.StartPos));
     }
@@ -93,19 +99,23 @@ public static class Interpreter
         }
 
         Value valueToCall = res.Regrister(Visit(node.NodeToCall, context));
-        if (res.ShouldReturn()) return res;
+        if (res.ShouldReturn())
+            return res;
 
         if (valueToCall is not VBaseFunction function)
-            return res.Failure(new InternalInterpreterError(
-                "The type of valueToCall is not supported. Type: " +
-                valueToCall.GetType()));
+            return res.Failure(
+                new InternalInterpreterError(
+                    "The type of valueToCall is not supported. Type: " + valueToCall.GetType()
+                )
+            );
 
         valueToCall = function.Copy().SetPos(node.StartPos, node.EndPos);
 
         for (int i = 0; i < node.ArgNodes.Length; i++)
         {
             args.Add(res.Regrister(Visit(node.ArgNodes[i], context)));
-            if (res.ShouldReturn()) return res;
+            if (res.ShouldReturn())
+                return res;
         }
 
         Value ret;
@@ -116,7 +126,8 @@ public static class Interpreter
         else
             ret = ValueNull.Instance;
 
-        if (res.ShouldReturn()) return res;
+        if (res.ShouldReturn())
+            return res;
 
         try
         {
@@ -143,7 +154,8 @@ public static class Interpreter
         {
             BaseNode _node = node.ArgNodes[i];
             Value val = res.Regrister(Visit(_node, context));
-            if (res.ShouldReturn()) return res;
+            if (res.ShouldReturn())
+                return res;
 
             argValue.Add(val);
         }
@@ -151,9 +163,11 @@ public static class Interpreter
         ValueAndError value = res.Regrister(Visit(node.Parent, context))
             .GetFunc(funcName ?? "null", argValue);
 
-        if (res.ShouldReturn()) return res;
+        if (res.ShouldReturn())
+            return res;
 
-        if (value.Error.IsError) return res.Failure(value.Error);
+        if (value.Error.IsError)
+            return res.Failure(value.Error);
 
         try
         {
@@ -174,11 +188,14 @@ public static class Interpreter
 
         string varName = node.VarNameTok.Value;
         ValueAndError value = res.Regrister(Visit(node.Parent, context)).GetVar(varName ?? "null");
-        if (res.ShouldReturn()) return res;
+        if (res.ShouldReturn())
+            return res;
 
-        if (value.Error.IsError) return res.Failure(value.Error);
+        if (value.Error.IsError)
+            return res.Failure(value.Error);
 
-        if (value.ValueIsNull) return res.Failure(new VarNotFoundError(node.StartPos, varName!, context));
+        if (value.ValueIsNull)
+            return res.Failure(new VarNotFoundError(node.StartPos, varName!, context));
 
         return res.Success(
             value.Value.Copy().SetPos(node.StartPos, node.EndPos).SetContext(context)
@@ -191,11 +208,12 @@ public static class Interpreter
         Value startValue = res.Regrister(Visit(node.StartValueNode, context));
         Value endValue = res.Regrister(Visit(node.EndValueNode, context));
 
-        if (res.ShouldReturn()) return res;
+        if (res.ShouldReturn())
+            return res;
 
         Value stepValue = res.Regrister(Visit(node.StepValueNode, context));
-        if (res.ShouldReturn()) return res;
-
+        if (res.ShouldReturn())
+            return res;
 
         double StartNumber;
         double EndNumber;
@@ -235,9 +253,7 @@ public static class Interpreter
 
         if (context.symbolTable is null)
         {
-            return res.Failure(
-                new InternalSymbolTableError(context)
-            );
+            return res.Failure(new InternalSymbolTableError(context));
         }
 
         string varName = node.VarNameTok.Value;
@@ -248,11 +264,14 @@ public static class Interpreter
             i += StepNumber;
 
             res.Regrister(Visit(node.BodyNode, context));
-            if (res.ShouldReturn() && !res.loopContinue && res.loopBreak) return res;
+            if (res.ShouldReturn() && !res.loopContinue && res.loopBreak)
+                return res;
 
-            if (res.loopContinue) continue;
+            if (res.loopContinue)
+                continue;
 
-            if (res.loopBreak) break;
+            if (res.loopBreak)
+                break;
         }
 
         return res.Success(ValueNull.Instance);
@@ -287,12 +306,14 @@ public static class Interpreter
             BaseNode condition = node.Cases[i].Condition;
             BaseNode expr = node.Cases[i].Expression;
             Value conditionValue = res.Regrister(Visit(condition, context));
-            if (res.ShouldReturn()) return res;
+            if (res.ShouldReturn())
+                return res;
 
             if (conditionValue.IsTrue())
             {
                 Value exprValue = res.Regrister(Visit(expr, context));
-                if (res.ShouldReturn()) return res;
+                if (res.ShouldReturn())
+                    return res;
 
                 return res.Success(exprValue);
             }
@@ -301,7 +322,8 @@ public static class Interpreter
         if (node.ElseNode is not null and not NodeNull)
         {
             Value elseValue = res.Regrister(Visit(node.ElseNode, context));
-            if (res.ShouldReturn()) return res;
+            if (res.ShouldReturn())
+                return res;
 
             return res.Success(elseValue);
         }
@@ -314,9 +336,11 @@ public static class Interpreter
         RunTimeResult res = new();
 
         string filePath = n.PathTok.Value;
-        if (Path.GetExtension(filePath) != ".dll") filePath += ".dll";
+        if (Path.GetExtension(filePath) != ".dll")
+            filePath += ".dll";
 
-        if (Path.IsPathRooted(filePath)) filePath = ImportUtil.DefaultPath + filePath;
+        if (Path.IsPathRooted(filePath))
+            filePath = ImportUtil.DefaultPath + filePath;
 
         if (!File.Exists(filePath))
         {
@@ -324,17 +348,18 @@ public static class Interpreter
                 new FileNotFoundError(
                     n.StartPos,
                     "The packege at the import path "
-                    + n.PathTok.Value
-                    + " was calculated to be at "
-                    + filePath
-                    + " sadly, there is no such file.",
+                        + n.PathTok.Value
+                        + " was calculated to be at "
+                        + filePath
+                        + " sadly, there is no such file.",
                     context
                 )
             );
         }
 
         List<ExposedClassData> exposeds = ImportUtil.Load(filePath, out string err);
-        if (err != string.Empty) return res.Failure(new InvalidLoadedModuleError(n.StartPos, err, context));
+        if (err != string.Empty)
+            return res.Failure(new InvalidLoadedModuleError(n.StartPos, err, context));
 
         //TODO: Implement call logic
 
@@ -349,7 +374,8 @@ public static class Interpreter
         {
             BaseNode elementNode = node.ElementNodes[i];
             elements.Add(res.Regrister(Visit(elementNode, context)));
-            if (res.ShouldReturn()) return res;
+            if (res.ShouldReturn())
+                return res;
         }
 
         return res.Success(
@@ -369,7 +395,8 @@ public static class Interpreter
         if (node.NodeToReturn is not null)
         {
             value = res.Regrister(Visit(node.NodeToReturn, context));
-            if (res.ShouldReturn()) return res;
+            if (res.ShouldReturn())
+                return res;
         }
         else
             value = ValueNull.Instance;
@@ -389,9 +416,7 @@ public static class Interpreter
 
         if (context.symbolTable is null)
         {
-            return res.Failure(
-                new InternalSymbolTableError(context)
-            );
+            return res.Failure(new InternalSymbolTableError(context));
         }
 
         Value oldVal = context.symbolTable.Get(varName);
@@ -424,20 +449,20 @@ public static class Interpreter
         RunTimeResult res = new();
 
         Value val = res.Regrister(Visit(node.TryNode, context));
-        if (!res.error.IsError) return res.Success(val);
+        if (!res.error.IsError)
+            return res.Success(val);
 
         if (context.symbolTable is null)
         {
-            return res.Failure(
-                new InternalSymbolTableError(context)
-            );
+            return res.Failure(new InternalSymbolTableError(context));
         }
 
         if (node.CatchVarName is not null)
             context.symbolTable.Set(node.CatchVarName.Value, new VString(res.error.ToString()));
 
         Value catchVal = res.Regrister(Visit(node.CatchNode, context));
-        if (res.ShouldReturn()) return res;
+        if (res.ShouldReturn())
+            return res;
 
         return res.Success(catchVal);
     }
@@ -446,17 +471,22 @@ public static class Interpreter
     {
         RunTimeResult res = new();
         Value value = res.Regrister(Visit(node.Node, context));
-        if (res.ShouldReturn()) return res;
+        if (res.ShouldReturn())
+            return res;
 
         ValueAndError result;
         if (node.OpTok.IsType(TokenType.MINUS) && value is VNumber)
             result = value.MuledTo(new VNumber(-1));
-        else if (node.OpTok.IsMatchingKeyword(KeywordType.NOT))
+        else if (
+            node.OpTok is Token<KeywordType> keywordTok
+            && keywordTok.ValueEquals(KeywordType.NOT)
+        )
             result = value.Notted();
         else
             result = (value, ErrorNull.Instance);
 
-        if (result.Error.IsError) return res.Failure(result.Error);
+        if (result.Error.IsError)
+            return res.Failure(result.Error);
 
         return res.Success(result.Value.SetPos(node.StartPos, node.StartPos));
     }
@@ -467,9 +497,7 @@ public static class Interpreter
 
         if (context.symbolTable is null)
         {
-            return res.Failure(
-                new InternalSymbolTableError(context)
-            );
+            return res.Failure(new InternalSymbolTableError(context));
         }
 
         string varName = node.VarNameTok.Value;
@@ -490,13 +518,12 @@ public static class Interpreter
         RunTimeResult res = new();
         string varName = node.VarNameTok.Value;
         Value value = res.Regrister(Visit(node.ValueNode, context));
-        if (res.ShouldReturn()) return res;
+        if (res.ShouldReturn())
+            return res;
 
         if (context.symbolTable is null)
         {
-            return res.Failure(
-                new InternalSymbolTableError(context)
-            );
+            return res.Failure(new InternalSymbolTableError(context));
         }
 
         context.symbolTable.Set(varName, value);
@@ -510,16 +537,21 @@ public static class Interpreter
         while (true)
         {
             Value condition = res.Regrister(Visit(node.ConditionNode, context));
-            if (res.ShouldReturn()) return res;
+            if (res.ShouldReturn())
+                return res;
 
-            if (!condition.IsTrue()) break;
+            if (!condition.IsTrue())
+                break;
 
             res.Regrister(Visit(node.BodyNode, context));
-            if (res.ShouldReturn() && !res.loopContinue && res.loopBreak) return res;
+            if (res.ShouldReturn() && !res.loopContinue && res.loopBreak)
+                return res;
 
-            if (res.loopContinue) continue;
+            if (res.loopContinue)
+                continue;
 
-            if (res.loopBreak) break;
+            if (res.loopBreak)
+                break;
         }
 
         return res.Success(ValueNull.Instance);

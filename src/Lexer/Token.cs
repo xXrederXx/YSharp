@@ -1,4 +1,3 @@
-using System.Runtime.CompilerServices;
 using FastEnumUtility;
 using YSharp.Common;
 
@@ -13,12 +12,6 @@ public interface IToken
     Position EndPos { get; }
     Position StartPos { get; }
     TokenType Type { get; }
-    public bool IsMatchingKeyword(KeywordType value);
-    public bool IsNotMatchingKeyword(KeywordType value);
-    public bool IsNotType(TokenType type);
-    public bool IsNotType(ReadOnlySpan<TokenType> types);
-    public bool IsType(TokenType type);
-    public bool IsType(ReadOnlySpan<TokenType> types);
 }
 
 /// <summary>
@@ -39,31 +32,6 @@ public class Token<T> : IToken
         Value = value;
         StartPos = startPos;
         EndPos = endPos;
-    }
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public bool IsMatchingKeyword(KeywordType value) =>
-        Type == TokenType.KEYWORD && Value is KeywordType keywordType && keywordType == value;
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public bool IsNotMatchingKeyword(KeywordType value) => !IsMatchingKeyword(value);
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public bool IsNotType(TokenType type) => Type != type;
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public bool IsNotType(ReadOnlySpan<TokenType> types) => !IsType(types);
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public bool IsType(TokenType type) => Type == type;
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public bool IsType(ReadOnlySpan<TokenType> types)
-    {
-        foreach (TokenType t in types)
-            if (Type == t)
-                return true;
-        return false;
     }
 
     // String Representation

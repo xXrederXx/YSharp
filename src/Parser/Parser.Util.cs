@@ -3,9 +3,7 @@ using YSharp.Common;
 using YSharp.Lexer;
 using YSharp.Parser.Nodes;
 
-
 namespace YSharp.Parser;
-
 
 public partial class Parser
 {
@@ -25,9 +23,28 @@ public partial class Parser
         }
 
         result = null!;
-        error = new InternalTokenCastError<T>(
-            token, membername
-        );
+        error = new InternalTokenCastError<T>(token, membername);
+
+        return false;
+    }
+
+    public static bool TryCastTokenNoValue(
+        IToken token,
+        out TokenNoValue result,
+        out InternalTokenCastError<TokenNoValue> error,
+        [CallerMemberName] string membername = "NoMemberName"
+    )
+    {
+        if (token is TokenNoValue casted)
+        {
+            result = casted;
+            error = null!;
+
+            return true;
+        }
+
+        result = null!;
+        error = new InternalTokenCastError<TokenNoValue>(token, membername);
 
         return false;
     }
@@ -45,10 +62,11 @@ public partial class Parser
 
     public bool HasErrorButEnd(ParseResult res)
     {
-        if (res.HasError && res.Error is not EndKeywordError) return true;
+        if (res.HasError && res.Error is not EndKeywordError)
+            return true;
         res.ResetError();
 
-        if (currentToken.IsNotMatchingKeyword(KeywordType.END))
+        if (IsCurrentTokenNotKeyword(KeywordType.END))
         {
             res.Failure(new ExpectedKeywordError(currentToken.StartPos, "END"));
             return true;
@@ -76,7 +94,8 @@ public partial class Parser
         // get argument
         List<BaseNode> argNodes = [];
         argNodes.Add(res.Register(Expression()));
-        if (res.HasError) return [];
+        if (res.HasError)
+            return [];
 
         // get the rest of the arguments which are seperated by commas
         while (currentToken.IsType(TokenType.COMMA))
@@ -84,7 +103,8 @@ public partial class Parser
             AdvanceParser(res);
 
             argNodes.Add(res.Register(Expression()));
-            if (res.HasError) return [];
+            if (res.HasError)
+                return [];
         }
 
         if (currentToken.IsNotType(TokenType.RPAREN))
@@ -104,7 +124,8 @@ public partial class Parser
 
         AdvanceParser(res);
         BaseNode expr = res.Register(Expression()); // this gets the "value" of the variable
-        if (res.HasError) return res;
+        if (res.HasError)
+            return res;
 
         // This converts varName += Expr to varName = varName + Expr
         BaseNode converted = new BinOpNode(
@@ -117,6 +138,17 @@ public partial class Parser
 
     private void SkipNewLines(ParseResult res)
     {
-        while (currentToken.IsType(TokenType.NEWLINE)) AdvanceParser(res);
+        while (currentToken.IsType(TokenType.NEWLINE))
+            AdvanceParser(res);
+    }
+
+    private bool IsCurrentTokenKeyword(KeywordType keyword)
+    {
+        return currentToken is Token<KeywordType> keywordTok && keywordTok.ValueEquals(keyword);
+    }
+
+    private bool IsCurrentTokenNotKeyword(KeywordType keyword)
+    {
+        return !IsCurrentTokenKeyword(keyword);
     }
 }
