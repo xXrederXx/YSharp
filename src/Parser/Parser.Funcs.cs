@@ -16,7 +16,7 @@ public partial class Parser
 
         while (currentToken.IsOneOf([TokenType.PLUS, TokenType.MINUS]))
         {
-            TokenNoValue opTok = (TokenNoValue)currentToken;
+            BaseToken opTok = (BaseToken)currentToken;
 
             AdvanceParser(res);
             BaseNode right = res.Register(Term());
@@ -34,7 +34,7 @@ public partial class Parser
     {
         ParseResult res = new();
 
-        IToken tok = currentToken;
+        BaseToken tok = currentToken;
 
         // check tyoes
         if (tok.IsOneOf([TokenType.INT, TokenType.FLOAT]))
@@ -149,7 +149,7 @@ public partial class Parser
 
         if (IsCurrentTokenKeyword(KeywordType.NOT))
         {
-            IToken opTok = currentToken;
+            BaseToken opTok = currentToken;
 
             AdvanceParser(res);
             BaseNode node = res.Register(CompExpr());
@@ -178,8 +178,8 @@ public partial class Parser
             if (
                 !TryCastTokenNoValue(
                     currentToken,
-                    out TokenNoValue opTok,
-                    out InternalTokenCastError<TokenNoValue> error
+                    out BaseToken opTok,
+                    out InternalTokenCastError<BaseToken> error
                 )
             )
                 return res.Failure(error);
@@ -216,7 +216,7 @@ public partial class Parser
 
         while (IsCurrentTokenKeyword(KeywordType.AND) || IsCurrentTokenKeyword(KeywordType.OR))
         {
-            IToken opTok = currentToken;
+            BaseToken opTok = currentToken;
 
             AdvanceParser(res);
             BaseNode right = res.Register(CompExpr());
@@ -239,8 +239,8 @@ public partial class Parser
             if (
                 !TryCastTokenNoValue(
                     currentToken,
-                    out TokenNoValue opTok,
-                    out InternalTokenCastError<TokenNoValue> error
+                    out BaseToken opTok,
+                    out InternalTokenCastError<BaseToken> error
                 )
             )
                 return res.Failure(error);
@@ -356,7 +356,7 @@ public partial class Parser
         }
 
         AdvanceParser(res);
-        List<IToken> argNameTok = [];
+        List<BaseToken> argNameTok = [];
 
         if (currentToken.IsType(TokenType.IDENTIFIER))
         {
@@ -602,8 +602,8 @@ public partial class Parser
             if (
                 !TryCastTokenNoValue(
                     currentToken,
-                    out TokenNoValue opTok,
-                    out InternalTokenCastError<TokenNoValue> error
+                    out BaseToken opTok,
+                    out InternalTokenCastError<BaseToken> error
                 )
             )
                 return res.Failure(error);
@@ -698,8 +698,8 @@ public partial class Parser
             if (
                 !TryCastTokenNoValue(
                     currentToken,
-                    out TokenNoValue opTok,
-                    out InternalTokenCastError<TokenNoValue> error
+                    out BaseToken opTok,
+                    out InternalTokenCastError<BaseToken> error
                 )
             )
                 return res.Failure(error);

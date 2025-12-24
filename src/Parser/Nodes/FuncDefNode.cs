@@ -7,7 +7,7 @@ namespace YSharp.Parser.Nodes;
 
 public sealed class FuncDefNode : BaseNode
 {
-    public readonly IToken[] ArgNameTokens;
+    public readonly BaseToken[] ArgNameTokens;
     public readonly BaseNode BodyNode;
     public readonly bool RetNull;
     public readonly Token<string> VarNameTok;
@@ -19,7 +19,7 @@ public sealed class FuncDefNode : BaseNode
 
     public FuncDefNode(
         Token<string> varNameTok,
-        List<IToken> argNameTokens,
+        List<BaseToken> argNameTokens,
         BaseNode bodyNode,
         bool autoReturn
     )

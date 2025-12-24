@@ -25,9 +25,9 @@ public sealed partial class Lexer
 
 
     // generates all tokens
-    public (List<IToken>, Error) MakeTokens()
+    public (List<BaseToken>, Error) MakeTokens()
     {
-        List<IToken> tokens = [];
+        List<BaseToken> tokens = [];
 
         while (currentChar != char.MaxValue)
             if (currentChar is ' ' or '\t')
@@ -47,17 +47,17 @@ public sealed partial class Lexer
             }
             else if (currentChar is ';' or '\n' or '\r')
             {
-                tokens.Add(new TokenNoValue(TokenType.NEWLINE, pos, pos));
+                tokens.Add(new BaseToken(TokenType.NEWLINE, pos, pos));
                 Advance();
             }
             else if (currentChar == '.')
             {
-                tokens.Add(new TokenNoValue(TokenType.DOT, pos, pos));
+                tokens.Add(new BaseToken(TokenType.DOT, pos, pos));
                 Advance();
             }
             else if (char.IsDigit(currentChar)) // Check for digits (int)
             {
-                (IToken tok, Error err) = MakeNumber();
+                (BaseToken tok, Error err) = MakeNumber();
                 if (err.IsError) return ([], err);
                 tokens.Add(tok);
             }
@@ -65,7 +65,7 @@ public sealed partial class Lexer
                 tokens.Add(MakeIdentifier());
             else if (currentChar == '"')
             {
-                (IToken tok, Error err) = MakeString();
+                (BaseToken tok, Error err) = MakeString();
                 if (err.IsError) return ([], err);
                 tokens.Add(tok);
             }
@@ -80,23 +80,23 @@ public sealed partial class Lexer
                 tokens.Add(MakeDecicion('=', TokenType.DIEQ, TokenType.DIV));
             else if (currentChar == '^')
             {
-                tokens.Add(new TokenNoValue(TokenType.POW, pos, pos));
+                tokens.Add(new BaseToken(TokenType.POW, pos, pos));
                 Advance();
             }
             else if (currentChar == '(')
             {
-                tokens.Add(new TokenNoValue(TokenType.LPAREN, pos, pos));
+                tokens.Add(new BaseToken(TokenType.LPAREN, pos, pos));
                 Advance();
             }
             else if (currentChar == ')')
             {
-                tokens.Add(new TokenNoValue(TokenType.RPAREN, pos, pos));
+                tokens.Add(new BaseToken(TokenType.RPAREN, pos, pos));
                 Advance();
             }
             // Comparison
             else if (currentChar == '!')
             {
-                (IToken, Error) res = MakeNotEquals();
+                (BaseToken, Error) res = MakeNotEquals();
                 if (res.Item2.IsError) return ([], res.Item2);
                 tokens.Add(res.Item1);
                 Advance();
@@ -110,26 +110,26 @@ public sealed partial class Lexer
             // Other
             else if (currentChar == ',')
             {
-                tokens.Add(new TokenNoValue(TokenType.COMMA, pos, pos));
+                tokens.Add(new BaseToken(TokenType.COMMA, pos, pos));
                 Advance();
             }
             else if (currentChar == '[')
             {
-                tokens.Add(new TokenNoValue(TokenType.LSQUARE, pos, pos));
+                tokens.Add(new BaseToken(TokenType.LSQUARE, pos, pos));
                 Advance();
             }
             else if (currentChar == ']')
             {
-                tokens.Add(new TokenNoValue(TokenType.RSQUARE, pos, pos));
+                tokens.Add(new BaseToken(TokenType.RSQUARE, pos, pos));
                 Advance();
             }
             else
             {
                 // Not a valid token, return an error
-                return (new List<IToken>(), new IllegalCharError(pos, currentChar));
+                return (new List<BaseToken>(), new IllegalCharError(pos, currentChar));
             }
 
-        tokens.Add(new TokenNoValue(TokenType.EOF, pos, pos)); // Add the End Of File token
+        tokens.Add(new BaseToken(TokenType.EOF, pos, pos)); // Add the End Of File token
         return (tokens, ErrorNull.Instance);
     }
 

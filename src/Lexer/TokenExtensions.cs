@@ -5,13 +5,13 @@ namespace YSharp.Lexer;
 public static class TokenExtensions
 {
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool IsType(this IToken self, TokenType type) => self.Type == type;
+    public static bool IsType(this BaseToken self, TokenType type) => self.Type == type;
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool IsNotType(this IToken self, TokenType type) => self.Type != type;
+    public static bool IsNotType(this BaseToken self, TokenType type) => self.Type != type;
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool IsOneOf(this IToken self, ReadOnlySpan<TokenType> types)
+    public static bool IsOneOf(this BaseToken self, ReadOnlySpan<TokenType> types)
     {
         foreach (TokenType type in types)
             if (self.IsType(type))
@@ -20,7 +20,7 @@ public static class TokenExtensions
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool IsNotOneOf(this IToken self, ReadOnlySpan<TokenType> types) =>
+    public static bool IsNotOneOf(this BaseToken self, ReadOnlySpan<TokenType> types) =>
         !self.IsOneOf(types);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]

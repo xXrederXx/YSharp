@@ -8,7 +8,7 @@ namespace YSharp.Parser;
 public partial class Parser
 {
     public static bool TryCastToken<T>(
-        IToken token,
+        BaseToken token,
         out Token<T> result,
         out InternalTokenCastError<T> error,
         [CallerMemberName] string membername = "NoMemberName"
@@ -29,13 +29,13 @@ public partial class Parser
     }
 
     public static bool TryCastTokenNoValue(
-        IToken token,
-        out TokenNoValue result,
-        out InternalTokenCastError<TokenNoValue> error,
+        BaseToken token,
+        out BaseToken result,
+        out InternalTokenCastError<BaseToken> error,
         [CallerMemberName] string membername = "NoMemberName"
     )
     {
-        if (token is TokenNoValue casted)
+        if (token is BaseToken casted)
         {
             result = casted;
             error = null!;
@@ -44,7 +44,7 @@ public partial class Parser
         }
 
         result = null!;
-        error = new InternalTokenCastError<TokenNoValue>(token, membername);
+        error = new InternalTokenCastError<BaseToken>(token, membername);
 
         return false;
     }
@@ -130,7 +130,7 @@ public partial class Parser
         // This converts varName += Expr to varName = varName + Expr
         BaseNode converted = new BinOpNode(
             new VarAccessNode(varName),
-            new TokenNoValue(type, expr.StartPos, expr.StartPos),
+            new BaseToken(type, expr.StartPos, expr.StartPos),
             expr
         );
         return res.Success(new VarAssignNode(varName, converted));

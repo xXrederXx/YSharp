@@ -7,7 +7,7 @@ namespace YSharp.Parser.Nodes;
 public sealed class BinOpNode : BaseNode
 {
     public readonly BaseNode LeftNode;
-    public readonly IToken OpTok;
+    public readonly BaseToken OpTok;
     public readonly BaseNode RightNode;
     public override NodeDebugInfo DebugInfo =>
         new NodeDebugInfo(
@@ -16,7 +16,7 @@ public sealed class BinOpNode : BaseNode
             [(LeftNode.DebugInfo, "left"), (RightNode.DebugInfo, "right")]
         );
 
-    public BinOpNode(BaseNode leftNode, IToken opTok, BaseNode rightNode)
+    public BinOpNode(BaseNode leftNode, BaseToken opTok, BaseNode rightNode)
         : base(leftNode.StartPos, rightNode.EndPos)
     {
         this.LeftNode = leftNode;

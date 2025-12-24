@@ -9,11 +9,11 @@ namespace YSharp.Parser;
 // the parser which is used to make the abstract syntax tree
 public partial class Parser
 {
-    public IToken currentToken;
+    public BaseToken currentToken;
     public int tokIndex = -1;
-    private readonly ImmutableArray<IToken> tokens;
+    private readonly ImmutableArray<BaseToken> tokens;
 
-    public Parser(List<IToken> tokens)
+    public Parser(List<BaseToken> tokens)
     {
         this.tokens = tokens.ToImmutableArray();
         currentToken = NullToken.Instance;
@@ -36,7 +36,7 @@ public partial class Parser
         UpdateCurrentTok();
     }
 
-    private IToken Reverse(int amount = 1)
+    private BaseToken Reverse(int amount = 1)
     {
         tokIndex -= amount;
         UpdateCurrentTok();

@@ -14,7 +14,7 @@ public class LexerBench
     public void LexerBenchmarkL()
     {
         Lexer.Lexer lexer = new(BenchHelp.Text50000Char, "BENCHMARK");
-        (List<IToken>, Error) tokens = lexer.MakeTokens();
+        (List<BaseToken>, Error) tokens = lexer.MakeTokens();
         x = tokens.Item2.IsError;
     }
 
@@ -22,7 +22,7 @@ public class LexerBench
     public void LexerBenchmarkM()
     {
         Lexer.Lexer lexer = new(BenchHelp.Text10000Char, "BENCHMARK");
-        (List<IToken>, Error) tokens = lexer.MakeTokens();
+        (List<BaseToken>, Error) tokens = lexer.MakeTokens();
         x = tokens.Item2.IsError;
     }
 
@@ -30,7 +30,7 @@ public class LexerBench
     public void LexerBenchmarkS()
     {
         Lexer.Lexer lexer = new(BenchHelp.Text5000Char, "BENCHMARK");
-        (List<IToken>, Error) tokens = lexer.MakeTokens();
+        (List<BaseToken>, Error) tokens = lexer.MakeTokens();
         x = tokens.Item2.IsError;
     }
 
@@ -38,7 +38,7 @@ public class LexerBench
     public void LexerBenchmarkXL()
     {
         Lexer.Lexer lexer = new(BenchHelp.Text100000Char, "BENCHMARK");
-        (List<IToken>, Error) tokens = lexer.MakeTokens();
+        (List<BaseToken>, Error) tokens = lexer.MakeTokens();
         x = tokens.Item2.IsError;
     }
 }

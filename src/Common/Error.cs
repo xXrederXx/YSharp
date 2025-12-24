@@ -220,5 +220,5 @@ public class AssertionFailedError(Position posStart, string message)
 public class InternalSymbolTableError(Context context)
     : InternalError(9005, "The current Symbol Table is null\n" + context);
 
-public class InternalTokenCastError<T>(IToken token, string membername) : InternalError(9006,
+public class InternalTokenCastError<T>(BaseToken token, string membername) : InternalError(9006,
     $"Casting the token ({token.GetType()}) to a Token<{typeof(T)}> failed in {membername} / Token: {token}");

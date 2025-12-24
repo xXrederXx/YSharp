@@ -33,7 +33,7 @@ public class RunClass
     public (Value, Error) Run(string fn, string text)
     {
         // create a Lexer and generate the tokens with it
-        (List<IToken> tokens, Error LexerError) = new Lexer.Lexer(text, fn).MakeTokens();
+        (List<BaseToken> tokens, Error LexerError) = new Lexer.Lexer(text, fn).MakeTokens();
 
         // look if the lexer threw an Error
         if (LexerError.IsError) return (new VNumber(0), LexerError);
@@ -74,7 +74,7 @@ public class RunClass
 
         // 2: create tokens
         sw.Restart();
-        (List<IToken>, Error) tokens = lexer.MakeTokens();
+        (List<BaseToken>, Error) tokens = lexer.MakeTokens();
 
         if (tokens.Item2.IsError) return (new VNumber(0), tokens.Item2, times);
         sw.Stop();

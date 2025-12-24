@@ -6,7 +6,7 @@ namespace YSharp.Lexer;
 
 public sealed partial class Lexer
 {
-    private TokenNoValue MakeDecicion(
+    private BaseToken MakeDecicion(
         char checkChar,
         TokenType TTTrue,
         TokenType TTFalse
@@ -17,21 +17,21 @@ public sealed partial class Lexer
         if (currentChar == checkChar)
         {
             Advance();
-            return new TokenNoValue(
+            return new BaseToken(
                 TTTrue,
                 posStart,
                 pos
             );
         }
 
-        return new TokenNoValue(
+        return new BaseToken(
             TTFalse,
             posStart,
             pos
         );
     }
 
-    private IToken MakeIdentifier()
+    private BaseToken MakeIdentifier()
     {
         Position posStart = pos;
 
@@ -49,7 +49,7 @@ public sealed partial class Lexer
         return new Token<string>(TokenType.IDENTIFIER, idStr, posStart, pos);
     }
 
-    private TokenNoValue MakeMinus()
+    private BaseToken MakeMinus()
     {
         Position startPos = pos;
         Advance();
@@ -58,36 +58,36 @@ public sealed partial class Lexer
         {
             // it is --
             Advance();
-            return new TokenNoValue(TokenType.MM, startPos, pos);
+            return new BaseToken(TokenType.MM, startPos, pos);
         }
 
         if (currentChar == '=')
         {
             // its -=
             Advance();
-            return new TokenNoValue(TokenType.MIEQ, startPos, pos);
+            return new BaseToken(TokenType.MIEQ, startPos, pos);
         }
 
         if (currentChar == '>')
         {
             Advance();
-            return new TokenNoValue(TokenType.ARROW, startPos, pos);
+            return new BaseToken(TokenType.ARROW, startPos, pos);
         }
 
-        return new TokenNoValue(TokenType.MINUS, startPos, pos);
+        return new BaseToken(TokenType.MINUS, startPos, pos);
     }
 
-    private (IToken, Error) MakeNotEquals()
+    private (BaseToken, Error) MakeNotEquals()
     {
         Position posStart = pos;
         Advance();
 
-        if (currentChar == '=') return (new TokenNoValue(TokenType.NE, posStart, pos), ErrorNull.Instance);
+        if (currentChar == '=') return (new BaseToken(TokenType.NE, posStart, pos), ErrorNull.Instance);
         return (NullToken.Instance, new ExpectedCharError(posStart, '='));
     }
 
     // this is used to make a number token of type int or float
-    private (IToken, Error) MakeNumber()
+    private (BaseToken, Error) MakeNumber()
     {
         bool hasDot = false;
         Position posStart = pos;
@@ -131,7 +131,7 @@ public sealed partial class Lexer
         );
     }
 
-    private TokenNoValue MakePlus()
+    private BaseToken MakePlus()
     {
         Position startPos = pos;
         Advance();
@@ -139,19 +139,19 @@ public sealed partial class Lexer
         if (currentChar == '+')
         {
             Advance();
-            return new TokenNoValue(TokenType.PP, startPos, pos);
+            return new BaseToken(TokenType.PP, startPos, pos);
         }
 
         if (currentChar == '=')
         {
             Advance();
-            return new TokenNoValue(TokenType.PLEQ, startPos, pos);
+            return new BaseToken(TokenType.PLEQ, startPos, pos);
         }
 
-        return new TokenNoValue(TokenType.PLUS, startPos, pos);
+        return new BaseToken(TokenType.PLUS, startPos, pos);
     }
 
-    private (IToken, Error) MakeString()
+    private (BaseToken, Error) MakeString()
     {
         Position startPos = pos;
 

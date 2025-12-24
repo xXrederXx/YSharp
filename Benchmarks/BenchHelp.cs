@@ -27,11 +27,11 @@ public static class BenchHelp
     public static readonly string Text50000Char;
 
     public static readonly string Text5000Char;
-    public static readonly List<IToken> TokenL;
-    public static readonly List<IToken> TokenM;
+    public static readonly List<BaseToken> TokenL;
+    public static readonly List<BaseToken> TokenM;
 
-    public static readonly List<IToken> TokenS;
-    public static readonly List<IToken> TokenXL;
+    public static readonly List<BaseToken> TokenS;
+    public static readonly List<BaseToken> TokenXL;
 
     static BenchHelp()
     {

@@ -1,19 +1,22 @@
+using FastEnumUtility;
 using YSharp.Common;
 
 namespace YSharp.Lexer;
 
-public class TokenNoValue : IToken, IEquatable<TokenNoValue>
+public class BaseToken : IEquatable<BaseToken>
 {
-    public Position EndPos { get; }
-    public Position StartPos { get; }
-    public TokenType Type { get; }
+    public readonly Position EndPos;
+    public readonly Position StartPos;
+    public readonly TokenType Type;
 
-    public TokenNoValue(TokenType type, in Position startPos, in Position endPos)
+    public BaseToken(TokenType type, in Position startPos, in Position endPos)
     {
         Type = type;
         StartPos = startPos;
         EndPos = endPos;
     }
+
+    public override string ToString() => Type.FastToString();
 
     public override int GetHashCode()
     {
@@ -22,12 +25,12 @@ public class TokenNoValue : IToken, IEquatable<TokenNoValue>
 
     public override bool Equals(object? obj)
     {
-        if (obj is not TokenNoValue token)
+        if (obj is not BaseToken token)
             return false;
         return Equals(token);
     }
 
-    public bool Equals(TokenNoValue? other)
+    public bool Equals(BaseToken? other)
     {
         if (other is null)
             return false;
@@ -35,7 +38,7 @@ public class TokenNoValue : IToken, IEquatable<TokenNoValue>
     }
 }
 
-public sealed class NullToken : TokenNoValue
+public sealed class NullToken : BaseToken
 {
     public static readonly NullToken Instance = new();
 
