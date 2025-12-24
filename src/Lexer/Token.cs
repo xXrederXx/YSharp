@@ -18,7 +18,7 @@ public interface IToken
 ///     The token version with a Value
 /// </summary>
 /// <typeparam name="T">Type of the value</typeparam>
-public class Token<T> : IToken
+public class Token<T> : IToken, IEquatable<Token<T>>
 {
     public Position EndPos { get; }
     public Position StartPos { get; }
@@ -37,4 +37,26 @@ public class Token<T> : IToken
     // String Representation
     public override string ToString() =>
         Value != null ? $"{Type.FastToString()}:{Value}" : Type.FastToString();
+
+    public override int GetHashCode()
+    {
+        return HashCode.Combine(EndPos, StartPos, Type, Value);
+    }
+
+    public override bool Equals(object? obj)
+    {
+        if (obj is not Token<T> token)
+            return false;
+        return Equals(token);
+    }
+
+    public bool Equals(Token<T>? other)
+    {
+        if (other is null)
+            return false;
+        return EndPos == other.EndPos
+            && StartPos == other.StartPos
+            && Type == other.Type
+            && EqualityComparer<T>.Default.Equals(Value, other.Value);
+    }
 }
