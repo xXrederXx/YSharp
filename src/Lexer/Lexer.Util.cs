@@ -1,34 +1,29 @@
 using FastEnumUtility;
 using YSharp.Common;
 
-
 namespace YSharp.Lexer;
 
 public sealed partial class Lexer
 {
-    private BaseToken MakeDecision(
-        char checkChar,
-        TokenType TTTrue,
-        TokenType TTFalse
-    )
+    private static readonly Dictionary<char, char> escapeChars = new()
+    {
+        { 'n', '\n' },
+        { '\\', '\\' },
+        { '"', '"' },
+        { 't', '\t' },
+    };
+
+    private BaseToken MakeDecision(char checkChar, TokenType TTTrue, TokenType TTFalse)
     {
         Position posStart = pos;
         Advance();
         if (currentChar == checkChar)
         {
             Advance();
-            return new BaseToken(
-                TTTrue,
-                posStart,
-                pos
-            );
+            return new BaseToken(TTTrue, posStart, pos);
         }
 
-        return new BaseToken(
-            TTFalse,
-            posStart,
-            pos
-        );
+        return new BaseToken(TTFalse, posStart, pos);
     }
 
     private BaseToken MakeIdentifier()
@@ -45,7 +40,8 @@ public sealed partial class Lexer
         bool IsKeyword = FastEnum.TryParse(idStr, out KeywordType keywordType);
         stringBuilder.Clear();
 
-        if (IsKeyword) return new Token<KeywordType>(TokenType.KEYWORD, keywordType, posStart, pos);
+        if (IsKeyword)
+            return new Token<KeywordType>(TokenType.KEYWORD, keywordType, posStart, pos);
         return new Token<string>(TokenType.IDENTIFIER, idStr, posStart, pos);
     }
 
@@ -81,8 +77,12 @@ public sealed partial class Lexer
     {
         Position posStart = pos;
         Advance();
-
-        if (currentChar == '=') return (new BaseToken(TokenType.NE, posStart, pos), ErrorNull.Instance);
+        if (currentChar == '=')
+        {
+            Position posEnd = pos;
+            Advance();
+            return (new BaseToken(TokenType.NE, posStart, posEnd), ErrorNull.Instance);
+        }
         return (NullToken.Instance, new ExpectedCharError(posStart, '='));
     }
 
@@ -103,7 +103,8 @@ public sealed partial class Lexer
 
             if (currentChar == '.')
             {
-                if (hasDot) return (NullToken.Instance, new IllegalNumberFormat(posStart));
+                if (hasDot)
+                    return (NullToken.Instance, new IllegalNumberFormat(posStart));
 
                 hasDot = true;
                 stringBuilder.Append('.');
@@ -125,9 +126,7 @@ public sealed partial class Lexer
 
         return (
             new Token<double>(TokenType.FLOAT, value, posStart, pos),
-            new InternalLexerError(
-                $"Couldnt convert Number to double -> Number ({stringBuilder})"
-            )
+            new InternalLexerError($"Couldnt convert Number to double -> Number ({stringBuilder})")
         );
     }
 
@@ -155,14 +154,6 @@ public sealed partial class Lexer
     {
         Position startPos = pos;
 
-        Dictionary<char, char> escapeChars = new()
-        {
-            { 'n', '\n' },
-            { '\\', '\\' },
-            { '"', '"' },
-            { 't', '\t' }
-        };
-
         Advance();
         while (currentChar != char.MaxValue && currentChar != '"')
         {
@@ -173,10 +164,7 @@ public sealed partial class Lexer
                     stringBuilder.Append(_char);
                 else
                 {
-                    return (
-                        NullToken.Instance,
-                        new IllegalEscapeCharError(startPos, currentChar)
-                    );
+                    return (NullToken.Instance, new IllegalEscapeCharError(startPos, currentChar));
                 }
             }
             else
@@ -193,11 +181,13 @@ public sealed partial class Lexer
 
     private void SkipComment()
     {
-        while (currentChar is not '\n' and not '\r' and not ';' and not '#' and not char.MaxValue) Advance();
+        while (currentChar is not '\n' and not '\r' and not ';' and not '#' and not char.MaxValue)
+            Advance();
     }
 
     private void SkipTypeAnotation()
     {
-        while (IsValidIdentifierChar(currentChar) || currentChar == ' ') Advance();
+        while (IsValidIdentifierChar(currentChar) || currentChar == ' ')
+            Advance();
     }
 }

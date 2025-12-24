@@ -12,6 +12,23 @@ public sealed partial class Lexer
     private char currentChar = char.MaxValue;
     private Position pos;
 
+    private static readonly Dictionary<char, TokenType> singelCharToken = new()
+    {
+        { '\n', TokenType.NEWLINE },
+        { '\r', TokenType.NEWLINE },
+        { ';', TokenType.NEWLINE },
+        { '.', TokenType.DOT },
+        { '(', TokenType.LPAREN },
+        { ')', TokenType.RPAREN },
+        { ',', TokenType.COMMA },
+        { '[', TokenType.LSQUARE },
+        { ']', TokenType.RSQUARE },
+        { '^', TokenType.POW },
+    };
+    private readonly Dictionary<char, Func<BaseToken>> safeMultiCharToken;
+    private readonly Dictionary<char, Func<(BaseToken, Error)>> unsafeMultiCharToken;
+    private readonly Dictionary<char, Action?> skipCharToken;
+
     // Initalizer
     public Lexer(string text, string fileName)
     {
@@ -21,8 +38,31 @@ public sealed partial class Lexer
         byte fileId = FileNameRegistry.GetFileId(fileName);
         pos = new Position(0, 0, 0, fileId);
         currentChar = pos.Index < text.Length ? text[pos.Index] : char.MaxValue;
-    }
 
+        safeMultiCharToken = new Dictionary<char, Func<BaseToken>>()
+        {
+            { '+', MakePlus },
+            { '-', MakeMinus },
+            { '*', () => MakeDecision('=', TokenType.MUEQ, TokenType.MUL) },
+            { '/', () => MakeDecision('=', TokenType.DIEQ, TokenType.DIV) },
+            { '=', () => MakeDecision('=', TokenType.EE, TokenType.EQ) },
+            { '<', () => MakeDecision('<', TokenType.LTE, TokenType.LT) },
+            { '>', () => MakeDecision('>', TokenType.GTE, TokenType.GT) },
+        };
+
+        unsafeMultiCharToken = new Dictionary<char, Func<(BaseToken, Error)>>()
+        {
+            { '"', MakeString },
+            { '!', MakeNotEquals },
+        };
+        skipCharToken = new Dictionary<char, Action?>()
+        {
+            { ' ', null },
+            { '\t', null },
+            { '#', SkipComment },
+            { ':', SkipTypeAnotation },
+        };
+    }
 
     // generates all tokens
     public (List<BaseToken>, Error) MakeTokens()
@@ -30,98 +70,37 @@ public sealed partial class Lexer
         List<BaseToken> tokens = [];
 
         while (currentChar != char.MaxValue)
-            if (currentChar is ' ' or '\t')
+            if (skipCharToken.TryGetValue(currentChar, out Action? action))
             {
-                // Discards spaces and tabs
+                Advance();
+                action?.Invoke();
+            }
+            else if (singelCharToken.TryGetValue(currentChar, out TokenType type))
+            {
+                tokens.Add(new BaseToken(type, pos, pos));
                 Advance();
             }
-            else if (currentChar == '#')
+            else if (unsafeMultiCharToken.TryGetValue(currentChar, out var unsafeFunc))
             {
-                Advance();
-                SkipComment();
+                (BaseToken tok, Error err) = unsafeFunc.Invoke();
+                if (err.IsError)
+                    return ([], err);
+                tokens.Add(tok);
             }
-            else if (currentChar == ':')
+            else if (safeMultiCharToken.TryGetValue(currentChar, out Func<BaseToken>? safeFunc))
             {
-                Advance();
-                SkipTypeAnotation();
-            }
-            else if (currentChar is ';' or '\n' or '\r')
-            {
-                tokens.Add(new BaseToken(TokenType.NEWLINE, pos, pos));
-                Advance();
-            }
-            else if (currentChar == '.')
-            {
-                tokens.Add(new BaseToken(TokenType.DOT, pos, pos));
-                Advance();
+                tokens.Add(safeFunc.Invoke());
             }
             else if (char.IsDigit(currentChar)) // Check for digits (int)
             {
                 (BaseToken tok, Error err) = MakeNumber();
-                if (err.IsError) return ([], err);
+                if (err.IsError)
+                    return ([], err);
                 tokens.Add(tok);
             }
             else if (char.IsLetter(currentChar)) // Check for letters
+            {
                 tokens.Add(MakeIdentifier());
-            else if (currentChar == '"')
-            {
-                (BaseToken tok, Error err) = MakeString();
-                if (err.IsError) return ([], err);
-                tokens.Add(tok);
-            }
-            // Arithmetic
-            else if (currentChar == '+')
-                tokens.Add(MakePlus());
-            else if (currentChar == '-')
-                tokens.Add(MakeMinus());
-            else if (currentChar == '*')
-                tokens.Add(MakeDecision('=', TokenType.MUEQ, TokenType.MUL));
-            else if (currentChar == '/')
-                tokens.Add(MakeDecision('=', TokenType.DIEQ, TokenType.DIV));
-            else if (currentChar == '^')
-            {
-                tokens.Add(new BaseToken(TokenType.POW, pos, pos));
-                Advance();
-            }
-            else if (currentChar == '(')
-            {
-                tokens.Add(new BaseToken(TokenType.LPAREN, pos, pos));
-                Advance();
-            }
-            else if (currentChar == ')')
-            {
-                tokens.Add(new BaseToken(TokenType.RPAREN, pos, pos));
-                Advance();
-            }
-            // Comparison
-            else if (currentChar == '!')
-            {
-                (BaseToken, Error) res = MakeNotEquals();
-                if (res.Item2.IsError) return ([], res.Item2);
-                tokens.Add(res.Item1);
-                Advance();
-            }
-            else if (currentChar == '=')
-                tokens.Add(MakeDecision('=', TokenType.EE, TokenType.EQ));
-            else if (currentChar == '<')
-                tokens.Add(MakeDecision('=', TokenType.LTE, TokenType.LT));
-            else if (currentChar == '>')
-                tokens.Add(MakeDecision('=', TokenType.GTE, TokenType.GT));
-            // Other
-            else if (currentChar == ',')
-            {
-                tokens.Add(new BaseToken(TokenType.COMMA, pos, pos));
-                Advance();
-            }
-            else if (currentChar == '[')
-            {
-                tokens.Add(new BaseToken(TokenType.LSQUARE, pos, pos));
-                Advance();
-            }
-            else if (currentChar == ']')
-            {
-                tokens.Add(new BaseToken(TokenType.RSQUARE, pos, pos));
-                Advance();
             }
             else
             {
