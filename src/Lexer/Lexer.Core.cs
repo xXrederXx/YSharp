@@ -75,9 +75,9 @@ public sealed partial class Lexer
             else if (currentChar == '-')
                 tokens.Add(MakeMinus());
             else if (currentChar == '*')
-                tokens.Add(MakeDecicion('=', TokenType.MUEQ, TokenType.MUL));
+                tokens.Add(MakeDecision('=', TokenType.MUEQ, TokenType.MUL));
             else if (currentChar == '/')
-                tokens.Add(MakeDecicion('=', TokenType.DIEQ, TokenType.DIV));
+                tokens.Add(MakeDecision('=', TokenType.DIEQ, TokenType.DIV));
             else if (currentChar == '^')
             {
                 tokens.Add(new BaseToken(TokenType.POW, pos, pos));
@@ -102,11 +102,11 @@ public sealed partial class Lexer
                 Advance();
             }
             else if (currentChar == '=')
-                tokens.Add(MakeDecicion('=', TokenType.EE, TokenType.EQ));
+                tokens.Add(MakeDecision('=', TokenType.EE, TokenType.EQ));
             else if (currentChar == '<')
-                tokens.Add(MakeDecicion('=', TokenType.LTE, TokenType.LT));
+                tokens.Add(MakeDecision('=', TokenType.LTE, TokenType.LT));
             else if (currentChar == '>')
-                tokens.Add(MakeDecicion('=', TokenType.GTE, TokenType.GT));
+                tokens.Add(MakeDecision('=', TokenType.GTE, TokenType.GT));
             // Other
             else if (currentChar == ',')
             {

@@ -6,7 +6,7 @@ namespace YSharp.Lexer;
 
 public sealed partial class Lexer
 {
-    private BaseToken MakeDecicion(
+    private BaseToken MakeDecision(
         char checkChar,
         TokenType TTTrue,
         TokenType TTFalse
