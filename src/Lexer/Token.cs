@@ -9,7 +9,7 @@ namespace YSharp.Lexer;
 /// <typeparam name="T">Type of the value</typeparam>
 public sealed class Token<T> : BaseToken, IEquatable<Token<T>>
 {
-    public T Value { get; }
+    public readonly T Value;
 
     // Constructor
     public Token(TokenType type, T value, in Position startPos, in Position endPos)
