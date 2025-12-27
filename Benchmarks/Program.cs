@@ -1,12 +1,10 @@
-using BenchmarkDotNet.Environments;
-using YSharp.Benchmarks;
+using YSharp.Benchmarks.Util;
 
-public class Program {
+public class Program
+{
     static void Main(string[] args)
     {
-        BenchHelp.Run<LexerBench>();
-        BenchHelp.Run<ParserBench>();
-        BenchHelp.Run<InterpreterBench>();
-        BenchHelp.Run<RunTimeBench>();
+        var config = UserRequester.Request();
+        RunHelper.Run(config);
     }
 }
