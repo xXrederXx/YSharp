@@ -4,15 +4,18 @@ namespace YSharp.Benchmarks.Analyzer;
 
 public class JsonExtractor
 {
-    const string NewDataPath = @"BenchmarkDotNet.Artifacts\results";
-    const string DataPath = @"BenchmarkDotNet.Artifacts\results";
+    public const string NewDataPath = @"BenchmarkDotNet.Artifacts\results";
+    public const string DataPath = @"..\Docs\Benchmarks\Data";
 
-    private static string[] GetJsonFiles() =>
-        Directory.GetFiles(NewDataPath).Where(x => x.EndsWith(".json")).ToArray();
+    public static List<BenchmarksData> LoadNewDatas() => LoadData(GetJsonFiles(NewDataPath));
 
-    public static void LoadData()
+    private static string[] GetJsonFiles(string directoryPath) =>
+        Directory.GetFiles(directoryPath).Where(x => x.EndsWith(".json")).ToArray();
+
+    private static List<BenchmarksData> LoadData(string[] paths)
     {
-        foreach (string path in GetJsonFiles())
+        List<BenchmarksData> benchmarkDatas = new List<BenchmarksData>(paths.Length);
+        foreach (string path in paths)
         {
             string content = File.ReadAllText(path);
             BenchmarksData? data = JsonSerializer.Deserialize<BenchmarksData>(content);
@@ -22,7 +25,8 @@ public class JsonExtractor
                 System.Console.WriteLine($"Data for {path} is null");
                 continue;
             }
-            File.WriteAllText(Path.Combine(NewDataPath, data.Title + ".json"), JsonSerializer.Serialize(data));
+            benchmarkDatas.Add(data);
         }
+        return benchmarkDatas;
     }
 }

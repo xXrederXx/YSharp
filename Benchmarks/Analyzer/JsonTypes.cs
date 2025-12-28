@@ -1,11 +1,19 @@
-record BenchmarksData(string Title, BenchmarkData[] Benchmarks);
+public record BenchmarksData(string Title, BenchmarkData[] Benchmarks);
 
-record BenchmarkData(string Type, string Method, BenchmarkStatisticData Statistics, BenchmarkMetricData[] Metrics);
+public record BenchmarkData(
+    string Type,
+    string Method,
+    BenchmarkStatisticData Statistics,
+    BenchmarkMetricData[] Metrics
+);
 
-record BenchmarkStatisticData(double Mean, BenchmarkConfidenceIntervalData ConfidenceInterval);
+public record BenchmarkStatisticData(
+    double Mean,
+    BenchmarkConfidenceIntervalData ConfidenceInterval
+);
 
-record BenchmarkConfidenceIntervalData(double Lower, double Upper);
+public record BenchmarkConfidenceIntervalData(double Lower, double Upper);
 
-record BenchmarkMetricData(double Value, BenchmarkMetricDescriptor Descriptor);
+public record BenchmarkMetricData(double Value, BenchmarkMetricDescriptor Descriptor);
 
-record BenchmarkMetricDescriptor(string DisplayName);
+public record BenchmarkMetricDescriptor(string DisplayName);
