@@ -1,5 +1,0 @@
-Method;Mean;Error;StdDev;Gen0;Gen1;Gen2;Allocated
-InterpreterBenchmarkS;23.88 μs;0.281 μs;0.263 μs;5.8289;0.6409;0;95.34 KB
-InterpreterBenchmarkM;49.84 μs;0.995 μs;0.931 μs;11.7798;2.3193;0;193.12 KB
-InterpreterBenchmarkL;277.37 μs;5.538 μs;4.909 μs;59.0820;21.4844;0;966.07 KB
-InterpreterBenchmarkXL;597.74 μs;11.919 μs;18.202 μs;118.1641;53.7109;0;1930.97 KB
