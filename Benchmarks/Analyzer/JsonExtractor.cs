@@ -9,6 +9,8 @@ public class JsonExtractor
 
     public static List<BenchmarksData> LoadNewDatas() => LoadData(GetJsonFiles(NewDataPath));
 
+    public static List<BenchmarksData> LoadAllDatas() => LoadData(GetJsonFiles(DataPath));
+
     private static string[] GetJsonFiles(string directoryPath) =>
         Directory.GetFiles(directoryPath).Where(x => x.EndsWith(".json")).ToArray();
 
