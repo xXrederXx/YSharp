@@ -12,5 +12,10 @@ public class Program
         List<BenchmarksData> newData = JsonExtractor.LoadNewDatas();
         newData =  newData.Select(x => new BenchmarksData(x.Title, gitHash, dateTime, x.Benchmarks)).ToList();
         JsonExtractor.SaveData(newData);
+
+        foreach (BenchmarksData bench in newData)
+        {
+            MarkdownExporter.ExportMarkdown(bench);
+        }
     }
 }
