@@ -1,7 +1,7 @@
 public record BenchmarksData(string Title, string GitHash, DateTime DateTime, BenchmarkData[] Benchmarks);
 
 public record BenchmarkData(
-    string Type,
+    string DisplayInfo,
     string Method,
     BenchmarkStatisticData Statistics,
     BenchmarkMetricData[] Metrics
