@@ -27,5 +27,6 @@ public class Program
         {
             MarkdownExporter.ExportMarkdown(bench);
         }
+        PlotExporter.GeneratePlots();
     }
 }
