@@ -28,7 +28,7 @@ public class RunHelper
             .CreateEmpty()
             .AddLogger(ConsoleLogger.Default)
             .AddColumnProvider(DefaultColumnProviders.Instance)
-            .AddExporter(MarkdownExporter.Default, JsonExporter.Full)
+            .AddExporter(JsonExporter.Full)
             .AddJob(userInput.Job)
             .AddValidator(JitOptimizationsValidator.FailOnError);
 
