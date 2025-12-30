@@ -9,6 +9,8 @@ public class Program
         var config = UserRequester.Request();
         RunHelper.Run(config);
 
-        var newData = JsonExtractor.LoadNewDatas();
+        List<BenchmarksData> newData = JsonExtractor.LoadNewDatas();
+        newData.ForEach(x => new BenchmarksData(x.Title, gitHash, dateTime, x.Benchmarks));
+        JsonExtractor.SaveData(newData);
     }
 }
