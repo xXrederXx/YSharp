@@ -1,7 +1,9 @@
+using System.Collections.Immutable;
 using System.Collections.Specialized;
 using System.Runtime.InteropServices;
 using Microsoft.VisualBasic;
 using ScottPlot;
+using ScottPlot.Plottables;
 using YSharp.Benchmarks.Analyzer;
 
 namespace YSharp.Benchmarks.Exporter;
@@ -77,6 +79,17 @@ public class PlotExporter
         data.Data.Sort((a, b) => a.DateTime.CompareTo(b.DateTime));
 
         plot.Add.Bars(data.Data.Select(x => x.Mean).ToArray());
+
+        ErrorBar errorBar = new ErrorBar(
+            xs: Enumerable.Range(0, data.Data.Count()).Select(x => (double)x).ToArray(),
+            ys: data.Data.Select(x => x.Mean).ToArray(),
+            xErrorsPositive: null,
+            xErrorsNegative: null,
+            yErrorsPositive: data.Data.Select(x => x.Upper - x.Mean).ToArray(),
+            yErrorsNegative: data.Data.Select(x => Math.Min(x.Mean, x.Mean - x.Lower)).ToArray()
+        );
+
+        plot.Add.Plottable(errorBar);
 
         plot.Axes.Bottom.SetTicks(
             Enumerable.Range(0, data.Data.Count()).Select(x => (double)x).ToArray(),
