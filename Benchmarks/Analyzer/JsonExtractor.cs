@@ -12,6 +12,17 @@ public class JsonExtractor
     private static string[] GetJsonFiles(string directoryPath) =>
         Directory.GetFiles(directoryPath).Where(x => x.EndsWith(".json")).ToArray();
 
+    public static void SaveData(List<BenchmarksData> data)
+    {
+        foreach (BenchmarksData bench in data)
+        {
+            File.WriteAllText(
+                Path.Combine(DataPath, bench.Title + ".json"),
+                JsonSerializer.Serialize(bench, JsonSerializerOptions.Default)
+            );
+        }
+    }
+
     private static List<BenchmarksData> LoadData(string[] paths)
     {
         List<BenchmarksData> benchmarkDatas = new List<BenchmarksData>(paths.Length);
