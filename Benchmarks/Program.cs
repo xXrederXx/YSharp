@@ -10,7 +10,7 @@ public class Program
         RunHelper.Run(config);
 
         List<BenchmarksData> newData = JsonExtractor.LoadNewDatas();
-        newData.ForEach(x => new BenchmarksData(x.Title, gitHash, dateTime, x.Benchmarks));
+        newData =  newData.Select(x => new BenchmarksData(x.Title, gitHash, dateTime, x.Benchmarks)).ToList();
         JsonExtractor.SaveData(newData);
     }
 }
