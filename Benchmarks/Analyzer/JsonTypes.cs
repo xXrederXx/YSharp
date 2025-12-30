@@ -1,4 +1,4 @@
-public record BenchmarksData(string Title, BenchmarkData[] Benchmarks);
+public record BenchmarksData(string Title, string GitHash, DateTime DateTime, BenchmarkData[] Benchmarks);
 
 public record BenchmarkData(
     string Type,
