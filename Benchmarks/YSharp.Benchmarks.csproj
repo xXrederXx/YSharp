@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <PackageReference Include="BenchmarkDotNet" Version="0.15.8" />
+    <PackageReference Include="Grynwald.MarkdownGenerator" Version="3.0.106" />
     <PackageReference Include="Spectre.Console" Version="0.54.1-alpha.0.10" />
   </ItemGroup>
 
