@@ -31,6 +31,18 @@ public class MarkdownExporter
         doc.Root.Add(new MdHeading(2, "Results"));
         doc.Root.Add(GenerateResultTable(data.Benchmarks));
 
+        doc.Root.Add(new MdHeading(2, "History"));
+        
+        foreach (BenchmarkData method in data.Benchmarks)
+        {
+            doc.Root.Add(new MdHeading(3, method.Method));
+            doc.Root.Add(
+                new MdParagraph(
+                    new MdImageSpan("Speed Plot", $"../Plots/{benchName}-{method.Method}.png")
+                )
+            );
+        }
+
         doc.Save(Path.Combine(MdDirectory, benchName + ".md"));
     }
 
