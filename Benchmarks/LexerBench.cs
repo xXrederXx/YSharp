@@ -4,8 +4,7 @@ using YSharp.Lexer;
 
 namespace YSharp.Benchmarks;
 
-[SimpleJob]
-[MemoryDiagnoser]
+
 public class LexerBench
 {
     public bool x;

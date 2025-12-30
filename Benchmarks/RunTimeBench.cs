@@ -3,8 +3,7 @@ using YSharp.Util;
 
 namespace YSharp.Benchmarks;
 
-[SimpleJob]
-[MemoryDiagnoser]
+
 public class RunTimeBench
 {
     [Benchmark]

@@ -3,8 +3,6 @@ using BenchmarkDotNet.Attributes;
 
 namespace YSharp.Benchmarks;
 
-[SimpleJob]
-[MemoryDiagnoser]
 public class ParserBench
 {
     [Benchmark]

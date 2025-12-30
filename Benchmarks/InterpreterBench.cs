@@ -1,11 +1,9 @@
 using YSharp.Runtime;
-using BenchmarkDotNet;
 using BenchmarkDotNet.Attributes;
 
 namespace YSharp.Benchmarks;
 
-[SimpleJob]
-[MemoryDiagnoser]
+
 public class InterpreterBench
 {
     [Benchmark]
