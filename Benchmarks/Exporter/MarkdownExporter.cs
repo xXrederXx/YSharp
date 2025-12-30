@@ -39,8 +39,7 @@ public class MarkdownExporter
         MdTableRow headerRow = new MdTableRow(
             "Method",
             "Time Mean",
-            "Time Lower",
-            "Time Upper",
+            "Aprox. Error",
             "Allocated",
             "Gen 0",
             "Gen 1",
@@ -49,8 +48,7 @@ public class MarkdownExporter
         List<MdTableRow> rows = data.Select(bench => new MdTableRow(
                 bench.Method,
                 ConvertTime(bench.Statistics.Mean),
-                ConvertTime(bench.Statistics.ConfidenceInterval.Lower),
-                ConvertTime(bench.Statistics.ConfidenceInterval.Upper),
+                ConvertTime(ApproximateError(bench)),
                 ConvertAllocated(GetMetric(bench.Metrics, "Allocated")),
                 ConvertGC(GetMetric(bench.Metrics, "Gen0")),
                 ConvertGC(GetMetric(bench.Metrics, "Gen1")),
@@ -60,10 +58,14 @@ public class MarkdownExporter
         return new MdTable(headerRow, rows);
     }
 
+    private static double ApproximateError(BenchmarkData data) =>
+        data.Statistics.Mean - data.Statistics.ConfidenceInterval.Lower;
+
     private static string ExtractTitleName(string title) =>
         string.Concat(title.Replace("YSharp.Benchmarks.", string.Empty).TakeWhile(char.IsLetter));
 
-    private static string ConvertTime(double timeNs) => timeNs.ToString("N0", CultureInfo.InvariantCulture) + " ns";
+    private static string ConvertTime(double timeNs) =>
+        timeNs.ToString("N0", CultureInfo.InvariantCulture) + " ns";
 
     private static string ConvertAllocated(double allocatedByte) =>
         (allocatedByte / 1000).ToString("N0", CultureInfo.InvariantCulture) + " kb";
