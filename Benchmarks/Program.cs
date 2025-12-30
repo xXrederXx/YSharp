@@ -18,7 +18,7 @@ public class Program
                 x.Title,
                 gitHash,
                 dateTime,
-                x.Benchmarks.Where(x => !x.DisplayInfo.Contains("DefaultJob")).ToArray()
+                x.Benchmarks
             ))
             .ToList();
         JsonExtractor.SaveData(newData);
