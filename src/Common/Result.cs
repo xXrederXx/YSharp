@@ -1,3 +1,5 @@
+using System.Diagnostics.CodeAnalysis;
+
 namespace YSharp.Common;
 
 /// <summary>
@@ -63,7 +65,7 @@ public readonly struct Result<TValue, TError> : IEquatable<Result<TValue, TError
     /// </summary>
     /// <param name="value">This will be the value saved or the null if IsSuccess is false</param>
     /// <returns>True if the result was a success and false otherwise</returns>
-    public bool TryGetValue(out TValue value)
+    public bool TryGetValue([NotNullWhen(true)] out TValue value)
     {
         value = _Value!;
         return IsSuccess;
@@ -73,7 +75,7 @@ public readonly struct Result<TValue, TError> : IEquatable<Result<TValue, TError
     /// This returns the saved value. Use with caution. Use TryGetValue if possible.
     /// </summary>
     /// <returns>The value from the result</returns>
-    /// <exception cref="InvalidOperationException">If the result was not successfull it will throw</exception>
+    /// <exception cref="InvalidOperationException">If the result was not successful it will throw</exception>
     public TValue GetValue()
     {
         if (IsFailed)
@@ -87,7 +89,7 @@ public readonly struct Result<TValue, TError> : IEquatable<Result<TValue, TError
     /// This returns the saved error. Use with caution. Only use if the result is failed
     /// </summary>
     /// <returns>The error from the result</returns>
-    /// <exception cref="InvalidOperationException">If the result was successfull it will throw</exception>
+    /// <exception cref="InvalidOperationException">If the result was successful it will throw</exception>
     public TError GetError()
     {
         if (IsSuccess)
