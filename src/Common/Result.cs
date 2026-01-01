@@ -6,7 +6,7 @@ namespace YSharp.Common;
 /// </summary>
 /// <typeparam name="TValue">This is the type the success value has</typeparam>
 /// <typeparam name="TError">This is the type of the error</typeparam>
-public readonly struct Result<TValue, TError>
+public readonly struct Result<TValue, TError> : IEquatable<Result<TValue, TError>>
 {
     private readonly TValue? _Value;
     private readonly TError? _Error;
@@ -95,5 +95,49 @@ public readonly struct Result<TValue, TError>
                 "You cant get the error of a succeded Result. Please check state first"
             );
         return _Error!;
+    }
+
+    public void Deconstruct(out bool isSuccess, out TValue? value, out TError? error)
+    {
+        isSuccess = IsSuccess;
+        value = _Value;
+        error = _Error;
+    }
+
+    public override int GetHashCode()
+    {
+        return IsSuccess ? HashCode.Combine(true, _Value) : HashCode.Combine(false, _Error);
+    }
+
+    public override bool Equals(object? obj)
+    {
+        if (obj is not Result<TValue, TError> other)
+            return false;
+        return Equals(other);
+    }
+
+    public bool Equals(Result<TValue, TError> other)
+    {
+        if (IsSuccess != other.IsSuccess)
+            return false;
+
+        return IsSuccess
+            ? EqualityComparer<TValue>.Default.Equals(_Value, other._Value)
+            : EqualityComparer<TError>.Default.Equals(_Error, other._Error);
+    }
+
+    public static bool operator ==(Result<TValue, TError> left, Result<TValue, TError> right)
+    {
+        return left.Equals(right);
+    }
+
+    public static bool operator !=(Result<TValue, TError> left, Result<TValue, TError> right)
+    {
+        return !(left == right);
+    }
+
+    public override string ToString()
+    {
+        return IsSuccess ? $"Success({_Value})" : $"Fail({_Error})";
     }
 }
