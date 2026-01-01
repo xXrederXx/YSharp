@@ -14,20 +14,12 @@ namespace YSharp.Util;
 public class RunClass
 {
     public static CliArgs args = new CliArgs() {Optimization = 0, RenderDot = false, ScriptPath = null};
-    private readonly SymbolTable globalSymbolTable = new();
+    private readonly SymbolTable globalSymbolTable;
 
     public RunClass()
     {
         // predifined values
-        globalSymbolTable.Set("TRUE", new VBool(true));
-        globalSymbolTable.Set("FALSE", new VBool(false));
-
-        globalSymbolTable.Set("MATH", new VMath());
-        globalSymbolTable.Set("PRINT", BuiltInFunctionsTable.print);
-        globalSymbolTable.Set("INPUT", BuiltInFunctionsTable.input);
-        globalSymbolTable.Set("RUN", BuiltInFunctionsTable.run);
-        globalSymbolTable.Set("TIMETORUN", BuiltInFunctionsTable.timetorun);
-        globalSymbolTable.Set("TIME", BuiltInFunctionsTable.time);
+        globalSymbolTable = SymbolTable.GenerateGlobalSymboltable();
     }
 
     public (Value, Error) Run(string fn, string text)

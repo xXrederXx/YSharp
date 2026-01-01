@@ -1,3 +1,7 @@
+using YSharp.Runtime.Functions;
+using YSharp.Runtime.Primatives.Bool;
+using YSharp.Runtime.Utils.Math;
+
 namespace YSharp.Runtime;
 
 public class SymbolTable
@@ -35,4 +39,21 @@ public class SymbolTable
 
     private Value GetFromParent(string name, Value defaultValue) =>
         parent is not null ? parent.Get(name, defaultValue) : defaultValue;
+
+    public static SymbolTable GenerateGlobalSymboltable()
+    {
+        SymbolTable SampleSymbolTable = new();
+
+        SampleSymbolTable.Set("TRUE", new VBool(true));
+        SampleSymbolTable.Set("FALSE", new VBool(false));
+
+        SampleSymbolTable.Set("MATH", new VMath());
+        SampleSymbolTable.Set("PRINT", BuiltInFunctionsTable.print);
+        SampleSymbolTable.Set("INPUT", BuiltInFunctionsTable.input);
+        SampleSymbolTable.Set("RUN", BuiltInFunctionsTable.run);
+        SampleSymbolTable.Set("TIMETORUN", BuiltInFunctionsTable.timetorun);
+        SampleSymbolTable.Set("TIME", BuiltInFunctionsTable.time);
+
+        return SampleSymbolTable;
+    }
 }

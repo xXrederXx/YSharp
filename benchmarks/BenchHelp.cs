@@ -4,32 +4,27 @@ using YSharp.Common;
 using YSharp.Lexer;
 using YSharp.Parser;
 using YSharp.Runtime;
-using YSharp.Runtime.Functions;
-using YSharp.Runtime.Primatives.Bool;
-using YSharp.Runtime.Utils.Math;
 using YSharp.Util;
 
 namespace YSharp.Benchmarks;
 
 public static class BenchHelp
 {
+    public const string SampleText =
+        "FUN func(a, b, c, d, e, f, g);\n PRINT(a + b + c); VAR x =d+ e + f + g; PRINT(x); END; 1 + 2 FUN add(a, b); RETURN a + b;END;FUN adda(a, b);  RETURN a + b;END;;;1+2; VAR list = [1,2,3,4,5,6,6,7,7,8,8,8,9,9,9,4,42,3243,43,64535,6434,43,3]; 1 + 2 + 3+ 44 +45 + 3 + 43 +4";
+
     public static readonly ParseResult astL;
     public static readonly ParseResult astM;
-
     public static readonly ParseResult astS;
     public static readonly ParseResult astXL;
-
-    public static readonly string SampleText =
-        "FUN func(a, b, c, d, e, f, g);\n PRINT(a + b + c); VAR x =d+ e + f + g; PRINT(x); END; 1 + 2 FUN add(a, b); RETURN a + b;END;FUN adda(a, b);  RETURN a + b;END;;;1+2; VAR list = [1,2,3,4,5,6,6,7,7,8,8,8,9,9,9,4,42,3243,43,64535,6434,43,3]; 1 + 2 + 3+ 44 +45 + 3 + 43 +4";
 
     public static readonly string Text100000Char;
     public static readonly string Text10000Char;
     public static readonly string Text50000Char;
-
     public static readonly string Text5000Char;
+
     public static readonly List<BaseToken> TokenL;
     public static readonly List<BaseToken> TokenM;
-
     public static readonly List<BaseToken> TokenS;
     public static readonly List<BaseToken> TokenXL;
 
@@ -50,37 +45,16 @@ public static class BenchHelp
         TokenL = new Lexer.Lexer(Text50000Char, "BenchHelp").MakeTokens().Item1;
         TokenXL = new Lexer.Lexer(Text100000Char, "BenchHelp").MakeTokens().Item1;
 
-        Parser.Parser parserS = new(TokenS);
-        astS = parserS.Parse();
-        Parser.Parser parserM = new(TokenM);
-        astM = parserM.Parse();
+        astS = new Parser.Parser(TokenS).Parse();
+        astM = new Parser.Parser(TokenM).Parse();
         astL = new Parser.Parser(TokenL).Parse();
         astXL = new Parser.Parser(TokenXL).Parse();
-    }
-
-    public static SymbolTable GetSymbolTable()
-    {
-        SymbolTable SampleSymbolTable = new();
-
-        SampleSymbolTable.Set("TRUE", new VBool(true));
-        SampleSymbolTable.Set("FALSE", new VBool(false));
-
-        SampleSymbolTable.Set("MATH", new VMath());
-        SampleSymbolTable.Set("PRINT", BuiltInFunctionsTable.print);
-        SampleSymbolTable.Set("INPUT", BuiltInFunctionsTable.input);
-        SampleSymbolTable.Set("RUN", BuiltInFunctionsTable.run);
-        SampleSymbolTable.Set("TIMETORUN", BuiltInFunctionsTable.timetorun);
-        SampleSymbolTable.Set("TIME", BuiltInFunctionsTable.time);
-
-        return SampleSymbolTable;
     }
 
     public static void LogData()
     {
         Console.WriteLine("\nBENCH HELPER DATA");
-        Console.WriteLine(
-            $"SAMPLE TEXT ({SampleText.Length} Char):\n{BetterString(SampleText)}"
-        );
+        Console.WriteLine($"SAMPLE TEXT ({SampleText.Length} Char):\n{BetterString(SampleText)}");
 
         Console.WriteLine("\nTEXT VARIANTS:");
         Console.WriteLine(
@@ -109,12 +83,6 @@ public static class BenchHelp
         Console.WriteLine($"\tEXTREME -> {astXL.Node.ToString()?.Length}");
     }
 
-    public static void Run<T>(string changeDescription = "-")
-    {
-        Summary summary = BenchmarkRunner.Run<T>();
-        BenchReportWriter.UpdateFiles<T>(changeDescription);
-    }
-
     private static string BetterString(string str, int length = 120)
     {
         if (string.IsNullOrEmpty(str) || str.Length <= length)
@@ -141,7 +109,8 @@ public static class BenchHelp
     private static string GetText(int length)
     {
         string text = "";
-        while (text.Length < length) text += SampleText;
+        while (text.Length < length)
+            text += SampleText;
         text = text.Substring(0, length);
         text = text.Substring(0, text.LastIndexOf(';'));
         return text;

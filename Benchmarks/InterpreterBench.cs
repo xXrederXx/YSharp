@@ -1,8 +1,7 @@
-using YSharp.Runtime;
 using BenchmarkDotNet.Attributes;
+using YSharp.Runtime;
 
 namespace YSharp.Benchmarks;
-
 
 public class InterpreterBench
 {
@@ -11,7 +10,7 @@ public class InterpreterBench
     {
         Interpreter.Visit(
             BenchHelp.astL.Node,
-            new Context { symbolTable = BenchHelp.GetSymbolTable() }
+            new Context { symbolTable = SymbolTable.GenerateGlobalSymboltable() }
         );
     }
 
@@ -20,7 +19,7 @@ public class InterpreterBench
     {
         Interpreter.Visit(
             BenchHelp.astM.Node,
-            new Context { symbolTable = BenchHelp.GetSymbolTable() }
+            new Context { symbolTable = SymbolTable.GenerateGlobalSymboltable() }
         );
     }
 
@@ -29,7 +28,7 @@ public class InterpreterBench
     {
         Interpreter.Visit(
             BenchHelp.astS.Node,
-            new Context { symbolTable = BenchHelp.GetSymbolTable() }
+            new Context { symbolTable = SymbolTable.GenerateGlobalSymboltable() }
         );
     }
 
@@ -38,7 +37,7 @@ public class InterpreterBench
     {
         Interpreter.Visit(
             BenchHelp.astXL.Node,
-            new Context { symbolTable = BenchHelp.GetSymbolTable() }
+            new Context { symbolTable = SymbolTable.GenerateGlobalSymboltable() }
         );
     }
 }
