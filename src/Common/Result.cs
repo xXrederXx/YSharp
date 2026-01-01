@@ -15,7 +15,7 @@ public class Result<TValue, TError>
     public bool IsSuccess => _IsSuccess;
     public bool IsFailed => !_IsSuccess;
 
-    private Result(TValue? value, TError? error, bool isSuccess)
+    protected Result(TValue? value, TError? error, bool isSuccess)
     {
         _Value = value;
         _Error = error;
@@ -30,11 +30,11 @@ public class Result<TValue, TError>
     /// <param name="value">The value produced and needed to give along</param>
     /// <returns>A new instance of <c>Result</c> with a value of type <c>T</c> and IsSucess set to true </returns>
     /// <exception cref="ArgumentNullException">The value is not allowed to be null. In this case the function throws</exception>
-    public static Result<T, U> Succses<T, U>(T value)
+    public static Result<TValue, TError> Succses(TValue value)
     {
         if (value is null)
             throw new ArgumentNullException(nameof(value), "The value can not be null");
-        return new Result<T, U>(value, default, true);
+        return new Result<TValue, TError>(value, default, true);
     }
 
     /// <summary>
@@ -45,11 +45,11 @@ public class Result<TValue, TError>
     /// <param name="error">The error which occured durring the operations</param>
     /// <returns>A new instance of <c>Result</c> with a error of type <c>U</c> and IsSucess set to false </returns>
     /// <exception cref="ArgumentNullException">The error is not allowed to be null. In this case the function throws</exception>
-    public static Result<T, U> Fail<T, U>(U error)
+    public static Result<TValue, TError> Fail(TError error)
     {
         if (error is null)
             throw new ArgumentNullException(nameof(error), "The error can not be null");
-        return new Result<T, U>(default, error, false);
+        return new Result<TValue, TError>(default, error, false);
     }
 
     /// <summary>
