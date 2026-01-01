@@ -6,20 +6,26 @@ namespace YSharp.Common;
 /// </summary>
 /// <typeparam name="TValue">This is the type the success value has</typeparam>
 /// <typeparam name="TError">This is the type of the error</typeparam>
-public class Result<TValue, TError>
+public readonly struct Result<TValue, TError>
 {
     private readonly TValue? _Value;
     private readonly TError? _Error;
-    private readonly bool _IsSuccess;
 
-    public bool IsSuccess => _IsSuccess;
-    public bool IsFailed => !_IsSuccess;
+    public bool IsSuccess { get; }
+    public bool IsFailed => !IsSuccess;
 
-    protected Result(TValue? value, TError? error, bool isSuccess)
+    private Result(TValue value)
     {
         _Value = value;
+        _Error = default;
+        IsSuccess = true;
+    }
+
+    private Result(TError error)
+    {
+        _Value = default;
         _Error = error;
-        _IsSuccess = isSuccess;
+        IsSuccess = false;
     }
 
     /// <summary>
@@ -33,8 +39,8 @@ public class Result<TValue, TError>
     public static Result<TValue, TError> Succses(TValue value)
     {
         if (value is null)
-            throw new ArgumentNullException(nameof(value), "The value can not be null");
-        return new Result<TValue, TError>(value, default, true);
+            throw new ArgumentNullException(nameof(value));
+        return new Result<TValue, TError>(value);
     }
 
     /// <summary>
@@ -48,20 +54,19 @@ public class Result<TValue, TError>
     public static Result<TValue, TError> Fail(TError error)
     {
         if (error is null)
-            throw new ArgumentNullException(nameof(error), "The error can not be null");
-        return new Result<TValue, TError>(default, error, false);
+            throw new ArgumentNullException(nameof(error));
+        return new Result<TValue, TError>(error);
     }
 
     /// <summary>
-    /// This function can be used to try to get a value.
+    /// This function can be used to try to get a value. Only use the value if the function returns true
     /// </summary>
-    /// <param name="value">This will be the value saved or the defaultValue provided if IsSuccess is false</param>
-    /// <param name="defaultValue">The defaultValue if IsSuccess is false</param>
+    /// <param name="value">This will be the value saved or the null if IsSuccess is false</param>
     /// <returns>True if the result was a success and false otherwise</returns>
-    public bool TryGetValue(out TValue value, TValue defaultValue)
+    public bool TryGetValue(out TValue value)
     {
-        value = _IsSuccess ? _Value! : defaultValue;
-        return _IsSuccess;
+        value = _Value!;
+        return IsSuccess;
     }
 
     /// <summary>
