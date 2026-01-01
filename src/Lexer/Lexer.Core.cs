@@ -85,7 +85,7 @@ public sealed partial class Lexer
             else if (unsafeMultiCharToken.TryGetValue(currentChar, out var unsafeFunc))
             {
                 LexerOperationResult res = unsafeFunc.Invoke();
-                if (!res.TryGetValue(out BaseToken tok, NullToken.Instance))
+                if (!res.TryGetValue(out BaseToken tok))
                     return ([], res.GetError());
                 tokens.Add(tok);
             }
@@ -96,7 +96,7 @@ public sealed partial class Lexer
             else if (char.IsDigit(currentChar)) // Check for digits (int)
             {
                 LexerOperationResult res = MakeNumber();
-                if (!res.TryGetValue(out BaseToken tok, NullToken.Instance))
+                if (!res.TryGetValue(out BaseToken tok))
                     return ([], res.GetError());
                 tokens.Add(tok);
             }
