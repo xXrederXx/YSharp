@@ -3,6 +3,8 @@ using YSharp.Common;
 
 namespace YSharp.Lexer;
 
+using LexerOperationResult = Result<BaseToken, Error>;
+
 public sealed partial class Lexer
 {
     private static readonly Dictionary<char, char> escapeChars = new()
@@ -73,7 +75,7 @@ public sealed partial class Lexer
         return new BaseToken(TokenType.MINUS, startPos, pos);
     }
 
-    private (BaseToken, Error) MakeNotEquals()
+    private LexerOperationResult MakeNotEquals()
     {
         Position posStart = pos;
         Advance();
@@ -81,13 +83,13 @@ public sealed partial class Lexer
         {
             Position posEnd = pos;
             Advance();
-            return (new BaseToken(TokenType.NE, posStart, posEnd), ErrorNull.Instance);
+            return LexerOperationResult.Succses(new BaseToken(TokenType.NE, posStart, posEnd));
         }
-        return (NullToken.Instance, new ExpectedCharError(posStart, '='));
+        return LexerOperationResult.Fail(new ExpectedCharError(posStart, '='));
     }
 
     // this is used to make a number token of type int or float
-    private (BaseToken, Error) MakeNumber()
+    private LexerOperationResult MakeNumber()
     {
         bool hasDot = false;
         Position posStart = pos;
@@ -104,7 +106,7 @@ public sealed partial class Lexer
             if (currentChar == '.')
             {
                 if (hasDot)
-                    return (NullToken.Instance, new IllegalNumberFormat(posStart));
+                    return LexerOperationResult.Fail(new IllegalNumberFormat(posStart));
 
                 hasDot = true;
                 stringBuilder.Append('.');
@@ -121,11 +123,12 @@ public sealed partial class Lexer
         if (double.TryParse(stringBuilder.ToString(), out double value))
         {
             stringBuilder.Clear();
-            return (new Token<double>(TokenType.FLOAT, value, posStart, pos), ErrorNull.Instance);
+            return LexerOperationResult.Succses(
+                new Token<double>(TokenType.FLOAT, value, posStart, pos)
+            );
         }
 
-        return (
-            new Token<double>(TokenType.FLOAT, value, posStart, pos),
+        return LexerOperationResult.Fail(
             new InternalLexerError($"Couldnt convert Number to double -> Number ({stringBuilder})")
         );
     }
@@ -150,7 +153,7 @@ public sealed partial class Lexer
         return new BaseToken(TokenType.PLUS, startPos, pos);
     }
 
-    private (BaseToken, Error) MakeString()
+    private LexerOperationResult MakeString()
     {
         Position startPos = pos;
 
@@ -164,7 +167,9 @@ public sealed partial class Lexer
                     stringBuilder.Append(_char);
                 else
                 {
-                    return (NullToken.Instance, new IllegalEscapeCharError(startPos, currentChar));
+                    return LexerOperationResult.Fail(
+                        new IllegalEscapeCharError(startPos, currentChar)
+                    );
                 }
             }
             else
@@ -176,7 +181,9 @@ public sealed partial class Lexer
         Advance();
         string value = stringBuilder.ToString();
         stringBuilder.Clear();
-        return (new Token<string>(TokenType.STRING, value, startPos, pos), ErrorNull.Instance);
+        return LexerOperationResult.Succses(
+            new Token<string>(TokenType.STRING, value, startPos, pos)
+        );
     }
 
     private void SkipComment()

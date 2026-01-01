@@ -5,6 +5,8 @@ using YSharp.Util;
 
 namespace YSharp.Lexer;
 
+using LexerOperationResult = Result<BaseToken, Error>;
+
 public sealed partial class Lexer
 {
     private readonly StringBuilder stringBuilder = new();
@@ -26,7 +28,7 @@ public sealed partial class Lexer
         { '^', TokenType.POW },
     };
     private readonly Dictionary<char, Func<BaseToken>> safeMultiCharToken;
-    private readonly Dictionary<char, Func<(BaseToken, Error)>> unsafeMultiCharToken;
+    private readonly Dictionary<char, Func<LexerOperationResult>> unsafeMultiCharToken;
     private readonly Dictionary<char, Action?> skipCharToken;
 
     // Initalizer
@@ -50,7 +52,7 @@ public sealed partial class Lexer
             { '>', () => MakeDecision('>', TokenType.GTE, TokenType.GT) },
         };
 
-        unsafeMultiCharToken = new Dictionary<char, Func<(BaseToken, Error)>>()
+        unsafeMultiCharToken = new Dictionary<char, Func<LexerOperationResult>>()
         {
             { '"', MakeString },
             { '!', MakeNotEquals },
@@ -82,9 +84,9 @@ public sealed partial class Lexer
             }
             else if (unsafeMultiCharToken.TryGetValue(currentChar, out var unsafeFunc))
             {
-                (BaseToken tok, Error err) = unsafeFunc.Invoke();
-                if (err.IsError)
-                    return ([], err);
+                LexerOperationResult res = unsafeFunc.Invoke();
+                if (!res.TryGetValue(out BaseToken tok, NullToken.Instance))
+                    return ([], res.GetError());
                 tokens.Add(tok);
             }
             else if (safeMultiCharToken.TryGetValue(currentChar, out Func<BaseToken>? safeFunc))
@@ -93,9 +95,9 @@ public sealed partial class Lexer
             }
             else if (char.IsDigit(currentChar)) // Check for digits (int)
             {
-                (BaseToken tok, Error err) = MakeNumber();
-                if (err.IsError)
-                    return ([], err);
+                LexerOperationResult res = MakeNumber();
+                if (!res.TryGetValue(out BaseToken tok, NullToken.Instance))
+                    return ([], res.GetError());
                 tokens.Add(tok);
             }
             else if (char.IsLetter(currentChar)) // Check for letters
