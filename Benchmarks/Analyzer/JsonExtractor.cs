@@ -11,6 +11,12 @@ public class JsonExtractor
 
     public static List<BenchmarksData> LoadAllDatas() => LoadData(GetJsonFiles(DataPath));
 
+    public static void DeleteOldDatas()
+    {
+        foreach (string file in GetJsonFiles(NewDataPath))
+            File.Delete(file);
+    }
+
     private static string[] GetJsonFiles(string directoryPath) =>
         Directory.GetFiles(directoryPath).Where(x => x.EndsWith(".json")).ToArray();
 

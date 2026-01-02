@@ -10,6 +10,9 @@ public class Program
         DateTime dateTime = DateTime.Now;
 
         RunHelper.UserInput config = UserRequester.Request();
+
+        JsonExtractor.DeleteOldDatas();
+
         RunHelper.Run(config);
 
         List<BenchmarksData> newData = JsonExtractor.LoadNewDatas();
