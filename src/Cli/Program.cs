@@ -1,6 +1,5 @@
 ﻿using CommandLine;
 using YSharp.Common;
-using YSharp.Util;
 
 namespace YSharp.Cli;
 
@@ -12,7 +11,8 @@ internal static class Program
             .Parser.Default.ParseArguments<CliArgs>(args)
             .WithParsed(cliargs =>
             {
-                RunClass.args = cliargs;
+                ArgsHolder.UserArgs = cliargs;
+
                 if (cliargs.ScriptPath is null)
                     Runner.ConsoleRunner();
                 else

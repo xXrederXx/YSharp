@@ -12,7 +12,6 @@ using RunResult = Result<Value, Error>;
 
 public class RunClass
 {
-    public static CliArgs args = new CliArgs() {Optimization = 0, RenderDot = false, ScriptPath = null};
     private readonly SymbolTable globalSymbolTable;
 
     public RunClass()
@@ -31,8 +30,8 @@ public class RunClass
 
         // create a Parser and parse all the tokens
         ParseResult ast = new Parser.Parser(tokens).Parse();
-        if (args.Optimization > 0) ast = new ParseResult().Success(Optimizer.Optimizer.Visit(ast.Node));
-        if (args.RenderDot)
+        if (ArgsHolder.UserArgs.Optimization > 0) ast = new ParseResult().Success(Optimizer.Optimizer.Visit(ast.Node));
+        if (ArgsHolder.UserArgs.RenderDot)
         {
             if (!Directory.Exists("./DOT"))
                 Directory.CreateDirectory("./DOT");

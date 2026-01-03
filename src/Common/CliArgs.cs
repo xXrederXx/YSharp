@@ -14,7 +14,7 @@ public class CliArgs
         HelpText = "This flag is used render a DOT graph of the AST"
     )]
     public bool RenderDot { get; set; }
-    
+
     [Option(
         'p',
         "path",
