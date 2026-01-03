@@ -15,7 +15,7 @@ public sealed class UnaryConstantFolder : NodeOptimizer<UnaryOpNode, NumberNode>
         NumberNode num = (NumberNode)node.Node;
 
         return new NumberNode(
-            new Token<double>(TokenType.FLOAT, num.Tok.Value * -1, node.StartPos, node.EndPos)
+            new Token<double>(TokenType.NUMBER, num.Tok.Value * -1, node.StartPos, node.EndPos)
         );
     }
 }

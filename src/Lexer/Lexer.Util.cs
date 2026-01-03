@@ -124,7 +124,7 @@ public sealed partial class Lexer
         {
             stringBuilder.Clear();
             return LexerOperationResult.Succses(
-                new Token<double>(TokenType.FLOAT, value, posStart, pos)
+                new Token<double>(TokenType.NUMBER, value, posStart, pos)
             );
         }
 

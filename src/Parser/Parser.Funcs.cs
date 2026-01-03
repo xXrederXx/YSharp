@@ -37,7 +37,7 @@ public sealed partial class Parser
         BaseToken tok = currentToken;
 
         // check tyoes
-        if (tok.IsOneOf([TokenType.INT, TokenType.FLOAT]))
+        if (tok.IsType(TokenType.NUMBER))
         {
             AdvanceParser(res);
             return res.Success(new NumberNode((Token<double>)tok));

@@ -38,7 +38,7 @@ public sealed class ForNode : BaseNode
         this.VarNameTok = varNameTok;
         this.StartValueNode = startValueNode;
         this.EndValueNode = endValueNode;
-        this.StepValueNode = stepValueNode ?? new NumberNode(new Token<double>(TokenType.FLOAT, 1, Position.Null, Position.Null));
+        this.StepValueNode = stepValueNode ?? new NumberNode(new Token<double>(TokenType.NUMBER, 1, Position.Null, Position.Null));
         this.BodyNode = bodyNode;
         this.RetNull = retNull;
     }

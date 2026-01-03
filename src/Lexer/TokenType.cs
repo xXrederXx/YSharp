@@ -7,8 +7,7 @@ public enum TokenType
     NULL,
 
     // Types
-    INT,
-    FLOAT,
+    NUMBER,
     STRING,
 
     // Arithmetic

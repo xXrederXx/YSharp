@@ -36,7 +36,7 @@ public sealed class NumberConstantFolder : NodeOptimizer<BinOpNode, NumberNode>
         };
 
         return new NumberNode(
-            new Token<double>(TokenType.FLOAT, result, node.StartPos, node.EndPos)
+            new Token<double>(TokenType.NUMBER, result, node.StartPos, node.EndPos)
         );
     }
 }
