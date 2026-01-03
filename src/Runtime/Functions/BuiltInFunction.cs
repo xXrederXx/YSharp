@@ -102,41 +102,6 @@ public sealed class VBuiltInFunction : VBaseFunction
     private RunTimeResult ExecTimeToRun(Context execContext)
     {
         return new RunTimeResult().Failure(new AccessDepricatedError(execContext.parentEntryPos, "RunTimed", execContext));
-        if (execContext.symbolTable == null)
-            return new RunTimeResult().Failure(new InternalSymbolTableError(execContext));
-
-        Value fileNameValue = execContext.symbolTable.Get("fileName");
-        if (fileNameValue.GetType() != typeof(VString))
-        {
-            return new RunTimeResult().Failure(
-                new WrongTypeError(StartPos, "first arg must be string", execContext)
-            );
-        }
-
-        string fileName = ((VString)fileNameValue).value;
-        string script;
-        try
-        {
-            script = File.ReadAllText(fileName).Replace("\r\n", "\n");
-        }
-        catch (Exception e)
-        {
-            return new RunTimeResult().Failure(
-                new FileReadError(
-                    StartPos,
-                    $"Failed to load script '{fileName}'\n" + e,
-                    execContext
-                )
-            );
-        }
-
-        RunClass runClass = new();
-        (Value, Error, List<long>) res = runClass.RunTimed(fileName, script);
-        if (res.Item2.IsError) return new RunTimeResult().Failure(res.Item2);
-        string str =
-            "Init Lexer, Create Tokens, Init Parser, Create AST, Init Context, Run Interpreter, Whole Time (ms) \n"
-            + string.Join(',', res.Item3);
-        return new RunTimeResult().Success(new VString(str));
     }
 
     public override RunTimeResult Execute(List<Value> args)
