@@ -65,7 +65,7 @@ public readonly struct Result<TValue, TError> : IEquatable<Result<TValue, TError
     /// </summary>
     /// <param name="value">This will be the value saved or the null if IsSuccess is false</param>
     /// <returns>True if the result was a success and false otherwise</returns>
-    public bool TryGetValue([NotNullWhen(true)] out TValue value)
+    public readonly bool TryGetValue([NotNullWhen(true)] out TValue value)
     {
         value = _Value!;
         return IsSuccess;
@@ -76,7 +76,7 @@ public readonly struct Result<TValue, TError> : IEquatable<Result<TValue, TError
     /// </summary>
     /// <returns>The value from the result</returns>
     /// <exception cref="InvalidOperationException">If the result was not successful it will throw</exception>
-    public TValue GetValue()
+    public readonly TValue GetValue()
     {
         if (IsFailed)
             throw new InvalidOperationException(
@@ -90,7 +90,7 @@ public readonly struct Result<TValue, TError> : IEquatable<Result<TValue, TError
     /// </summary>
     /// <returns>The error from the result</returns>
     /// <exception cref="InvalidOperationException">If the result was successful it will throw</exception>
-    public TError GetError()
+    public readonly TError GetError()
     {
         if (IsSuccess)
             throw new InvalidOperationException(
@@ -99,26 +99,26 @@ public readonly struct Result<TValue, TError> : IEquatable<Result<TValue, TError
         return _Error!;
     }
 
-    public void Deconstruct(out bool isSuccess, out TValue? value, out TError? error)
+    public readonly void Deconstruct(out bool isSuccess, out TValue? value, out TError? error)
     {
         isSuccess = IsSuccess;
         value = _Value;
         error = _Error;
     }
 
-    public override int GetHashCode()
+    public override readonly int GetHashCode()
     {
         return IsSuccess ? HashCode.Combine(true, _Value) : HashCode.Combine(false, _Error);
     }
 
-    public override bool Equals(object? obj)
+    public override readonly bool Equals(object? obj)
     {
         if (obj is not Result<TValue, TError> other)
             return false;
         return Equals(other);
     }
 
-    public bool Equals(Result<TValue, TError> other)
+    public readonly bool Equals(Result<TValue, TError> other)
     {
         if (IsSuccess != other.IsSuccess)
             return false;
