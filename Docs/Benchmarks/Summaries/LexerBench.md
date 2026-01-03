@@ -2,17 +2,17 @@
 
 ## Metadata
 
-- Git Commit: [16788f0](https://github.com/xXrederXx/YSharp/commit/16788f08154d605bbf2da0ecc504b50fc399c393)
-- Recorded At: 31.12.2025 17:01:02
+- Git Commit: [4378cc6](https://github.com/xXrederXx/YSharp/commit/4378cc6bbdd7e216fbbf46590e863b5dfc89a964)
+- Recorded At: 03.01.2026 17:26:23
 
 ## Results
 
 | Method           | Time Mean    | Aprox. Error | Allocated | Gen 0 | Gen 1 | Gen 2 |
 | ---------------- | ------------ | ------------ | --------- | ----- | ----- | ----- |
-| LexerBenchmarkL  | 3,103,993 ns | 26,343 ns    | 2,148 kb  | 293   | 289   | 86    |
-| LexerBenchmarkM  | 170,284 ns   | 268 ns       | 458 kb    | 54    | 18    | 0     |
-| LexerBenchmarkS  | 81,934 ns    | 147 ns       | 229 kb    | 27    | 7     | 0     |
-| LexerBenchmarkXL | 6,373,498 ns | 55,702 ns    | 4,293 kb  | 578   | 570   | 180   |
+| LexerBenchmarkL  | 3,020,793 ns | 43,540 ns    | 2,148 kb  | 301   | 297   | 94    |
+| LexerBenchmarkM  | 174,627 ns   | 1,129 ns     | 458 kb    | 54    | 36    | 0     |
+| LexerBenchmarkS  | 83,621 ns    | 387 ns       | 229 kb    | 27    | 10    | 0     |
+| LexerBenchmarkXL | 5,837,520 ns | 183,730 ns   | 4,293 kb  | 586   | 578   | 188   |
 
 ## History
 
