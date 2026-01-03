@@ -1,4 +1,3 @@
-using YSharp.Lexer;
 using YSharp.Optimizer.NodeOptimizers;
 using YSharp.Parser;
 using YSharp.Parser.Nodes;

@@ -1,9 +1,7 @@
-using System.Diagnostics;
 using YSharp.Common;
 using YSharp.Lexer;
 using YSharp.Parser;
 using YSharp.Runtime;
-using YSharp.Runtime.Primatives.Number;
 using YSharp.Tools.Debug.Dot;
 
 namespace YSharp.Util;

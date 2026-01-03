@@ -1,7 +1,3 @@
-using System.Collections.Immutable;
-using System.Collections.Specialized;
-using System.Runtime.InteropServices;
-using Microsoft.VisualBasic;
 using ScottPlot;
 using ScottPlot.Plottables;
 using YSharp.Benchmarks.Analyzer;
