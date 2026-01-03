@@ -2,9 +2,7 @@ using System.Collections.Immutable;
 using System.Runtime.CompilerServices;
 using YSharp.Lexer;
 
-
 namespace YSharp.Parser;
-
 
 // the parser which is used to make the abstract syntax tree
 public partial class Parser
@@ -21,16 +19,17 @@ public partial class Parser
         UpdateCurrentTok();
     }
 
+    public ParseResult Parse() => Statements();
+
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public void AdvanceParser(ParseResult res)
+    private void AdvanceParser(ParseResult res)
     {
         tokIndex++;
         UpdateCurrentTok();
         res.Advance();
     }
 
-    public ParseResult Parse() => Statements();
-
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private BaseToken Reverse(int amount = 1)
     {
         tokIndex -= amount;
@@ -38,8 +37,10 @@ public partial class Parser
         return currentToken;
     }
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private void UpdateCurrentTok()
     {
-        if (tokIndex >= 0 && tokIndex < tokens.Length) currentToken = tokens[tokIndex];
+        if (tokIndex >= 0 && tokIndex < tokens.Length)
+            currentToken = tokens[tokIndex];
     }
 }
