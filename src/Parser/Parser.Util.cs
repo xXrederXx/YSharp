@@ -5,7 +5,7 @@ using YSharp.Parser.Nodes;
 
 namespace YSharp.Parser;
 
-public partial class Parser
+public sealed partial class Parser
 {
     public static bool TryCastToken<T>(
         BaseToken token,

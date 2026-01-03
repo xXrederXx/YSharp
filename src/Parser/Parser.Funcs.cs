@@ -4,7 +4,7 @@ using YSharp.Parser.Nodes;
 
 namespace YSharp.Parser;
 
-public partial class Parser
+public sealed partial class Parser
 {
     private ParseResult ArithExpr()
     {
