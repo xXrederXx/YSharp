@@ -10,14 +10,15 @@ namespace YSharp.Parser;
 public partial class Parser
 {
     public BaseToken currentToken;
-    public int tokIndex = -1;
+    public int tokIndex;
     private readonly ImmutableArray<BaseToken> tokens;
 
     public Parser(List<BaseToken> tokens)
     {
         this.tokens = tokens.ToImmutableArray();
         currentToken = NullToken.Instance;
-        AdvanceParser();
+        tokIndex = 0;
+        UpdateCurrentTok();
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -29,12 +30,6 @@ public partial class Parser
     }
 
     public ParseResult Parse() => Statements();
-
-    private void AdvanceParser()
-    {
-        tokIndex++;
-        UpdateCurrentTok();
-    }
 
     private BaseToken Reverse(int amount = 1)
     {
