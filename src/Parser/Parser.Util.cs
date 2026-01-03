@@ -78,34 +78,30 @@ public partial class Parser
 
     private List<BaseNode> MakeArgs(ParseResult res)
     {
+        List<BaseNode> argNodes = [];
         if (currentToken.IsNotType(TokenType.LPAREN))
         {
             res.Failure(new ExpectedTokenError(currentToken.StartPos, "'('"));
-            return [];
+            return argNodes;
         }
 
         AdvanceParser(res);
         if (currentToken.IsType(TokenType.RPAREN))
         {
+            // Means its empty
             AdvanceParser(res);
-            return []; // empty node just for the parseresult.succses
+            return argNodes;
         }
 
-        // get argument
-        List<BaseNode> argNodes = [];
-        argNodes.Add(res.Register(Expression()));
-        if (res.HasError)
-            return [];
-
-        // get the rest of the arguments which are seperated by commas
-        while (currentToken.IsType(TokenType.COMMA))
+        Reverse(1);
+        do
         {
             AdvanceParser(res);
 
             argNodes.Add(res.Register(Expression()));
             if (res.HasError)
                 return [];
-        }
+        } while (currentToken.IsType(TokenType.COMMA));
 
         if (currentToken.IsNotType(TokenType.RPAREN))
         {
@@ -114,8 +110,7 @@ public partial class Parser
         }
 
         AdvanceParser(res);
-
-        return argNodes; // empty node just for the parseresult.succses
+        return argNodes;
     }
 
     private ParseResult ShortendVarAssignHelper(Token<string> varName, TokenType type)
