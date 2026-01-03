@@ -10,9 +10,10 @@ using LexerResult = Result<List<BaseToken>, Error>;
 
 public sealed partial class Lexer
 {
+    private const char StopChar = char.MaxValue;
     private readonly StringBuilder stringBuilder = new();
     private readonly string text;
-    private char currentChar = char.MaxValue;
+    private char currentChar = StopChar;
     private Position pos;
 
     private static readonly Dictionary<char, TokenType> singelCharToken = new()
@@ -40,7 +41,7 @@ public sealed partial class Lexer
         // The .MaxValue enshures that the first advance call overflows to
         byte fileId = FileNameRegistry.GetFileId(fileName);
         pos = new Position(0, 0, 0, fileId);
-        currentChar = pos.Index < text.Length ? text[pos.Index] : char.MaxValue;
+        currentChar = pos.Index < text.Length ? text[pos.Index] : StopChar;
 
         safeMultiCharToken = new Dictionary<char, Func<BaseToken>>()
         {
@@ -72,7 +73,7 @@ public sealed partial class Lexer
     {
         List<BaseToken> tokens = [];
 
-        while (currentChar != char.MaxValue)
+        while (currentChar != StopChar)
             if (skipCharToken.TryGetValue(currentChar, out Action? action))
             {
                 Advance();
@@ -122,6 +123,6 @@ public sealed partial class Lexer
     private void Advance()
     {
         pos = pos.Advance(currentChar);
-        currentChar = pos.Index < text.Length ? text[pos.Index] : char.MaxValue;
+        currentChar = pos.Index < text.Length ? text[pos.Index] : StopChar;
     }
 }

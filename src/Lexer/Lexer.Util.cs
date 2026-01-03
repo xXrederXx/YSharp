@@ -158,7 +158,7 @@ public sealed partial class Lexer
         Position startPos = pos;
 
         Advance();
-        while (currentChar != char.MaxValue && currentChar != '"')
+        while (currentChar != StopChar && currentChar != '"')
         {
             if (currentChar == '\\')
             {
@@ -188,7 +188,7 @@ public sealed partial class Lexer
 
     private void SkipComment()
     {
-        while (currentChar is not '\n' and not '\r' and not ';' and not '#' and not char.MaxValue)
+        while (currentChar is not '\n' and not '\r' and not ';' and not '#' and not StopChar)
             Advance();
     }
 
