@@ -6,6 +6,7 @@ using YSharp.Util;
 namespace YSharp.Lexer;
 
 using LexerOperationResult = Result<BaseToken, Error>;
+using LexerResult = Result<List<BaseToken>, Error>;
 
 public sealed partial class Lexer
 {
@@ -67,7 +68,7 @@ public sealed partial class Lexer
     }
 
     // generates all tokens
-    public (List<BaseToken>, Error) MakeTokens()
+    public LexerResult MakeTokens()
     {
         List<BaseToken> tokens = [];
 
@@ -86,7 +87,7 @@ public sealed partial class Lexer
             {
                 LexerOperationResult res = unsafeFunc.Invoke();
                 if (!res.TryGetValue(out BaseToken tok))
-                    return ([], res.GetError());
+                    return LexerResult.Fail(res.GetError());
                 tokens.Add(tok);
             }
             else if (safeMultiCharToken.TryGetValue(currentChar, out Func<BaseToken>? safeFunc))
@@ -97,7 +98,7 @@ public sealed partial class Lexer
             {
                 LexerOperationResult res = MakeNumber();
                 if (!res.TryGetValue(out BaseToken tok))
-                    return ([], res.GetError());
+                    return LexerResult.Fail(res.GetError());
                 tokens.Add(tok);
             }
             else if (char.IsLetter(currentChar)) // Check for letters
@@ -107,11 +108,11 @@ public sealed partial class Lexer
             else
             {
                 // Not a valid token, return an error
-                return (new List<BaseToken>(), new IllegalCharError(pos, currentChar));
+                return LexerResult.Fail(new IllegalCharError(pos, currentChar));
             }
 
         tokens.Add(new BaseToken(TokenType.EOF, pos, pos)); // Add the End Of File token
-        return (tokens, ErrorNull.Instance);
+        return LexerResult.Succses(tokens);
     }
 
     private static bool IsValidIdentifierChar(char c) => char.IsLetterOrDigit(c) || c == '_';

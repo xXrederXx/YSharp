@@ -8,6 +8,7 @@ using YSharp.Tools.Debug.Dot;
 
 namespace YSharp.Util;
 
+using LexerResult = Result<List<BaseToken>, Error>;
 using RunResult = Result<Value, Error>;
 
 public class RunClass
@@ -23,33 +24,52 @@ public class RunClass
     public RunResult Run(string fn, string text)
     {
         // create a Lexer and generate the tokens with it
-        (List<BaseToken> tokens, Error LexerError) = new Lexer.Lexer(text, fn).MakeTokens();
+        LexerResult lexerResult = new Lexer.Lexer(text, fn).MakeTokens();
 
         // look if the lexer threw an Error
-        if (LexerError.IsError) return RunResult.Fail(LexerError);
+        if (!lexerResult.TryGetValue(out List<BaseToken> tokens))
+            return RunResult.Fail(lexerResult.GetError());
 
         // create a Parser and parse all the tokens
         ParseResult ast = new Parser.Parser(tokens).Parse();
-        if (ArgsHolder.UserArgs.Optimization > 0) ast = new ParseResult().Success(Optimizer.Optimizer.Visit(ast.Node));
-        if (ArgsHolder.UserArgs.RenderDot)
+        ast = TryOptimize(ast);
+        TryRenderDot(fn, ast);
+
+        if (ast.HasError)
+            return RunResult.Fail(ast.Error);
+
+        Context context = new("<program>", null, Position.Null)
         {
-            if (!Directory.Exists("./DOT"))
-                Directory.CreateDirectory("./DOT");
-            AstDotExporter.ExportToDot(
-                ast.Node,
-                $"./DOT/DOT-{string.Concat(fn.Where(c => char.IsLetterOrDigit(c)))}.dot"
-            );
-        }
-
-        if (ast.HasError) return RunResult.Fail(ast.Error);
-
-        Context context = new("<program>", null, new Position()) { symbolTable = globalSymbolTable };
+            symbolTable = globalSymbolTable,
+        };
         RunTimeResult result = Interpreter.Visit(ast.Node, context);
 
         // return the node and Error
-        if(result.error.IsError)
+        if (result.error.IsError)
             return RunResult.Fail(result.error);
         return RunResult.Succses(result.value);
+    }
+
+    private static void TryRenderDot(string fn, ParseResult ast)
+    {
+        if (!ArgsHolder.UserArgs.RenderDot)
+        {
+            return;
+        }
+
+        if (!Directory.Exists("./DOT"))
+            Directory.CreateDirectory("./DOT");
+        AstDotExporter.ExportToDot(
+            ast.Node,
+            $"./DOT/DOT-{string.Concat(fn.Where(c => char.IsLetterOrDigit(c)))}.dot"
+        );
+    }
+
+    private static ParseResult TryOptimize(ParseResult ast)
+    {
+        if (ArgsHolder.UserArgs.Optimization > 0)
+            ast = new ParseResult().Success(Optimizer.Optimizer.Visit(ast.Node));
+        return ast;
     }
 
     public (Value, Error, List<long>) RunTimed(string fn, string text)
@@ -66,15 +86,16 @@ public class RunClass
 
         // 2: create tokens
         sw.Restart();
-        (List<BaseToken>, Error) tokens = lexer.MakeTokens();
+        LexerResult lexerResult = lexer.MakeTokens();
 
-        if (tokens.Item2.IsError) return (new VNumber(0), tokens.Item2, times);
+        if (!lexerResult.TryGetValue(out List<BaseToken> tokens))
+            return (new VNumber(0), lexerResult.GetError(), times);
         sw.Stop();
         times.Add(sw.ElapsedTicks);
 
         // 3: init parser
         sw.Restart();
-        Parser.Parser parser = new(tokens.Item1);
+        Parser.Parser parser = new(tokens);
         sw.Stop();
         times.Add(sw.ElapsedTicks);
 
@@ -82,13 +103,17 @@ public class RunClass
         sw.Restart();
         ParseResult ast = parser.Parse(); // ast = abstract syntax tree
 
-        if (ast.Error.IsError) return (new VNumber(0), ast.Error, times);
+        if (ast.Error.IsError)
+            return (new VNumber(0), ast.Error, times);
         sw.Stop();
         times.Add(sw.ElapsedTicks);
 
         // 6: init context
         sw.Restart();
-        Context context = new("<program>", null, new Position()) { symbolTable = globalSymbolTable };
+        Context context = new("<program>", null, new Position())
+        {
+            symbolTable = globalSymbolTable,
+        };
         sw.Stop();
         times.Add(sw.ElapsedTicks);
 
