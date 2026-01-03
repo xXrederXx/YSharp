@@ -40,10 +40,10 @@ public static class BenchHelp
         CheckString(Text50000Char);
         CheckString(Text100000Char);
 
-        TokenS = new Lexer.Lexer(Text5000Char, "BenchHelp").MakeTokens().Item1;
-        TokenM = new Lexer.Lexer(Text10000Char, "BenchHelp").MakeTokens().Item1;
-        TokenL = new Lexer.Lexer(Text50000Char, "BenchHelp").MakeTokens().Item1;
-        TokenXL = new Lexer.Lexer(Text100000Char, "BenchHelp").MakeTokens().Item1;
+        TokenS = new Lexer.Lexer(Text5000Char, "BenchHelp").MakeTokens().GetValue();
+        TokenM = new Lexer.Lexer(Text10000Char, "BenchHelp").MakeTokens().GetValue();
+        TokenL = new Lexer.Lexer(Text50000Char, "BenchHelp").MakeTokens().GetValue();
+        TokenXL = new Lexer.Lexer(Text100000Char, "BenchHelp").MakeTokens().GetValue();
 
         astS = new Parser.Parser(TokenS).Parse();
         astM = new Parser.Parser(TokenM).Parse();
