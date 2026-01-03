@@ -7,6 +7,8 @@ using YSharp.Util;
 
 namespace YSharp.Tests;
 
+using RunResult = Result<Value, Common.Error>;
+
 public class ErrorTest
 {
     private readonly RunClass _runClass = new();
@@ -58,8 +60,10 @@ public class ErrorTest
     [Fact]
     public void Test_Divide_By_Zero()
     {
-        (Value _, Error err) = _runClass.Run("TEST", "1 / 0");
-        Assert.IsType<DivisionByZeroError>(err);
+        RunResult res = _runClass.Run("TEST", "1 / 0");
+        Assert.True(res.IsFailed);
+        if(res.IsFailed)
+            Assert.IsType<DivisionByZeroError>(res.GetError());
     }
 
     [Theory]
@@ -92,9 +96,9 @@ public class ErrorTest
     [InlineData(0.5, -0.354)]
     public void Test_Sub(double x, double y)
     {
-        (Value val, Error err) res = _runClass.Run("TEST", $"{x:f}-{y:f}");
+        RunResult res = _runClass.Run("TEST", $"{x:f}-{y:f}");
         if (y < 0)
-            Assert.IsType<InvalidSyntaxError>(res.err);
+            Assert.IsType<InvalidSyntaxError>(res.GetError());
         else
             Check_Arith(res, x - y);
     }
@@ -110,12 +114,9 @@ public class ErrorTest
         Check_Arith(_runClass.Run("TEST", $"{x:f} - {y:f}"), x - y);
     }
 
-    private void Check_Arith((Value, Error) res, double expected)
+    private void Check_Arith(RunResult res, double expected)
     {
-        Assert.NotNull(res.Item2);
-        Assert.IsType<ErrorNull>(res.Item2);
-        Assert.IsType<VNumber>(((VList)res.Item1).value[0]);
-        if (res.Item1 is VNumber num)
-            Assert.Equal(expected, num.value);
+        Assert.True(res.IsSuccess);
+        Assert.IsType<VNumber>(((VList)res.GetValue()).value[0]);
     }
 }

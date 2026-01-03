@@ -3,13 +3,12 @@ using YSharp.Common;
 using YSharp.Lexer;
 using YSharp.Parser;
 using YSharp.Runtime;
-using YSharp.Runtime.Functions;
-using YSharp.Runtime.Primatives.Bool;
 using YSharp.Runtime.Primatives.Number;
-using YSharp.Runtime.Utils.Math;
 using YSharp.Tools.Debug.Dot;
 
 namespace YSharp.Util;
+
+using RunResult = Result<Value, Error>;
 
 public class RunClass
 {
@@ -22,13 +21,13 @@ public class RunClass
         globalSymbolTable = SymbolTable.GenerateGlobalSymboltable();
     }
 
-    public (Value, Error) Run(string fn, string text)
+    public RunResult Run(string fn, string text)
     {
         // create a Lexer and generate the tokens with it
         (List<BaseToken> tokens, Error LexerError) = new Lexer.Lexer(text, fn).MakeTokens();
 
         // look if the lexer threw an Error
-        if (LexerError.IsError) return (new VNumber(0), LexerError);
+        if (LexerError.IsError) return RunResult.Fail(LexerError);
 
         // create a Parser and parse all the tokens
         ParseResult ast = new Parser.Parser(tokens).Parse();
@@ -43,13 +42,15 @@ public class RunClass
             );
         }
 
-        if (ast.HasError) return (new VNumber(0), ast.Error);
+        if (ast.HasError) return RunResult.Fail(ast.Error);
 
         Context context = new("<program>", null, new Position()) { symbolTable = globalSymbolTable };
         RunTimeResult result = Interpreter.Visit(ast.Node, context);
 
         // return the node and Error
-        return (result.value, result.error);
+        if(result.error.IsError)
+            return RunResult.Fail(result.error);
+        return RunResult.Succses(result.value);
     }
 
     public (Value, Error, List<long>) RunTimed(string fn, string text)

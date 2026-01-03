@@ -7,6 +7,8 @@ using YSharp.Util;
 
 namespace YSharp.Tests;
 
+using RunResult = Result<Value, Error>;
+
 public class FeatureTest
 {
     private readonly RunClass _runClass = new();
@@ -14,7 +16,7 @@ public class FeatureTest
     [Fact]
     public void ForLoopSum()
     {
-        (Value val, Error err) = _runClass.Run(
+        RunResult res = _runClass.Run(
             "TEST",
             @"
         FUN x()
@@ -29,14 +31,14 @@ public class FeatureTest
     "
         );
 
-        Assert.IsType<ErrorNull>(err);
-        Assert.Equal(10, ExtractResult(val));
+        Assert.True(res.IsSuccess);
+        Assert.Equal(10, ExtractResult(res));
     }
 
     [Fact]
     public void FunctionSimpleReturn()
     {
-        (Value val, Error err) = _runClass.Run(
+        RunResult res = _runClass.Run(
             "TEST",
             @"
         FUN A(x)
@@ -46,23 +48,23 @@ public class FeatureTest
     "
         );
 
-        Assert.IsType<ErrorNull>(err);
-        Assert.Equal(5, ExtractResult(val));
+        Assert.True(res.IsSuccess);
+        Assert.Equal(5, ExtractResult(res));
     }
 
     [Fact]
     public void ListIndex()
     {
-        (Value val, Error err) = _runClass.Run("TEST", "VAR x = [10, 20, 30];x.Get(1)");
+        RunResult res = _runClass.Run("TEST", "VAR x = [10, 20, 30];x.Get(1)");
 
-        Assert.IsType<ErrorNull>(err);
-        Assert.Equal(20, ExtractResult(val));
+        Assert.True(res.IsSuccess);
+        Assert.Equal(20, ExtractResult(res));
     }
 
     [Fact]
     public void ListLengthProperty()
     {
-        (Value val, Error err) = _runClass.Run(
+        RunResult res = _runClass.Run(
             "TEST",
             @"
         VAR l = [1,2,3,4]
@@ -70,23 +72,23 @@ public class FeatureTest
     "
         );
 
-        Assert.IsType<ErrorNull>(err);
-        Assert.Equal(4, ExtractResult(val));
+        Assert.True(res.IsSuccess);
+        Assert.Equal(4, ExtractResult(res));
     }
 
     [Fact]
     public void MathSqrtTest()
     {
-        (Value val, Error err) = _runClass.Run("TEST", "MATH.SQRT(9)");
+        RunResult res = _runClass.Run("TEST", "MATH.SQRT(9)");
 
-        Assert.IsType<ErrorNull>(err);
-        Assert.Equal(3, ExtractResult(val));
+        Assert.True(res.IsSuccess);
+        Assert.Equal(3, ExtractResult(res));
     }
 
     [Fact]
     public void NestedCalls()
     {
-        (Value val, Error err) = _runClass.Run(
+        RunResult res = _runClass.Run(
             "TEST",
             @"
         FUN A(x); RETURN x + 1 END
@@ -95,12 +97,14 @@ public class FeatureTest
     "
         );
 
-        Assert.IsType<ErrorNull>(err);
-        Assert.Equal(8, ExtractResult(val));
+        Assert.True(res.IsSuccess);
+        Assert.Equal(8, ExtractResult(res));
     }
 
-    private double ExtractResult(Value val)
+    private double ExtractResult(RunResult res)
     {
+        if(!res.TryGetValue(out Value val))
+            return double.NaN;
         switch (val)
         {
             case VNumber num:

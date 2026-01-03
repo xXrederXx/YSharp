@@ -7,6 +7,7 @@ using YSharp.Util;
 
 namespace YSharp.Tests;
 
+using RunResult = Result<Value, Error>;
 public class ScriptTest
 {
     private readonly RunClass _runClass = new();
@@ -14,7 +15,7 @@ public class ScriptTest
     [Fact]
     public void SumFactorials()
     {
-        (Value val, Error err) = _runClass.Run(
+        RunResult res = _runClass.Run(
             "TEST",
             @"
 FUN sumFactorials(n)
@@ -34,14 +35,14 @@ sumFactorials(5)
     "
         );
 
-        Assert.IsType<ErrorNull>(err);
-        Assert.Equal(153, ExtractResult(val));
+        Assert.True(res.IsSuccess);
+        Assert.Equal(153, ExtractResult(res));
     } 
 
     [Fact(Skip = "No modulo")]
     public void CollatzSteps()
     {
-        (Value val, Error err) = _runClass.Run(
+        RunResult res = _runClass.Run(
             "TEST",
             @"
 FUN collatzSteps(x)
@@ -62,14 +63,14 @@ collatzSteps(13)
         "
         );
 
-        Assert.IsType<ErrorNull>(err);
-        Assert.Equal(9, ExtractResult(val));
+        Assert.True(res.IsSuccess);
+        Assert.Equal(9, ExtractResult(res));
     }
 
     [Fact]
     public void FibSum()
     {
-        (Value val, Error err) = _runClass.Run(
+        RunResult res = _runClass.Run(
             "TEST",
             @"
 FUN fibSum(n)
@@ -89,14 +90,14 @@ fibSum(10)
     "
         );
 
-        Assert.IsType<ErrorNull>(err);
-        Assert.Equal(88, ExtractResult(val));
+        Assert.True(res.IsSuccess);
+        Assert.Equal(88, ExtractResult(res));
     }
 
     [Fact]
     public void Power()
     {
-        (Value val, Error err) = _runClass.Run(
+        RunResult res = _runClass.Run(
             "TEST",
             @"
 FUN power(base, exp)
@@ -111,14 +112,14 @@ power(3, 4)
     "
         );
 
-        Assert.IsType<ErrorNull>(err);
-        Assert.Equal(81, ExtractResult(val));
+        Assert.True(res.IsSuccess);
+        Assert.Equal(81, ExtractResult(res));
     }
 
     [Fact]
     public void SumList()
     {
-        (Value val, Error err) = _runClass.Run(
+        RunResult res = _runClass.Run(
             "TEST",
             @"
 FUN sumList(lst)
@@ -133,14 +134,14 @@ sumList([1, 2, 3, 4, 5])
     "
         );
 
-        Assert.IsType<ErrorNull>(err);
-        Assert.Equal(15, ExtractResult(val));
+        Assert.True(res.IsSuccess);
+        Assert.Equal(15, ExtractResult(res));
     }
 
     [Fact]
     public void Fib()
     {
-        (Value val, Error err) = _runClass.Run(
+        RunResult res = _runClass.Run(
             "TEST",
             @"
 FUN fib(n)
@@ -158,14 +159,14 @@ fib(10)
     "
         );
 
-        Assert.IsType<ErrorNull>(err);
-        Assert.Equal(55, ExtractResult(val));
+        Assert.True(res.IsSuccess);
+        Assert.Equal(55, ExtractResult(res));
     }
 
     [Fact]
     public void Factorial()
     {
-        (Value val, Error err) = _runClass.Run(
+        RunResult res = _runClass.Run(
             "TEST",
             @"
 FUN factorial(n)
@@ -180,14 +181,14 @@ factorial(5)
     "
         );
 
-        Assert.IsType<ErrorNull>(err);
-        Assert.Equal(120, ExtractResult(val));
+        Assert.True(res.IsSuccess);
+        Assert.Equal(120, ExtractResult(res));
     }
 
     [Fact]
     public void Add()
     {
-        (Value val, Error err) = _runClass.Run(
+        RunResult res = _runClass.Run(
             "TEST",
             @"
 FUN add(a, b)
@@ -199,12 +200,14 @@ add(5, 7)
     "
         );
 
-        Assert.IsType<ErrorNull>(err);
-        Assert.Equal(12, ExtractResult(val));
+        Assert.True(res.IsSuccess);
+        Assert.Equal(12, ExtractResult(res));
     }
 
-    private double ExtractResult(Value val)
+    private double ExtractResult(RunResult res)
     {
+        if(!res.TryGetValue(out Value val))
+            return double.NaN;
         switch (val)
         {
             case VNumber num:

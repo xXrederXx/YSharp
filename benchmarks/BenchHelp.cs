@@ -6,6 +6,8 @@ using YSharp.Util;
 
 namespace YSharp.Benchmarks;
 
+using RunResult = Result<Value, Error>;
+
 public static class BenchHelp
 {
     public const string SampleText =
@@ -95,11 +97,11 @@ public static class BenchHelp
     private static void CheckString(string str)
     {
         RunClass runClass = new();
-        (Value, Error) res = runClass.Run("BENCH-HELPER-CHECK", str);
-        if (res.Item2.IsError)
+        RunResult res = runClass.Run("BENCH-HELPER-CHECK", str);
+        if (res.IsFailed)
         {
             Console.WriteLine(
-                $"DID NOT PASS BENCH-HELPER-CHECK \n\n ERROR: \n\t{res.Item2} \n\n TEXT: \n {BetterString(str)}"
+                $"DID NOT PASS BENCH-HELPER-CHECK \n\n ERROR: \n\t{res.GetError()} \n\n TEXT: \n {BetterString(str)}"
             );
         }
     }

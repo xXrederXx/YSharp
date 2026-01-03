@@ -5,6 +5,7 @@ using YSharp.Util;
 
 namespace YSharp.Runtime.Functions;
 
+using RunResult = Result<Value, Common.Error>;
 
 public static class BuiltInFunctionsTable
 {
@@ -93,8 +94,8 @@ public sealed class VBuiltInFunction : VBaseFunction
         }
 
         RunClass runClass = new();
-        ValueAndError res = runClass.Run(fileName, script);
-        if (res.Error.IsError) return new RunTimeResult().Failure(res.Error);
+        RunResult res = runClass.Run(fileName, script);
+        if (res.IsFailed) return new RunTimeResult().Failure(res.GetError());
         return new RunTimeResult().Success(ValueNull.Instance);
     }
 

@@ -5,6 +5,8 @@ using YSharp.Util;
 
 namespace YSharp.Cli;
 
+using RunResult = Result<Value, Common.Error>;
+
 internal static class Start
 {
     private static void ConsoleRunner()
@@ -22,10 +24,10 @@ internal static class Start
             if (inp.Trim() == "")
                 continue;
 
-            (Value, Common.Error) res = runClass.Run("<stdin>", inp); // run the app
+            RunResult res = runClass.Run("<stdin>", inp); // run the app
 
-            if (res.Item2.IsError)
-                Console.WriteLine(res.Item2);
+            if (res.IsFailed)
+                Console.WriteLine(res.GetError());
         }
     }
 
@@ -33,12 +35,12 @@ internal static class Start
     {
         RunClass runClass = new();
         // intrnr = internal runner
-        (Value, Common.Error) res = runClass.Run(
+        RunResult res = runClass.Run(
             "<intrnr>",
             $"RUN(\"{path.Replace("\\", "\\\\")}\")"
         ); // run the app
-        if (res.Item2.IsError)
-            Console.WriteLine(res.Item2);
+        if (res.IsFailed)
+            Console.WriteLine(res.GetError());
     }
 
     private static void Main(string[] args)
