@@ -132,6 +132,9 @@ public class AssignmentToConstantError(Position posStart, string name, Context? 
 public class ReservedNameError(Position posStart, string name, Context? context)
     : RunTimeError(posStart, $"'{name}' is a reserved keyword", context, 2003);
 
+public class AccessDepricatedError(Position posStart, string name, Context? context)
+    : RunTimeError(posStart, $"Cannot access '{name}' because its depricated", context, 2004);
+
 //* 3000–3999: Type & Value Errors
 public class WrongTypeError(Position posStart, string details, Context? context)
     : RunTimeError(posStart, details, context, 3000);

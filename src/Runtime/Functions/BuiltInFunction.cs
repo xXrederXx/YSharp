@@ -101,6 +101,7 @@ public sealed class VBuiltInFunction : VBaseFunction
 
     private RunTimeResult ExecTimeToRun(Context execContext)
     {
+        return new RunTimeResult().Failure(new AccessDepricatedError(execContext.parentEntryPos, "RunTimed", execContext));
         if (execContext.symbolTable == null)
             return new RunTimeResult().Failure(new InternalSymbolTableError(execContext));
 
