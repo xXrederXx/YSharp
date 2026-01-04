@@ -1,15 +1,15 @@
 # Installation of Ysharp
 
-Here you will learn how to install Ysharp. When you have completed this step you are ready to use the shell.
+Here you will learn how to install Ysharp. When you have completed this step you are ready to use the shell or to execute your own scripts.
 
 ## Prerequesites
 
 Before installing Ysharp, make sure the following tools are installed on your system:
 
-- [.NET SDK (>= 9.0)](https://dotnet.microsoft.com/en-us/download) – required to build and run Ysharp
-- [Git](https://git-scm.com/) – to clone the repository
+- [.NET SDK (>= 10)](https://dotnet.microsoft.com/en-us/download)  required to build and run Ysharp
+- [Git](https://git-scm.com/) to clone the repository
 
-You can verify that they’re installed using the following commands in a terminal or command prompt:
+You can verify that they are installed using the following commands in a terminal:
 
 ```bash
 dotnet --version
@@ -26,13 +26,18 @@ git clone https://github.com/xXrederXx/YSharp.git
 
 This will create a new folder named YSharp in your current directory.
 
-
 ## 2. Navigate to the Project Folder
 
 Change directory into the newly cloned repository:
 
 ```bash
 cd ysharp
+```
+
+Now navigate into the source code folder named `src`
+
+```bash
+cd src
 ```
 
 ## 3. Build the Project
@@ -50,7 +55,6 @@ If successful, the compiled executable will be located in:
 ```
 
 > Look for a file named Ysharp.exe.
-
 
 ## Next Steps
 
