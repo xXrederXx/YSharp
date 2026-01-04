@@ -30,6 +30,8 @@ public class RunClass
 
         // create a Parser and parse all the tokens
         ParseResult ast = new Parser.Parser(tokens).Parse();
+        if (ast.HasError)
+            return RunResult.Fail(ast.Error);
         ast = TryOptimize(ast);
         TryRenderDot(fn, ast);
 
