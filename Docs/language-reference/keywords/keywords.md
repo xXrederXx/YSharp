@@ -71,42 +71,6 @@ ELSE
 END
 ```
 
-## AND
-
-Logical operator that returns `true` only if **both** expressions are true.
-
-```
-IF x == 7 AND y == 5 THEN
-    PRINT("Both conditions are true")
-END
-```
-
-
-
-## OR
-
-Logical operator that returns `true` if **at least one** expression is true.
-
-```
-IF x == 7 OR y == 5 THEN
-    PRINT("One or both conditions are true")
-END
-```
-
-
-
-## NOT
-
-Logical operator that flips the value of a boolean.
-Only works on boolean values — not on numbers, strings, etc.
-
-```
-VAR isOn = true
-IF NOT isOn THEN
-    PRINT("It is off")
-END
-```
-
 ## FOR
 
 Creates a counted loop.
@@ -165,35 +129,6 @@ WHILE x < 10 THEN
 END
 ```
 
-## CONTINUE
-
-Skips the rest of the current loop iteration and jumps to the next one.
-
-```
-FOR i = 1 TO 5 THEN
-    IF i == 3 THEN
-        CONTINUE
-    END
-    PRINT(i)
-END
-```
-
-
-
-## BREAK
-
-Immediately stops the loop.
-
-```
-FOR i = 1 TO 10 THEN
-    IF i > 5 THEN
-        BREAK
-    END
-    PRINT(i)
-END
-```
-
-
 ## FUN
 
 Defines a function.
@@ -204,17 +139,6 @@ FUN add(a, b)
     RETURN a + b
 END
 ```
-
-## RETURN
-
-Exits a function and sends a value back to where it was called.
-
-```
-FUN double(n)
-    RETURN n * 2
-END
-```
-
 
 ## END
 
