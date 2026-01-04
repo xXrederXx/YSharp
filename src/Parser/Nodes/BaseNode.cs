@@ -9,7 +9,7 @@ public abstract class BaseNode : INodeDescriptor
 
     public readonly Position StartPos;
 
-    public abstract NodeDebugInfo DebugInfo { get; }
+    public abstract NodeDebugInfo DebugInfo { get; init; }
 
     protected BaseNode(in Position startPos, in Position endPos)
     {
