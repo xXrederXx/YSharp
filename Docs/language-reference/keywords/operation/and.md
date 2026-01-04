@@ -1,8 +1,8 @@
-# keyword
+# AND
 
 ## Description
 
-The `AND` keyword is used as a logical operator. It takes two boolan values (one left and one right to it) and combines them to a single boolean. If both are true the result will also be true. Otherwise it will be false. 
+The `AND` keyword is used as a logical operator. It takes two boolan values (one left and one right to it) and combines them to a single boolean. If both are true the result will also be true. Otherwise it will be false.
 
 It exists to make more compact code. For example reducing the number of if checks.
 
