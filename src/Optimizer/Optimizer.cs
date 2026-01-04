@@ -152,10 +152,7 @@ public static class Optimizer
 
     private static BaseNode Visit_ReturnNode(ReturnNode node)
     {
-        BaseNode? BaseNode = node.NodeToReturn is null
-            ? node.NodeToReturn
-            : Visit(node.NodeToReturn);
-        return new ReturnNode(BaseNode, node.StartPos, node.EndPos);
+        return new ReturnNode(Visit(node.NodeToReturn), node.StartPos, node.EndPos);
     }
 
     private static BaseNode Visit_String(StringNode node) => node;

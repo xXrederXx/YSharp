@@ -392,14 +392,10 @@ public static class Interpreter
     {
         RunTimeResult res = new();
         Value value;
-        if (node.NodeToReturn is not null)
-        {
-            value = res.Regrister(Visit(node.NodeToReturn, context));
-            if (res.ShouldReturn())
-                return res;
-        }
-        else
-            value = ValueNull.Instance;
+
+        value = res.Regrister(Visit(node.NodeToReturn, context));
+        if (res.ShouldReturn())
+            return res;
 
         return res.SuccessReturn(value);
     }

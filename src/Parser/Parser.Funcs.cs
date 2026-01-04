@@ -627,10 +627,17 @@ public sealed partial class Parser
         if (IsCurrentTokenKeyword(KeywordType.RETURN))
         {
             AdvanceParser(res);
-            BaseNode? _expr = res.TryRegister(Expression());
-            if (_expr == null)
-                Reverse(res.ToReverseCount);
-            return res.Success(new ReturnNode(_expr, startPos, currentToken.StartPos));
+            // Try to get an expression to return
+            ParseResult result = Expression();
+            if (result.HasError)
+            {
+                Reverse(result.ToReverseCount);
+                return res.Success(
+                    new ReturnNode(NodeNull.Instance, startPos, currentToken.StartPos)
+                );
+            }
+
+            return res.Success(new ReturnNode(result.Node, startPos, currentToken.StartPos));
         }
 
         if (IsCurrentTokenKeyword(KeywordType.CONTINUE))
