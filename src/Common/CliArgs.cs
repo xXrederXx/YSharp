@@ -50,4 +50,11 @@ public class CliArgs : IEquatable<CliArgs>
     {
         return $"Optimize({Optimization}) RenderDot({RenderDot}) ScriptPath({ScriptPath})";
     }
+
+    public static readonly CliArgs DefaultArgs = new CliArgs()
+    {
+        Optimization = 0,
+        RenderDot = false,
+        ScriptPath = null,
+    };
 }

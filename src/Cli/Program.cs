@@ -11,12 +11,11 @@ internal static class Program
             .Parser.Default.ParseArguments<CliArgs>(args)
             .WithParsed(cliargs =>
             {
-                ArgsHolder.UserArgs = cliargs;
 
                 if (cliargs.ScriptPath is null)
-                    Runner.ConsoleRunner();
+                    Runner.ConsoleRunner(cliargs);
                 else
-                    Runner.ScriptRunner(cliargs.ScriptPath);
+                    Runner.ScriptRunner(cliargs.ScriptPath, cliargs);
             });
     }
 }

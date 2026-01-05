@@ -19,7 +19,7 @@ public class RunClass
         globalSymbolTable = SymbolTable.GenerateGlobalSymboltable();
     }
 
-    public RunResult Run(string fn, string text)
+    public RunResult Run(string fn, string text, CliArgs args)
     {
         // create a Lexer and generate the tokens with it
         LexerResult lexerResult = new Lexer.Lexer(text, fn).MakeTokens();
@@ -32,8 +32,12 @@ public class RunClass
         ParseResult ast = new Parser.Parser(tokens).Parse();
         if (ast.HasError)
             return RunResult.Fail(ast.Error);
-        ast = TryOptimize(ast);
-        TryRenderDot(fn, ast);
+
+        if (args.Optimization > 0)
+            ast = new ParseResult().Success(Optimizer.Optimizer.Visit(ast.Node));
+
+        if (args.RenderDot)
+            RenderDot(fn, ast);
 
         if (ast.HasError)
             return RunResult.Fail(ast.Error);
@@ -50,25 +54,13 @@ public class RunClass
         return RunResult.Succses(result.value);
     }
 
-    private static void TryRenderDot(string fn, ParseResult ast)
+    private static void RenderDot(string fn, ParseResult ast)
     {
-        if (!ArgsHolder.UserArgs.RenderDot)
-        {
-            return;
-        }
-
         if (!Directory.Exists("./DOT"))
             Directory.CreateDirectory("./DOT");
         AstDotExporter.ExportToDot(
             ast.Node,
             $"./DOT/DOT-{string.Concat(fn.Where(c => char.IsLetterOrDigit(c)))}.dot"
         );
-    }
-
-    private static ParseResult TryOptimize(ParseResult ast)
-    {
-        if (ArgsHolder.UserArgs.Optimization > 0)
-            ast = new ParseResult().Success(Optimizer.Optimizer.Visit(ast.Node));
-        return ast;
     }
 }
