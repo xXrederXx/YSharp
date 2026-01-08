@@ -28,6 +28,20 @@ public static class BenchHelp
     public static readonly List<BaseToken> TokenS;
     public static readonly List<BaseToken> TokenXL;
 
+    public static readonly CliArgs ArgsNoOptimization = new CliArgs()
+    {
+        Optimization = 0,
+        RenderDot = false,
+        ScriptPath = null
+    };
+    
+    public static readonly CliArgs ArgsWithOptimization = new CliArgs()
+    {
+        Optimization = 1,
+        RenderDot = false,
+        ScriptPath = null
+    };
+
     static BenchHelp()
     {
         Text5000Char = GetText(5000);
