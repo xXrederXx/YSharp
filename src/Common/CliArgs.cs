@@ -30,9 +30,7 @@ public class CliArgs : IEquatable<CliArgs>{
 
     public override bool Equals(object? obj)
     {
-        if (obj is not CliArgs cliArgs)
-            return false;
-        return Equals(cliArgs);
+        return obj is CliArgs cliArgs && Equals(cliArgs);
     }
 
     public bool Equals(CliArgs? other)
