@@ -2,8 +2,7 @@ using CommandLine;
 
 namespace YSharp.Common;
 
-public class CliArgs : IEquatable<CliArgs>
-{
+public class CliArgs : IEquatable<CliArgs>{
     [Option('o', "optimization", Required = false, Default = 0)]
     public int Optimization { get; set; }
 
@@ -42,8 +41,8 @@ public class CliArgs : IEquatable<CliArgs>
             return false;
 
         return Optimization == other.Optimization
-            && RenderDot == other.RenderDot
-            && ScriptPath == other.ScriptPath;
+               && RenderDot == other.RenderDot
+               && ScriptPath == other.ScriptPath;
     }
 
     public override string ToString()
@@ -56,5 +55,19 @@ public class CliArgs : IEquatable<CliArgs>
         Optimization = 0,
         RenderDot = false,
         ScriptPath = null,
+    };
+
+    public static readonly CliArgs ArgsNoOptimization = new CliArgs()
+    {
+        Optimization = 0,
+        RenderDot = false,
+        ScriptPath = null
+    };
+
+    public static readonly CliArgs ArgsWithOptimization = new CliArgs()
+    {
+        Optimization = 1,
+        RenderDot = false,
+        ScriptPath = null
     };
 }
