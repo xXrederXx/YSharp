@@ -13,7 +13,7 @@ public sealed partial class Lexer
     private const char StopChar = char.MaxValue;
     private readonly StringBuilder stringBuilder = new();
     private readonly string text;
-    private char currentChar = StopChar;
+    private char currentChar;
     private Position pos;
 
     private static readonly Dictionary<char, TokenType> singelCharToken = new()
