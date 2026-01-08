@@ -13,8 +13,9 @@ public class FeatureTest
 {
     private readonly RunClass _runClass = new();
 
-    [Fact]
-    public void ForLoopSum()
+    [Theory]
+    [MemberData(nameof(TestCases))]
+    public void ForLoopSum(CliArgs arg)
     {
         RunResult res = _runClass.Run(
             "TEST",
@@ -28,15 +29,16 @@ public class FeatureTest
         END
         x()
         
-    "
+    ", arg
         );
 
         Assert.True(res.IsSuccess);
         Assert.Equal(10, ExtractResult(res));
     }
 
-    [Fact]
-    public void FunctionSimpleReturn()
+    [Theory]
+    [MemberData(nameof(TestCases))]
+    public void FunctionSimpleReturn(CliArgs arg)
     {
         RunResult res = _runClass.Run(
             "TEST",
@@ -45,48 +47,52 @@ public class FeatureTest
             RETURN x + 1
         END
         A(4)
-    "
+    ", arg
         );
 
         Assert.True(res.IsSuccess);
         Assert.Equal(5, ExtractResult(res));
     }
 
-    [Fact]
-    public void ListIndex()
+    [Theory]
+    [MemberData(nameof(TestCases))]
+    public void ListIndex(CliArgs arg)
     {
-        RunResult res = _runClass.Run("TEST", "VAR x = [10, 20, 30];x.Get(1)");
+        RunResult res = _runClass.Run("TEST", "VAR x = [10, 20, 30];x.Get(1)", arg);
 
         Assert.True(res.IsSuccess);
         Assert.Equal(20, ExtractResult(res));
     }
 
-    [Fact]
-    public void ListLengthProperty()
+    [Theory]
+    [MemberData(nameof(TestCases))]
+    public void ListLengthProperty(CliArgs arg)
     {
         RunResult res = _runClass.Run(
             "TEST",
             @"
         VAR l = [1,2,3,4]
         l.Length
-    "
+    ", arg
         );
 
         Assert.True(res.IsSuccess);
         Assert.Equal(4, ExtractResult(res));
     }
 
-    [Fact]
-    public void MathSqrtTest()
+    [Theory]
+    [MemberData(nameof(TestCases))]
+    public void MathSqrtTest(CliArgs arg)
     {
-        RunResult res = _runClass.Run("TEST", "MATH.SQRT(9)");
+        RunResult res = _runClass.Run("TEST", "MATH.SQRT(9)", arg);
 
         Assert.True(res.IsSuccess);
         Assert.Equal(3, ExtractResult(res));
     }
 
-    [Fact]
-    public void NestedCalls()
+    [Theory]
+    [MemberData(nameof(TestCases))]
+    public void NestedCalls(CliArgs arg)
     {
         RunResult res = _runClass.Run(
             "TEST",
@@ -94,7 +100,7 @@ public class FeatureTest
         FUN A(x); RETURN x + 1 END
         FUN B(x); RETURN x * 2 END
         B(A(3))
-    "
+    ", arg
         );
 
         Assert.True(res.IsSuccess);
@@ -119,4 +125,7 @@ public class FeatureTest
                 throw new InvalidOperationException($"Unexpected result type: {val.GetType()}");
         }
     }
+
+    public static TheoryData<CliArgs> TestCases =
+        new TheoryData<CliArgs>(CliArgs.ArgsNoOptimization, CliArgs.ArgsWithOptimization);
 }

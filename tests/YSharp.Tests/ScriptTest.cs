@@ -12,8 +12,9 @@ public class ScriptTest
 {
     private readonly RunClass _runClass = new();
 
-    [Fact]
-    public void SumFactorials()
+    [Theory]
+    [MemberData(nameof(TestCases))]
+    public void SumFactorials(CliArgs arg)
     {
         RunResult res = _runClass.Run(
             "TEST",
@@ -32,15 +33,16 @@ END
 
 sumFactorials(5)
 
-    "
+    ", arg
         );
 
         Assert.True(res.IsSuccess);
         Assert.Equal(153, ExtractResult(res));
     } 
 
-    [Fact(Skip = "No modulo")]
-    public void CollatzSteps()
+    [Theory(Skip = "No Modulo")]
+    [MemberData(nameof(TestCases))]
+    public void CollatzSteps(CliArgs arg)
     {
         RunResult res = _runClass.Run(
             "TEST",
@@ -60,15 +62,16 @@ END
 
 collatzSteps(13)
 
-        "
+        ", arg
         );
 
         Assert.True(res.IsSuccess);
         Assert.Equal(9, ExtractResult(res));
     }
 
-    [Fact]
-    public void FibSum()
+    [Theory]
+    [MemberData(nameof(TestCases))]
+    public void FibSum(CliArgs arg)
     {
         RunResult res = _runClass.Run(
             "TEST",
@@ -87,15 +90,16 @@ FUN fibSum(n)
 END
 
 fibSum(10)
-    "
+    ", arg
         );
 
         Assert.True(res.IsSuccess);
         Assert.Equal(88, ExtractResult(res));
     }
 
-    [Fact]
-    public void Power()
+    [Theory]
+    [MemberData(nameof(TestCases))]
+    public void Power(CliArgs arg)
     {
         RunResult res = _runClass.Run(
             "TEST",
@@ -109,15 +113,16 @@ FUN power(base, exp)
 END
 
 power(3, 4)
-    "
+    ", arg
         );
 
         Assert.True(res.IsSuccess);
         Assert.Equal(81, ExtractResult(res));
     }
 
-    [Fact]
-    public void SumList()
+    [Theory]
+    [MemberData(nameof(TestCases))]
+    public void SumList(CliArgs arg)
     {
         RunResult res = _runClass.Run(
             "TEST",
@@ -131,15 +136,16 @@ FUN sumList(lst)
 END
 
 sumList([1, 2, 3, 4, 5])
-    "
+    ", arg
         );
 
         Assert.True(res.IsSuccess);
         Assert.Equal(15, ExtractResult(res));
     }
 
-    [Fact]
-    public void Fib()
+    [Theory]
+    [MemberData(nameof(TestCases))]
+    public void Fib(CliArgs arg)
     {
         RunResult res = _runClass.Run(
             "TEST",
@@ -156,15 +162,16 @@ FUN fib(n)
 END
 
 fib(10)
-    "
+    ", arg
         );
 
         Assert.True(res.IsSuccess);
         Assert.Equal(55, ExtractResult(res));
     }
 
-    [Fact]
-    public void Factorial()
+    [Theory]
+    [MemberData(nameof(TestCases))]
+    public void Factorial(CliArgs arg)
     {
         RunResult res = _runClass.Run(
             "TEST",
@@ -178,15 +185,16 @@ FUN factorial(n)
 END
 
 factorial(5)
-    "
+    ", arg
         );
 
         Assert.True(res.IsSuccess);
         Assert.Equal(120, ExtractResult(res));
     }
 
-    [Fact]
-    public void Add()
+    [Theory]
+    [MemberData(nameof(TestCases))]
+    public void Add(CliArgs arg)
     {
         RunResult res = _runClass.Run(
             "TEST",
@@ -197,7 +205,7 @@ END
 
 add(5, 7)
 
-    "
+    ", arg
         );
 
         Assert.True(res.IsSuccess);
@@ -223,4 +231,8 @@ add(5, 7)
                 throw new InvalidOperationException($"Unexpected result type: {val.GetType()}");
         }
     }
+    
+    
+    public static TheoryData<CliArgs> TestCases =
+        new TheoryData<CliArgs>(CliArgs.ArgsNoOptimization, CliArgs.ArgsWithOptimization);
 }
