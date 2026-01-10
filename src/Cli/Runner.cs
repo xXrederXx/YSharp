@@ -41,7 +41,7 @@ public static class Runner
     {
         RunClass runClass = new();
         // intrnr = internal runner
-        RunResult res = runClass.Run("<intrnr>", $"RUN(\"{path.Replace("\\", "\\\\")}\")", args); // run the app
+        RunResult res = runClass.Run("<intrnr>", $"RUN(\"{path.Replace(@"\", @"\\")}\")", args); // run the app
         if (res.IsFailed)
             Console.WriteLine(res.GetError());
     }

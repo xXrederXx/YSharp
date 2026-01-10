@@ -4,7 +4,7 @@ namespace YSharp.Common;
 
 public class CliArgs : IEquatable<CliArgs>{
     [Option('o', "optimization", Required = false, Default = 0)]
-    public int Optimization { get; set; }
+    public int Optimization { get; private init; }
 
     [Option(
         'd',
@@ -12,7 +12,7 @@ public class CliArgs : IEquatable<CliArgs>{
         Required = false,
         HelpText = "This flag is used render a DOT graph of the AST"
     )]
-    public bool RenderDot { get; set; }
+    public bool RenderDot { get; private init; }
 
     [Option(
         'p',
@@ -21,7 +21,7 @@ public class CliArgs : IEquatable<CliArgs>{
         HelpText = "Specify a path to a file which will be executed",
         Default = null
     )]
-    public string? ScriptPath { get; set; }
+    public string? ScriptPath { get; private init; }
 
     public override int GetHashCode()
     {
@@ -30,9 +30,7 @@ public class CliArgs : IEquatable<CliArgs>{
 
     public override bool Equals(object? obj)
     {
-        if (obj is not CliArgs cliArgs)
-            return false;
-        return Equals(cliArgs);
+        return obj is CliArgs cliArgs && Equals(cliArgs);
     }
 
     public bool Equals(CliArgs? other)
