@@ -7,7 +7,7 @@ namespace YSharp.Benchmarks;
 
 public class RunTimeBench
 {
-    
+
     [Benchmark]
     public void RTBenchmarkL()
     {

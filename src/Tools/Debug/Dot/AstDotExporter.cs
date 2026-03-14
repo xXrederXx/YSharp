@@ -3,7 +3,8 @@ using YSharp.Parser.Nodes;
 
 namespace YSharp.Tools.Debug.Dot;
 
-public static class AstDotExporter{
+public static class AstDotExporter
+{
     private static readonly Dictionary<NodeDebugInfo, int> _nodeIds = new();
     private static int _idCounter;
 

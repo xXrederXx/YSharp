@@ -109,7 +109,7 @@ public class FeatureTest
 
     private double ExtractResult(RunResult res)
     {
-        if(!res.TryGetValue(out Value val))
+        if (!res.TryGetValue(out Value val))
             return double.NaN;
         switch (val)
         {

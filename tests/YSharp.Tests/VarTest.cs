@@ -7,7 +7,8 @@ namespace YSharp.Tests;
 
 using RunResult = Result<Value, Error>;
 
-public class VarTest{
+public class VarTest
+{
     private readonly RunClass _runClass = new();
 
     [Theory]

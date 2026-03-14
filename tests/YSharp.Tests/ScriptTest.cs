@@ -38,7 +38,7 @@ sumFactorials(5)
 
         Assert.True(res.IsSuccess);
         Assert.Equal(153, ExtractResult(res));
-    } 
+    }
 
     [Theory(Skip = "No Modulo")]
     [MemberData(nameof(TestCases))]
@@ -214,7 +214,7 @@ add(5, 7)
 
     private double ExtractResult(RunResult res)
     {
-        if(!res.TryGetValue(out Value val))
+        if (!res.TryGetValue(out Value val))
             return double.NaN;
         switch (val)
         {
@@ -231,8 +231,8 @@ add(5, 7)
                 throw new InvalidOperationException($"Unexpected result type: {val.GetType()}");
         }
     }
-    
-    
+
+
     public static TheoryData<CliArgs> TestCases =
         new TheoryData<CliArgs>(CliArgs.ArgsNoOptimization, CliArgs.ArgsWithOptimization);
 }

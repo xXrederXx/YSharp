@@ -2,7 +2,8 @@ using CommandLine;
 
 namespace YSharp.Common;
 
-public class CliArgs : IEquatable<CliArgs>{
+public class CliArgs : IEquatable<CliArgs>
+{
     [Option('o', "optimization", Required = false, Default = 0)]
     public int Optimization { get; private init; }
 

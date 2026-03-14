@@ -1,6 +1,7 @@
 using YSharp.Parser.Nodes;
 
 namespace YSharp.Optimizer;
+
 public abstract class NodeOptimizer<TIn, TOut> : INodeOptimizer
     where TIn : BaseNode
     where TOut : BaseNode

@@ -1,6 +1,7 @@
 namespace YSharp.Tools.Debug;
 
-public enum NodeDebugShape{
+public enum NodeDebugShape
+{
     Diamond,
     Rectangle,
     Hexagon,

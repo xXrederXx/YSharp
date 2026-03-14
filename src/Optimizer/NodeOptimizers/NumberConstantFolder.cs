@@ -8,14 +8,14 @@ public sealed class NumberConstantFolder : NodeOptimizer<BinOpNode, NumberNode>
 {
     public override bool IsOptimizable(BinOpNode node)
     {
-        if(node.OpTok.Type == TokenType.DIV && node.RightNode is NumberNode r && r.Tok.Value == 0) return false;
+        if (node.OpTok.Type == TokenType.DIV && node.RightNode is NumberNode r && r.Tok.Value == 0) return false;
 
         return node.LeftNode is NumberNode
             && node.RightNode is NumberNode
             && node.OpTok.Type
                 is TokenType.PLUS
                     or TokenType.MINUS
-                    or TokenType.MUL 
+                    or TokenType.MUL
                     or TokenType.DIV
                     or TokenType.POW;
     }

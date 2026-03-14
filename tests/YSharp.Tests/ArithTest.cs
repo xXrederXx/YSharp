@@ -43,11 +43,11 @@ public class ErrorTest
 
     [Theory]
     [MemberData(nameof(TestCases))]
-    public void Test_Divide_By_Zero(CliArgs arg, double x, double y)
+    public void Test_Divide_By_Zero(CliArgs arg, double y)
     {
         RunResult res = _runClass.Run("TEST", "1 / 0", arg);
         Assert.True(res.IsFailed);
-        if(res.IsFailed)
+        if (res.IsFailed)
             Assert.IsType<DivisionByZeroError>(res.GetError());
     }
 
@@ -58,7 +58,7 @@ public class ErrorTest
         Check_Arith(_runClass.Run("TEST", $"{x:f}*{y:f}", arg), x * y);
     }
 
-    [Theory]    
+    [Theory]
     [MemberData(nameof(TestCases))]
     public void Test_Mult_Pretty(CliArgs arg, double x, double y)
     {
@@ -88,7 +88,7 @@ public class ErrorTest
         Assert.True(res.IsSuccess);
         Assert.IsType<VNumber>(((VList)res.GetValue()).value[0]);
     }
-    
+
     public static IEnumerable<object[]> TestCases()
     {
         (double, double)[] values =

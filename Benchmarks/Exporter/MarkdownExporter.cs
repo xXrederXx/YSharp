@@ -32,7 +32,7 @@ public class MarkdownExporter
         doc.Root.Add(GenerateResultTable(data.Benchmarks));
 
         doc.Root.Add(new MdHeading(2, "History"));
-        
+
         foreach (BenchmarkData method in data.Benchmarks)
         {
             doc.Root.Add(new MdHeading(3, method.Method));
