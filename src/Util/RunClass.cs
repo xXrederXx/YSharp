@@ -1,6 +1,7 @@
 using YSharp.Common;
 using YSharp.Lexer;
 using YSharp.Parser;
+using YSharp.Parser.Nodes;
 using YSharp.Runtime;
 using YSharp.Tools.Debug.Dot;
 
@@ -33,20 +34,16 @@ public class RunClass
         if (ast.HasError)
             return RunResult.Fail(ast.Error);
 
-        if (args.Optimization > 0)
-            ast = new ParseResult().Success(Optimizer.Optimizer.Visit(ast.Node));
+        BaseNode rootNode = args.Optimization > 0 ? Optimizer.Optimizer.Visit(ast.Node) : ast.Node;
 
         if (args.RenderDot)
-            RenderDot(fn, ast);
-
-        if (ast.HasError)
-            return RunResult.Fail(ast.Error);
+            RenderDot(fn, rootNode);
 
         Context context = new("<program>", null, Position.Null)
         {
             symbolTable = globalSymbolTable,
         };
-        RunTimeResult result = Interpreter.Visit(ast.Node, context);
+        RunTimeResult result = Interpreter.Visit(rootNode, context);
 
         // return the node and Error
         if (result.error.IsError)
@@ -54,12 +51,12 @@ public class RunClass
         return RunResult.Succses(result.value);
     }
 
-    private static void RenderDot(string fn, ParseResult ast)
+    private static void RenderDot(string fn, BaseNode node)
     {
         if (!Directory.Exists("./DOT"))
             Directory.CreateDirectory("./DOT");
         AstDotExporter.ExportToDot(
-            ast.Node,
+            node,
             $"./DOT/DOT-{string.Concat(fn.Where(c => char.IsLetterOrDigit(c)))}.dot"
         );
     }

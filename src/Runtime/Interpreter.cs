@@ -339,7 +339,7 @@ public static class Interpreter
         if (Path.GetExtension(filePath) != ".dll")
             filePath += ".dll";
 
-        if (Path.IsPathRooted(filePath))
+        if (!Path.IsPathRooted(filePath))
             filePath = ImportUtil.DefaultPath + filePath;
 
         if (!File.Exists(filePath))
@@ -362,6 +362,8 @@ public static class Interpreter
             return res.Failure(new InvalidLoadedModuleError(n.StartPos, err, context));
 
         //TODO: Implement call logic
+        System.Console.WriteLine(exposeds.Count);
+        System.Console.WriteLine(string.Join(", ", exposeds));
 
         return res;
     }

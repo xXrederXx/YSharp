@@ -30,7 +30,7 @@ public static class ImportUtil
     {
         DefaultPath = Path.Join(
             Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-            "Packages"
+            "YSharp", "Packages"
         );
     }
 
@@ -128,7 +128,7 @@ public static class ImportUtil
         }
     }
 
-    private const string ExposeAttributeName = "Expose";
+    private const string ExposeAttributeName = "ExposeAttribute";
 }
 
 public class ExposedClassData(
