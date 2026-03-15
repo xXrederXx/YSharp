@@ -158,14 +158,13 @@ public sealed partial class Lexer
             if (currentChar == '\\')
             {
                 Advance();
-                if (escapeChars.TryGetValue(currentChar, out char _char))
-                    stringBuilder.Append(_char);
-                else
+                if (!escapeChars.TryGetValue(currentChar, out char escapedChar))
                 {
                     return LexerOperationResult.Fail(
-                        new IllegalEscapeCharError(startPos, currentChar)
+                        new IllegalEscapeCharError(pos, currentChar)
                     );
                 }
+                stringBuilder.Append(escapedChar);
             }
             else
                 stringBuilder.Append(currentChar);
