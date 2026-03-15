@@ -1,5 +1,6 @@
 using FastEnumUtility;
 using YSharp.Common;
+using YSharp.Util;
 
 namespace YSharp.Lexer;
 
@@ -38,13 +39,12 @@ public sealed partial class Lexer
             Advance();
         }
 
-        string idStr = stringBuilder.ToString();
+        string idStr = stringBuilder.GetAndClear();
         bool IsKeyword = FastEnum.TryParse(idStr, out KeywordType keywordType);
-        stringBuilder.Clear();
 
-        if (IsKeyword)
-            return new Token<KeywordType>(TokenType.KEYWORD, keywordType, startPos, pos);
-        return new Token<string>(TokenType.IDENTIFIER, idStr, startPos, pos);
+        return IsKeyword
+            ? new Token<KeywordType>(TokenType.KEYWORD, keywordType, startPos, pos)
+            : new Token<string>(TokenType.IDENTIFIER, idStr, startPos, pos);
     }
 
     private BaseToken MakeMinus()
@@ -115,9 +115,14 @@ public sealed partial class Lexer
             Advance();
         }
 
-        if (double.TryParse(stringBuilder.ToString(), StaticConfig.numberCulture, out double value))
+        if (
+            double.TryParse(
+                stringBuilder.GetAndClear(),
+                StaticConfig.numberCulture,
+                out double value
+            )
+        )
         {
-            stringBuilder.Clear();
             return LexerOperationResult.Success(
                 new Token<double>(TokenType.NUMBER, value, startPos, pos)
             );
@@ -160,35 +165,37 @@ public sealed partial class Lexer
                 Advance();
                 if (!escapeChars.TryGetValue(currentChar, out char escapedChar))
                 {
-                    return LexerOperationResult.Fail(
-                        new IllegalEscapeCharError(pos, currentChar)
-                    );
+                    return LexerOperationResult.Fail(new IllegalEscapeCharError(pos, currentChar));
                 }
                 stringBuilder.Append(escapedChar);
             }
             else
+            {
                 stringBuilder.Append(currentChar);
+            }
 
             Advance();
         }
 
         Advance();
-        string value = stringBuilder.ToString();
-        stringBuilder.Clear();
         return LexerOperationResult.Success(
-            new Token<string>(TokenType.STRING, value, startPos, pos)
+            new Token<string>(TokenType.STRING, stringBuilder.GetAndClear(), startPos, pos)
         );
     }
 
     private void SkipComment()
     {
         while (currentChar is not '\n' and not '\r' and not ';' and not '#' and not StopChar)
+        {
             Advance();
+        }
     }
 
     private void SkipTypeAnotation()
     {
         while (IsValidIdentifierChar(currentChar) || currentChar == ' ')
+        {
             Advance();
+        }
     }
 }
