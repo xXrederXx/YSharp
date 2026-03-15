@@ -2,17 +2,17 @@
 
 ## Metadata
 
-- Git Commit: [4378cc6](https://github.com/xXrederXx/YSharp/commit/4378cc6bbdd7e216fbbf46590e863b5dfc89a964)
-- Recorded At: 03.01.2026 17:26:23
+- Git Commit: [cd865ba](https://github.com/xXrederXx/YSharp/commit/cd865ba938b7cfc6377e7c4fed9f94705ff50ffb)
+- Recorded At: 15.03.2026 12:01:04
 
 ## Results
 
 | Method            | Time Mean    | Aprox. Error | Allocated | Gen 0 | Gen 1 | Gen 2 |
 | ----------------- | ------------ | ------------ | --------- | ----- | ----- | ----- |
-| ParserBenchmarkL  | 1,152,948 ns | 3,267 ns     | 4,048 kb  | 492   | 268   | 35    |
-| ParserBenchmarkM  | 156,564 ns   | 5,340 ns     | 810 kb    | 97    | 32    | 0     |
-| ParserBenchmarkS  | 69,330 ns    | 1,217 ns     | 400 kb    | 48    | 11    | 0     |
-| ParserBenchmarkXL | 3,294,876 ns | 5,636 ns     | 8,095 kb  | 984   | 754   | 70    |
+| ParserBenchmarkL  | 1,179,612 ns | 8,216 ns     | 4,048 kb  | 492   | 268   | 35    |
+| ParserBenchmarkM  | 149,264 ns   | 1,119 ns     | 810 kb    | 97    | 32    | 0     |
+| ParserBenchmarkS  | 72,006 ns    | 2,915 ns     | 400 kb    | 48    | 11    | 0     |
+| ParserBenchmarkXL | 3,325,028 ns | 34,532 ns    | 8,095 kb  | 984   | 754   | 70    |
 
 ## History
 
