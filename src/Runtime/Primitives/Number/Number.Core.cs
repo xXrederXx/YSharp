@@ -18,5 +18,5 @@ public sealed partial class VNumber(double value) : Value
     public override bool IsTrue() => value != 0;
 
     // custom string representation
-    public override string ToString() => $"{value}";
+    public override string ToString() => value.ToString(StaticConfig.numberCulture);
 }

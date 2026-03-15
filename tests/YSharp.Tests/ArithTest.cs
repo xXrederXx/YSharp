@@ -17,33 +17,61 @@ public class ErrorTest
     [MemberData(nameof(TestCases))]
     public void Test_Add(CliArgs arg, double x, double y)
     {
-        Check_Arith(_runClass.Run("TEST", $"{x:f}+{y:f}", arg), x + y);
+        Check_Arith(
+            _runClass.Run(
+                "TEST",
+                $"{x.ToString(StaticConfig.numberCulture)}+{y.ToString(StaticConfig.numberCulture)}",
+                arg
+            ),
+            x + y
+        );
     }
 
     [Theory]
     [MemberData(nameof(TestCases))]
     public void Test_Add_Pretty(CliArgs arg, double x, double y)
     {
-        Check_Arith(_runClass.Run("TEST", $"{x:f} + {y:f}", arg), x + y);
+        Check_Arith(
+            _runClass.Run(
+                "TEST",
+                $"{x.ToString(StaticConfig.numberCulture)} + {y.ToString(StaticConfig.numberCulture)}",
+                arg
+            ),
+            x + y
+        );
     }
 
     [Theory]
     [MemberData(nameof(TestCases))]
     public void Test_Div(CliArgs arg, double x, double y)
     {
-        Check_Arith(_runClass.Run("TEST", $"{x:f}/{y:f}", arg), x / y);
+        Check_Arith(
+            _runClass.Run(
+                "TEST",
+                $"{x.ToString(StaticConfig.numberCulture)}/{y.ToString(StaticConfig.numberCulture)}",
+                arg
+            ),
+            x / y
+        );
     }
 
     [Theory]
     [MemberData(nameof(TestCases))]
     public void Test_Div_Pretty(CliArgs arg, double x, double y)
     {
-        Check_Arith(_runClass.Run("TEST", $"{x:f} / {y:f}", arg), x / y);
+        Check_Arith(
+            _runClass.Run(
+                "TEST",
+                $"{x.ToString(StaticConfig.numberCulture)} / {y.ToString(StaticConfig.numberCulture)}",
+                arg
+            ),
+            x / y
+        );
     }
 
     [Theory]
     [MemberData(nameof(TestCases))]
-    public void Test_Divide_By_Zero(CliArgs arg, double y)
+    public void Test_Divide_By_Zero(CliArgs arg, double x, double y)
     {
         RunResult res = _runClass.Run("TEST", "1 / 0", arg);
         Assert.True(res.IsFailed);
@@ -55,21 +83,39 @@ public class ErrorTest
     [MemberData(nameof(TestCases))]
     public void Test_Mult(CliArgs arg, double x, double y)
     {
-        Check_Arith(_runClass.Run("TEST", $"{x:f}*{y:f}", arg), x * y);
+        Check_Arith(
+            _runClass.Run(
+                "TEST",
+                $"{x.ToString(StaticConfig.numberCulture)}*{y.ToString(StaticConfig.numberCulture)}",
+                arg
+            ),
+            x * y
+        );
     }
 
     [Theory]
     [MemberData(nameof(TestCases))]
     public void Test_Mult_Pretty(CliArgs arg, double x, double y)
     {
-        Check_Arith(_runClass.Run("TEST", $"{x:f} * {y:f}", arg), x * y);
+        Check_Arith(
+            _runClass.Run(
+                "TEST",
+                $"{x.ToString(StaticConfig.numberCulture)} * {y.ToString(StaticConfig.numberCulture)}",
+                arg
+            ),
+            x * y
+        );
     }
 
     [Theory]
     [MemberData(nameof(TestCases))]
     public void Test_Sub(CliArgs arg, double x, double y)
     {
-        RunResult res = _runClass.Run("TEST", $"{x:f}-{y:f}", arg);
+        RunResult res = _runClass.Run(
+            "TEST",
+            $"{x.ToString(StaticConfig.numberCulture)}-{y.ToString(StaticConfig.numberCulture)}",
+            arg
+        );
         if (y < 0)
             Assert.IsType<InvalidSyntaxError>(res.GetError());
         else
@@ -80,7 +126,14 @@ public class ErrorTest
     [MemberData(nameof(TestCases))]
     public void Test_Sub_Pretty(CliArgs arg, double x, double y)
     {
-        Check_Arith(_runClass.Run("TEST", $"{x:f} - {y:f}", arg), x - y);
+        Check_Arith(
+            _runClass.Run(
+                "TEST",
+                $"{x.ToString(StaticConfig.numberCulture)} - {y.ToString(StaticConfig.numberCulture)}",
+                arg
+            ),
+            x - y
+        );
     }
 
     private void Check_Arith(RunResult res, double expected)
@@ -97,7 +150,7 @@ public class ErrorTest
             (100.0, 2.0),
             (0.5, 20.0),
             (0.5, -20.0),
-            (0.5, -0.354)
+            (0.5, -0.354),
         ];
 
         foreach (CliArgs mode in new[] { CliArgs.ArgsNoOptimization, CliArgs.ArgsWithOptimization })

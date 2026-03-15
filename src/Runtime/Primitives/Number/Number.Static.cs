@@ -40,7 +40,7 @@ public sealed partial class VNumber : Value
         err = ValueHelper.CheckArgs(args, 1, [typeof(VString)], self.Context); // format argument
         if (err.IsError) return (ValueNull.Instance, err);
         string format = ConvertToCSFormat(((VString)args[0]).value);
-        string formatedStr = self.value.ToString(format);
+        string formatedStr = self.value.ToString(format, StaticConfig.numberCulture);
         //TODO: Add format exeption
         return (new VString(formatedStr), ErrorNull.Instance);
     }

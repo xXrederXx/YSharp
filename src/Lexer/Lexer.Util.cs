@@ -109,18 +109,13 @@ public sealed partial class Lexer
                     return LexerOperationResult.Fail(new IllegalNumberFormat(posStart));
 
                 hasDot = true;
-                stringBuilder.Append('.');
             }
-            else
-            {
-                // just a number
-                stringBuilder.Append(currentChar);
-            }
+            stringBuilder.Append(currentChar);
 
             Advance();
         }
 
-        if (double.TryParse(stringBuilder.ToString(), out double value))
+        if (double.TryParse(stringBuilder.ToString(), StaticConfig.numberCulture, out double value))
         {
             stringBuilder.Clear();
             return LexerOperationResult.Succses(
