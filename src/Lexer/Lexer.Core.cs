@@ -84,7 +84,7 @@ public sealed partial class Lexer
                 tokens.Add(new BaseToken(type, pos, pos));
                 Advance();
             }
-            else if (unsafeMultiCharToken.TryGetValue(currentChar, out var unsafeFunc))
+            else if (unsafeMultiCharToken.TryGetValue(currentChar, out Func<LexerOperationResult>? unsafeFunc))
             {
                 LexerOperationResult res = unsafeFunc.Invoke();
                 if (!res.TryGetValue(out BaseToken tok))

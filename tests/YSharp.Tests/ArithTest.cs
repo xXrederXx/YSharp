@@ -71,7 +71,7 @@ public class ErrorTest
 
     [Theory]
     [MemberData(nameof(TestCases))]
-    public void Test_Divide_By_Zero(CliArgs arg, double y)
+    public void Test_Divide_By_Zero(CliArgs arg)
     {
         RunResult res = _runClass.Run("TEST", "1 / 0", arg);
         Assert.True(res.IsFailed);

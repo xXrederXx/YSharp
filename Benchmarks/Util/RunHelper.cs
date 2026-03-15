@@ -4,6 +4,7 @@ using BenchmarkDotNet.Diagnosers;
 using BenchmarkDotNet.Exporters.Json;
 using BenchmarkDotNet.Jobs;
 using BenchmarkDotNet.Loggers;
+using BenchmarkDotNet.Reports;
 using BenchmarkDotNet.Running;
 using BenchmarkDotNet.Validators;
 
@@ -23,7 +24,7 @@ public class RunHelper
 
     public static void Run(UserInput userInput)
     {
-        var config = ManualConfig
+        ManualConfig config = ManualConfig
             .CreateEmpty()
             .AddLogger(ConsoleLogger.Default)
             .AddColumnProvider(DefaultColumnProviders.Instance)
@@ -44,7 +45,7 @@ public class RunHelper
 
     private static void RunBench(Benches bench, IConfig config)
     {
-        var summary = bench switch
+        Summary summary = bench switch
         {
             Benches.Lexer => BenchmarkRunner.Run<LexerBench>(config),
             Benches.Parser => BenchmarkRunner.Run<ParserBench>(config),

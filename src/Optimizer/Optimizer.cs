@@ -40,7 +40,7 @@ public static class Optimizer
             NodeNull n => n,
             _ => Vistit_ErrorNode(node),
         };
-        foreach (var optimizer in optimizers.Where(x => x.IsOptimizable(rebuilt)))
+        foreach (INodeOptimizer? optimizer in optimizers.Where(x => x.IsOptimizable(rebuilt)))
         {
             rebuilt = optimizer.OptimizeNode(rebuilt);
         }
