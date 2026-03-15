@@ -83,7 +83,7 @@ public sealed partial class Lexer
         {
             Position endPos = pos;
             Advance();
-            return LexerOperationResult.Succses(new BaseToken(TokenType.NE, startPos, endPos));
+            return LexerOperationResult.Success(new BaseToken(TokenType.NE, startPos, endPos));
         }
         return LexerOperationResult.Fail(new ExpectedCharError(startPos, '='));
     }
@@ -118,7 +118,7 @@ public sealed partial class Lexer
         if (double.TryParse(stringBuilder.ToString(), StaticConfig.numberCulture, out double value))
         {
             stringBuilder.Clear();
-            return LexerOperationResult.Succses(
+            return LexerOperationResult.Success(
                 new Token<double>(TokenType.NUMBER, value, startPos, pos)
             );
         }
@@ -175,7 +175,7 @@ public sealed partial class Lexer
         Advance();
         string value = stringBuilder.ToString();
         stringBuilder.Clear();
-        return LexerOperationResult.Succses(
+        return LexerOperationResult.Success(
             new Token<string>(TokenType.STRING, value, startPos, pos)
         );
     }

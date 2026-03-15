@@ -48,7 +48,7 @@ public class RunClass
         // return the node and Error
         if (result.error.IsError)
             return RunResult.Fail(result.error);
-        return RunResult.Succses(result.value);
+        return RunResult.Success(result.value);
     }
 
     private static void RenderDot(string fn, BaseNode node)

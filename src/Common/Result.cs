@@ -38,7 +38,7 @@ public readonly struct Result<TValue, TError> : IEquatable<Result<TValue, TError
     /// <param name="value">The value produced and needed to give along</param>
     /// <returns>A new instance of <c>Result</c> with a value of type <c>T</c> and IsSucess set to true </returns>
     /// <exception cref="ArgumentNullException">The value is not allowed to be null. In this case the function throws</exception>
-    public static Result<TValue, TError> Succses(TValue value)
+    public static Result<TValue, TError> Success(TValue value)
     {
         if (value is null)
             throw new ArgumentNullException(nameof(value));

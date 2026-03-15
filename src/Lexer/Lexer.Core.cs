@@ -113,7 +113,7 @@ public sealed partial class Lexer
             }
 
         tokens.Add(new BaseToken(TokenType.EOF, pos, pos)); // Add the End Of File token
-        return LexerResult.Succses(tokens);
+        return LexerResult.Success(tokens);
     }
 
     private static bool IsValidIdentifierChar(char c) => char.IsLetterOrDigit(c) || c == '_';
