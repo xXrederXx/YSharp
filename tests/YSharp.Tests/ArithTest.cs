@@ -71,7 +71,9 @@ public class ErrorTest
 
     [Theory]
     [MemberData(nameof(TestCases))]
-    public void Test_Divide_By_Zero(CliArgs arg)
+#pragma warning disable xUnit1026 // Theory methods should use all of their parameters
+    public void Test_Divide_By_Zero(CliArgs arg, double x, double y) // TEST BREAKES WHEN x / y ARE REMOVED
+#pragma warning restore xUnit1026 // Theory methods should use all of their parameters
     {
         RunResult res = _runClass.Run("TEST", "1 / 0", arg);
         Assert.True(res.IsFailed);

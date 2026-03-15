@@ -17,20 +17,20 @@ public sealed partial class Lexer
 
     private BaseToken MakeDecision(char checkChar, TokenType TTTrue, TokenType TTFalse)
     {
-        Position posStart = pos;
+        Position startPos = pos;
         Advance();
         if (currentChar == checkChar)
         {
             Advance();
-            return new BaseToken(TTTrue, posStart, pos);
+            return new BaseToken(TTTrue, startPos, pos);
         }
 
-        return new BaseToken(TTFalse, posStart, pos);
+        return new BaseToken(TTFalse, startPos, pos);
     }
 
     private BaseToken MakeIdentifier()
     {
-        Position posStart = pos;
+        Position startPos = pos;
 
         while (IsValidIdentifierChar(currentChar))
         {
@@ -43,8 +43,8 @@ public sealed partial class Lexer
         stringBuilder.Clear();
 
         if (IsKeyword)
-            return new Token<KeywordType>(TokenType.KEYWORD, keywordType, posStart, pos);
-        return new Token<string>(TokenType.IDENTIFIER, idStr, posStart, pos);
+            return new Token<KeywordType>(TokenType.KEYWORD, keywordType, startPos, pos);
+        return new Token<string>(TokenType.IDENTIFIER, idStr, startPos, pos);
     }
 
     private BaseToken MakeMinus()
@@ -77,22 +77,22 @@ public sealed partial class Lexer
 
     private LexerOperationResult MakeNotEquals()
     {
-        Position posStart = pos;
+        Position startPos = pos;
         Advance();
         if (currentChar == '=')
         {
-            Position posEnd = pos;
+            Position endPos = pos;
             Advance();
-            return LexerOperationResult.Succses(new BaseToken(TokenType.NE, posStart, posEnd));
+            return LexerOperationResult.Succses(new BaseToken(TokenType.NE, startPos, endPos));
         }
-        return LexerOperationResult.Fail(new ExpectedCharError(posStart, '='));
+        return LexerOperationResult.Fail(new ExpectedCharError(startPos, '='));
     }
 
     // this is used to make a number token of type int or float
     private LexerOperationResult MakeNumber()
     {
         bool hasDot = false;
-        Position posStart = pos;
+        Position startPos = pos;
 
         while (char.IsDigit(currentChar) || currentChar == '.' || currentChar == '_')
         {
@@ -106,7 +106,7 @@ public sealed partial class Lexer
             if (currentChar == '.')
             {
                 if (hasDot)
-                    return LexerOperationResult.Fail(new IllegalNumberFormat(posStart));
+                    return LexerOperationResult.Fail(new IllegalNumberFormat(startPos));
 
                 hasDot = true;
             }
@@ -119,7 +119,7 @@ public sealed partial class Lexer
         {
             stringBuilder.Clear();
             return LexerOperationResult.Succses(
-                new Token<double>(TokenType.NUMBER, value, posStart, pos)
+                new Token<double>(TokenType.NUMBER, value, startPos, pos)
             );
         }
 

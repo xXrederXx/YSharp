@@ -15,8 +15,8 @@ public sealed class ListNode : BaseNode
             ElementNodes.Select((x, i) => (x.DebugInfo, $"elem[{i}]")).ToList()
         );
 
-    public ListNode(List<BaseNode> elementNodes, in Position posStart, in Position posEnd)
-        : base(posStart, posEnd)
+    public ListNode(List<BaseNode> elementNodes, in Position startPos, in Position endPos)
+        : base(startPos, endPos)
     {
         this.ElementNodes = elementNodes.ToArray();
     }
