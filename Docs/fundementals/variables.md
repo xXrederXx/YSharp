@@ -13,8 +13,6 @@ VAR x = 10   // this creates a new variable x with value 10
 
 Even though it looks like you’re reassigning `x`, you’re actually creating a new version of `x` each time.
 
-
-
 ## Variable Types
 
 Currently, YSharp supports **four main types of variables**:
@@ -37,7 +35,8 @@ Currently, YSharp supports **four main types of variables**:
      VAR age = 25
      VAR pi = 3.14
      ```
-4. **[Bool](./types/Bool.md)**
+
+3. **[Bool](./types/Bool.md)**
 
    * A 2 state variable
    * Example:
@@ -47,7 +46,7 @@ Currently, YSharp supports **four main types of variables**:
      VAR containsNuts = FALSE
      ```
 
-3. **[DateTime](./types/DateTime.md)**
+4. **[DateTime](./types/DateTime.md)**
 
    * Represents dates and times.
    * Example:
@@ -56,7 +55,7 @@ Currently, YSharp supports **four main types of variables**:
      VAR now = TIME()
      ```
 
-4. **[List](./types/List.md)**
+5. **[List](./types/List.md)**
 
    * A collection of values, which can be of the same or mixed types.
    * Example:
@@ -66,10 +65,8 @@ Currently, YSharp supports **four main types of variables**:
      VAR numbers = [1, 2, 3, 4, 5]
      ```
 
-
-## Key Takeaways:
+## Key Takeaways
 
 * Variables in YSharp never change after being created.
 * To "update" a variable, you must create a new one with the same name.
 * There are currently four data types: `String`, `Number`, `Bool`, `DateTime`, and `List`.
-
