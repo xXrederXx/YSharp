@@ -187,7 +187,7 @@ public static class Interpreter
         RunTimeResult res = new();
 
         string varName = node.VarNameTok.Value;
-        ValueAndError value = res.Regrister(Visit(node.Parent, context)).GetVar(varName ?? "null");
+        ValueAndError value = res.Regrister(Visit(node.Parent, context)).GetVar(varName);
         if (res.ShouldReturn())
             return res;
 
@@ -195,7 +195,7 @@ public static class Interpreter
             return res.Failure(value.Error);
 
         if (value.ValueIsNull)
-            return res.Failure(new VarNotFoundError(node.StartPos, varName!, context));
+            return res.Failure(new VarNotFoundError(node.StartPos, varName, context));
 
         return res.Success(
             value.Value.Copy().SetPos(node.StartPos, node.EndPos).SetContext(context)
