@@ -5,7 +5,7 @@ namespace YSharp.Runtime.Primatives.Number;
 
 public sealed partial class VNumber : Value
 {
-    public override ValueAndError AddedTo(Value other)
+    public override Result<Value, Error> AddedTo(Value other)
     {
         Value? val = other switch
         {
@@ -16,10 +16,10 @@ public sealed partial class VNumber : Value
             return base.AddedTo(other);
 
         val.SetContext(Context);
-        return (val, ErrorNull.Instance);
+        return Result<Value, Error>.Success(val);
     }
 
-    public override ValueAndError DivedTo(Value other)
+    public override Result<Value, Error> DivedTo(Value other)
     {
         return other switch
         {
@@ -28,49 +28,49 @@ public sealed partial class VNumber : Value
         };
     }
 
-    public override ValueAndError GetComparisonEQ(Value other)
+    public override Result<Value, Error> GetComparisonEQ(Value other)
     {
         if (other is VNumber _other)
-            return (new VBool(value == _other.value), ErrorNull.Instance);
+            return Result<Value, Error>.Success(new VBool(value == _other.value));
         return base.GetComparisonEQ(other);
     }
 
-    public override ValueAndError GetComparisonGT(Value other)
+    public override Result<Value, Error> GetComparisonGT(Value other)
     {
         if (other is VNumber _other)
-            return (new VBool(value > _other.value), ErrorNull.Instance);
+            return Result<Value, Error>.Success(new VBool(value > _other.value));
         return base.GetComparisonGT(other);
     }
 
-    public override ValueAndError GetComparisonGTE(Value other)
+    public override Result<Value, Error> GetComparisonGTE(Value other)
     {
         if (other is VNumber _other)
-            return (new VBool(value >= _other.value), ErrorNull.Instance);
+            return Result<Value, Error>.Success(new VBool(value >= _other.value));
         return base.GetComparisonGTE(other);
     }
 
-    public override ValueAndError GetComparisonLT(Value other)
+    public override Result<Value, Error> GetComparisonLT(Value other)
     {
         if (other is VNumber _other)
-            return (new VBool(value < _other.value), ErrorNull.Instance);
+            return Result<Value, Error>.Success(new VBool(value < _other.value));
         return base.GetComparisonLT(other);
     }
 
-    public override ValueAndError GetComparisonLTE(Value other)
+    public override Result<Value, Error> GetComparisonLTE(Value other)
     {
         if (other is VNumber _other)
-            return (new VBool(value <= _other.value), ErrorNull.Instance);
+            return Result<Value, Error>.Success(new VBool(value <= _other.value));
         return base.GetComparisonLTE(other);
     }
 
-    public override ValueAndError GetComparisonNE(Value other)
+    public override Result<Value, Error> GetComparisonNE(Value other)
     {
         if (other is VNumber _other)
-            return (new VBool(value != _other.value), ErrorNull.Instance);
+            return Result<Value, Error>.Success(new VBool(value != _other.value));
         return base.GetComparisonNE(other);
     }
 
-    public override ValueAndError MuledTo(Value other)
+    public override Result<Value, Error> MuledTo(Value other)
     {
         Value? val = other switch
         {
@@ -81,10 +81,10 @@ public sealed partial class VNumber : Value
             return base.MuledTo(other);
 
         val.SetContext(Context);
-        return (val, ErrorNull.Instance);
+        return Result<Value, Error>.Success(val);
     }
 
-    public override ValueAndError PowedTo(Value other)
+    public override Result<Value, Error> PowedTo(Value other)
     {
         Value? val = other switch
         {
@@ -95,10 +95,10 @@ public sealed partial class VNumber : Value
             return base.AddedTo(other);
 
         val.SetContext(Context);
-        return (val, ErrorNull.Instance);
+        return Result<Value, Error>.Success(val);
     }
 
-    public override ValueAndError SubedTo(Value other)
+    public override Result<Value, Error> SubedTo(Value other)
     {
         Value? val = other switch
         {
@@ -109,6 +109,6 @@ public sealed partial class VNumber : Value
             return base.SubedTo(other);
 
         val.SetContext(Context);
-        return (val, ErrorNull.Instance);
+        return Result<Value, Error>.Success(val);
     }
 }

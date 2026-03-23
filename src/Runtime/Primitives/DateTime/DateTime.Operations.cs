@@ -4,7 +4,7 @@ namespace YSharp.Runtime.Primatives.Datetime;
 
 public sealed partial class VDateTime
 {
-    public override ValueAndError AddedTo(Value other)
+    public override Result<Value, Error> AddedTo(Value other)
     {
         Value? val = other switch
         {
@@ -15,10 +15,10 @@ public sealed partial class VDateTime
             return base.AddedTo(other);
 
         val.SetContext(Context);
-        return (val, ErrorNull.Instance);
+        return Result<Value, Error>.Success(val);
     }
 
-    public override ValueAndError SubedTo(Value other)
+    public override Result<Value, Error> SubedTo(Value other)
     {
         Value? val = other switch
         {
@@ -29,6 +29,6 @@ public sealed partial class VDateTime
             return base.AddedTo(other);
 
         val.SetContext(Context);
-        return (val, ErrorNull.Instance);
+        return Result<Value, Error>.Success(val);
     }
 }

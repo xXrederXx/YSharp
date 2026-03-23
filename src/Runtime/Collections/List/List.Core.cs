@@ -1,3 +1,5 @@
+using YSharp.Common;
+
 namespace YSharp.Runtime.Collections.List;
 
 
@@ -13,10 +15,10 @@ public sealed partial class VList(List<Value> elements) : Value
         return copy;
     }
 
-    public override ValueAndError GetFunc(string name, List<Value> argValues) =>
+    public override Result<Value, Error> GetFunc(string name, List<Value> argValues) =>
         methodTable.Invoke(name, this, argValues);
 
-    public override ValueAndError GetVar(string name) => propertyTable.Get(name, this);
+    public override Result<Value, Error> GetVar(string name) => propertyTable.Get(name, this);
 
     public override bool IsTrue() => value.Count > 0;
 

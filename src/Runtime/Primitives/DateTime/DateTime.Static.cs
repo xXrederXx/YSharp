@@ -11,19 +11,19 @@ public sealed partial class VDateTime
     static VDateTime()
     {
         propertyTable = new PropertyTable<VDateTime>([
-            ("Microsecond", self => (new VNumber(self.dateTime.Microsecond), ErrorNull.Instance)),
-            ("Millisecond", self => (new VNumber(self.dateTime.Millisecond), ErrorNull.Instance)),
-            ("Second", self => (new VNumber(self.dateTime.Second), ErrorNull.Instance)),
-            ("Minute", self => (new VNumber(self.dateTime.Minute), ErrorNull.Instance)),
-            ("Hour", self => (new VNumber(self.dateTime.Hour), ErrorNull.Instance)),
-            ("DayOfMonth", self => (new VNumber(self.dateTime.Day), ErrorNull.Instance)),
+            ("Microsecond", self => Result<Value, Error>.Success(new VNumber(self.dateTime.Microsecond))),
+            ("Millisecond", self => Result<Value, Error>.Success(new VNumber(self.dateTime.Millisecond))),
+            ("Second", self => Result<Value, Error>.Success(new VNumber(self.dateTime.Second))),
+            ("Minute", self => Result<Value, Error>.Success(new VNumber(self.dateTime.Minute))),
+            ("Hour", self => Result<Value, Error>.Success(new VNumber(self.dateTime.Hour))),
+            ("DayOfMonth", self => Result<Value, Error>.Success(new VNumber(self.dateTime.Day))),
             (
                 "DayOfWeek",
-                self => (new VString(self.dateTime.DayOfWeek.ToString()), ErrorNull.Instance)
+                self => Result<Value, Error>.Success(new VString(self.dateTime.DayOfWeek.ToString()))
             ),
-            ("DayOfYear", self => (new VNumber(self.dateTime.DayOfYear), ErrorNull.Instance)),
-            ("Month", self => (new VNumber(self.dateTime.Month), ErrorNull.Instance)),
-            ("Year", self => (new VNumber(self.dateTime.Year), ErrorNull.Instance)),
+            ("DayOfYear", self => Result<Value, Error>.Success(new VNumber(self.dateTime.DayOfYear))),
+            ("Month", self => Result<Value, Error>.Success(new VNumber(self.dateTime.Month))),
+            ("Year", self => Result<Value, Error>.Success(new VNumber(self.dateTime.Year))),
         ]);
     }
 

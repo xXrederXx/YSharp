@@ -48,7 +48,7 @@ public static class Interpreter
         if (res.ShouldReturn())
             return res;
 
-        ValueAndError KeywordHandeler()
+        Result<Value, Error> KeywordHandeler()
         {
             if (node.OpTok is Token<KeywordType> keywordTok)
             {
@@ -62,7 +62,7 @@ public static class Interpreter
             throw new Exception("operator token type is wrong: " + node.OpTok.Type);
         }
 
-        ValueAndError result = node.OpTok.Type switch
+        Result<Value, Error> result = node.OpTok.Type switch
         {
             TokenType.PLUS => left.AddedTo(right),
             TokenType.MINUS => left.SubedTo(right),
@@ -79,10 +79,10 @@ public static class Interpreter
             _ => throw new Exception("operator token type is wrong: " + node.OpTok.Type),
         };
 
-        if (result.Error.IsError)
-            return res.Failure(result.Error);
+        if (result.IsFailed)
+            return res.Failure(result.GetError());
 
-        return res.Success(result.Value.SetPos(node.StartPos, node.StartPos));
+        return res.Success(result.GetValue().SetPos(node.StartPos, node.StartPos));
     }
 
     private static RunTimeResult Visit_BreakNode() => new RunTimeResult().SuccessBreak();
@@ -160,25 +160,25 @@ public static class Interpreter
             argValue.Add(val);
         }
 
-        ValueAndError value = res.Regrister(Visit(node.Parent, context))
+        Result<Value, Error> value = res.Regrister(Visit(node.Parent, context))
             .GetFunc(funcName ?? "null", argValue);
 
         if (res.ShouldReturn())
             return res;
 
-        if (value.Error.IsError)
-            return res.Failure(value.Error);
+        if (value.IsFailed)
+            return res.Failure(value.GetError());
 
         try
         {
             return res.Success(
-                value.Value.Copy().SetPos(node.StartPos, node.EndPos).SetContext(context)
+                value.GetValue().Copy().SetPos(node.StartPos, node.EndPos).SetContext(context)
             );
         }
         catch
         {
             // the function returns an emptie value, which cnat be copied
-            return res.Success(value.Value);
+            return res.Success(value.GetValue());
         }
     }
 
@@ -187,18 +187,18 @@ public static class Interpreter
         RunTimeResult res = new();
 
         string varName = node.VarNameTok.Value;
-        ValueAndError value = res.Regrister(Visit(node.Parent, context)).GetVar(varName);
+        Result<Value, Error> value = res.Regrister(Visit(node.Parent, context)).GetVar(varName);
         if (res.ShouldReturn())
             return res;
 
-        if (value.Error.IsError)
-            return res.Failure(value.Error);
+        if (value.IsFailed)
+            return res.Failure(value.GetError());
 
-        if (value.ValueIsNull)
+        if (value.GetValue() is null)
             return res.Failure(new VarNotFoundError(node.StartPos, varName, context));
 
         return res.Success(
-            value.Value.Copy().SetPos(node.StartPos, node.EndPos).SetContext(context)
+            value.GetValue().Copy().SetPos(node.StartPos, node.EndPos).SetContext(context)
         );
     }
 
@@ -429,17 +429,17 @@ public static class Interpreter
             );
         }
 
-        ValueAndError newValue;
+        Result<Value, Error> newValue;
         if (node.IsAdd)
             newValue = numNode.AddedTo(new VNumber(1));
         else
             newValue = numNode.SubedTo(new VNumber(1));
 
-        if (newValue.Error.IsError)
-            return res.Failure(newValue.Error);
+        if (newValue.IsFailed)
+            return res.Failure(newValue.GetError());
 
-        context.symbolTable.Set(varName, newValue.Value);
-        return res.Success(newValue.Value);
+        context.symbolTable.Set(varName, newValue.GetValue());
+        return res.Success(newValue.GetValue());
     }
 
     private static RunTimeResult Visit_TryCatchNode(TryCatchNode node, Context context)
@@ -472,7 +472,7 @@ public static class Interpreter
         if (res.ShouldReturn())
             return res;
 
-        ValueAndError result;
+        Result<Value, Error> result;
         if (node.OpTok.IsType(TokenType.MINUS) && value is VNumber)
             result = value.MuledTo(new VNumber(-1));
         else if (
@@ -481,12 +481,12 @@ public static class Interpreter
         )
             result = value.Notted();
         else
-            result = (value, ErrorNull.Instance);
+            result = Result<Value, Error>.Success(value);
 
-        if (result.Error.IsError)
-            return res.Failure(result.Error);
+        if (result.IsFailed)
+            return res.Failure(result.GetError());
 
-        return res.Success(result.Value.SetPos(node.StartPos, node.StartPos));
+        return res.Success(result.GetValue().SetPos(node.StartPos, node.StartPos));
     }
 
     private static RunTimeResult Visit_VarAccessNode(VarAccessNode node, Context context)

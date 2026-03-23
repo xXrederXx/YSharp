@@ -1,3 +1,5 @@
+using YSharp.Common;
+
 namespace YSharp.Runtime.Primatives.Datetime;
 
 public sealed partial class VDateTime(DateTime? dateTime = null) : Value
@@ -12,7 +14,7 @@ public sealed partial class VDateTime(DateTime? dateTime = null) : Value
         return copy;
     }
 
-    public override ValueAndError GetVar(string name) => propertyTable.Get(name, this);
+    public override Result<Value, Error> GetVar(string name) => propertyTable.Get(name, this);
 
     public override string ToString() => dateTime.ToString("MM-dd-yyyyTHH:mm:ss.fffffff");
 }
