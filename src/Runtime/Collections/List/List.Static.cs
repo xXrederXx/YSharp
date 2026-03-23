@@ -34,7 +34,7 @@ public sealed partial class VList : Value
         if (index >= self.value.Count)
         {
             return Result<int, Error>.Fail(
-                
+
                 new ArgOutOfRangeError(
                     argValues[0].StartPos,
                     "Index was out of range. Must be less than size of list.",
@@ -48,7 +48,7 @@ public sealed partial class VList : Value
         if (index < 0)
         {
             return Result<int, Error>.Fail(
-                
+
                 new ArgOutOfRangeError(
                     argValues[0].StartPos,
                     "Index was out of range. Negative size cant be greater than size of list.",

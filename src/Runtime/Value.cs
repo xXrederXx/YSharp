@@ -44,7 +44,7 @@ public class Value
         Result<Value, Error>.Fail(new FuncNotFoundError(Position.Null, name, Context));
 
     public virtual Result<Value, Error> GetVar(string name) =>
-        Result<Value, Error>.Fail( new VarNotFoundError(Position.Null, name, Context));
+        Result<Value, Error>.Fail(new VarNotFoundError(Position.Null, name, Context));
 
     public virtual bool IsTrue() => false;
 
@@ -84,7 +84,7 @@ public class Value
         else
             details += $" between {GetType()} and {other.GetType()}";
 
-        return Result<Value, Error>.Fail( new IlligalOperationError(StartPos, details, Context));
+        return Result<Value, Error>.Fail(new IlligalOperationError(StartPos, details, Context));
     }
 }
 
