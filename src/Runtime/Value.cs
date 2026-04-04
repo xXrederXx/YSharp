@@ -9,55 +9,55 @@ public class Value
     public Position StartPos { protected set; get; }
 
     // arethmetic
-    public virtual ValueAndError AddedTo(Value other) =>
-        (ValueNull.Instance, IlligalOperation(other));
+    public virtual Result<Value, Error> AddedTo(Value other) =>
+        IlligalOperation(other);
 
     // other
-    public virtual ValueAndError AndedTo(Value other) =>
-        (ValueNull.Instance, IlligalOperation(other));
+    public virtual Result<Value, Error> AndedTo(Value other) =>
+        IlligalOperation(other);
 
     public virtual Value Copy() => throw new NotImplementedException("No copy method defined");
 
-    public virtual ValueAndError DivedTo(Value other) =>
-        (ValueNull.Instance, IlligalOperation(other));
+    public virtual Result<Value, Error> DivedTo(Value other) =>
+        IlligalOperation(other);
 
     // comparison
-    public virtual ValueAndError GetComparisonEQ(Value other) =>
-        (ValueNull.Instance, IlligalOperation(other));
+    public virtual Result<Value, Error> GetComparisonEQ(Value other) =>
+        IlligalOperation(other);
 
-    public virtual ValueAndError GetComparisonGT(Value other) =>
-        (ValueNull.Instance, IlligalOperation(other));
+    public virtual Result<Value, Error> GetComparisonGT(Value other) =>
+        IlligalOperation(other);
 
-    public virtual ValueAndError GetComparisonGTE(Value other) =>
-        (ValueNull.Instance, IlligalOperation(other));
+    public virtual Result<Value, Error> GetComparisonGTE(Value other) =>
+        IlligalOperation(other);
 
-    public virtual ValueAndError GetComparisonLT(Value other) =>
-        (ValueNull.Instance, IlligalOperation(other));
+    public virtual Result<Value, Error> GetComparisonLT(Value other) =>
+        IlligalOperation(other);
 
-    public virtual ValueAndError GetComparisonLTE(Value other) =>
-        (ValueNull.Instance, IlligalOperation(other));
+    public virtual Result<Value, Error> GetComparisonLTE(Value other) =>
+        IlligalOperation(other);
 
-    public virtual ValueAndError GetComparisonNE(Value other) =>
-        (ValueNull.Instance, IlligalOperation(other));
+    public virtual Result<Value, Error> GetComparisonNE(Value other) =>
+        IlligalOperation(other);
 
-    public virtual ValueAndError GetFunc(string name, List<Value> argNodes) =>
-        (ValueNull.Instance, new FuncNotFoundError(Position.Null, name, Context));
+    public virtual Result<Value, Error> GetFunc(string name, List<Value> argNodes) =>
+        Result<Value, Error>.Fail(new FuncNotFoundError(Position.Null, name, Context));
 
-    public virtual ValueAndError GetVar(string name) =>
-        (ValueNull.Instance, new VarNotFoundError(Position.Null, name, Context));
+    public virtual Result<Value, Error> GetVar(string name) =>
+        Result<Value, Error>.Fail(new VarNotFoundError(Position.Null, name, Context));
 
     public virtual bool IsTrue() => false;
 
-    public virtual ValueAndError MuledTo(Value other) =>
-        (ValueNull.Instance, IlligalOperation(other));
+    public virtual Result<Value, Error> MuledTo(Value other) =>
+        IlligalOperation(other);
 
-    public virtual ValueAndError Notted() => (ValueNull.Instance, IlligalOperation());
+    public virtual Result<Value, Error> Notted() => IlligalOperation();
 
-    public virtual ValueAndError OredTo(Value other) =>
-        (ValueNull.Instance, IlligalOperation(other));
+    public virtual Result<Value, Error> OredTo(Value other) =>
+        IlligalOperation(other);
 
-    public virtual ValueAndError PowedTo(Value other) =>
-        (ValueNull.Instance, IlligalOperation(other));
+    public virtual Result<Value, Error> PowedTo(Value other) =>
+        IlligalOperation(other);
 
     public Value SetContext(Context? context)
     {
@@ -73,10 +73,10 @@ public class Value
         return this;
     }
 
-    public virtual ValueAndError SubedTo(Value other) =>
-        (ValueNull.Instance, IlligalOperation(other));
+    public virtual Result<Value, Error> SubedTo(Value other) =>
+       IlligalOperation(other);
 
-    protected Error IlligalOperation(Value? other = null)
+    protected Result<Value, Error> IlligalOperation(Value? other = null)
     {
         string details = "Illigal Operation";
         if (other == null)
@@ -84,7 +84,7 @@ public class Value
         else
             details += $" between {GetType()} and {other.GetType()}";
 
-        return new IlligalOperationError(StartPos, details, Context);
+        return Result<Value, Error>.Fail(new IlligalOperationError(StartPos, details, Context));
     }
 }
 

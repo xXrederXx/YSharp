@@ -34,13 +34,13 @@ public sealed partial class VMath : Value
             ("LOG10", (self, args) => GetMathFunc(self, "LOG10", args)),
         ]);
         propertyTable = new PropertyTable<VMath>([
-            ("PI", self => (new VNumber(System.Math.PI), ErrorNull.Instance)),
-            ("E", self => (new VNumber(System.Math.E), ErrorNull.Instance)),
-            ("TAU", self => (new VNumber(System.Math.Tau), ErrorNull.Instance)),
+            ("PI", self => Result<Value, Error>.Success(new VNumber(System.Math.PI))),
+            ("E", self => Result<Value, Error>.Success(new VNumber(System.Math.E))),
+            ("TAU", self => Result<Value, Error>.Success(new VNumber(System.Math.Tau))),
         ]);
     }
 
-    private static ValueAndError GetMathFunc(VMath self, string name, List<Value> argNodes)
+    private static Result<Value, Error> GetMathFunc(VMath self, string name, List<Value> argNodes)
     {
         Error err = ValueHelper.CheckArgs(
             argNodes,
@@ -49,52 +49,52 @@ public sealed partial class VMath : Value
             self.Context ?? new Context()
         );
         if (err.IsError)
-            return (ValueNull.Instance, err);
+            return Result<Value, Error>.Fail(err);
 
         return name switch
         {
-            "ABS" => (ValueAndError)
-                (new VNumber(System.Math.Abs(((VNumber)argNodes[0]).value)), ErrorNull.Instance),
-            "CEIL" => (ValueAndError)
-                (new VNumber(System.Math.Ceiling(((VNumber)argNodes[0]).value)), ErrorNull.Instance),
-            "FLOOR" => (ValueAndError)
-                (new VNumber(System.Math.Floor(((VNumber)argNodes[0]).value)), ErrorNull.Instance),
-            "ROUND" => (ValueAndError)
-                (new VNumber(System.Math.Round(((VNumber)argNodes[0]).value)), ErrorNull.Instance),
-            "SQRT" => (ValueAndError)
-                (new VNumber(System.Math.Sqrt(((VNumber)argNodes[0]).value)), ErrorNull.Instance),
-            "CBRT" => (ValueAndError)
-                (new VNumber(System.Math.Cbrt(((VNumber)argNodes[0]).value)), ErrorNull.Instance),
-            "SIN" => (ValueAndError)
-                (new VNumber(System.Math.Sin(((VNumber)argNodes[0]).value)), ErrorNull.Instance),
-            "COS" => (ValueAndError)
-                (new VNumber(System.Math.Cos(((VNumber)argNodes[0]).value)), ErrorNull.Instance),
-            "TAN" => (ValueAndError)
-                (new VNumber(System.Math.Tan(((VNumber)argNodes[0]).value)), ErrorNull.Instance),
-            "SINH" => (ValueAndError)
-                (new VNumber(System.Math.Sinh(((VNumber)argNodes[0]).value)), ErrorNull.Instance),
-            "COSH" => (ValueAndError)
-                (new VNumber(System.Math.Cosh(((VNumber)argNodes[0]).value)), ErrorNull.Instance),
-            "TANH" => (ValueAndError)
-                (new VNumber(System.Math.Tanh(((VNumber)argNodes[0]).value)), ErrorNull.Instance),
-            "ASIN" => (ValueAndError)
-                (new VNumber(System.Math.Asin(((VNumber)argNodes[0]).value)), ErrorNull.Instance),
-            "ACOS" => (ValueAndError)
-                (new VNumber(System.Math.Acos(((VNumber)argNodes[0]).value)), ErrorNull.Instance),
-            "ATAN" => (ValueAndError)
-                (new VNumber(System.Math.Atan(((VNumber)argNodes[0]).value)), ErrorNull.Instance),
-            "ASINH" => (ValueAndError)
-                (new VNumber(System.Math.Asinh(((VNumber)argNodes[0]).value)), ErrorNull.Instance),
-            "ACOSH" => (ValueAndError)
-                (new VNumber(System.Math.Acosh(((VNumber)argNodes[0]).value)), ErrorNull.Instance),
-            "ATANH" => (ValueAndError)
-                (new VNumber(System.Math.Atanh(((VNumber)argNodes[0]).value)), ErrorNull.Instance),
-            "LOG" => (ValueAndError)
-                (new VNumber(System.Math.Log(((VNumber)argNodes[0]).value)), ErrorNull.Instance),
-            "LOG2" => (ValueAndError)
-                (new VNumber(System.Math.Log2(((VNumber)argNodes[0]).value)), ErrorNull.Instance),
-            "LOG10" => (ValueAndError)
-                (new VNumber(System.Math.Log10(((VNumber)argNodes[0]).value)), ErrorNull.Instance),
+            "ABS" =>
+                Result<Value, Error>.Success(new VNumber(System.Math.Abs(((VNumber)argNodes[0]).value))),
+            "CEIL" =>
+                Result<Value, Error>.Success(new VNumber(System.Math.Ceiling(((VNumber)argNodes[0]).value))),
+            "FLOOR" =>
+                Result<Value, Error>.Success(new VNumber(System.Math.Floor(((VNumber)argNodes[0]).value))),
+            "ROUND" =>
+                Result<Value, Error>.Success(new VNumber(System.Math.Round(((VNumber)argNodes[0]).value))),
+            "SQRT" =>
+                Result<Value, Error>.Success(new VNumber(System.Math.Sqrt(((VNumber)argNodes[0]).value))),
+            "CBRT" =>
+                Result<Value, Error>.Success(new VNumber(System.Math.Cbrt(((VNumber)argNodes[0]).value))),
+            "SIN" =>
+                Result<Value, Error>.Success(new VNumber(System.Math.Sin(((VNumber)argNodes[0]).value))),
+            "COS" =>
+                Result<Value, Error>.Success(new VNumber(System.Math.Cos(((VNumber)argNodes[0]).value))),
+            "TAN" =>
+                Result<Value, Error>.Success(new VNumber(System.Math.Tan(((VNumber)argNodes[0]).value))),
+            "SINH" =>
+                Result<Value, Error>.Success(new VNumber(System.Math.Sinh(((VNumber)argNodes[0]).value))),
+            "COSH" =>
+                Result<Value, Error>.Success(new VNumber(System.Math.Cosh(((VNumber)argNodes[0]).value))),
+            "TANH" =>
+                Result<Value, Error>.Success(new VNumber(System.Math.Tanh(((VNumber)argNodes[0]).value))),
+            "ASIN" =>
+                Result<Value, Error>.Success(new VNumber(System.Math.Asin(((VNumber)argNodes[0]).value))),
+            "ACOS" =>
+                Result<Value, Error>.Success(new VNumber(System.Math.Acos(((VNumber)argNodes[0]).value))),
+            "ATAN" =>
+                Result<Value, Error>.Success(new VNumber(System.Math.Atan(((VNumber)argNodes[0]).value))),
+            "ASINH" =>
+                Result<Value, Error>.Success(new VNumber(System.Math.Asinh(((VNumber)argNodes[0]).value))),
+            "ACOSH" =>
+                Result<Value, Error>.Success(new VNumber(System.Math.Acosh(((VNumber)argNodes[0]).value))),
+            "ATANH" =>
+                Result<Value, Error>.Success(new VNumber(System.Math.Atanh(((VNumber)argNodes[0]).value))),
+            "LOG" =>
+                Result<Value, Error>.Success(new VNumber(System.Math.Log(((VNumber)argNodes[0]).value))),
+            "LOG2" =>
+                Result<Value, Error>.Success(new VNumber(System.Math.Log2(((VNumber)argNodes[0]).value))),
+            "LOG10" =>
+                Result<Value, Error>.Success(new VNumber(System.Math.Log10(((VNumber)argNodes[0]).value))),
             _ => throw new NotImplementedException(
                 $"You called this with {name} but didnt implement it"
             ),

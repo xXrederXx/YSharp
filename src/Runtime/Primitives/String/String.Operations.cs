@@ -6,7 +6,7 @@ namespace YSharp.Runtime.Primatives.String;
 
 public sealed partial class VString
 {
-    public override ValueAndError AddedTo(Value other)
+    public override Result<Value, Error> AddedTo(Value other)
     {
         Value? val = other switch
         {
@@ -17,24 +17,24 @@ public sealed partial class VString
             return base.AddedTo(other);
 
         val.SetContext(Context);
-        return (val, ErrorNull.Instance);
+        return Result<Value, Error>.Success(val);
     }
 
-    public override ValueAndError GetComparisonEQ(Value other)
+    public override Result<Value, Error> GetComparisonEQ(Value other)
     {
         if (other is VString _other)
-            return (new VBool(value == _other.value), ErrorNull.Instance);
+            return Result<Value, Error>.Success(new VBool(value == _other.value));
         return base.GetComparisonEQ(other);
     }
 
-    public override ValueAndError GetComparisonNE(Value other)
+    public override Result<Value, Error> GetComparisonNE(Value other)
     {
         if (other is VString _other)
-            return (new VBool(value != _other.value), ErrorNull.Instance);
+            return Result<Value, Error>.Success(new VBool(value != _other.value));
         return base.GetComparisonNE(other);
     }
 
-    public override ValueAndError MuledTo(Value other)
+    public override Result<Value, Error> MuledTo(Value other)
     {
         Value? val = other switch
         {
@@ -45,6 +45,6 @@ public sealed partial class VString
             return base.MuledTo(other);
 
         val.SetContext(Context);
-        return (val, ErrorNull.Instance);
+        return Result<Value, Error>.Success(val);
     }
 }

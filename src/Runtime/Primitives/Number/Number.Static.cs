@@ -24,36 +24,36 @@ public sealed partial class VNumber : Value
         // S -> Scientific
         value;
 
-    private static ValueAndError DivToNum(VNumber self, VNumber other)
+    private static Result<Value, Error> DivToNum(VNumber self, VNumber other)
     {
-        if (other.value == 0) return (ValueNull.Instance, new DivisionByZeroError(other.StartPos, self.Context));
-        return (new VNumber(self.value / other.value).SetContext(self.Context), ErrorNull.Instance);
+        if (other.value == 0) return Result<Value, Error>.Fail(new DivisionByZeroError(other.StartPos, self.Context));
+        return Result<Value, Error>.Success(new VNumber(self.value / other.value).SetContext(self.Context));
     }
 
     private static VNumber MulToNum(VNumber self, VNumber other) => new(self.value * other.value);
 
-    private static ValueAndError MyToString(VNumber self, List<Value> args)
+    private static Result<Value, Error> MyToString(VNumber self, List<Value> args)
     {
         Error err = ValueHelper.CheckArgs(args, 0, [], self.Context); // no argument
-        if (!err.IsError) return (new VString(self.value.ToString()), ErrorNull.Instance);
+        if (!err.IsError) return Result<Value, Error>.Success(new VString(self.value.ToString()));
 
         err = ValueHelper.CheckArgs(args, 1, [typeof(VString)], self.Context); // format argument
-        if (err.IsError) return (ValueNull.Instance, err);
+        if (err.IsError) return Result<Value, Error>.Fail(err);
         string format = ConvertToCSFormat(((VString)args[0]).value);
         string formatedStr = self.value.ToString(format, StaticConfig.numberCulture);
         //TODO: Add format exeption
-        return (new VString(formatedStr), ErrorNull.Instance);
+        return Result<Value, Error>.Success(new VString(formatedStr));
     }
 
     private static VNumber PowToNum(VNumber self, VNumber other) => new(self.value + other.value);
 
     private static VNumber SubToNum(VNumber self, VNumber other) => new(self.value - other.value);
 
-    private static ValueAndError ToBool(VNumber self, List<Value> args)
+    private static Result<Value, Error> ToBool(VNumber self, List<Value> args)
     {
         Error err = ValueHelper.CheckArgs(args, 0, [], self.Context);
-        if (!err.IsError) return (ValueNull.Instance, err);
+        if (!err.IsError) return Result<Value, Error>.Fail(err);
 
-        return (new VBool(self.IsTrue()), ErrorNull.Instance);
+        return Result<Value, Error>.Success(new VBool(self.IsTrue()));
     }
 }

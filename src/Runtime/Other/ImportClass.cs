@@ -19,10 +19,9 @@ public sealed class ImportClass : Value
 
     public override Value Copy() => base.Copy();
 
-    public override ValueAndError GetFunc(string name, List<Value> argNodes)
+    public override Result<Value, Error> GetFunc(string name, List<Value> argNodes)
     {
-        ValueAndError returnVE = new(
-            ValueNull.Instance,
+        Result<Value, Error> returnVE = Result<Value, Error>.Fail(
             new FuncNotFoundError(
                 argNodes.Count >= 1 ? argNodes[0].StartPos : Position.Null,
                 name,
@@ -52,7 +51,7 @@ public sealed class ImportClass : Value
             if (!canBeUsed) continue;
 
             object? ret = method.Invoke(data.instance, argList.ToArray());
-            returnVE = new ValueAndError(ConvertReturn(ret), ErrorNull.Instance);
+            returnVE = Result<Value, Error>.Success(ConvertReturn(ret));
         }
 
         return returnVE;

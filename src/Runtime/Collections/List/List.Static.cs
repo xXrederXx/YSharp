@@ -17,24 +17,24 @@ public sealed partial class VList : Value
         propertyTable = new PropertyTable<VList>([("Length", GetLength)]);
     }
 
-    private static ValueAndError Add(VList self, List<Value> args)
+    private static Result<Value, Error> Add(VList self, List<Value> args)
     {
         self.value.AddRange(args);
-        return (ValueNull.Instance, ErrorNull.Instance);
+        return Result<Value, Error>.Success(ValueNull.Instance);
     }
 
-    private static (int, Error) ConvertToUsableIndex(VList self, List<Value> argValues)
+    private static Result<int, Error> ConvertToUsableIndex(VList self, List<Value> argValues)
     {
         // converts a value to a csharp usable index
         Error err = ValueHelper.CheckArgs(argValues, 1, [typeof(VNumber)], self.Context);
-        if (err.IsError) return (0, err);
+        if (err.IsError) return Result<int, Error>.Fail(err);
 
         int index = (int)((VNumber)argValues[0]).value;
 
         if (index >= self.value.Count)
         {
-            return (
-                0,
+            return Result<int, Error>.Fail(
+
                 new ArgOutOfRangeError(
                     argValues[0].StartPos,
                     "Index was out of range. Must be less than size of list.",
@@ -47,8 +47,8 @@ public sealed partial class VList : Value
 
         if (index < 0)
         {
-            return (
-                0,
+            return Result<int, Error>.Fail(
+
                 new ArgOutOfRangeError(
                     argValues[0].StartPos,
                     "Index was out of range. Negative size cant be greater than size of list.",
@@ -57,24 +57,24 @@ public sealed partial class VList : Value
             );
         }
 
-        return (index, ErrorNull.Instance);
+        return Result<int, Error>.Success(index);
     }
 
-    private static ValueAndError Get(VList self, List<Value> args)
+    private static Result<Value, Error> Get(VList self, List<Value> args)
     {
-        (int, Error) index = ConvertToUsableIndex(self, args);
-        if (index.Item2.IsError) return (ValueNull.Instance, index.Item2);
+        Result<int, Error> index = ConvertToUsableIndex(self, args);
+        if (index.IsFailed) return Result<Value, Error>.Fail(index.GetError());
 
-        return (self.value[index.Item1], ErrorNull.Instance);
+        return Result<Value, Error>.Success(self.value[index.GetValue()]);
     }
 
-    private static ValueAndError GetLength(VList self) =>
-        (new VNumber(self.value.Count), ErrorNull.Instance);
+    private static Result<Value, Error> GetLength(VList self) =>
+        Result<Value, Error>.Success(new VNumber(self.value.Count));
 
-    private static ValueAndError IndexOf(VList self, List<Value> args)
+    private static Result<Value, Error> IndexOf(VList self, List<Value> args)
     {
         Error err = ValueHelper.IsRightLength(1, args, self.Context);
-        if (err.IsError) return (ValueNull.Instance, err);
+        if (err.IsError) return Result<Value, Error>.Fail(err);
 
         int index = args[0] switch
         {
@@ -87,15 +87,15 @@ public sealed partial class VList : Value
             _ => -1
         };
 
-        return (new VNumber(index), ErrorNull.Instance);
+        return Result<Value, Error>.Success(new VNumber(index));
     }
 
-    private static ValueAndError Remove(VList self, List<Value> args)
+    private static Result<Value, Error> Remove(VList self, List<Value> args)
     {
-        (int, Error) index = ConvertToUsableIndex(self, args);
-        if (index.Item2.IsError) return (ValueNull.Instance, index.Item2);
+        Result<int, Error> index = ConvertToUsableIndex(self, args);
+        if (index.IsFailed) return Result<Value, Error>.Fail(index.GetError());
 
-        self.value.RemoveAt(index.Item1);
-        return (ValueNull.Instance, ErrorNull.Instance);
+        self.value.RemoveAt(index.GetValue());
+        return Result<Value, Error>.Success(ValueNull.Instance);
     }
 }

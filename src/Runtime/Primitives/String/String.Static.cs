@@ -21,49 +21,47 @@ public sealed partial class VString
 
     private static VString AddToString(VString self, VString other) => new(self.value + other.value);
 
-    private static ValueAndError GetLength(VString self) =>
-        (new VNumber(self.value.Length), ErrorNull.Instance);
+    private static Result<Value, Error> GetLength(VString self) =>
+        Result<Value, Error>.Success(new VNumber(self.value.Length));
 
     private static VString MulToNum(VString self, VNumber other) =>
         new(string.Concat(Enumerable.Repeat(self.value, (int)other.value)));
 
-    private static ValueAndError Split(VString self, List<Value> args)
+    private static Result<Value, Error> Split(VString self, List<Value> args)
     {
         Error err = ValueHelper.CheckArgs(args, 1, [typeof(VString)], self.Context); // format argument
-        if (err.IsError) return (ValueNull.Instance, err);
+        if (err.IsError) return Result<Value, Error>.Fail(err);
         if (args[0] is not VString splitStr)
-            return (ValueNull.Instance,
+            return Result<Value, Error>.Fail(
                 new InternalInterpreterError("The splitStr is not Vstring even though Chech args said it is"));
 
-        return (new VList(self.value.Split(splitStr.value).Select(x => (Value)new VString(x)).ToList()),
-            ErrorNull.Instance);
+        return Result<Value, Error>.Success(new VList(self.value.Split(splitStr.value).Select(x => (Value)new VString(x)).ToList()));
     }
 
-    private static ValueAndError ToBool(VString self, List<Value> args)
+    private static Result<Value, Error> ToBool(VString self, List<Value> args)
     {
         Error err = ValueHelper.CheckArgs(args, 0, [], self.Context); // no argument
-        if (!err.IsError) return (ValueNull.Instance, err);
+        if (!err.IsError) return Result<Value, Error>.Fail(err);
 
-        return (new VBool(self.IsTrue()), ErrorNull.Instance);
+        return Result<Value, Error>.Success(new VBool(self.IsTrue()));
     }
 
-    private static ValueAndError ToLower(VString self, List<Value> args)
+    private static Result<Value, Error> ToLower(VString self, List<Value> args)
     {
         Error err = ValueHelper.CheckArgs(args, 0, [], self.Context); // format argument
-        if (err.IsError) return (ValueNull.Instance, err);
+        if (err.IsError) return Result<Value, Error>.Fail(err);
 
-        return (new VString(self.value.ToUpper()), ErrorNull.Instance);
+        return Result<Value, Error>.Success(new VString(self.value.ToUpper()));
     }
 
-    private static ValueAndError ToNumber(VString self, List<Value> args)
+    private static Result<Value, Error> ToNumber(VString self, List<Value> args)
     {
         Error err = ValueHelper.CheckArgs(args, 0, [typeof(VString)], self.Context); // format argument
-        if (err.IsError) return (ValueNull.Instance, err);
+        if (err.IsError) return Result<Value, Error>.Fail(err);
 
-        if (double.TryParse(self.value, out double res)) return (new VNumber(res), ErrorNull.Instance);
+        if (double.TryParse(self.value, out double res)) return Result<Value, Error>.Success(new VNumber(res));
 
-        return (
-            ValueNull.Instance,
+        return Result<Value, Error>.Fail(
             new WrongFormatError(
                 self.StartPos,
                 self.value + " can't be converted to Number",
@@ -72,11 +70,11 @@ public sealed partial class VString
         );
     }
 
-    private static ValueAndError ToUpper(VString self, List<Value> args)
+    private static Result<Value, Error> ToUpper(VString self, List<Value> args)
     {
         Error err = ValueHelper.CheckArgs(args, 0, [], self.Context); // format argument
-        if (err.IsError) return (ValueNull.Instance, err);
+        if (err.IsError) return Result<Value, Error>.Fail(err);
 
-        return (new VString(self.value.ToUpper()), ErrorNull.Instance);
+        return Result<Value, Error>.Success(new VString(self.value.ToUpper()));
     }
 }
