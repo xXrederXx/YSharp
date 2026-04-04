@@ -189,6 +189,11 @@ public sealed partial class Lexer
         {
             Advance();
         }
+        if (currentChar is '#')
+        {
+            // If not skiped new comment will start
+            Advance();
+        }
     }
 
     private void SkipTypeAnotation()

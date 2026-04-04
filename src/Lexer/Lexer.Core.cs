@@ -50,8 +50,8 @@ public sealed partial class Lexer
             { '*', () => MakeDecision('=', TokenType.MUEQ, TokenType.MUL) },
             { '/', () => MakeDecision('=', TokenType.DIEQ, TokenType.DIV) },
             { '=', () => MakeDecision('=', TokenType.EE, TokenType.EQ) },
-            { '<', () => MakeDecision('<', TokenType.LTE, TokenType.LT) },
-            { '>', () => MakeDecision('>', TokenType.GTE, TokenType.GT) },
+            { '<', () => MakeDecision('=', TokenType.LTE, TokenType.LT) },
+            { '>', () => MakeDecision('=', TokenType.GTE, TokenType.GT) },
         };
 
         unsafeMultiCharToken = new Dictionary<char, Func<LexerOperationResult>>()
