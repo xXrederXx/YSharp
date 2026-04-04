@@ -1,7 +1,9 @@
+using System.Diagnostics.CodeAnalysis;
 using CommandLine;
 
 namespace YSharp.Common;
 
+[ExcludeFromCodeCoverage]
 public class CliArgs : IEquatable<CliArgs>
 {
     [Option('o', "optimization", Required = false, Default = 0)]
