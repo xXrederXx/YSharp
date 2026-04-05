@@ -49,14 +49,14 @@ public sealed class VBuiltInFunction : VBaseFunction
 
     private RunTimeResult ExecPrint(Context execContext)
     {
-        if (execContext.symbolTable == null)
+        if (execContext.SymbolTable == null)
         {
             return new RunTimeResult().Failure(
                 new InternalSymbolTableError(execContext)
             );
         }
 
-        string value = execContext.symbolTable.Get("value").ToString() ?? " - ";
+        string value = execContext.SymbolTable.Get("value").ToString() ?? " - ";
         value = value.Replace('"', ' ');
         Console.WriteLine(value);
         return new RunTimeResult().Success(ValueNull.Instance);
@@ -64,10 +64,10 @@ public sealed class VBuiltInFunction : VBaseFunction
 
     private RunTimeResult ExecRun(Context execContext)
     {
-        if (execContext.symbolTable == null)
+        if (execContext.SymbolTable == null)
             return new RunTimeResult().Failure(new InternalSymbolTableError(execContext));
 
-        Value fileNameValue = execContext.symbolTable.Get("fileName");
+        Value fileNameValue = execContext.SymbolTable.Get("fileName");
         if (fileNameValue is not VString)
         {
             return new RunTimeResult().Failure(
@@ -101,7 +101,7 @@ public sealed class VBuiltInFunction : VBaseFunction
 
     private RunTimeResult ExecTimeToRun(Context execContext)
     {
-        return new RunTimeResult().Failure(new AccessDepricatedError(execContext.parentEntryPos, "RunTimed", execContext));
+        return new RunTimeResult().Failure(new AccessDepricatedError(execContext.ParentEntryPos, "RunTimed", execContext));
     }
 
     public override RunTimeResult Execute(List<Value> args)

@@ -43,7 +43,7 @@ public abstract class VBaseFunction : Value
 
     protected static void PopulateArgs(List<string> argNames, List<Value> args, Context execContext)
     {
-        if (execContext.symbolTable == null)
+        if (execContext.SymbolTable == null)
         {
             Console.WriteLine("Symbol table is null");
             return;
@@ -54,14 +54,13 @@ public abstract class VBaseFunction : Value
             string argName = argNames[i];
             Value argValue = args[i];
             argValue.SetContext(execContext);
-            execContext.symbolTable.Set(argName, argValue);
+            execContext.SymbolTable.Set(argName, argValue);
         }
     }
 
     protected Context GeneratContext()
     {
-        Context newContext = new(name, Context, StartPos);
-        newContext.symbolTable = new SymbolTable { Parent = newContext.parent!.symbolTable };
+        Context newContext = new(name, Context, StartPos, new SymbolTable() { Parent = Context?.SymbolTable });
         return newContext;
     }
 }

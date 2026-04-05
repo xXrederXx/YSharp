@@ -30,10 +30,10 @@ public abstract class RunTimeError(Position startPos, string details, Context? c
         while (ctx != null && !pos.IsNull)
         {
             result =
-                $"  File {FileNameRegistry.GetFileName(pos.FileId)}, line {pos.Line + 1}, in {ctx.displayName}\n"
+                $"  File {FileNameRegistry.GetFileName(pos.FileId)}, line {pos.Line + 1}, in {ctx.DisplayName}\n"
                 + result;
-            pos = ctx.parentEntryPos;
-            ctx = ctx.parent;
+            pos = ctx.ParentEntryPos;
+            ctx = ctx.Parent;
         }
 
         return "Traceback (most recent call last):\n" + result;

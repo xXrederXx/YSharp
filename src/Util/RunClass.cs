@@ -39,10 +39,7 @@ public class RunClass
         if (args.RenderDot)
             RenderDot(fn, rootNode);
 
-        Context context = new("<program>", null, Position.Null)
-        {
-            symbolTable = globalSymbolTable,
-        };
+        Context context = new("<program>", null, Position.Null, globalSymbolTable);
         RunTimeResult result = Interpreter.Visit(rootNode, context);
 
         // return the node and Error

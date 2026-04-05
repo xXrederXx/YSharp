@@ -2,28 +2,34 @@ using YSharp.Common;
 
 namespace YSharp.Runtime;
 
-
 public class Context
 {
-    public readonly string displayName;
-    public readonly Context? parent;
-    public readonly Position parentEntryPos;
-    public SymbolTable? symbolTable;
+    public string DisplayName { get; }
+    public Context? Parent { get; }
+    public Position ParentEntryPos { get; }
+    public SymbolTable SymbolTable { get; }
 
-    public Context(string displayName, Context? parent, in Position parentEntryPos)
+    public Context(
+        string displayName,
+        Context? parent,
+        in Position parentEntryPos,
+        SymbolTable symbolTable
+    )
     {
-        this.displayName = displayName;
-        this.parentEntryPos = parentEntryPos;
-        this.parent = parent;
+        DisplayName = displayName;
+        ParentEntryPos = parentEntryPos;
+        Parent = parent;
+        SymbolTable = symbolTable;
     }
 
     public Context()
     {
-        displayName = string.Empty;
-        parent = null;
-        parentEntryPos = new Position();
+        DisplayName = string.Empty;
+        Parent = null;
+        ParentEntryPos = Position.Null;
+        SymbolTable = new SymbolTable();
     }
 
     public override string ToString() =>
-        $"DisplayName {displayName} / SymbolTable {symbolTable} / Parent Entry {parentEntryPos} / parent {parent}";
+        $"DisplayName {DisplayName} / SymbolTable {SymbolTable} / Parent Entry {ParentEntryPos} / parent {Parent}";
 }

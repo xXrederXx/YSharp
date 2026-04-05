@@ -251,7 +251,7 @@ public static class Interpreter
         else
             condition = i => i > EndNumber;
 
-        if (context.symbolTable is null)
+        if (context.SymbolTable is null)
         {
             return res.Failure(new InternalSymbolTableError(context));
         }
@@ -260,7 +260,7 @@ public static class Interpreter
 
         while (condition(i))
         {
-            context.symbolTable.Set(varName, new VNumber(i));
+            context.SymbolTable.Set(varName, new VNumber(i));
             i += StepNumber;
 
             res.Regrister(Visit(node.BodyNode, context));
@@ -293,7 +293,7 @@ public static class Interpreter
         VFunction funcValue = new(funcName, bodyNode, argNames, node.RetNull);
         funcValue.SetContext(context).SetPos(node.StartPos, node.EndPos);
 
-        context.symbolTable?.Set(funcName, funcValue);
+        context.SymbolTable?.Set(funcName, funcValue);
         return res.Success(funcValue);
     }
 
@@ -412,12 +412,12 @@ public static class Interpreter
         RunTimeResult res = new();
         string varName = node.VarName;
 
-        if (context.symbolTable is null)
+        if (context.SymbolTable is null)
         {
             return res.Failure(new InternalSymbolTableError(context));
         }
 
-        Value oldVal = context.symbolTable.Get(varName);
+        Value oldVal = context.SymbolTable.Get(varName);
         if (oldVal is not VNumber numNode)
         {
             return res.Failure(
@@ -438,7 +438,7 @@ public static class Interpreter
         if (newValue.IsFailed)
             return res.Failure(newValue.GetError());
 
-        context.symbolTable.Set(varName, newValue.GetValue());
+        context.SymbolTable.Set(varName, newValue.GetValue());
         return res.Success(newValue.GetValue());
     }
 
@@ -450,13 +450,13 @@ public static class Interpreter
         if (!res.error.IsError)
             return res.Success(val);
 
-        if (context.symbolTable is null)
+        if (context.SymbolTable is null)
         {
             return res.Failure(new InternalSymbolTableError(context));
         }
 
         if (node.CatchVarName is not null)
-            context.symbolTable.Set(node.CatchVarName.Value, new VString(res.error.ToString()));
+            context.SymbolTable.Set(node.CatchVarName.Value, new VString(res.error.ToString()));
 
         Value catchVal = res.Regrister(Visit(node.CatchNode, context));
         if (res.ShouldReturn())
@@ -493,13 +493,13 @@ public static class Interpreter
     {
         RunTimeResult res = new();
 
-        if (context.symbolTable is null)
+        if (context.SymbolTable is null)
         {
             return res.Failure(new InternalSymbolTableError(context));
         }
 
         string varName = node.VarNameTok.Value;
-        Value value = context.symbolTable.Get(varName);
+        Value value = context.SymbolTable.Get(varName);
 
         if (value is ValueNull)
         {
@@ -519,12 +519,12 @@ public static class Interpreter
         if (res.ShouldReturn())
             return res;
 
-        if (context.symbolTable is null)
+        if (context.SymbolTable is null)
         {
             return res.Failure(new InternalSymbolTableError(context));
         }
 
-        context.symbolTable.Set(varName, value);
+        context.SymbolTable.Set(varName, value);
         return res.Success(value);
     }
 
