@@ -61,7 +61,7 @@ public abstract class VBaseFunction : Value
     protected Context GeneratContext()
     {
         Context newContext = new(name, Context, StartPos);
-        newContext.symbolTable = new SymbolTable { parent = newContext.parent!.symbolTable };
+        newContext.symbolTable = new SymbolTable { Parent = newContext.parent!.symbolTable };
         return newContext;
     }
 }

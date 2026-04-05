@@ -6,39 +6,32 @@ namespace YSharp.Runtime;
 
 public class SymbolTable
 {
-    public SymbolTable? parent = null;
-    public Dictionary<string, Value> symbols = [];
+    public SymbolTable? Parent { private get; init; } = null;
+    private Dictionary<string, Value> Symbols = [];
 
-    public Value Get(string? name)
-    {
-        if (string.IsNullOrEmpty(name)) return ValueNull.Instance;
-
-        return symbols.TryGetValue(name, out Value? value)
-            ? value
-            : GetFromParent(name, ValueNull.Instance);
-    }
+    public Value Get(string? name) => Get(name, ValueNull.Instance);
 
     public Value Get(string? name, Value defaultValue)
     {
         if (string.IsNullOrEmpty(name)) return defaultValue;
 
-        return symbols.TryGetValue(name, out Value? value)
+        return Symbols.TryGetValue(name, out Value? value)
             ? value
             : GetFromParent(name, defaultValue);
     }
 
     public void Remove(string name)
     {
-        symbols.Remove(name);
+        Symbols.Remove(name);
     }
 
     public void Set(string name, Value value)
     {
-        symbols[name] = value;
+        Symbols[name] = value;
     }
 
     private Value GetFromParent(string name, Value defaultValue) =>
-        parent is not null ? parent.Get(name, defaultValue) : defaultValue;
+        Parent is not null ? Parent.Get(name, defaultValue) : defaultValue;
 
     public static SymbolTable GenerateGlobalSymboltable()
     {
