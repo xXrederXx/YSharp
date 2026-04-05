@@ -56,17 +56,6 @@ public static class TokenExtensions
         return false;
     }
 
-    /// <summary>
-    /// Determines whether the token's type is not contained within the provided set of types.
-    /// </summary>
-    /// <param name="self">The token to inspect.</param>
-    /// <param name="types">A span of token types to test against.</param>
-    /// <returns>
-    /// <c>true</c> if the token's type does not match any value in <paramref name="types"/>; otherwise, <c>false</c>.
-    /// </returns>
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool IsNotOneOf(this BaseToken self, ReadOnlySpan<TokenType> types) =>
-        !self.IsOneOf(types);
 
     /// <summary>
     /// Determines whether the value of the token is equal to the specified value.
@@ -80,16 +69,4 @@ public static class TokenExtensions
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool ValueEquals<T>(this Token<T> self, T value) =>
         EqualityComparer<T>.Default.Equals(self.Value, value);
-
-    /// <summary>
-    /// Determines whether the value of the token is not equal to the specified value.
-    /// </summary>
-    /// <typeparam name="T">The type of the token's value.</typeparam>
-    /// <param name="self">The token whose value is compared.</param>
-    /// <param name="value">The value to compare against.</param>
-    /// <returns>
-    /// <c>true</c> if the token's value is not equal to <paramref name="value"/>; otherwise, <c>false</c>.
-    /// </returns>
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool ValueNotEquals<T>(this Token<T> self, T value) => !self.ValueEquals(value);
 }
