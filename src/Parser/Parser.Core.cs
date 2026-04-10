@@ -7,8 +7,8 @@ namespace YSharp.Parser;
 // the parser which is used to make the abstract syntax tree
 public sealed partial class Parser
 {
-    public BaseToken currentToken;
-    public int tokIndex;
+    private BaseToken currentToken;
+    private int tokIndex;
     private readonly ImmutableArray<BaseToken> tokens;
 
     public Parser(List<BaseToken> tokens)
