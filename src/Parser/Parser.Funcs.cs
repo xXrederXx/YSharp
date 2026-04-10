@@ -16,7 +16,7 @@ public sealed partial class Parser
 
         while (currentToken.IsOneOf([TokenType.PLUS, TokenType.MINUS]))
         {
-            BaseToken opTok = (BaseToken)currentToken;
+            BaseToken opTok = currentToken;
 
             AdvanceParser(res);
             BaseNode right = res.Register(Term());
