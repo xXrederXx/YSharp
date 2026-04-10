@@ -28,27 +28,6 @@ public sealed partial class Parser
         return false;
     }
 
-    public static bool TryCastTokenNoValue(
-        BaseToken token,
-        out BaseToken result,
-        out InternalTokenCastError<BaseToken> error,
-        [CallerMemberName] string membername = "NoMemberName"
-    )
-    {
-        if (token is BaseToken casted)
-        {
-            result = casted;
-            error = null!;
-
-            return true;
-        }
-
-        result = null!;
-        error = new InternalTokenCastError<BaseToken>(token, membername);
-
-        return false;
-    }
-
     public BaseNode GetBodyNode(ParseResult res)
     {
         if (currentToken.IsType(TokenType.NEWLINE))
