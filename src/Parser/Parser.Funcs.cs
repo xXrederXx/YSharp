@@ -8,25 +8,7 @@ public sealed partial class Parser
 {
     private ParseResult ArithExpr()
     {
-        ParseResult res = new();
-
-        BaseNode left = res.Register(Term());
-        if (res.HasError)
-            return res;
-
-        while (currentToken.IsOneOf([TokenType.PLUS, TokenType.MINUS]))
-        {
-            BaseToken opTok = currentToken;
-
-            AdvanceParser(res);
-            BaseNode right = res.Register(Term());
-            if (res.HasError)
-                return res;
-
-            left = new BinOpNode(left, opTok, right);
-        }
-
-        return res.Success(left);
+        return BinaryOperation(new ParseResult(), Term, [TokenType.PLUS, TokenType.MINUS], Term);
     }
 
     // Important Methods Start at bottom to top
@@ -159,40 +141,13 @@ public sealed partial class Parser
         }
 
         // Binary Operation
-        BaseNode left = res.Register(ArithExpr());
-        if (res.HasError)
-            return res;
 
-        // This checks for the comparison operators
-        while (
-            currentToken.IsOneOf([
-                TokenType.EE,
-                TokenType.NE,
-                TokenType.GT,
-                TokenType.LT,
-                TokenType.GTE,
-                TokenType.LTE,
-            ])
-        )
-        {
-            if (
-                !TryCastTokenNoValue(
-                    currentToken,
-                    out BaseToken opTok,
-                    out InternalTokenCastError<BaseToken> error
-                )
-            )
-                return res.Failure(error);
-
-            AdvanceParser(res);
-            BaseNode right = res.Register(ArithExpr());
-            if (res.HasError)
-                return res;
-
-            left = new BinOpNode(left, opTok, right);
-        }
-
-        return res.Success(left);
+        return BinaryOperation(
+            res,
+            ArithExpr,
+            [TokenType.EE, TokenType.NE, TokenType.GT, TokenType.LT, TokenType.GTE, TokenType.LTE],
+            ArithExpr
+        );
     }
 
     private ParseResult Expression()
@@ -209,24 +164,12 @@ public sealed partial class Parser
             return res.Success(node);
         }
 
-        // Binary Operation
-        BaseNode left = res.Register(CompExpr());
-        if (res.HasError)
-            return res;
-
-        while (IsCurrentTokenKeyword(KeywordType.AND) || IsCurrentTokenKeyword(KeywordType.OR))
-        {
-            BaseToken opTok = currentToken;
-
-            AdvanceParser(res);
-            BaseNode right = res.Register(CompExpr());
-            if (res.HasError)
-                return res;
-
-            left = new BinOpNode(left, opTok, right);
-        }
-
-        return res.Success(left);
+        return BinaryOperation(
+            res,
+            CompExpr,
+            () => IsCurrentTokenKeyword(KeywordType.AND) || IsCurrentTokenKeyword(KeywordType.OR),
+            CompExpr
+        );
     }
 
     private ParseResult Factor()
@@ -601,32 +544,7 @@ public sealed partial class Parser
 
     private ParseResult Power()
     {
-        ParseResult res = new();
-
-        BaseNode left = res.Register(Atom());
-        if (res.HasError)
-            return res;
-
-        while (currentToken.IsType(TokenType.POW))
-        {
-            if (
-                !TryCastTokenNoValue(
-                    currentToken,
-                    out BaseToken opTok,
-                    out InternalTokenCastError<BaseToken> error
-                )
-            )
-                return res.Failure(error);
-            AdvanceParser(res);
-
-            BaseNode right = res.Register(Factor());
-            if (res.HasError)
-                return res;
-
-            left = new BinOpNode(left, opTok, right);
-        }
-
-        return res.Success(left);
+        return BinaryOperation(new ParseResult(), Atom, [TokenType.POW], Factor);
     }
 
     private ParseResult Statement()
@@ -698,33 +616,7 @@ public sealed partial class Parser
 
     private ParseResult Term()
     {
-        // will return BinOpNode
-        ParseResult res = new();
-
-        BaseNode left = res.Register(Factor());
-        if (res.HasError)
-            return res;
-
-        while (currentToken.IsOneOf([TokenType.MUL, TokenType.DIV]))
-        {
-            if (
-                !TryCastTokenNoValue(
-                    currentToken,
-                    out BaseToken opTok,
-                    out InternalTokenCastError<BaseToken> error
-                )
-            )
-                return res.Failure(error);
-
-            AdvanceParser(res);
-            BaseNode right = res.Register(Factor());
-            if (res.HasError)
-                return res;
-
-            left = new BinOpNode(left, opTok, right);
-        }
-
-        return res.Success(left);
+        return BinaryOperation(new ParseResult(), Factor, [TokenType.MUL, TokenType.DIV], Factor);
     }
 
     private ParseResult TryCatchExpr()

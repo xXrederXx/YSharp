@@ -130,4 +130,42 @@ public sealed partial class Parser
     {
         return !IsCurrentTokenKeyword(keyword);
     }
+
+    private ParseResult BinaryOperation(
+        ParseResult res,
+        Func<ParseResult> left,
+        TokenType[] validOperators,
+        Func<ParseResult> right
+    )
+    {
+        return BinaryOperation(res, left, () => currentToken.IsOneOf(validOperators), right);
+    }
+
+    private ParseResult BinaryOperation(
+        ParseResult res,
+        Func<ParseResult> left,
+        Func<bool> validator,
+        Func<ParseResult> right
+    )
+    {
+        // Binary Operation
+        BaseNode leftNode = res.Register(left.Invoke());
+        if (res.HasError)
+            return res;
+
+        // This checks for the comparison operators
+        while (validator.Invoke())
+        {
+            BaseToken opTok = currentToken;
+
+            AdvanceParser(res);
+
+            BaseNode rightNode = res.Register(right.Invoke());
+            if (res.HasError)
+                return res;
+
+            leftNode = new BinOpNode(leftNode, opTok, rightNode);
+        }
+        return res.Success(leftNode);
+    }
 }
