@@ -179,14 +179,7 @@ public sealed partial class Parser
         // if there is a plus or a minus it could be +5 or -5
         if (currentToken.IsOneOf([TokenType.PLUS, TokenType.MINUS]))
         {
-            if (
-                !TryCastTokenNoValue(
-                    currentToken,
-                    out BaseToken opTok,
-                    out InternalTokenCastError<BaseToken> error
-                )
-            )
-                return res.Failure(error);
+            BaseToken opTok = currentToken;
             AdvanceParser(res);
             BaseNode factor = res.Register(Factor());
             if (res.HasError)
