@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using YSharp.Lexer;
 using YSharp.Runtime;
 using YSharp.Util;
@@ -61,7 +62,7 @@ public class IllegalCharError(Position startPos, char illegalChar)
 public class IllegalEscapeCharError(Position startPos, char illegalChar)
     : Error(0002, $"'{illegalChar}' is not a valid escape character", startPos)
 { }
-
+[ExcludeFromCodeCoverage]
 public class InvalidEncodingError(Position startPos, string encoding)
     : Error(0003, $"Unsupported encoding: '{encoding}'", startPos)
 { }
@@ -83,14 +84,17 @@ public class ExpectedKeywordError(Position startPos, string keyword)
     : Error(1001, $"Expected keyword '{keyword}'", startPos)
 { }
 
+[ExcludeFromCodeCoverage]
 public class UnexpectedEOFError(Position startPos)
     : Error(1002, "Unexpected end of file", startPos)
 { }
 
+[ExcludeFromCodeCoverage]
 public class UnexpectedIndentError(Position startPos)
     : Error(1003, "Unexpected indent", startPos)
 { }
 
+[ExcludeFromCodeCoverage]
 public class ExpectedBlockError(Position startPos)
     : Error(1004, "Expected an indented code block", startPos)
 { }
@@ -118,9 +122,11 @@ public class VarNotFoundError(Position startPos, string varName, Context? contex
 public class FuncNotFoundError(Position startPos, string funcName, Context? context)
     : RunTimeError(startPos, $"Function '{funcName}' is not defined", context, 2001);
 
+[ExcludeFromCodeCoverage]
 public class AssignmentToConstantError(Position startPos, string name, Context? context)
     : RunTimeError(startPos, $"Cannot assign to constant '{name}'", context, 2002);
 
+[ExcludeFromCodeCoverage]
 public class ReservedNameError(Position startPos, string name, Context? context)
     : RunTimeError(startPos, $"'{name}' is a reserved keyword", context, 2003);
 
@@ -131,9 +137,11 @@ public class AccessDepricatedError(Position startPos, string name, Context? cont
 public class WrongTypeError(Position startPos, string details, Context? context)
     : RunTimeError(startPos, details, context, 3000);
 
+[ExcludeFromCodeCoverage]
 public class NullReferenceError(Position startPos, string varName, Context? context)
     : RunTimeError(startPos, $"'{varName}' is null", context, 3001);
 
+[ExcludeFromCodeCoverage]
 public class InvalidCastError(Position startPos, string fromType, string toType, Context? context)
     : RunTimeError(startPos, $"Cannot convert type '{fromType}' to '{toType}'", context, 3002);
 
@@ -147,6 +155,7 @@ public class NumArgsError(Position startPos, int expected, int actual, Context? 
 public class ArgOutOfRangeError(Position startPos, string details, Context? context)
     : RunTimeError(startPos, details, context, 4001);
 
+[ExcludeFromCodeCoverage]
 public class MissingRequiredArgError(Position startPos, string name, Context? context)
     : RunTimeError(startPos, $"Missing required argument '{name}'", context, 4002);
 
@@ -154,9 +163,11 @@ public class MissingRequiredArgError(Position startPos, string name, Context? co
 public class DivisionByZeroError(Position startPos, Context? context)
     : RunTimeError(startPos, "Division by zero", context, 5000);
 
+[ExcludeFromCodeCoverage]
 public class MathOverflowError(Position startPos, string details, Context? context)
     : RunTimeError(startPos, details, context, 5001);
 
+[ExcludeFromCodeCoverage]
 public class InvalidMathOpError(Position startPos, string op, Context? context)
     : RunTimeError(startPos, $"Invalid operation: '{op}'", context, 5002);
 
@@ -164,12 +175,15 @@ public class IlligalOperationError(Position startPos, string details, Context? c
     : RunTimeError(startPos, details, context, 306);
 
 //* 6000–6999: Control Flow Errors
+[ExcludeFromCodeCoverage]
 public class BreakOutsideLoopError(Position startPos, Context? context)
     : RunTimeError(startPos, "'break' used outside loop", context, 6000);
 
+[ExcludeFromCodeCoverage]
 public class ReturnOutsideFunctionError(Position startPos, Context? context)
     : RunTimeError(startPos, "'return' used outside function", context, 6001);
 
+[ExcludeFromCodeCoverage]
 public class MaxRecursionDepthError(Position startPos, Context? context)
     : RunTimeError(startPos, "Maximum recursion depth exceeded", context, 6002);
 
@@ -180,19 +194,24 @@ public class FileNotFoundError(Position startPos, string details, Context? conte
 public class FileReadError(Position startPos, string details, Context? context)
     : RunTimeError(startPos, details, context, 7001);
 
+[ExcludeFromCodeCoverage]
 public class FileWriteError(Position startPos, string details, Context? context)
     : RunTimeError(startPos, details, context, 7002);
 
+[ExcludeFromCodeCoverage]
 public class PermissionDeniedError(Position startPos, string file, Context? context)
     : RunTimeError(startPos, $"Permission denied: '{file}'", context, 7003);
 
 //* 8000–8999: Module / Import Errors
+[ExcludeFromCodeCoverage]
 public class ModuleNotFoundError(Position startPos, string moduleName, Context? context)
     : RunTimeError(startPos, $"Module '{moduleName}' not found", context, 8000);
 
+[ExcludeFromCodeCoverage]
 public class CircularImportError(Position startPos, string moduleName, Context? context)
     : RunTimeError(startPos, $"Circular import detected: '{moduleName}'", context, 8001);
 
+[ExcludeFromCodeCoverage]
 public class ImportSyntaxError(Position startPos, string details, Context? context)
     : RunTimeError(startPos, details, context, 8002);
 
@@ -208,6 +227,7 @@ public class InternalParserError(string details) : InternalError(9002, details);
 
 public class InternalInterpreterError(string details) : InternalError(9003, details);
 
+[ExcludeFromCodeCoverage]
 public class AssertionFailedError(Position startPos, string message)
     : Error(9004, $"Assertion failed: {message}", startPos)
 { }
