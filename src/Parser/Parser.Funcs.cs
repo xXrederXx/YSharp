@@ -66,55 +66,29 @@ public sealed partial class Parser
         }
         // check keywords
         Token<KeywordType>? keywordTok = tok as Token<KeywordType>;
+
         if (keywordTok is not null)
         {
-            if (keywordTok.ValueEquals(KeywordType.IF))
+            Func<ParseResult> func = keywordTok.Value switch
             {
-                BaseNode ifExpression = res.Register(IfExpr());
-                if (res.HasError)
-                    return res;
-                return res.Success(ifExpression);
-            }
-
-            if (keywordTok.ValueEquals(KeywordType.FOR))
-            {
-                BaseNode forExpression = res.Register(ForExpr());
-                if (res.HasError)
-                    return res;
-                return res.Success(forExpression);
-            }
-
-            if (keywordTok.ValueEquals(KeywordType.WHILE))
-            {
-                BaseNode whileExpression = res.Register(WhileExpr());
-                if (res.HasError)
-                    return res;
-                return res.Success(whileExpression);
-            }
-
-            if (keywordTok.ValueEquals(KeywordType.FUN))
-            {
-                BaseNode funcExpression = res.Register(FuncDef());
-                if (res.HasError)
-                    return res;
-                return res.Success(funcExpression);
-            }
-
-            if (keywordTok.ValueEquals(KeywordType.TRY))
-            {
-                BaseNode tryCatch = res.Register(TryCatchExpr());
-                if (res.HasError)
-                    return res;
-                return res.Success(tryCatch);
-            }
-
-            if (keywordTok.ValueEquals(KeywordType.IMPORT))
-            {
-                BaseNode importNode = res.Register(ImportExpr());
-                if (res.HasError)
-                    return res;
-                return res.Success(importNode);
-            }
+                KeywordType.IF => IfExpr,
+                KeywordType.FOR => ForExpr,
+                KeywordType.WHILE => WhileExpr,
+                KeywordType.FUN => FuncDef,
+                KeywordType.TRY => TryCatchExpr,
+                KeywordType.IMPORT => ImportExpr,
+                _ => () =>
+                    new ParseResult().Failure(
+                        new InvalidSyntaxError(
+                            tok.StartPos,
+                            $"Expected anything else but current token is of type {tok.Type}"
+                        )
+                    ),
+            };
+            BaseNode node = res.Register(func.Invoke());
+            if (res.HasError)
+                return res;
+            return res.Success(node);
         }
 
         return res.Failure(
