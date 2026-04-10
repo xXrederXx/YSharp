@@ -310,8 +310,11 @@ public sealed partial class Parser
         AdvanceParser(res);
 
         BaseNode body = GetBodyNode(res);
-        if (HasErrorButEnd(res))
+        if (res.HasError)
             return res;
+        if (IsCurrentTokenNotKeyword(KeywordType.END))
+            return res.Failure(new ExpectedKeywordError(currentToken.StartPos, "END"));
+        AdvanceParser(res);
         return res.Success(new ForNode(varName, startValue, endValue, stepValue, body, false));
     }
 
@@ -409,8 +412,12 @@ public sealed partial class Parser
 
         AdvanceParser(res);
         BaseNode body = res.Register(Statements());
-        if (HasErrorButEnd(res))
+        if (res.HasError)
             return res;
+
+        if (IsCurrentTokenNotKeyword(KeywordType.END))
+            return res.Failure(new ExpectedKeywordError(currentToken.StartPos, "END"));
+        AdvanceParser(res);
         return res.Success(new FuncDefNode(varNameTok, argNameTok, body, false));
     }
 
@@ -493,10 +500,11 @@ public sealed partial class Parser
             AdvanceParser(res);
 
             BaseNode caseBodyNode = res.Register(Statements());
-            if (res.HasError && res.Error is not EndKeywordError)
+            if (res.HasError)
                 return res;
-            res.ResetError();
-
+            if (IsCurrentTokenNotKeyword(KeywordType.END))
+                return res.Failure(new ExpectedKeywordError(currentToken.StartPos, "END"));
+            AdvanceParser(res);
             cases.Add(new SubIfNode(caseCondition, caseBodyNode));
 
             if (IsCurrentTokenNotKeyword(KeywordType.END))
@@ -516,9 +524,11 @@ public sealed partial class Parser
         AdvanceParser(res);
 
         elseCase = res.Register(Statements());
-        if (HasErrorButEnd(res))
+        if (res.HasError)
             return res;
-
+        if (IsCurrentTokenNotKeyword(KeywordType.END))
+            return res.Failure(new ExpectedKeywordError(currentToken.StartPos, "END"));
+        AdvanceParser(res);
         return res.Success(new IfNode(cases, elseCase));
     }
 
@@ -652,9 +662,6 @@ public sealed partial class Parser
             return res.Success(new BreakNode(startPos, currentToken.StartPos));
         }
 
-        if (IsCurrentTokenKeyword(KeywordType.END))
-            return res.Failure(new EndKeywordError(currentToken.StartPos));
-
         BaseNode expr = res.Register(Expression());
 
         if (res.HasError)
@@ -671,17 +678,15 @@ public sealed partial class Parser
         List<BaseNode> AllStatements = [];
         BaseNode nextStatement;
 
-        while (currentToken.IsNotType(TokenType.EOF)) // repeat until no more lines are available
+        while (currentToken.IsNotType(TokenType.EOF) && IsCurrentTokenNotKeyword(KeywordType.END)) // repeat until no more lines are available
         {
             SkipNewLines(res);
-            if (currentToken.IsType(TokenType.EOF))
+            if (currentToken.IsType(TokenType.EOF) || IsCurrentTokenKeyword(KeywordType.END))
                 break;
 
             nextStatement = res.Register(Statement());
             if (res.HasError)
             {
-                if (res.Error is EndKeywordError)
-                    return res.Success(new ListNode(AllStatements, StartPos, currentToken.EndPos));
                 return res;
             }
 
@@ -733,9 +738,11 @@ public sealed partial class Parser
         BaseNode tryBlock = res.Register(Statements());
         BaseNode catchBlock = NodeNull.Instance;
         Token<string> varName = new(TokenType.NULL, "", currentToken.StartPos, currentToken.EndPos);
-        if (HasErrorButEnd(res))
+        if (res.HasError)
             return res;
-
+        if (IsCurrentTokenNotKeyword(KeywordType.END))
+            return res.Failure(new ExpectedKeywordError(currentToken.StartPos, "END"));
+        AdvanceParser(res);
         SkipNewLines(res);
 
         if (IsCurrentTokenKeyword(KeywordType.CATCH))
@@ -749,8 +756,11 @@ public sealed partial class Parser
             }
 
             catchBlock = res.Register(Statements());
-            if (HasErrorButEnd(res))
+            if (res.HasError)
                 return res;
+            if (IsCurrentTokenNotKeyword(KeywordType.END))
+                return res.Failure(new ExpectedKeywordError(currentToken.StartPos, "END"));
+            AdvanceParser(res);
         }
 
         return res.Success(new TryCatchNode(tryBlock, catchBlock, varName));
@@ -850,9 +860,11 @@ public sealed partial class Parser
 
         AdvanceParser(res);
         BaseNode body = GetBodyNode(res);
-        if (HasErrorButEnd(res))
+        if (res.HasError)
             return res;
-
+        if (IsCurrentTokenNotKeyword(KeywordType.END))
+            return res.Failure(new ExpectedKeywordError(currentToken.StartPos, "END"));
+        AdvanceParser(res);
         return res.Success(new WhileNode(condition, body, true));
     }
 }

@@ -60,22 +60,6 @@ public sealed partial class Parser
         return res.Register(Statement());
     }
 
-    public bool HasErrorButEnd(ParseResult res)
-    {
-        if (res.HasError && res.Error is not EndKeywordError)
-            return true;
-        res.ResetError();
-
-        if (IsCurrentTokenNotKeyword(KeywordType.END))
-        {
-            res.Failure(new ExpectedKeywordError(currentToken.StartPos, "END"));
-            return true;
-        }
-
-        AdvanceParser(res);
-        return false;
-    }
-
     private List<BaseNode> MakeArgs(ParseResult res)
     {
         List<BaseNode> argNodes = [];

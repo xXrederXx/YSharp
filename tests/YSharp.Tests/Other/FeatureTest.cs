@@ -28,7 +28,7 @@ public class FeatureTest
             RETURN s
         END
         x()
-        
+
     ", arg
         );
 
@@ -117,8 +117,8 @@ public class FeatureTest
                 return num.value;
 
             case VList list:
-                VNumber? firstNum = list.value.FirstOrDefault(v => v is VNumber) as VNumber;
-                if (firstNum != null) return firstNum.value;
+            System.Console.WriteLine(list);
+                if (list.value.LastOrDefault(v => v is VNumber) is VNumber firstNum) return firstNum.value;
                 throw new InvalidOperationException("No numeric result found in list.");
 
             default:

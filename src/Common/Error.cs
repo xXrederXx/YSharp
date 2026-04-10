@@ -53,10 +53,6 @@ public class ErrorNull : Error
 
 // Specific error types
 
-//Y0S690 -> Internal Use not accualy an error
-// TODO: Find way around this
-public class EndKeywordError(Position startPos) : Error(690, "End keyword there", startPos);
-
 //* 0000–0999: Lexical Errors
 public class IllegalCharError(Position startPos, char illegalChar)
     : Error(0001, $"Illegal character '{illegalChar}'", startPos)
