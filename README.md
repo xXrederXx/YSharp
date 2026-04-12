@@ -1,6 +1,7 @@
 # Welcome to YSharp
 
 ![CI](https://github.com/xXrederXx/YSharp/workflows/CI/badge.svg)
+[![Coverage](https://codecov.io/gh/xXrederXx/YSharp/branch/main/graph/badge.svg)](https://codecov.io/gh/xXrederXx/YSharp)
 
 ## What is YSharp?
 
