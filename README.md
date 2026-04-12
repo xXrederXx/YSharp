@@ -1,5 +1,7 @@
 # Welcome to YSharp
 
+![CI](https://github.com/xXrederXx/YSharp/workflows/CI/badge.svg)
+
 ## What is YSharp?
 
 YSharp is a simple, general-purpose, interpreted programming language. It runs through a `.exe` interpreter and includes a REPL shell for interactive development.
