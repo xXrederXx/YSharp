@@ -33,9 +33,17 @@ jobs:
       run: dotnet build YSharp.sln --configuration Release --no-restore
 
     - name: Test
-      run: dotnet test YSharp.sln --configuration Release --no-build --collect:"XPlat Code Coverage" -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=cobertura
+      run: |
+        dotnet test tests/YSharp.Tests/YSharp.Tests.csproj --configuration Release --no-build \
+          --collect:"XPlat Code Coverage" \
+          --results-directory TestResults \
+          -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=cobertura
 
-    # Should generate a coverage badge?!
+    - name: Find coverage files
+      run: |
+        echo "Looking for cobertura coverage files..."
+        find . -name "*.cobertura.xml" -print || true
+
     - name: Generate coverage badge JSON
       run: |
         python - <<'PY'
@@ -43,9 +51,12 @@ jobs:
         import pathlib
         import xml.etree.ElementTree as ET
 
-        xml_path = next(pathlib.Path('.').rglob('coverage.cobertura.xml'), None)
-        if xml_path is None:
-            raise SystemExit('Coverage file not found')
+        files = sorted(pathlib.Path('.').rglob('*.cobertura.xml'))
+        if not files:
+            raise SystemExit('Coverage file not found. Searched for *.cobertura.xml')
+
+        xml_path = files[-1]
+        print('Using coverage file:', xml_path)
 
         tree = ET.parse(xml_path)
         root = tree.getroot()
