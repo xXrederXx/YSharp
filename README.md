@@ -1,4 +1,4 @@
-# Welcome to YSharp 
+# Welcome to YSharp
 
 ## What is YSharp?
 
