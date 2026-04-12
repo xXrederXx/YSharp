@@ -18,11 +18,14 @@ jobs:
       with:
         dotnet-version: '10.0.x'
 
+    - name: Restore
+      run: dotnet restore YSharp.sln
+
     - name: Check formatting
       run: dotnet format YSharp.sln --verify-no-changes
 
     - name: Build
-      run: dotnet build YSharp.sln --configuration Release
+      run: dotnet build YSharp.sln --configuration Release --no-restore
 
     - name: Test
-      run: dotnet test YSharp.sln --configuration Release --collect:"XPlat Code Coverage"
+      run: dotnet test YSharp.sln --configuration Release --no-build --collect:"XPlat Code Coverage"
