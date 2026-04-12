@@ -6,12 +6,17 @@ on:
   pull_request:
     branches: [ main ]
 
+permissions:
+  contents: write
+
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
 
     steps:
     - uses: actions/checkout@v4
+      with:
+        persist-credentials: true
 
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
@@ -30,8 +35,39 @@ jobs:
     - name: Test
       run: dotnet test YSharp.sln --configuration Release --no-build --collect:"XPlat Code Coverage" -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=cobertura
 
-    - name: Upload coverage to Codecov
-      uses: codecov/codecov-action@v4
-      with:
-        files: '**/coverage.cobertura.xml'
-        fail_ci_if_error: true
+    # Should generate a coverage badge?!
+    - name: Generate coverage badge JSON
+      run: |
+        python - <<'PY'
+        import json
+        import pathlib
+        import xml.etree.ElementTree as ET
+
+        xml_path = next(pathlib.Path('.').rglob('coverage.cobertura.xml'), None)
+        if xml_path is None:
+            raise SystemExit('Coverage file not found')
+
+        tree = ET.parse(xml_path)
+        root = tree.getroot()
+        line_rate = root.attrib.get('line-rate')
+        if line_rate is None:
+            raise SystemExit('line-rate attribute missing')
+
+        pct = round(float(line_rate) * 100, 1)
+        data = {
+            'schemaVersion': 1,
+            'label': 'coverage',
+            'message': f'{pct}%',
+            'color': 'yellowgreen'
+        }
+        with open('coverage-badge.json', 'w', encoding='utf-8') as f:
+            json.dump(data, f)
+        print('Generated coverage-badge.json:', data)
+
+    - name: Commit coverage badge
+      if: github.ref == 'refs/heads/main'
+      run: |
+        git config user.name 'github-actions[bot]'
+        git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+        git add coverage-badge.json
+        git diff --cached --quiet || (git commit -m 'Update coverage badge [skip ci]' && git push origin HEAD:main)
