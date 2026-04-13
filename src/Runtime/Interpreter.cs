@@ -109,7 +109,8 @@ public static class Interpreter
                 )
             );
 
-        valueToCall = function.Copy().SetPos(node.StartPos, node.EndPos);
+        VBaseFunction functionToCall = (VBaseFunction)
+            function.Copy().SetPos(node.StartPos, node.EndPos);
 
         for (int i = 0; i < node.ArgNodes.Length; i++)
         {
@@ -118,13 +119,7 @@ public static class Interpreter
                 return res;
         }
 
-        Value ret;
-        if (valueToCall is VBaseFunction _BIfunction)
-            ret = res.Register(_BIfunction.Execute(args));
-        else if (valueToCall is VBaseFunction _function)
-            ret = res.Register(_function.Execute(args));
-        else
-            ret = ValueNull.Instance;
+        Value ret = res.Register(functionToCall.Execute(args));
 
         if (res.ShouldReturn())
             return res;
