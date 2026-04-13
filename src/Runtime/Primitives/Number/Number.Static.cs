@@ -40,9 +40,9 @@ public sealed partial class VNumber : Value
         err = ValueHelper.CheckArgs(args, 1, [typeof(VString)], self.Context); // format argument
         if (err.IsError) return Result<Value, Error>.Fail(err);
         string format = ConvertToCSFormat(((VString)args[0]).value);
-        string formatedStr = self.value.ToString(format, StaticConfig.numberCulture);
-        //TODO: Add format exeption
-        return Result<Value, Error>.Success(new VString(formatedStr));
+        string formattedStr = self.value.ToString(format, StaticConfig.numberCulture);
+        //TODO: Add format exception
+        return Result<Value, Error>.Success(new VString(formattedStr));
     }
 
     private static VNumber PowToNum(VNumber self, VNumber other) => new(self.value + other.value);

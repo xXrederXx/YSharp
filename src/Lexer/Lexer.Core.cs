@@ -38,7 +38,7 @@ public sealed partial class Lexer
     {
         this.text = text;
 
-        // The .MaxValue enshures that the first advance call overflows to
+        // The .MaxValue ensures that the first advance call overflows to
         byte fileId = FileNameRegistry.GetFileId(fileName);
         pos = new Position(0, 0, 0, fileId);
         currentChar = pos.Index < text.Length ? text[pos.Index] : StopChar;
@@ -118,7 +118,7 @@ public sealed partial class Lexer
 
     private static bool IsValidIdentifierChar(char c) => char.IsLetterOrDigit(c) || c == '_';
 
-    // this uptades to the next charachter
+    // this updates to the next character
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private void Advance()
     {

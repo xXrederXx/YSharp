@@ -15,21 +15,21 @@ public sealed partial class VList : Value
             return Result<Value, Error>.Success(new VList(value));
         }
 
-        return IlligalOperation(other);
+        return IllegalOperation(other);
     }
 
     public override Result<Value, Error> GetComparisonEQ(Value other)
     {
         if (other is VList _other) return Result<Value, Error>.Success(new VBool(value == _other.value));
 
-        return IlligalOperation(other);
+        return IllegalOperation(other);
     }
 
     public override Result<Value, Error> GetComparisonNE(Value other)
     {
         if (other is VList _other) return Result<Value, Error>.Success(new VBool(value != _other.value));
 
-        return IlligalOperation(other);
+        return IllegalOperation(other);
     }
 
     public override Result<Value, Error> MuledTo(Value other)
@@ -45,6 +45,6 @@ public sealed partial class VList : Value
             return Result<Value, Error>.Success(new VList(value));
         }
 
-        return IlligalOperation(other);
+        return IllegalOperation(other);
     }
 }

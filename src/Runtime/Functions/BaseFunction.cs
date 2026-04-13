@@ -23,7 +23,7 @@ public abstract class VBaseFunction : Value
     )
     {
         RunTimeResult res = new();
-        res.Regrister(CheckArgs(argNames, args, execContext));
+        res.Register(CheckArgs(argNames, args, execContext));
         if (res.ShouldReturn()) return res;
         PopulateArgs(argNames, args, execContext);
         return res.Success(ValueNull.Instance);

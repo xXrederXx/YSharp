@@ -8,37 +8,37 @@ public class Value
     public Position EndPos { protected set; get; }
     public Position StartPos { protected set; get; }
 
-    // arethmetic
+    // arithmetic
     public virtual Result<Value, Error> AddedTo(Value other) =>
-        IlligalOperation(other);
+        IllegalOperation(other);
 
     // other
     public virtual Result<Value, Error> AndedTo(Value other) =>
-        IlligalOperation(other);
+        IllegalOperation(other);
 
     public virtual Value Copy() => throw new NotImplementedException("No copy method defined");
 
     public virtual Result<Value, Error> DivedTo(Value other) =>
-        IlligalOperation(other);
+        IllegalOperation(other);
 
     // comparison
     public virtual Result<Value, Error> GetComparisonEQ(Value other) =>
-        IlligalOperation(other);
+        IllegalOperation(other);
 
     public virtual Result<Value, Error> GetComparisonGT(Value other) =>
-        IlligalOperation(other);
+        IllegalOperation(other);
 
     public virtual Result<Value, Error> GetComparisonGTE(Value other) =>
-        IlligalOperation(other);
+        IllegalOperation(other);
 
     public virtual Result<Value, Error> GetComparisonLT(Value other) =>
-        IlligalOperation(other);
+        IllegalOperation(other);
 
     public virtual Result<Value, Error> GetComparisonLTE(Value other) =>
-        IlligalOperation(other);
+        IllegalOperation(other);
 
     public virtual Result<Value, Error> GetComparisonNE(Value other) =>
-        IlligalOperation(other);
+        IllegalOperation(other);
 
     public virtual Result<Value, Error> GetFunc(string name, List<Value> argNodes) =>
         Result<Value, Error>.Fail(new FuncNotFoundError(Position.Null, name, Context));
@@ -49,15 +49,15 @@ public class Value
     public virtual bool IsTrue() => false;
 
     public virtual Result<Value, Error> MuledTo(Value other) =>
-        IlligalOperation(other);
+        IllegalOperation(other);
 
-    public virtual Result<Value, Error> Notted() => IlligalOperation();
+    public virtual Result<Value, Error> Notted() => IllegalOperation();
 
     public virtual Result<Value, Error> OredTo(Value other) =>
-        IlligalOperation(other);
+        IllegalOperation(other);
 
     public virtual Result<Value, Error> PowedTo(Value other) =>
-        IlligalOperation(other);
+        IllegalOperation(other);
 
     public Value SetContext(Context? context)
     {
@@ -74,17 +74,17 @@ public class Value
     }
 
     public virtual Result<Value, Error> SubedTo(Value other) =>
-       IlligalOperation(other);
+       IllegalOperation(other);
 
-    protected Result<Value, Error> IlligalOperation(Value? other = null)
+    protected Result<Value, Error> IllegalOperation(Value? other = null)
     {
-        string details = "Illigal Operation";
+        string details = "Illegal Operation";
         if (other == null)
             details += " on self";
         else
             details += $" between {GetType()} and {other.GetType()}";
 
-        return Result<Value, Error>.Fail(new IlligalOperationError(StartPos, details, Context));
+        return Result<Value, Error>.Fail(new IllegalOperationError(StartPos, details, Context));
     }
 }
 

@@ -171,7 +171,7 @@ public class MathOverflowError(Position startPos, string details, Context? conte
 public class InvalidMathOpError(Position startPos, string op, Context? context)
     : RunTimeError(startPos, $"Invalid operation: '{op}'", context, 5002);
 
-public class IlligalOperationError(Position startPos, string details, Context? context)
+public class IllegalOperationError(Position startPos, string details, Context? context)
     : RunTimeError(startPos, details, context, 306);
 
 //* 6000–6999: Control Flow Errors
