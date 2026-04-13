@@ -469,14 +469,28 @@ public static class Interpreter
 
         Result<Value, Error> result;
         if (node.OpTok.IsType(TokenType.MINUS) && value is VNumber)
+        {
             result = value.MuledTo(new VNumber(-1));
+        }
+        else if (node.OpTok.IsType(TokenType.PLUS) && value is VNumber)
+        {
+            result = Result<Value, Error>.Success(value);
+        }
         else if (
             node.OpTok is Token<KeywordType> keywordTok
             && keywordTok.ValueEquals(KeywordType.NOT)
         )
+        {
             result = value.Notted();
+        }
         else
-            result = Result<Value, Error>.Success(value);
+        {
+            result = Result<Value, Error>.Fail(
+                new InternalInterpreterError(
+                    $"Invalid Unary Operation using {node.OpTok} and {node.Node}"
+                )
+            );
+        }
 
         if (result.IsFailed)
             return res.Failure(result.GetError());
