@@ -47,7 +47,7 @@ jobs:
       run: |
         echo "Listing TestResults..."
         pwd
-        ls -R TestResults || true
+        ls -R || true
 
     - name: Generate coverage badge JSON
       run: |
