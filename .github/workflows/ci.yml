@@ -35,6 +35,7 @@ jobs:
 
     - name: Test with coverage
       run: |
+        pwd
         dotnet test tests/YSharp.Tests/YSharp.Tests.csproj \
           --configuration Release \
           --no-build \
@@ -45,6 +46,7 @@ jobs:
     - name: Debug coverage files
       run: |
         echo "Listing TestResults..."
+        pwd
         ls -R TestResults || true
 
     - name: Generate coverage badge JSON
