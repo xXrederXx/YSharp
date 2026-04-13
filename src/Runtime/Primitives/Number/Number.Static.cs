@@ -52,7 +52,7 @@ public sealed partial class VNumber : Value
     private static Result<Value, Error> ToBool(VNumber self, List<Value> args)
     {
         Error err = ValueHelper.CheckArgs(args, 0, [], self.Context);
-        if (!err.IsError) return Result<Value, Error>.Fail(err);
+        if (err.IsError) return Result<Value, Error>.Fail(err);
 
         return Result<Value, Error>.Success(new VBool(self.IsTrue()));
     }
