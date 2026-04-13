@@ -50,51 +50,51 @@ jobs:
     - name: Generate coverage badge JSON
       run: |
         python - <<'PY'
-            import json
-            import pathlib
-            import xml.etree.ElementTree as ET
+        import json
+        import pathlib
+        import xml.etree.ElementTree as ET
 
-            # Look specifically in TestResults for reliability
-            files = sorted(pathlib.Path('TestResults').rglob('*.cobertura.xml'))
+        # Look specifically in TestResults for reliability
+        files = sorted(pathlib.Path('TestResults').rglob('*.cobertura.xml'))
 
-            if not files:
-                raise SystemExit('Coverage file not found in TestResults')
+        if not files:
+            raise SystemExit('Coverage file not found in TestResults')
 
-            xml_path = files[-1]
-            print('Using coverage file:', xml_path)
+        xml_path = files[-1]
+        print('Using coverage file:', xml_path)
 
-            tree = ET.parse(xml_path)
-            root = tree.getroot()
+        tree = ET.parse(xml_path)
+        root = tree.getroot()
 
-            line_rate = root.attrib.get('line-rate')
-            if line_rate is None:
-                raise SystemExit('line-rate attribute missing')
+        line_rate = root.attrib.get('line-rate')
+        if line_rate is None:
+            raise SystemExit('line-rate attribute missing')
 
-            pct = round(float(line_rate) * 100, 1)
+        pct = round(float(line_rate) * 100, 1)
 
-            # Dynamic badge color
-            if pct >= 90:
-                color = 'brightgreen'
-            elif pct >= 75:
-                color = 'green'
-            elif pct >= 60:
-                color = 'yellowgreen'
-            elif pct >= 50:
-                color = 'yellow'
-            else:
-                color = 'red'
+        # Dynamic badge color
+        if pct >= 90:
+            color = 'brightgreen'
+        elif pct >= 75:
+            color = 'green'
+        elif pct >= 60:
+            color = 'yellowgreen'
+        elif pct >= 50:
+            color = 'yellow'
+        else:
+            color = 'red'
 
-            data = {
-                'schemaVersion': 1,
-                'label': 'coverage',
-                'message': f'{pct}%',
-                'color': color
-            }
+        data = {
+            'schemaVersion': 1,
+            'label': 'coverage',
+            'message': f'{pct}%',
+            'color': color
+        }
 
-            with open('coverage-badge.json', 'w', encoding='utf-8') as f:
-                json.dump(data, f)
+        with open('coverage-badge.json', 'w', encoding='utf-8') as f:
+            json.dump(data, f)
 
-            print('Generated coverage-badge.json:', data)
+        print('Generated coverage-badge.json:', data)
         PY
 
     - name: Commit coverage badge (main only)
