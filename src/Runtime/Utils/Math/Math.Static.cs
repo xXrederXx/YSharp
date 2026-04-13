@@ -1,5 +1,5 @@
 using YSharp.Common;
-using YSharp.Runtime.Primatives.Number;
+using YSharp.Runtime.Primitives.Number;
 
 namespace YSharp.Runtime.Utils.Math;
 

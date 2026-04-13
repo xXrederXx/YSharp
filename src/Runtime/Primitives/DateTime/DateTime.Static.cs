@@ -1,8 +1,8 @@
 using YSharp.Common;
-using YSharp.Runtime.Primatives.Number;
-using YSharp.Runtime.Primatives.String;
+using YSharp.Runtime.Primitives.Number;
+using YSharp.Runtime.Primitives.String;
 
-namespace YSharp.Runtime.Primatives.Datetime;
+namespace YSharp.Runtime.Primitives.Datetime;
 
 public sealed partial class VDateTime
 {

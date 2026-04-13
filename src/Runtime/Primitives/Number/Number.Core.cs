@@ -1,6 +1,6 @@
 using YSharp.Common;
 
-namespace YSharp.Runtime.Primatives.Number;
+namespace YSharp.Runtime.Primitives.Number;
 
 public sealed partial class VNumber(double value) : Value
 {

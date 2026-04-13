@@ -1,8 +1,8 @@
 using YSharp.Common;
-using YSharp.Runtime.Primatives.Bool;
-using YSharp.Runtime.Primatives.Number;
+using YSharp.Runtime.Primitives.Bool;
+using YSharp.Runtime.Primitives.Number;
 
-namespace YSharp.Runtime.Primatives.String;
+namespace YSharp.Runtime.Primitives.String;
 
 public sealed partial class VString
 {

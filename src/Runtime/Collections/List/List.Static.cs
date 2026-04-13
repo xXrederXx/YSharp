@@ -1,7 +1,7 @@
 using YSharp.Common;
-using YSharp.Runtime.Primatives.Bool;
-using YSharp.Runtime.Primatives.Number;
-using YSharp.Runtime.Primatives.String;
+using YSharp.Runtime.Primitives.Bool;
+using YSharp.Runtime.Primitives.Number;
+using YSharp.Runtime.Primitives.String;
 
 namespace YSharp.Runtime.Collections.List;
 

@@ -1,5 +1,5 @@
 using YSharp.Runtime.Functions;
-using YSharp.Runtime.Primatives.Bool;
+using YSharp.Runtime.Primitives.Bool;
 using YSharp.Runtime.Utils.Math;
 
 namespace YSharp.Runtime;

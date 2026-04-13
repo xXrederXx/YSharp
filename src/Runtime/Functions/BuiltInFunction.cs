@@ -1,6 +1,6 @@
 using YSharp.Common;
-using YSharp.Runtime.Primatives.Datetime;
-using YSharp.Runtime.Primatives.String;
+using YSharp.Runtime.Primitives.Datetime;
+using YSharp.Runtime.Primitives.String;
 using YSharp.Util;
 
 namespace YSharp.Runtime.Functions;

@@ -2,7 +2,7 @@ using Xunit;
 using YSharp.Common;
 using YSharp.Runtime;
 using YSharp.Runtime.Collections.List;
-using YSharp.Runtime.Primatives.Number;
+using YSharp.Runtime.Primitives.Number;
 using YSharp.Util;
 
 namespace YSharp.Tests;
