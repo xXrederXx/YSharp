@@ -98,10 +98,13 @@ jobs:
         print('Generated coverage-badge.json:', data)
         PY
 
-    - name: Commit coverage badge (main only)
+    - name: Create Pull Request with coverage badge (main only)
       if: github.ref == 'refs/heads/main'
-      run: |
-        git config user.name 'github-actions[bot]'
-        git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-        git add coverage-badge.json
-        git diff --cached --quiet || (git commit -m 'Update coverage badge [skip ci]' && git push)
+      uses: peter-evans/create-pull-request@v5
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+        commit-message: 'chore: Update coverage badge [skip ci]'
+        title: 'chore: Update coverage badge'
+        body: 'Automated coverage badge update'
+        branch: coverage-badge-update
+        delete-branch: true
