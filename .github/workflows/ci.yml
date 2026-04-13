@@ -6,12 +6,18 @@ on:
   pull_request:
     branches: [ main ]
 
+permissions:
+  contents: write
+
 jobs:
-  build-and-test:
+  build-test-coverage:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v4
+    - name: Checkout
+      uses: actions/checkout@v4
+      with:
+        persist-credentials: true
 
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
@@ -27,5 +33,75 @@ jobs:
     - name: Build
       run: dotnet build YSharp.sln --configuration Release --no-restore
 
-    - name: Test
-      run: dotnet test YSharp.sln --configuration Release --no-build --collect:"XPlat Code Coverage"
+    - name: Test with coverage
+      run: |
+        pwd
+        dotnet test tests/YSharp.Tests/YSharp.Tests.csproj \
+          --configuration Release \
+          --collect:"XPlat Code Coverage" \
+          --results-directory TestResults
+
+    # Optional but VERY useful when debugging CI issues
+    - name: Debug coverage files
+      run: |
+        echo "Listing TestResults..."
+        pwd
+        ls -R TestResults || true
+
+    - name: Generate coverage badge JSON
+      run: |
+        python - <<'PY'
+        import json
+        import pathlib
+        import xml.etree.ElementTree as ET
+
+        # Look specifically in TestResults for reliability
+        files = sorted(pathlib.Path('TestResults').rglob('*.cobertura.xml'))
+
+        if not files:
+            raise SystemExit('Coverage file not found in TestResults')
+
+        xml_path = files[-1]
+        print('Using coverage file:', xml_path)
+
+        tree = ET.parse(xml_path)
+        root = tree.getroot()
+
+        line_rate = root.attrib.get('line-rate')
+        if line_rate is None:
+            raise SystemExit('line-rate attribute missing')
+
+        pct = round(float(line_rate) * 100, 1)
+
+        # Dynamic badge color
+        if pct >= 90:
+            color = 'brightgreen'
+        elif pct >= 75:
+            color = 'green'
+        elif pct >= 60:
+            color = 'yellowgreen'
+        elif pct >= 50:
+            color = 'yellow'
+        else:
+            color = 'red'
+
+        data = {
+            'schemaVersion': 1,
+            'label': 'coverage',
+            'message': f'{pct}%',
+            'color': color
+        }
+
+        with open('coverage-badge.json', 'w', encoding='utf-8') as f:
+            json.dump(data, f)
+
+        print('Generated coverage-badge.json:', data)
+        PY
+
+    - name: Commit coverage badge (main only)
+      if: github.ref == 'refs/heads/main'
+      run: |
+        git config user.name 'github-actions[bot]'
+        git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+        git add coverage-badge.json
+        git diff --cached --quiet || (git commit -m 'Update coverage badge [skip ci]' && git push)
