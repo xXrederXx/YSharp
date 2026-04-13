@@ -17,7 +17,7 @@ public class RunTimeResult
         return this;
     }
 
-    public Value Regrister(RunTimeResult res)
+    public Value Register(RunTimeResult res)
     {
         error = res.error;
         funcReturnValue = res.funcReturnValue;
@@ -26,9 +26,9 @@ public class RunTimeResult
         return res.value;
     }
 
-    public bool Regrister(RunTimeResult res, out Value val)
+    public bool Register(RunTimeResult res, out Value val)
     {
-        val = Regrister(res);
+        val = Register(res);
         return ShouldReturn();
     }
 

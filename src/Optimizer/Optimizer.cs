@@ -38,7 +38,7 @@ public static class Optimizer
             ImportNode n => Visit_ImportNode(n),
             SuffixAssignNode n => Visit_SuffixAssignNode(n),
             NodeNull n => n,
-            _ => Vistit_ErrorNode(node),
+            _ => Visit_ErrorNode(node),
         };
         foreach (INodeOptimizer? optimizer in optimizers.Where(x => x.IsOptimizable(rebuilt)))
         {
@@ -189,7 +189,7 @@ public static class Optimizer
         return new WhileNode(conditionNode, bodyNode, node.RetNull);
     }
 
-    private static BaseNode Vistit_ErrorNode(BaseNode node)
+    private static BaseNode Visit_ErrorNode(BaseNode node)
     {
         Console.WriteLine("No method found for " + node.GetType());
         return node;

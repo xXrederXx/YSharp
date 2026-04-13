@@ -35,15 +35,15 @@ public static class Interpreter
             TryCatchNode n => Visit_TryCatchNode(n, context),
             ImportNode n => Visit_ImportNode(n, context),
             SuffixAssignNode n => Visit_SuffixAssignNode(n, context),
-            _ => Vistit_ErrorNode(node, context),
+            _ => Visit_ErrorNode(node, context),
         };
     }
 
     private static RunTimeResult Visit_BinaryOp(BinOpNode node, Context context)
     {
         RunTimeResult res = new();
-        Value left = res.Regrister(Visit(node.LeftNode, context));
-        Value right = res.Regrister(Visit(node.RightNode, context));
+        Value left = res.Register(Visit(node.LeftNode, context));
+        Value right = res.Register(Visit(node.RightNode, context));
 
         if (res.ShouldReturn())
             return res;
@@ -98,7 +98,7 @@ public static class Interpreter
             varAccessNode.FromCall = true;
         }
 
-        Value valueToCall = res.Regrister(Visit(node.NodeToCall, context));
+        Value valueToCall = res.Register(Visit(node.NodeToCall, context));
         if (res.ShouldReturn())
             return res;
 
@@ -113,16 +113,16 @@ public static class Interpreter
 
         for (int i = 0; i < node.ArgNodes.Length; i++)
         {
-            args.Add(res.Regrister(Visit(node.ArgNodes[i], context)));
+            args.Add(res.Register(Visit(node.ArgNodes[i], context)));
             if (res.ShouldReturn())
                 return res;
         }
 
         Value ret;
         if (valueToCall is VBaseFunction _BIfunction)
-            ret = res.Regrister(_BIfunction.Execute(args));
+            ret = res.Register(_BIfunction.Execute(args));
         else if (valueToCall is VBaseFunction _function)
-            ret = res.Regrister(_function.Execute(args));
+            ret = res.Register(_function.Execute(args));
         else
             ret = ValueNull.Instance;
 
@@ -136,7 +136,7 @@ public static class Interpreter
         }
         catch
         {
-            // the function returns an emptie value, which cnat be copied
+            // the function returns an empty value, which can't be copied
             return res.Success(ValueNull.Instance);
         }
     }
@@ -153,14 +153,14 @@ public static class Interpreter
         for (int i = 0; i < node.ArgNodes.Length; i++)
         {
             BaseNode _node = node.ArgNodes[i];
-            Value val = res.Regrister(Visit(_node, context));
+            Value val = res.Register(Visit(_node, context));
             if (res.ShouldReturn())
                 return res;
 
             argValue.Add(val);
         }
 
-        Result<Value, Error> value = res.Regrister(Visit(node.Parent, context))
+        Result<Value, Error> value = res.Register(Visit(node.Parent, context))
             .GetFunc(funcName ?? "null", argValue);
 
         if (res.ShouldReturn())
@@ -177,7 +177,7 @@ public static class Interpreter
         }
         catch
         {
-            // the function returns an emptie value, which cnat be copied
+            // the function returns an empty value, which can't be copied
             return res.Success(value.GetValue());
         }
     }
@@ -187,7 +187,7 @@ public static class Interpreter
         RunTimeResult res = new();
 
         string varName = node.VarNameTok.Value;
-        Result<Value, Error> value = res.Regrister(Visit(node.Parent, context)).GetVar(varName);
+        Result<Value, Error> value = res.Register(Visit(node.Parent, context)).GetVar(varName);
         if (res.ShouldReturn())
             return res;
 
@@ -205,13 +205,13 @@ public static class Interpreter
     private static RunTimeResult Visit_ForNode(ForNode node, Context context)
     {
         RunTimeResult res = new();
-        Value startValue = res.Regrister(Visit(node.StartValueNode, context));
-        Value endValue = res.Regrister(Visit(node.EndValueNode, context));
+        Value startValue = res.Register(Visit(node.StartValueNode, context));
+        Value endValue = res.Register(Visit(node.EndValueNode, context));
 
         if (res.ShouldReturn())
             return res;
 
-        Value stepValue = res.Regrister(Visit(node.StepValueNode, context));
+        Value stepValue = res.Register(Visit(node.StepValueNode, context));
         if (res.ShouldReturn())
             return res;
 
@@ -263,7 +263,7 @@ public static class Interpreter
             context.SymbolTable.Set(varName, new VNumber(i));
             i += StepNumber;
 
-            res.Regrister(Visit(node.BodyNode, context));
+            res.Register(Visit(node.BodyNode, context));
             if (res.ShouldReturn() && !res.loopContinue && res.loopBreak)
                 return res;
 
@@ -305,13 +305,13 @@ public static class Interpreter
         {
             BaseNode condition = node.Cases[i].Condition;
             BaseNode expr = node.Cases[i].Expression;
-            Value conditionValue = res.Regrister(Visit(condition, context));
+            Value conditionValue = res.Register(Visit(condition, context));
             if (res.ShouldReturn())
                 return res;
 
             if (conditionValue.IsTrue())
             {
-                Value exprValue = res.Regrister(Visit(expr, context));
+                Value exprValue = res.Register(Visit(expr, context));
                 if (res.ShouldReturn())
                     return res;
 
@@ -321,7 +321,7 @@ public static class Interpreter
 
         if (node.ElseNode is not null and not NodeNull)
         {
-            Value elseValue = res.Regrister(Visit(node.ElseNode, context));
+            Value elseValue = res.Register(Visit(node.ElseNode, context));
             if (res.ShouldReturn())
                 return res;
 
@@ -347,7 +347,7 @@ public static class Interpreter
             res.Failure(
                 new FileNotFoundError(
                     n.StartPos,
-                    "The packege at the import path "
+                    "The package at the import path "
                         + n.PathTok.Value
                         + " was calculated to be at "
                         + filePath
@@ -375,7 +375,7 @@ public static class Interpreter
         for (int i = 0; i < node.ElementNodes.Length; i++)
         {
             BaseNode elementNode = node.ElementNodes[i];
-            elements.Add(res.Regrister(Visit(elementNode, context)));
+            elements.Add(res.Register(Visit(elementNode, context)));
             if (res.ShouldReturn())
                 return res;
         }
@@ -395,7 +395,7 @@ public static class Interpreter
         RunTimeResult res = new();
         Value value;
 
-        value = res.Regrister(Visit(node.NodeToReturn, context));
+        value = res.Register(Visit(node.NodeToReturn, context));
         if (res.ShouldReturn())
             return res;
 
@@ -423,7 +423,7 @@ public static class Interpreter
             return res.Failure(
                 new WrongTypeError(
                     node.StartPos,
-                    "You can only use this operateor for Numbers",
+                    "You can only use this operator for Numbers",
                     context
                 )
             );
@@ -446,7 +446,7 @@ public static class Interpreter
     {
         RunTimeResult res = new();
 
-        Value val = res.Regrister(Visit(node.TryNode, context));
+        Value val = res.Register(Visit(node.TryNode, context));
         if (!res.error.IsError)
             return res.Success(val);
 
@@ -458,7 +458,7 @@ public static class Interpreter
         if (node.CatchVarName is not null)
             context.SymbolTable.Set(node.CatchVarName.Value, new VString(res.error.ToString()));
 
-        Value catchVal = res.Regrister(Visit(node.CatchNode, context));
+        Value catchVal = res.Register(Visit(node.CatchNode, context));
         if (res.ShouldReturn())
             return res;
 
@@ -468,7 +468,7 @@ public static class Interpreter
     private static RunTimeResult Visit_UnaryOp(UnaryOpNode node, Context context)
     {
         RunTimeResult res = new();
-        Value value = res.Regrister(Visit(node.Node, context));
+        Value value = res.Register(Visit(node.Node, context));
         if (res.ShouldReturn())
             return res;
 
@@ -515,7 +515,7 @@ public static class Interpreter
     {
         RunTimeResult res = new();
         string varName = node.VarNameTok.Value;
-        Value value = res.Regrister(Visit(node.ValueNode, context));
+        Value value = res.Register(Visit(node.ValueNode, context));
         if (res.ShouldReturn())
             return res;
 
@@ -534,14 +534,14 @@ public static class Interpreter
 
         while (true)
         {
-            Value condition = res.Regrister(Visit(node.ConditionNode, context));
+            Value condition = res.Register(Visit(node.ConditionNode, context));
             if (res.ShouldReturn())
                 return res;
 
             if (!condition.IsTrue())
                 break;
 
-            res.Regrister(Visit(node.BodyNode, context));
+            res.Register(Visit(node.BodyNode, context));
             if (res.ShouldReturn() && !res.loopContinue && res.loopBreak)
                 return res;
 
@@ -555,7 +555,7 @@ public static class Interpreter
         return res.Success(ValueNull.Instance);
     }
 
-    private static RunTimeResult Vistit_ErrorNode(BaseNode node, Context ctx)
+    private static RunTimeResult Visit_ErrorNode(BaseNode node, Context ctx)
     {
         Console.WriteLine("No method found for " + node.GetType() + ctx);
         return new RunTimeResult().Success(ValueNull.Instance);

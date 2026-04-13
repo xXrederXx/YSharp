@@ -1,1 +1,1 @@
-VAR x = 12 + "28" # Illigal Operation you are not allowed to add Number and String
+VAR x = 12 + "28" # Illegal Operation you are not allowed to add Number and String

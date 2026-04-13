@@ -2,7 +2,7 @@
 
 ## Overview
 
-A string stores a series of charachters.
+A string stores a series of characters.
 
 ## Syntax
 

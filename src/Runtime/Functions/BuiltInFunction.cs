@@ -109,26 +109,26 @@ public sealed class VBuiltInFunction : VBaseFunction
         RunTimeResult res = new();
         Context execContext = GeneratContext();
 
-        res.Regrister(CheckAndPopulateArgs(functionArgs[name], args, execContext));
+        res.Register(CheckAndPopulateArgs(functionArgs[name], args, execContext));
         if (res.ShouldReturn()) return res;
 
         Value returnValue = ValueNull.Instance;
         switch (name)
         {
             case "print":
-                returnValue = res.Regrister(ExecPrint(execContext));
+                returnValue = res.Register(ExecPrint(execContext));
                 break;
             case "input":
-                returnValue = res.Regrister(ExecInput(execContext));
+                returnValue = res.Register(ExecInput(execContext));
                 break;
             case "run":
-                returnValue = res.Regrister(ExecRun(execContext));
+                returnValue = res.Register(ExecRun(execContext));
                 break;
             case "timetorun":
-                returnValue = res.Regrister(ExecTimeToRun(execContext));
+                returnValue = res.Register(ExecTimeToRun(execContext));
                 break;
             case "time":
-                returnValue = res.Regrister(ExecTime());
+                returnValue = res.Register(ExecTime());
                 break;
             default:
                 No_Visit_methed();

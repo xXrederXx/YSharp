@@ -27,11 +27,11 @@ public sealed class VFunction(
         RunTimeResult res = new();
         Context execContext = GeneratContext();
 
-        res.Regrister(CheckAndPopulateArgs(argNames, args, execContext));
+        res.Register(CheckAndPopulateArgs(argNames, args, execContext));
         if (res.ShouldReturn())
             return res;
 
-        Value value = res.Regrister(Interpreter.Visit(bodyNode, execContext));
+        Value value = res.Register(Interpreter.Visit(bodyNode, execContext));
         if (res.ShouldReturn() && res.funcReturnValue is ValueNull)
             return res;
         Value retValue = autoReturn ? value : res.funcReturnValue;

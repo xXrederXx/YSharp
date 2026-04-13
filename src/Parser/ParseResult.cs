@@ -41,7 +41,7 @@ public class ParseResult
     }
 
     /// <summary>
-    /// Regrister takes another result and essentialy adds it to itself. It combines the advance counts and overrides the error.
+    /// Register takes another result and essentialy adds it to itself. It combines the advance counts and overrides the error.
     /// </summary>
     /// <param name="result">The other result</param>
     /// <returns>The node from the other result</returns>

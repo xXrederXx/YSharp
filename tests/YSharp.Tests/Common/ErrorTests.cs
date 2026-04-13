@@ -334,10 +334,10 @@ public class ErrorTests
     }
 
     [Fact]
-    void checIlligalOperationError_whenToString_generateError()
+    void checIllegalOperationError_whenToString_generateError()
     {
         Position startPos = new(0, 0, 0, FileNameRegistry.GetFileId("<TEST>"));
-        Error err = new IlligalOperationError(
+        Error err = new IllegalOperationError(
             startPos,
             "detail",
             new Context(
