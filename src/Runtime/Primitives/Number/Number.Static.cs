@@ -45,7 +45,7 @@ public sealed partial class VNumber : Value
         return Result<Value, Error>.Success(new VString(formattedStr));
     }
 
-    private static VNumber PowToNum(VNumber self, VNumber other) => new(self.value + other.value);
+    private static VNumber PowToNum(VNumber self, VNumber other) => new(Math.Pow(self.value, other.value));
 
     private static VNumber SubToNum(VNumber self, VNumber other) => new(self.value - other.value);
 
