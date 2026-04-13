@@ -1,4 +1,4 @@
-namespace YSharp.Runtime.Primatives.Bool;
+namespace YSharp.Runtime.Primitives.Bool;
 
 
 public sealed partial class VBool(bool value) : Value

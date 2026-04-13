@@ -1,7 +1,7 @@
 using YSharp.Common;
-using YSharp.Runtime.Primatives.Bool;
+using YSharp.Runtime.Primitives.Bool;
 
-namespace YSharp.Runtime.Primatives.Number;
+namespace YSharp.Runtime.Primitives.Number;
 
 public sealed partial class VNumber : Value
 {

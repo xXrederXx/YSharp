@@ -3,8 +3,8 @@ using YSharp.Lexer;
 using YSharp.Parser.Nodes;
 using YSharp.Runtime.Collections.List;
 using YSharp.Runtime.Functions;
-using YSharp.Runtime.Primatives.Number;
-using YSharp.Runtime.Primatives.String;
+using YSharp.Runtime.Primitives.Number;
+using YSharp.Runtime.Primitives.String;
 using YSharp.Util;
 
 namespace YSharp.Runtime;

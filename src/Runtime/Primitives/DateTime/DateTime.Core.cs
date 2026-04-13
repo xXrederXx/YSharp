@@ -1,6 +1,6 @@
 using YSharp.Common;
 
-namespace YSharp.Runtime.Primatives.Datetime;
+namespace YSharp.Runtime.Primitives.Datetime;
 
 public sealed partial class VDateTime(DateTime? dateTime = null) : Value
 {

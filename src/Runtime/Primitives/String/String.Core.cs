@@ -1,6 +1,6 @@
 using YSharp.Common;
 
-namespace YSharp.Runtime.Primatives.String;
+namespace YSharp.Runtime.Primitives.String;
 
 public sealed partial class VString(string value) : Value
 {
