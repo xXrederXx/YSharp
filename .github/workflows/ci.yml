@@ -38,16 +38,15 @@ jobs:
         pwd
         dotnet test tests/YSharp.Tests/YSharp.Tests.csproj \
           --configuration Release \
-          --no-build \
           --collect:"XPlat Code Coverage" \
-          --results-directory ./TestResults
+          --results-directory TestResults
 
     # Optional but VERY useful when debugging CI issues
     - name: Debug coverage files
       run: |
         echo "Listing TestResults..."
         pwd
-        ls -R || true
+        ls -R TestResults || true
 
     - name: Generate coverage badge JSON
       run: |
