@@ -112,8 +112,7 @@ public static class ImportUtil
 
         if (!File.Exists(filePath) || !filePath.EndsWith(".dll"))
         {
-            Console.WriteLine("File not found: " + filePath);
-            return "File not found (Maybe wrong format?)";
+            return "File not found (Maybe wrong format?), detected path was: " + filePath;
         }
 
         try

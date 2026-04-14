@@ -76,7 +76,6 @@ public sealed class VBuiltInFunction : VBaseFunction
         }
 
         string fileName = ((VString)fileNameValue).value;
-        Console.WriteLine(fileName);
         string script;
         try
         {
