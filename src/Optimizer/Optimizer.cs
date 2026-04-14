@@ -1,3 +1,4 @@
+using YSharp.Common;
 using YSharp.Optimizer.NodeOptimizers;
 using YSharp.Parser;
 using YSharp.Parser.Nodes;
@@ -38,7 +39,7 @@ public static class Optimizer
             ImportNode n => Visit_ImportNode(n),
             SuffixAssignNode n => Visit_SuffixAssignNode(n),
             NodeNull n => n,
-            _ => Visit_ErrorNode(node),
+            _ => throw new ArgumentException($"Node not recogniced:\n{node}", nameof(node)),
         };
         foreach (INodeOptimizer? optimizer in optimizers.Where(x => x.IsOptimizable(rebuilt)))
         {
@@ -187,11 +188,5 @@ public static class Optimizer
         BaseNode conditionNode = Visit(node.ConditionNode);
         BaseNode bodyNode = Visit(node.BodyNode);
         return new WhileNode(conditionNode, bodyNode, node.RetNull);
-    }
-
-    private static BaseNode Visit_ErrorNode(BaseNode node)
-    {
-        Console.WriteLine("No method found for " + node.GetType());
-        return node;
     }
 }
