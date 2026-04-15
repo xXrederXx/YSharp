@@ -257,7 +257,7 @@ public static class Interpreter
 
         string varName = node.VarNameTok.Value;
 
-        while (condition(i))
+        while (condition.Invoke(i))
         {
             context.SymbolTable.Set(varName, new VNumber(i));
 
