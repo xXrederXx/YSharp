@@ -35,7 +35,11 @@ public static class Interpreter
             TryCatchNode n => Visit_TryCatchNode(n, context),
             ImportNode n => Visit_ImportNode(n, context),
             SuffixAssignNode n => Visit_SuffixAssignNode(n, context),
-            _ => new RunTimeResult().Failure(new InternalInterpreterError($"Tryed to operate on an unknown Node:\n{node}\n{context}")),
+            _ => new RunTimeResult().Failure(
+                new InternalInterpreterError(
+                    $"Tryed to operate on an unknown Node:\n{node}\n{context}"
+                )
+            ),
         };
     }
 
@@ -253,10 +257,9 @@ public static class Interpreter
 
         string varName = node.VarNameTok.Value;
 
-        while (condition(i))
+        while (condition.Invoke(i))
         {
             context.SymbolTable.Set(varName, new VNumber(i));
-            i += StepNumber;
 
             res.Register(Visit(node.BodyNode, context));
             if (res.ShouldReturn() && !res.loopContinue && res.loopBreak)
@@ -267,6 +270,8 @@ public static class Interpreter
 
             if (res.loopBreak)
                 break;
+
+            i += StepNumber;
         }
 
         return res.Success(ValueNull.Instance);
