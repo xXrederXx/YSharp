@@ -45,8 +45,6 @@ public class RunTimeResult
 
     public RunTimeResult Success(Value value)
     {
-        if (error.IsError)
-            Console.WriteLine("error deleted:\n" + error);
         Reset();
         this.value = value;
         return this;

@@ -35,7 +35,11 @@ public static class Interpreter
             TryCatchNode n => Visit_TryCatchNode(n, context),
             ImportNode n => Visit_ImportNode(n, context),
             SuffixAssignNode n => Visit_SuffixAssignNode(n, context),
-            _ => Visit_ErrorNode(node, context),
+            _ => new RunTimeResult().Failure(
+                new InternalInterpreterError(
+                    $"Tryed to operate on an unknown Node:\n{node}\n{context}"
+                )
+            ),
         };
     }
 
@@ -129,7 +133,7 @@ public static class Interpreter
             ret = ret.Copy().SetPos(node.StartPos, node.EndPos).SetContext(context);
             return res.Success(ret);
         }
-        catch
+        catch (NotImplementedException)
         {
             // the function returns an empty value, which can't be copied
             return res.Success(ValueNull.Instance);
@@ -253,10 +257,9 @@ public static class Interpreter
 
         string varName = node.VarNameTok.Value;
 
-        while (condition(i))
+        while (condition.Invoke(i))
         {
             context.SymbolTable.Set(varName, new VNumber(i));
-            i += StepNumber;
 
             res.Register(Visit(node.BodyNode, context));
             if (res.ShouldReturn() && !res.loopContinue && res.loopBreak)
@@ -267,6 +270,8 @@ public static class Interpreter
 
             if (res.loopBreak)
                 break;
+
+            i += StepNumber;
         }
 
         return res.Success(ValueNull.Instance);
@@ -562,11 +567,5 @@ public static class Interpreter
         }
 
         return res.Success(ValueNull.Instance);
-    }
-
-    private static RunTimeResult Visit_ErrorNode(BaseNode node, Context ctx)
-    {
-        Console.WriteLine("No method found for " + node.GetType() + ctx);
-        return new RunTimeResult().Success(ValueNull.Instance);
     }
 }
