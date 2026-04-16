@@ -133,7 +133,7 @@ public static class Interpreter
             ret = ret.Copy().SetPos(node.StartPos, node.EndPos).SetContext(context);
             return res.Success(ret);
         }
-        catch
+        catch (NotImplementedException)
         {
             // the function returns an empty value, which can't be copied
             return res.Success(ValueNull.Instance);
