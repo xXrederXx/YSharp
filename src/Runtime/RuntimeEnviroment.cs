@@ -2,19 +2,18 @@ using YSharp.Common;
 using YSharp.Lexer;
 using YSharp.Parser;
 using YSharp.Parser.Nodes;
-using YSharp.Runtime;
 using YSharp.Tools.Debug.Dot;
 
-namespace YSharp.Util;
+namespace YSharp.Runtime;
 
 using LexerResult = Result<List<BaseToken>, Error>;
 using RunResult = Result<Value, Error>;
 
-public class RunClass
+public class RuntimeEnviroment : IRuntimeEnviroment
 {
     private readonly SymbolTable globalSymbolTable;
 
-    public RunClass()
+    public RuntimeEnviroment()
     {
         // predifined values
         globalSymbolTable = SymbolTable.GenerateGlobalSymboltable();

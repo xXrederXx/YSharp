@@ -11,7 +11,7 @@ using RunnerResult = Result<Value, Error>;
 
 public class ForTests
 {
-    private readonly RunClass runner = new RunClass();
+    private readonly RuntimeEnviroment runner = new RuntimeEnviroment();
 
     [Fact]
     void checkFor_whenValidLoopWithStep_succes()

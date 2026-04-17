@@ -11,7 +11,7 @@ using RunResult = Result<Value, Error>;
 
 public class FeatureTest
 {
-    private readonly RunClass _runClass = new();
+    private readonly RuntimeEnviroment _runClass = new();
 
     [Theory]
     [MemberData(nameof(TestCases))]

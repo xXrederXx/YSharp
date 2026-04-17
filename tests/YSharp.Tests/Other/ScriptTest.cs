@@ -10,7 +10,7 @@ namespace YSharp.Tests;
 using RunResult = Result<Value, Error>;
 public class ScriptTest
 {
-    private readonly RunClass _runClass = new();
+    private readonly RuntimeEnviroment _runClass = new();
 
     [Theory]
     [MemberData(nameof(TestCases))]

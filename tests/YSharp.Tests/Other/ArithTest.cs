@@ -11,7 +11,7 @@ using RunResult = Result<Value, Common.Error>;
 
 public class ErrorTest
 {
-    private readonly RunClass _runClass = new();
+    private readonly RuntimeEnviroment _runClass = new();
 
     [Theory]
     [MemberData(nameof(TestCases))]
