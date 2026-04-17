@@ -403,6 +403,12 @@ public class ErrorTests
     }
 
     [Fact]
+    void checkErrorNull_whenToString_generateEmpty()
+    {
+        Assert.Equal(string.Empty, ErrorNull.Instance.ToString());
+    }
+
+    [Fact]
     void checInvalidLoadedModuleError_whenToString_generateError()
     {
         Position startPos = new(0, 0, 0, FileNameRegistry.GetFileId("<TEST>"));
