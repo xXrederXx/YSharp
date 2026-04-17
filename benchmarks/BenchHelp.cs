@@ -96,7 +96,7 @@ public static class BenchHelp
 
     private static void CheckString(string str)
     {
-        RunClass runClass = new();
+        RuntimeEnviroment runClass = new();
         RunResult res = runClass.Run("BENCH-HELPER-CHECK", str, CliArgs.DefaultArgs);
         if (res.IsFailed)
         {
