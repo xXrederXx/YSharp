@@ -160,6 +160,54 @@ public class ErrorTest
         Assert.Equal(x - y, number.value, 1e-9);
     }
 
+    [Theory]
+    [MemberData(nameof(TestCases))]
+    public void checkOrderOfOperation_whenAddAndMult(CliArgs arg, double x, double y)
+    {
+        RunResult result = _runClass.Run(
+            "TEST",
+            $"{x.ToString(StaticConfig.numberCulture)} + {y.ToString(StaticConfig.numberCulture)} * {x.ToString(StaticConfig.numberCulture)}",
+            arg
+        );
+
+        Assert.True(result.TryGetValue(out Value value));
+        VList list = Assert.IsType<VList>(value);
+        VNumber number = Assert.IsType<VNumber>(list.value[0]);
+        Assert.Equal(x + y * x, number.value, 1e-9);
+    }
+
+    [Theory]
+    [MemberData(nameof(TestCases))]
+    public void checkOrderOfOperation_whenAddAndDiv(CliArgs arg, double x, double y)
+    {
+        RunResult result = _runClass.Run(
+            "TEST",
+            $"{x.ToString(StaticConfig.numberCulture)} + {x.ToString(StaticConfig.numberCulture)} / {y.ToString(StaticConfig.numberCulture)}",
+            arg
+        );
+
+        Assert.True(result.TryGetValue(out Value value));
+        VList list = Assert.IsType<VList>(value);
+        VNumber number = Assert.IsType<VNumber>(list.value[0]);
+        Assert.Equal(x + x / y, number.value, 1e-9);
+    }
+
+    [Theory]
+    [MemberData(nameof(TestCases))]
+    public void checkOrderOfOperation_whenParams(CliArgs arg, double x, double y)
+    {
+        RunResult result = _runClass.Run(
+            "TEST",
+            $"{x.ToString(StaticConfig.numberCulture)} * ({y.ToString(StaticConfig.numberCulture)} + {x.ToString(StaticConfig.numberCulture)})",
+            arg
+        );
+
+        Assert.True(result.TryGetValue(out Value value));
+        VList list = Assert.IsType<VList>(value);
+        VNumber number = Assert.IsType<VNumber>(list.value[0]);
+        Assert.Equal(x * (y + x), number.value, 1e-9);
+    }
+
     public static TheoryData<CliArgs, double, double> TestCases()
     {
         (double, double)[] values =
