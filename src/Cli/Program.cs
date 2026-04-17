@@ -1,6 +1,8 @@
 using System.Diagnostics.CodeAnalysis;
 using CommandLine;
 using YSharp.Common;
+using YSharp.Runtime;
+using YSharp.Util;
 
 namespace YSharp.Cli;
 
@@ -14,9 +16,9 @@ internal static class Program
             .WithParsed(cliargs =>
             {
                 if (cliargs.ScriptPath is null)
-                    Runner.ConsoleRunner(cliargs);
+                    Runner.ConsoleRunner(cliargs, new RuntimeEnviroment());
                 else
-                    Runner.ScriptRunner(cliargs.ScriptPath, cliargs);
+                    Runner.ScriptRunner(cliargs.ScriptPath, cliargs, new RuntimeEnviroment());
             });
     }
 }
