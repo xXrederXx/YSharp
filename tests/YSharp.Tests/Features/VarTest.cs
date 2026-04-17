@@ -1,6 +1,9 @@
 using Xunit;
 using YSharp.Common;
 using YSharp.Runtime;
+using YSharp.Runtime.Collections.List;
+using YSharp.Runtime.Primitives.Number;
+using YSharp.Runtime.Primitives.String;
 using YSharp.Util;
 
 namespace YSharp.Tests;
@@ -11,35 +14,52 @@ public class VarTest
 {
     private readonly RuntimeEnviroment _runClass = new();
 
-    [Theory]
-    [MemberData(nameof(TestCases))]
-    public void Assign_And_Get_Test(CliArgs arg, string toAssign)
+    [Fact]
+    public void checkAssignVariable_whenInt()
     {
-        RunResult res = _runClass.Run("TEST", "VAR x = " + toAssign + ";PRINT(x)", arg);
-        Assert.True(res.IsSuccess);
+        RunResult result = _runClass.Run("<test>", $"VAR x = 5; x", CliArgs.DefaultArgs);
+
+        Assert.True(result.TryGetValue(out Value value));
+        VList list = Assert.IsType<VList>(value);
+        VNumber number = Assert.IsType<VNumber>(list.value[0]);
+        Assert.Equal(5, number.value, 1e-9);
     }
 
-    [Theory]
-    [MemberData(nameof(TestCases))]
-    public void Assign_Test(CliArgs arg, string toAssign)
+    [Fact]
+    public void checkAssignVariable_whenDouble()
     {
-        RunResult res = _runClass.Run("TEST", "VAR x = " + toAssign, arg);
-        Assert.True(res.IsSuccess);
+        RunResult result = _runClass.Run("<test>", $"VAR x = 6.7; x", CliArgs.DefaultArgs);
+
+        Assert.True(result.TryGetValue(out Value value));
+        VList list = Assert.IsType<VList>(value);
+        VNumber number = Assert.IsType<VNumber>(list.value[0]);
+        Assert.Equal(6.7, number.value, 1e-9);
     }
 
-    public static IEnumerable<object[]> TestCases()
+    [Fact]
+    public void checkAssignVariable_whenString()
     {
-        string[] values =
-        [
-            "5", "6.7", "\"Hi\"", "[1, 2]"
-        ];
+        RunResult result = _runClass.Run("<test>", $"VAR x = \"Hi\"; x", CliArgs.DefaultArgs);
 
-        foreach (CliArgs mode in new[] { CliArgs.ArgsNoOptimization, CliArgs.ArgsWithOptimization })
-        {
-            foreach (string x in values)
-            {
-                yield return [mode, x];
-            }
-        }
+        Assert.True(result.TryGetValue(out Value value));
+        VList list = Assert.IsType<VList>(value);
+        VString stringValue = Assert.IsType<VString>(list.value[0]);
+        Assert.Equal("Hi", stringValue.value);
+    }
+
+    [Fact]
+    public void checkAssignVariable_whenList()
+    {
+        RunResult result = _runClass.Run("<test>", $"VAR x = [1, 2]; x", CliArgs.DefaultArgs);
+
+        Assert.True(result.TryGetValue(out Value value));
+        VList list = Assert.IsType<VList>(value);
+        VList valueList = Assert.IsType<VList>(list.value[0]);
+
+        VNumber number1 = Assert.IsType<VNumber>(valueList.value[0]);
+        Assert.Equal(1, number1.value, 1e-9);
+
+        VNumber number2 = Assert.IsType<VNumber>(valueList.value[1]);
+        Assert.Equal(2, number2.value, 1e-9);
     }
 }
