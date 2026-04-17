@@ -415,12 +415,8 @@ public sealed partial class Parser
             if (IsCurrentTokenNotKeyword(KeywordType.END))
                 return res.Failure(new ExpectedKeywordError(currentToken.StartPos, "END"));
             AdvanceParser(res);
-            cases.Add(new SubIfNode(caseCondition, caseBodyNode));
-
-            if (IsCurrentTokenNotKeyword(KeywordType.END))
-                return res.Failure(new ExpectedKeywordError(currentToken.StartPos, "END"));
-            AdvanceParser(res);
             SkipNewLines(res);
+            cases.Add(new SubIfNode(caseCondition, caseBodyNode));
         } while (IsCurrentTokenKeyword(KeywordType.ELIF));
 
         if (IsCurrentTokenNotKeyword(KeywordType.ELSE))
