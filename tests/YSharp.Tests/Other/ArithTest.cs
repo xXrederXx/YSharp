@@ -3,11 +3,10 @@ using YSharp.Common;
 using YSharp.Runtime;
 using YSharp.Runtime.Collections.List;
 using YSharp.Runtime.Primitives.Number;
-using YSharp.Util;
 
 namespace YSharp.Tests;
 
-using RunResult = Result<Value, Common.Error>;
+using RunResult = Result<Value, Error>;
 
 public class ErrorTest
 {
@@ -15,136 +14,153 @@ public class ErrorTest
 
     [Theory]
     [MemberData(nameof(TestCases))]
-    public void Test_Add(CliArgs arg, double x, double y)
+    public void checkAdd_whenNoSpace(CliArgs arg, double x, double y)
     {
-        Check_Arith(
-            _runClass.Run(
-                "TEST",
-                $"{x.ToString(StaticConfig.numberCulture)}+{y.ToString(StaticConfig.numberCulture)}",
-                arg
-            ),
-            x + y
+        RunResult result = _runClass.Run(
+            "TEST",
+            $"{x.ToString(StaticConfig.numberCulture)}+{y.ToString(StaticConfig.numberCulture)}",
+            arg
         );
+
+        Assert.True(result.TryGetValue(out Value value));
+        VList list = Assert.IsType<VList>(value);
+        VNumber number = Assert.IsType<VNumber>(list.value[0]);
+        Assert.Equal(x + y, number.value, 1e-9);
     }
 
     [Theory]
     [MemberData(nameof(TestCases))]
-    public void Test_Add_Pretty(CliArgs arg, double x, double y)
+    public void checkAdd_whenPretty(CliArgs arg, double x, double y)
     {
-        Check_Arith(
-            _runClass.Run(
-                "TEST",
-                $"{x.ToString(StaticConfig.numberCulture)} + {y.ToString(StaticConfig.numberCulture)}",
-                arg
-            ),
-            x + y
+        RunResult result = _runClass.Run(
+            "TEST",
+            $"{x.ToString(StaticConfig.numberCulture)} + {y.ToString(StaticConfig.numberCulture)}",
+            arg
         );
+
+        Assert.True(result.TryGetValue(out Value value));
+        VList list = Assert.IsType<VList>(value);
+        VNumber number = Assert.IsType<VNumber>(list.value[0]);
+        Assert.Equal(x + y, number.value, 1e-9);
     }
 
     [Theory]
     [MemberData(nameof(TestCases))]
-    public void Test_Div(CliArgs arg, double x, double y)
+    public void checkDiv_whenNoSpace(CliArgs arg, double x, double y)
     {
-        Check_Arith(
-            _runClass.Run(
-                "TEST",
-                $"{x.ToString(StaticConfig.numberCulture)}/{y.ToString(StaticConfig.numberCulture)}",
-                arg
-            ),
-            x / y
+        RunResult result = _runClass.Run(
+            "TEST",
+            $"{x.ToString(StaticConfig.numberCulture)}/{y.ToString(StaticConfig.numberCulture)}",
+            arg
         );
+
+        Assert.True(result.TryGetValue(out Value value));
+        VList list = Assert.IsType<VList>(value);
+        VNumber number = Assert.IsType<VNumber>(list.value[0]);
+        Assert.Equal(x / y, number.value, 1e-9);
     }
 
     [Theory]
     [MemberData(nameof(TestCases))]
-    public void Test_Div_Pretty(CliArgs arg, double x, double y)
+    public void checkDiv_whenPretty(CliArgs arg, double x, double y)
     {
-        Check_Arith(
-            _runClass.Run(
-                "TEST",
-                $"{x.ToString(StaticConfig.numberCulture)} / {y.ToString(StaticConfig.numberCulture)}",
-                arg
-            ),
-            x / y
+        RunResult result = _runClass.Run(
+            "TEST",
+            $"{x.ToString(StaticConfig.numberCulture)} / {y.ToString(StaticConfig.numberCulture)}",
+            arg
         );
+
+        Assert.True(result.TryGetValue(out Value value));
+        VList list = Assert.IsType<VList>(value);
+        VNumber number = Assert.IsType<VNumber>(list.value[0]);
+        Assert.Equal(x / y, number.value, 1e-9);
     }
 
     [Theory]
     [MemberData(nameof(TestCases))]
 #pragma warning disable xUnit1026 // Theory methods should use all of their parameters
-    public void Test_Divide_By_Zero(CliArgs arg, double x, double y) // TEST BREAKES WHEN x / y ARE REMOVED
+    public void checkDiv_whenDivBy0_returnError(CliArgs arg, double x, double y) // TEST BREAKES WHEN x / y ARE REMOVED
 #pragma warning restore xUnit1026 // Theory methods should use all of their parameters
     {
         RunResult res = _runClass.Run("TEST", "1 / 0", arg);
+
         Assert.True(res.IsFailed);
-        if (res.IsFailed)
-            Assert.IsType<DivisionByZeroError>(res.GetError());
+        Assert.IsType<DivisionByZeroError>(res.GetError());
     }
 
     [Theory]
     [MemberData(nameof(TestCases))]
-    public void Test_Mult(CliArgs arg, double x, double y)
+    public void checkMult_whenNoSpace(CliArgs arg, double x, double y)
     {
-        Check_Arith(
-            _runClass.Run(
-                "TEST",
-                $"{x.ToString(StaticConfig.numberCulture)}*{y.ToString(StaticConfig.numberCulture)}",
-                arg
-            ),
-            x * y
+        RunResult result = _runClass.Run(
+            "TEST",
+            $"{x.ToString(StaticConfig.numberCulture)}*{y.ToString(StaticConfig.numberCulture)}",
+            arg
         );
+
+        Assert.True(result.TryGetValue(out Value value));
+        VList list = Assert.IsType<VList>(value);
+        VNumber number = Assert.IsType<VNumber>(list.value[0]);
+        Assert.Equal(x * y, number.value, 1e-9);
     }
 
     [Theory]
     [MemberData(nameof(TestCases))]
-    public void Test_Mult_Pretty(CliArgs arg, double x, double y)
+    public void checkMult_whenPretty(CliArgs arg, double x, double y)
     {
-        Check_Arith(
-            _runClass.Run(
-                "TEST",
-                $"{x.ToString(StaticConfig.numberCulture)} * {y.ToString(StaticConfig.numberCulture)}",
-                arg
-            ),
-            x * y
+        RunResult result = _runClass.Run(
+            "TEST",
+            $"{x.ToString(StaticConfig.numberCulture)} * {y.ToString(StaticConfig.numberCulture)}",
+            arg
         );
+
+        Assert.True(result.TryGetValue(out Value value));
+        VList list = Assert.IsType<VList>(value);
+        VNumber number = Assert.IsType<VNumber>(list.value[0]);
+        Assert.Equal(x * y, number.value, 1e-9);
     }
 
     [Theory]
     [MemberData(nameof(TestCases))]
-    public void Test_Sub(CliArgs arg, double x, double y)
+    public void checkSub_whenNoSpace(CliArgs arg, double x, double y)
     {
-        RunResult res = _runClass.Run(
+        RunResult result = _runClass.Run(
             "TEST",
             $"{x.ToString(StaticConfig.numberCulture)}-{y.ToString(StaticConfig.numberCulture)}",
             arg
         );
+
         if (y < 0)
-            Assert.IsType<InvalidSyntaxError>(res.GetError());
+        {
+            Assert.True(result.IsFailed);
+            Assert.IsType<InvalidSyntaxError>(result.GetError());
+        }
         else
-            Check_Arith(res, x - y);
+        {
+            Assert.True(result.TryGetValue(out Value value));
+            VList list = Assert.IsType<VList>(value);
+            VNumber number = Assert.IsType<VNumber>(list.value[0]);
+            Assert.Equal(x - y, number.value, 1e-9);
+        }
     }
 
     [Theory]
     [MemberData(nameof(TestCases))]
-    public void Test_Sub_Pretty(CliArgs arg, double x, double y)
+    public void checkSub_whenPretty(CliArgs arg, double x, double y)
     {
-        Check_Arith(
-            _runClass.Run(
-                "TEST",
-                $"{x.ToString(StaticConfig.numberCulture)} - {y.ToString(StaticConfig.numberCulture)}",
-                arg
-            ),
-            x - y
+        RunResult result = _runClass.Run(
+            "TEST",
+            $"{x.ToString(StaticConfig.numberCulture)} - {y.ToString(StaticConfig.numberCulture)}",
+            arg
         );
+
+        Assert.True(result.TryGetValue(out Value value));
+        VList list = Assert.IsType<VList>(value);
+        VNumber number = Assert.IsType<VNumber>(list.value[0]);
+        Assert.Equal(x - y, number.value, 1e-9);
     }
 
-    private void Check_Arith(RunResult res, double expected)
-    {
-        Assert.True(res.IsSuccess);
-        Assert.IsType<VNumber>(((VList)res.GetValue()).value[0]);
-    }
-
-    public static IEnumerable<object[]> TestCases()
+    public static TheoryData<CliArgs, double, double> TestCases()
     {
         (double, double)[] values =
         [
@@ -155,12 +171,16 @@ public class ErrorTest
             (0.5, -0.354),
         ];
 
+        TheoryData<CliArgs, double, double> data = new TheoryData<CliArgs, double, double>();
+
         foreach (CliArgs mode in new[] { CliArgs.ArgsNoOptimization, CliArgs.ArgsWithOptimization })
         {
             foreach ((double x, double y) in values)
             {
-                yield return [mode, x, y];
+                data.Add(mode, x, y);
             }
         }
+
+        return data;
     }
 }
