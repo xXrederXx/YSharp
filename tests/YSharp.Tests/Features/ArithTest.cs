@@ -208,6 +208,21 @@ public class ErrorTest
         Assert.Equal(x * (y + x), number.value, 1e-9);
     }
 
+    [Theory]
+    [MemberData(nameof(TestCases))]
+    public void checkOrderOfOperation_whenInvalidParams_thenError(CliArgs arg, double x, double y)
+    {
+        RunResult result = _runClass.Run(
+            "TEST",
+            $"{x.ToString(StaticConfig.numberCulture)} * ({y.ToString(StaticConfig.numberCulture)} + {x.ToString(StaticConfig.numberCulture)}",
+            arg
+        );
+
+        Assert.True(result.IsFailed);
+        InvalidSyntaxError err = Assert.IsType<InvalidSyntaxError>(result.GetError());
+        Assert.Contains('(', err.ToString());
+    }
+
     public static TheoryData<CliArgs, double, double> TestCases()
     {
         (double, double)[] values =
