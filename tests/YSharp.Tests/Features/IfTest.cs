@@ -76,4 +76,30 @@ public class IfTest
         VNumber number = Assert.IsType<VNumber>(list.value.Last());
         Assert.Equal(2.0, number.value, 1e-9);
     }
+
+    [Fact]
+    void checkIF_whenELIFTrue_success()
+    {
+        RunnerResult result = runner.Run(
+            "<TEST>",
+            """
+            VAR x = 7
+            IF x == 0 THEN
+                VAR x = 1
+            END
+            ELIF NOT x == 6 THEN
+                VAR x = 2
+            END
+            ELSE
+                VAR x = 3
+            END
+            x # Moves it to out
+            """,
+            CliArgs.DefaultArgs
+        );
+        Assert.True(result.TryGetValue(out Value resultValue));
+        VList list = Assert.IsType<VList>(resultValue);
+        VNumber number = Assert.IsType<VNumber>(list.value.Last());
+        Assert.Equal(2.0, number.value, 1e-9);
+    }
 }
