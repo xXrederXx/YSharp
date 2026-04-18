@@ -62,4 +62,52 @@ public class VarTest
         VNumber number2 = Assert.IsType<VNumber>(valueList.value[1]);
         Assert.Equal(2, number2.value, 1e-9);
     }
+
+    [Fact]
+    void checkIncrement()
+    {
+        RunResult result = _runClass.Run("<test>", $"VAR x = 1; VAR x++; x", CliArgs.DefaultArgs);
+
+        Assert.True(result.TryGetValue(out Value value));
+        VList list = Assert.IsType<VList>(value);
+        VNumber number = Assert.IsType<VNumber>(list.value.Last());
+        Assert.Equal(2, number.value, 1e-9);
+    }
+
+    [Fact]
+    void checkDecrement()
+    {
+        RunResult result = _runClass.Run("<test>", $"VAR x = 1; VAR x--; x", CliArgs.DefaultArgs);
+
+        Assert.True(result.TryGetValue(out Value value));
+        VList list = Assert.IsType<VList>(value);
+        VNumber number = Assert.IsType<VNumber>(list.value.Last());
+        Assert.Equal(0, number.value, 1e-9);
+    }
+
+    [Fact]
+    void checkIncrement_whenString()
+    {
+        RunResult result = _runClass.Run(
+            "<test>",
+            $"VAR x = \"tst\"; VAR x++; x",
+            CliArgs.DefaultArgs
+        );
+
+        Assert.True(result.IsFailed);
+        Assert.IsType<WrongTypeError>(result.GetError());
+    }
+
+    [Fact]
+    void checkDecrement_whenString()
+    {
+        RunResult result = _runClass.Run(
+            "<test>",
+            $"VAR x = \"tst\"; VAR x--; x",
+            CliArgs.DefaultArgs
+        );
+
+        Assert.True(result.IsFailed);
+        Assert.IsType<WrongTypeError>(result.GetError());
+    }
 }
