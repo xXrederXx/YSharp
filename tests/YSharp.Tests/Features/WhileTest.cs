@@ -30,7 +30,7 @@ public class WhileTest
         Assert.True(result.TryGetValue(out Value resultValue));
         VList list = Assert.IsType<VList>(resultValue);
         VNumber number = Assert.IsType<VNumber>(list.value.Last());
-        Assert.Equal(10.0, number.value, 1e-9);
+        Assert.Equal(10.0, number.value, TestingConstans.DOUBLE_PRECISION);
     }
 
     [Fact]

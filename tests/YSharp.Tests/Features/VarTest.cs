@@ -22,7 +22,7 @@ public class VarTest
         Assert.True(result.TryGetValue(out Value value));
         VList list = Assert.IsType<VList>(value);
         VNumber number = Assert.IsType<VNumber>(list.value[0]);
-        Assert.Equal(5, number.value, 1e-9);
+        Assert.Equal(5, number.value, TestingConstans.DOUBLE_PRECISION);
     }
 
     [Fact]
@@ -33,7 +33,7 @@ public class VarTest
         Assert.True(result.TryGetValue(out Value value));
         VList list = Assert.IsType<VList>(value);
         VNumber number = Assert.IsType<VNumber>(list.value[0]);
-        Assert.Equal(6.7, number.value, 1e-9);
+        Assert.Equal(6.7, number.value, TestingConstans.DOUBLE_PRECISION);
     }
 
     [Fact]
@@ -57,10 +57,10 @@ public class VarTest
         VList valueList = Assert.IsType<VList>(list.value[0]);
 
         VNumber number1 = Assert.IsType<VNumber>(valueList.value[0]);
-        Assert.Equal(1, number1.value, 1e-9);
+        Assert.Equal(1, number1.value, TestingConstans.DOUBLE_PRECISION);
 
         VNumber number2 = Assert.IsType<VNumber>(valueList.value[1]);
-        Assert.Equal(2, number2.value, 1e-9);
+        Assert.Equal(2, number2.value, TestingConstans.DOUBLE_PRECISION);
     }
 
     [Fact]
@@ -71,7 +71,7 @@ public class VarTest
         Assert.True(result.TryGetValue(out Value value));
         VList list = Assert.IsType<VList>(value);
         VNumber number = Assert.IsType<VNumber>(list.value.Last());
-        Assert.Equal(2, number.value, 1e-9);
+        Assert.Equal(2, number.value, TestingConstans.DOUBLE_PRECISION);
     }
 
     [Fact]
@@ -82,7 +82,7 @@ public class VarTest
         Assert.True(result.TryGetValue(out Value value));
         VList list = Assert.IsType<VList>(value);
         VNumber number = Assert.IsType<VNumber>(list.value.Last());
-        Assert.Equal(0, number.value, 1e-9);
+        Assert.Equal(0, number.value, TestingConstans.DOUBLE_PRECISION);
     }
 
     [Fact]

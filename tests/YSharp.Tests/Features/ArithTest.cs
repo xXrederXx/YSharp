@@ -25,7 +25,7 @@ public class ErrorTest
         Assert.True(result.TryGetValue(out Value value));
         VList list = Assert.IsType<VList>(value);
         VNumber number = Assert.IsType<VNumber>(list.value[0]);
-        Assert.Equal(x + y, number.value, 1e-9);
+        Assert.Equal(x + y, number.value, TestingConstans.DOUBLE_PRECISION);
     }
 
     [Theory]
@@ -41,7 +41,7 @@ public class ErrorTest
         Assert.True(result.TryGetValue(out Value value));
         VList list = Assert.IsType<VList>(value);
         VNumber number = Assert.IsType<VNumber>(list.value[0]);
-        Assert.Equal(x + y, number.value, 1e-9);
+        Assert.Equal(x + y, number.value, TestingConstans.DOUBLE_PRECISION);
     }
 
     [Theory]
@@ -57,7 +57,7 @@ public class ErrorTest
         Assert.True(result.TryGetValue(out Value value));
         VList list = Assert.IsType<VList>(value);
         VNumber number = Assert.IsType<VNumber>(list.value[0]);
-        Assert.Equal(x / y, number.value, 1e-9);
+        Assert.Equal(x / y, number.value, TestingConstans.DOUBLE_PRECISION);
     }
 
     [Theory]
@@ -73,7 +73,7 @@ public class ErrorTest
         Assert.True(result.TryGetValue(out Value value));
         VList list = Assert.IsType<VList>(value);
         VNumber number = Assert.IsType<VNumber>(list.value[0]);
-        Assert.Equal(x / y, number.value, 1e-9);
+        Assert.Equal(x / y, number.value, TestingConstans.DOUBLE_PRECISION);
     }
 
     [Theory]
@@ -101,7 +101,7 @@ public class ErrorTest
         Assert.True(result.TryGetValue(out Value value));
         VList list = Assert.IsType<VList>(value);
         VNumber number = Assert.IsType<VNumber>(list.value[0]);
-        Assert.Equal(x * y, number.value, 1e-9);
+        Assert.Equal(x * y, number.value, TestingConstans.DOUBLE_PRECISION);
     }
 
     [Theory]
@@ -117,7 +117,7 @@ public class ErrorTest
         Assert.True(result.TryGetValue(out Value value));
         VList list = Assert.IsType<VList>(value);
         VNumber number = Assert.IsType<VNumber>(list.value[0]);
-        Assert.Equal(x * y, number.value, 1e-9);
+        Assert.Equal(x * y, number.value, TestingConstans.DOUBLE_PRECISION);
     }
 
     [Theory]
@@ -140,7 +140,7 @@ public class ErrorTest
             Assert.True(result.TryGetValue(out Value value));
             VList list = Assert.IsType<VList>(value);
             VNumber number = Assert.IsType<VNumber>(list.value[0]);
-            Assert.Equal(x - y, number.value, 1e-9);
+            Assert.Equal(x - y, number.value, TestingConstans.DOUBLE_PRECISION);
         }
     }
 
@@ -157,7 +157,7 @@ public class ErrorTest
         Assert.True(result.TryGetValue(out Value value));
         VList list = Assert.IsType<VList>(value);
         VNumber number = Assert.IsType<VNumber>(list.value[0]);
-        Assert.Equal(x - y, number.value, 1e-9);
+        Assert.Equal(x - y, number.value, TestingConstans.DOUBLE_PRECISION);
     }
 
     [Theory]
@@ -173,7 +173,7 @@ public class ErrorTest
         Assert.True(result.TryGetValue(out Value value));
         VList list = Assert.IsType<VList>(value);
         VNumber number = Assert.IsType<VNumber>(list.value[0]);
-        Assert.Equal(x + y * x, number.value, 1e-9);
+        Assert.Equal(x + y * x, number.value, TestingConstans.DOUBLE_PRECISION);
     }
 
     [Theory]
@@ -189,7 +189,7 @@ public class ErrorTest
         Assert.True(result.TryGetValue(out Value value));
         VList list = Assert.IsType<VList>(value);
         VNumber number = Assert.IsType<VNumber>(list.value[0]);
-        Assert.Equal(x + x / y, number.value, 1e-9);
+        Assert.Equal(x + x / y, number.value, TestingConstans.DOUBLE_PRECISION);
     }
 
     [Theory]
@@ -205,7 +205,7 @@ public class ErrorTest
         Assert.True(result.TryGetValue(out Value value));
         VList list = Assert.IsType<VList>(value);
         VNumber number = Assert.IsType<VNumber>(list.value[0]);
-        Assert.Equal(x * (y + x), number.value, 1e-9);
+        Assert.Equal(x * (y + x), number.value, TestingConstans.DOUBLE_PRECISION);
     }
 
     [Theory]

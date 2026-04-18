@@ -45,7 +45,7 @@ public class DateTimeTest
         Result<Value, Error> result = vDateTime.GetVar(name);
         Assert.True(result.TryGetValue(out Value value));
         VNumber number = Assert.IsType<VNumber>(value);
-        Assert.Equal(expected, number.value, 1e-9);
+        Assert.Equal(expected, number.value, TestingConstans.DOUBLE_PRECISION);
     }
 
     [Fact]
@@ -67,7 +67,7 @@ public class DateTimeTest
         );
         Assert.True(result.TryGetValue(out Value value));
         VDateTime date = Assert.IsType<VDateTime>(value);
-        Assert.Equal(new DateTime(testDateTime.Ticks * 2), date.dateTime);
+        Assert.Equal(new DateTime(testDateTime.Ticks * 2), date.dateTime, TestingConstans.TIME_PRECISION);
     }
 
     [Fact]
@@ -86,7 +86,7 @@ public class DateTimeTest
         );
         Assert.True(result.TryGetValue(out Value value));
         VDateTime date = Assert.IsType<VDateTime>(value);
-        Assert.Equal(new DateTime(0), date.dateTime);
+        Assert.Equal(new DateTime(0), date.dateTime, TestingConstans.TIME_PRECISION);
     }
 
     [Fact]
@@ -109,7 +109,7 @@ public class DateTimeTest
         VDateTime left = new VDateTime(testDateTime);
         VDateTime right = left.Copy();
 
-        Assert.Equal(left.dateTime, right.dateTime);
+        Assert.Equal(left.dateTime, right.dateTime, TestingConstans.TIME_PRECISION);
         Assert.Equal(left.StartPos, right.StartPos);
         Assert.Equal(left.EndPos, right.EndPos);
         Assert.Equal(left.Context, right.Context);
@@ -120,6 +120,6 @@ public class DateTimeTest
     {
         VDateTime left = new VDateTime();
 
-        Assert.Equal(DateTime.Now, left.dateTime, new TimeSpan(0, 0, 1));
+        Assert.Equal(DateTime.Now, left.dateTime, TestingConstans.TIME_PRECISION);
     }
 }

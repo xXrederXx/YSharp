@@ -28,7 +28,7 @@ public class FunctionDefinitonTest {
         Assert.True(result.TryGetValue(out Value value));
         VList list = Assert.IsType<VList>(value);
         VNumber number = Assert.IsType<VNumber>(list.value.Last());
-        Assert.Equal(1, number.value, 1e-9);
+        Assert.Equal(1, number.value, TestingConstans.DOUBLE_PRECISION);
     }
 
     [Fact]
@@ -48,7 +48,7 @@ public class FunctionDefinitonTest {
         Assert.True(result.TryGetValue(out Value value));
         VList list = Assert.IsType<VList>(value);
         VNumber number = Assert.IsType<VNumber>(list.value.Last());
-        Assert.Equal(1, number.value, 1e-9);
+        Assert.Equal(1, number.value, TestingConstans.DOUBLE_PRECISION);
     }
 
     [Fact]
@@ -68,6 +68,6 @@ public class FunctionDefinitonTest {
         Assert.True(result.TryGetValue(out Value value));
         VList list = Assert.IsType<VList>(value);
         VNumber number = Assert.IsType<VNumber>(list.value.Last());
-        Assert.Equal(13, number.value, 1e-9);
+        Assert.Equal(13, number.value, TestingConstans.DOUBLE_PRECISION);
     }
 }
