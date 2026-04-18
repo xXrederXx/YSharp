@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 
 namespace YSharp.Util;
@@ -130,15 +131,10 @@ public static class ImportUtil
     private const string ExposeAttributeName = "ExposeAttribute";
 }
 
-public class ExposedClassData(
+[ExcludeFromCodeCoverage]
+public record ExposedClassData(
     MethodInfo[] Methods,
     FieldInfo[] Fields,
     PropertyInfo[] Properties,
     object? instance = null
-)
-{
-    public readonly FieldInfo[] fields = Fields;
-    public readonly object? instance = instance;
-    public readonly MethodInfo[] methods = Methods;
-    public readonly PropertyInfo[] properties = Properties;
-}
+);
