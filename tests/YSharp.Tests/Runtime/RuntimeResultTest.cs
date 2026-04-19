@@ -1,0 +1,163 @@
+using Xunit;
+using YSharp.Common;
+using YSharp.Runtime;
+
+namespace YSharp.Tests;
+
+public class RunTimeResultTests
+{
+    [Fact]
+    public void Success_ShouldSetValue_AndResetOtherFields()
+    {
+        RunTimeResult result = new RunTimeResult();
+        Value value = new Value();
+
+        result.Success(value);
+
+        Assert.Equal(value, result.value);
+        Assert.Equal(ValueNull.Instance, result.funcReturnValue);
+        Assert.Equal(ErrorNull.Instance, result.error);
+        Assert.False(result.loopBreak);
+        Assert.False(result.loopContinue);
+    }
+
+    [Fact]
+    public void Failure_ShouldSetError_AndResetOtherFields()
+    {
+        RunTimeResult result = new RunTimeResult();
+        ExpectedTokenError error = new ExpectedTokenError(Position.Null, "tok");
+
+        result.Failure(error);
+
+        Assert.Equal(error, result.error);
+        Assert.Equal(ValueNull.Instance, result.value);
+        Assert.Equal(ValueNull.Instance, result.funcReturnValue);
+        Assert.False(result.loopBreak);
+        Assert.False(result.loopContinue);
+    }
+
+    [Fact]
+    public void SuccessReturn_ShouldSetFuncReturnValue()
+    {
+        RunTimeResult result = new RunTimeResult();
+        Value value = new Value();
+
+        result.SuccessReturn(value);
+
+        Assert.Equal(value, result.funcReturnValue);
+        Assert.True(result.ShouldReturn());
+    }
+
+    [Fact]
+    public void SuccessBreak_ShouldSetLoopBreak()
+    {
+        RunTimeResult result = new RunTimeResult();
+
+        result.SuccessBreak();
+
+        Assert.True(result.loopBreak);
+        Assert.True(result.ShouldReturn());
+    }
+
+    [Fact]
+    public void SuccessContinue_ShouldSetLoopContinue()
+    {
+        RunTimeResult result = new RunTimeResult();
+
+        result.SuccessContinue();
+
+        Assert.True(result.loopContinue);
+        Assert.True(result.ShouldReturn());
+    }
+
+    [Fact]
+    public void Register_ShouldCopyState_FromOtherResult()
+    {
+        RunTimeResult source = new RunTimeResult();
+        RunTimeResult target = new RunTimeResult();
+
+        Value value = new Value();
+        ExpectedTokenError error = new ExpectedTokenError(Position.Null, "tok");
+
+        source.value = value;
+        source.error = error;
+        source.loopBreak = true;
+        source.loopContinue = true;
+        source.funcReturnValue = value;
+
+        Value returnedValue = target.Register(source);
+
+        Assert.Equal(value, returnedValue);
+        Assert.Equal(error, target.error);
+        Assert.Equal(value, target.funcReturnValue);
+        Assert.True(target.loopBreak);
+        Assert.True(target.loopContinue);
+    }
+
+    [Fact]
+    public void ShouldReturn_ShouldBeFalse_WhenNoFlagsOrError()
+    {
+        RunTimeResult result = new RunTimeResult();
+
+        Assert.False(result.ShouldReturn());
+    }
+
+    [Fact]
+    public void ShouldReturn_ShouldBeTrue_WhenErrorExists()
+    {
+        RunTimeResult result = new RunTimeResult
+        {
+            error = new ExpectedTokenError(Position.Null, "tok"),
+        };
+
+        Assert.True(result.ShouldReturn());
+    }
+
+    [Fact]
+    public void Reset_ShouldClearAllFields()
+    {
+        RunTimeResult result = new RunTimeResult
+        {
+            value = new Value(),
+            error = new ExpectedTokenError(Position.Null, "tok"),
+            funcReturnValue = new Value(),
+            loopBreak = true,
+            loopContinue = true,
+        };
+
+        result.Reset();
+
+        Assert.Equal(ValueNull.Instance, result.value);
+        Assert.Equal(ErrorNull.Instance, result.error);
+        Assert.Equal(ValueNull.Instance, result.funcReturnValue);
+        Assert.False(result.loopBreak);
+        Assert.False(result.loopContinue);
+    }
+
+    [Fact]
+    public void MultipleOperations_ShouldNotLeakState()
+    {
+        RunTimeResult result = new RunTimeResult();
+
+        result.Success(new Value());
+        result.SuccessBreak();
+
+        Assert.True(result.loopBreak);
+        Assert.Equal(ValueNull.Instance, result.value); // reset happened
+    }
+
+    [Fact]
+    public void Register_ShouldOverwriteExistingState()
+    {
+        RunTimeResult result = new RunTimeResult();
+        RunTimeResult source = new RunTimeResult
+        {
+            error = new ExpectedTokenError(Position.Null, "tok"),
+        };
+
+        result.Success(new Value());
+        result.Register(source);
+
+        Assert.Equal(source.error, result.error);
+    }
+}
