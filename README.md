@@ -1,14 +1,14 @@
-# Welcome to YSharp
+[![License](https://img.shields.io/github/license/xXrederXx/YSharp)](https://github.com/xXrederXx/YSharp/blob/main/LICENSE)
+[![CI](https://github.com/xXrederXx/YSharp/workflows/CI/badge.svg)](https://github.com/xXrederXx/YSharp/actions)
+[![Coverage](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/xXrederXx/YSharp/main/coverage-badge.json)](https://github.com/xXrederXx/YSharp/tree/main/tests/YSharp.Tests)
+[![Closed Issues](https://img.shields.io/github/issues-closed/xXrederXx/YSharp?logo=github&color=9E9E9E)](https://github.com/xXrederXx/YSharp/issues?q=is%3Aissue%20state%3Aclosed) 
+[![Open Issues](https://img.shields.io/github/issues/xXrederXx/YSharp?logo=github&color=4CAF50)](https://github.com/xXrederXx/YSharp/issues?q=is%3Aissue%20state%3Aopen)
 
-![CI](https://github.com/xXrederXx/YSharp/workflows/CI/badge.svg)
-[![Coverage](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/xXrederXx/YSharp/main/coverage-badge.json)](https://github.com/xXrederXx/YSharp)
-
-## What is YSharp?
+# YSharp Programming Language
 
 YSharp is a simple, general-purpose, interpreted programming language. It runs through a `.exe` interpreter and includes a REPL shell for interactive development.
 
 This language is ideal for scripting, learning programming fundamentals, and experimenting with code in a lightweight environment.
-
 
 ## Features
 
@@ -29,7 +29,7 @@ This language is ideal for scripting, learning programming fundamentals, and exp
 | [Api](./Docs/api/)                               | Built-in functions or types                                      |
 | [Limitations](./Docs/other/limitations.md)       | Known limitations and missing features                           |
 
-## ✅ Quick Example
+## Quick Example
 
 ```plaintext
 FUN greet(name)
@@ -53,11 +53,10 @@ Or, use the shell:
 7
 ```
 
-
-## 🛠️ Project Status
+## Project Status
 
 This language is in development and under active improvement. Expect changes and incomplete features.
 
-## 🧭 Start Here
+## Start Here
 
-👉 [Getting Started →](./Docs/getting-started/)
+[Getting Started →](./Docs/getting-started/)
