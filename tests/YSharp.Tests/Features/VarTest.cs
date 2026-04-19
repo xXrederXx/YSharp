@@ -64,7 +64,7 @@ public class VarTest
     }
 
     [Fact]
-    void checkIncrement()
+    public void checkIncrement_whenVariableIs1_thenIncrementsTo2()
     {
         RunResult result = _runClass.Run("<test>", $"VAR x = 1; VAR x++; x", CliArgs.DefaultArgs);
 
@@ -75,7 +75,7 @@ public class VarTest
     }
 
     [Fact]
-    void checkDecrement()
+    public void checkDecrement_whenVariableIs1_thenDecrementsTo0()
     {
         RunResult result = _runClass.Run("<test>", $"VAR x = 1; VAR x--; x", CliArgs.DefaultArgs);
 

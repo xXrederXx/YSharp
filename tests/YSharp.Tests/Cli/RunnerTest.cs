@@ -12,7 +12,7 @@ public class RunnerTests
     private readonly CliArgs _args = CliArgs.DefaultArgs; // adjust if needed
 
     [Fact]
-    public void ConsoleRunner_ShouldExit_OnBreakCommand()
+    public void checkConsoleRunner_whenBreakCommand_exitsRunner()
     {
         StringReader input = new StringReader("b\n");
         StringWriter output = new StringWriter();
@@ -32,7 +32,7 @@ public class RunnerTests
     }
 
     [Fact]
-    public void ConsoleRunner_ShouldIgnore_EmptyInput()
+    public void checkConsoleRunner_whenEmptyInput_ignoresIt()
     {
         StringReader input = new StringReader("\n\nb\n");
         StringWriter output = new StringWriter();
@@ -54,7 +54,7 @@ public class RunnerTests
     }
 
     [Fact]
-    public void ConsoleRunner_ShouldHandle_NullInput_AsEmpty()
+    public void checkConsoleRunner_whenNullInput_handlesAsEmpty()
     {
         StringReader input = new StringReader(""); // ReadLine() returns null
         StringWriter output = new StringWriter();
@@ -78,7 +78,7 @@ public class RunnerTests
     }
 
     [Fact]
-    public void ConsoleRunner_ShouldPrintError_WhenRunFails()
+    public void checkConsoleRunner_whenRunFails_printsError()
     {
         StringReader input = new StringReader("invalid_command\nb\n");
         StringWriter output = new StringWriter();
@@ -99,7 +99,7 @@ public class RunnerTests
     }
 
     [Fact]
-    public void ScriptRunner_ShouldExecuteScript()
+    public void checkScriptRunner_whenValidScript_executes()
     {
         StringWriter output = new StringWriter();
         Console.SetOut(output);
@@ -117,7 +117,7 @@ public class RunnerTests
     }
 
     [Fact]
-    public void ScriptRunner_ShouldEscape_Backslashes()
+    public void checkScriptRunner_whenBackslashes_escapesThem()
     {
         StringWriter output = new StringWriter();
         Console.SetOut(output);
@@ -135,7 +135,7 @@ public class RunnerTests
     }
 
     [Fact]
-    public void ScriptRunner_ShouldPrintError_OnFailure()
+    public void checkScriptRunner_whenFails_printsError()
     {
         StringWriter output = new StringWriter();
         Console.SetOut(output);

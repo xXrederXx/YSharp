@@ -14,7 +14,7 @@ public class ForTests
     private readonly RuntimeEnviroment runner = new RuntimeEnviroment();
 
     [Fact]
-    void checkFor_whenValidLoopWithStep_succes()
+    public void checkFor_whenValidLoopWithStep_thenSumsTo95()
     {
         RunnerResult result = runner.Run(
             "<TEST>",
@@ -35,7 +35,7 @@ public class ForTests
     }
 
     [Fact]
-    void checkFor_whenValidLoopNoStep_succes()
+    public void checkFor_whenValidLoopNoStep_thenSumsTo45()
     {
         RunnerResult result = runner.Run(
             "<TEST>",
@@ -56,7 +56,7 @@ public class ForTests
     }
 
     [Fact(Skip = "Issue#43")]
-    void checkForWithContinue_whenValidLoopNoStep_succes()
+    public void checkForWithContinue_whenValidLoopNoStep_thenSkipsAllIterations()
     {
         RunnerResult result = runner.Run(
             "<TEST>",
@@ -78,7 +78,7 @@ public class ForTests
     }
 
     [Fact(Skip = "Issue#43")]
-    void checkForWithBreak_whenValidLoopNoStep_succes()
+    public void checkForWithBreak_whenValidLoopNoStep_thenStopsAtFirstIteration()
     {
         RunnerResult result = runner.Run(
             "<TEST>",

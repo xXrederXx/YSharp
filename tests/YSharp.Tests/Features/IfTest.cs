@@ -12,7 +12,7 @@ public class IfTest
     private readonly RuntimeEnviroment runner = new RuntimeEnviroment();
 
     [Fact]
-    void checkIF_whenFirstTrue_success()
+    public void checkIf_whenConditionTrue_thenExecutesThenBlock()
     {
         RunnerResult result = runner.Run(
             "<TEST>",
@@ -33,7 +33,7 @@ public class IfTest
     }
 
     [Fact]
-    void checkIF_whenFirstFalse_success()
+    public void checkIf_whenConditionFalse_thenSkipsThenBlock()
     {
         RunnerResult result = runner.Run(
             "<TEST>",
@@ -54,7 +54,7 @@ public class IfTest
     }
 
     [Fact]
-    void checkIF_whenFirstFalseAndElse_success()
+    public void checkIf_whenConditionFalseAndElse_thenExecutesElseBlock()
     {
         RunnerResult result = runner.Run(
             "<TEST>",
@@ -78,7 +78,7 @@ public class IfTest
     }
 
     [Fact]
-    void checkIF_whenELIFTrue_success()
+    public void checkIf_whenElifTrue_thenExecutesElifBlock()
     {
         RunnerResult result = runner.Run(
             "<TEST>",

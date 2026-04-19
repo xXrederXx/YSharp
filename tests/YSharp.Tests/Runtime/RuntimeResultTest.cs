@@ -7,7 +7,7 @@ namespace YSharp.Tests;
 public class RunTimeResultTests
 {
     [Fact]
-    public void Success_ShouldSetValue_AndResetOtherFields()
+    public void checkRunTimeResult_whenSuccess_thenSetsValueAndResetsFields()
     {
         RunTimeResult result = new RunTimeResult();
         Value value = new Value();
@@ -22,7 +22,7 @@ public class RunTimeResultTests
     }
 
     [Fact]
-    public void Failure_ShouldSetError_AndResetOtherFields()
+    public void checkRunTimeResult_whenFailure_thenSetsErrorAndResetsFields()
     {
         RunTimeResult result = new RunTimeResult();
         ExpectedTokenError error = new ExpectedTokenError(Position.Null, "tok");
