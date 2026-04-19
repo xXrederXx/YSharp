@@ -39,7 +39,7 @@ public class IfTest
             "<TEST>",
             """
             VAR x = 7
-            IF x == 0 THEN
+            IF x < 0 THEN
                 VAR x = 1
             END
             x # Moves it to out
@@ -60,7 +60,7 @@ public class IfTest
             "<TEST>",
             """
             VAR x = 7
-            IF x == 0 THEN
+            IF x == 0 OR x != 7 THEN
                 VAR x = 1
             END
             ELSE
@@ -84,7 +84,7 @@ public class IfTest
             "<TEST>",
             """
             VAR x = 7
-            IF x == 0 THEN
+            IF x <= 0 THEN
                 VAR x = 1
             END
             ELIF NOT x == 6 THEN
