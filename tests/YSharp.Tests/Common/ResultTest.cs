@@ -7,7 +7,7 @@ namespace YSharp.Tests;
 public class ResultTests
 {
     [Fact]
-    public void Success_ShouldCreateSuccessfulResult()
+    public void checkResult_whenSuccess_thenCreatesSuccessfulResult()
     {
         Result<int, string> result = Result<int, string>.Success(42);
 
@@ -17,7 +17,7 @@ public class ResultTests
     }
 
     [Fact]
-    public void Fail_ShouldCreateFailedResult()
+    public void checkResult_whenFail_thenCreatesFailedResult()
     {
         Result<int, string> result = Result<int, string>.Fail("error");
 
@@ -27,7 +27,7 @@ public class ResultTests
     }
 
     [Fact]
-    public void TryGetValue_OnSuccess_ShouldReturnTrueAndValue()
+    public void checkResult_whenTryGetValueOnSuccess_thenReturnsTrueAndValue()
     {
         Result<int, string> result = Result<int, string>.Success(10);
 
@@ -36,7 +36,7 @@ public class ResultTests
     }
 
     [Fact]
-    public void TryGetValue_OnFailure_ShouldReturnFalse()
+    public void checkResult_whenTryGetValueOnFailure_thenReturnsFalse()
     {
         Result<int, string> result = Result<int, string>.Fail("err");
 
@@ -45,7 +45,7 @@ public class ResultTests
     }
 
     [Fact]
-    public void Deconstruct_ShouldReturnCorrectValues_OnSuccess()
+    public void checkResult_whenDeconstructOnSuccess_thenReturnsCorrectValues()
     {
         Result<int, string> result = Result<int, string>.Success(5);
 
@@ -57,7 +57,7 @@ public class ResultTests
     }
 
     [Fact]
-    public void Deconstruct_ShouldReturnCorrectValues_OnFailure()
+    public void checkResult_whenDeconstructOnFailure_thenReturnsCorrectValues()
     {
         Result<int, string> result = Result<int, string>.Fail("fail");
 
@@ -69,7 +69,7 @@ public class ResultTests
     }
 
     [Fact]
-    public void GetValue_OnFailure_ShouldThrow()
+    public void checkResult_whenGetValueOnFailure_thenThrows()
     {
         Result<int, string> result = Result<int, string>.Fail("error");
 
@@ -77,7 +77,7 @@ public class ResultTests
     }
 
     [Fact]
-    public void GetError_OnSuccess_ShouldThrow()
+    public void checkResult_whenGetErrorOnSuccess_thenThrows()
     {
         Result<int, string> result = Result<int, string>.Success(1);
 
@@ -85,19 +85,19 @@ public class ResultTests
     }
 
     [Fact]
-    public void Success_WithNull_ShouldThrow()
+    public void checkResult_whenSuccessWithNull_thenThrows()
     {
         Assert.Throws<ArgumentNullException>(() => Result<string, string>.Success(null!));
     }
 
     [Fact]
-    public void Fail_WithNull_ShouldThrow()
+    public void checkResult_whenFailWithNull_thenThrows()
     {
         Assert.Throws<ArgumentNullException>(() => Result<string, string>.Fail(null!));
     }
 
     [Fact]
-    public void EqualResults_ShouldBeEqual()
+    public void checkResult_whenEqualResults_thenTrue()
     {
         Result<int, string> r1 = Result<int, string>.Success(5);
         Result<int, string> r2 = Result<int, string>.Success(5);
@@ -107,7 +107,7 @@ public class ResultTests
     }
 
     [Fact]
-    public void DifferentValues_ShouldNotBeEqual()
+    public void checkResult_whenDifferentValues_thenNotEqual()
     {
         Result<int, string> r1 = Result<int, string>.Success(5);
         Result<int, string> r2 = Result<int, string>.Success(10);
@@ -116,7 +116,7 @@ public class ResultTests
     }
 
     [Fact]
-    public void SuccessAndFail_ShouldNotBeEqual()
+    public void checkResult_whenSuccessAndFail_thenNotEqual()
     {
         Result<int, string> success = Result<int, string>.Success(1);
         Result<int, string> fail = Result<int, string>.Fail("err");
@@ -125,7 +125,7 @@ public class ResultTests
     }
 
     [Fact]
-    public void EqualFailures_ShouldBeEqual()
+    public void checkResult_whenEqualFailures_thenEqual()
     {
         Result<int, string> r1 = Result<int, string>.Fail("err");
         Result<int, string> r2 = Result<int, string>.Fail("err");
@@ -134,7 +134,7 @@ public class ResultTests
     }
 
     [Fact]
-    public void EqualFailuresCasted_ShouldBeEqual()
+    public void checkResult_whenEqualFailuresCasted_thenEqual()
     {
         Result<int, string> r1 = Result<int, string>.Fail("err");
         object r2 = Result<int, string>.Fail("err");
@@ -143,7 +143,7 @@ public class ResultTests
     }
 
     [Fact]
-    public void NotEqualFailuresCasted_ShouldBeNotEqual()
+    public void checkResult_whenNotEqualFailuresCasted_thenNotEqual()
     {
         Result<int, string> r1 = Result<int, string>.Fail("err");
         object r2 = "err";
@@ -152,7 +152,7 @@ public class ResultTests
     }
 
     [Fact]
-    public void ToString_OnSuccess_ShouldContainValue()
+    public void checkResult_whenToStringOnSuccess_thenContainsValue()
     {
         Result<int, string> result = Result<int, string>.Success(123);
 
@@ -163,7 +163,7 @@ public class ResultTests
     }
 
     [Fact]
-    public void ToString_OnFailure_ShouldContainError()
+    public void checkResult_whenToStringOnFailure_thenContainsError()
     {
         Result<int, string> result = Result<int, string>.Fail("oops");
 
@@ -174,7 +174,7 @@ public class ResultTests
     }
 
     [Fact]
-    public void GetHashCode_ShouldBeSame_ForEqualResults()
+    public void checkResult_whenGetHashCodeForEqualResults_thenSame()
     {
         Result<int, string> r1 = Result<int, string>.Success(7);
         Result<int, string> r2 = Result<int, string>.Success(7);
@@ -183,7 +183,7 @@ public class ResultTests
     }
 
     [Fact]
-    public void GetHashCode_ShouldBeDifferent_ForNonEqualResults()
+    public void checkResult_whenGetHashCodeForNonEqualResults_thenDifferent()
     {
         Result<int, string> r1 = Result<int, string>.Success(7);
         Result<int, string> r2 = Result<int, string>.Fail("err");
@@ -192,7 +192,7 @@ public class ResultTests
     }
 
     [Fact]
-    public void DefaultStruct_ShouldBehaveAsFailed()
+    public void checkResult_whenDefaultStruct_thenBehavesAsFailed()
     {
         Result<int, string> result = default;
 

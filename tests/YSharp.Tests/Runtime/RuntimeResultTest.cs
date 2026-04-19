@@ -49,7 +49,7 @@ public class RunTimeResultTests
     }
 
     [Fact]
-    public void SuccessBreak_ShouldSetLoopBreak()
+    public void checkRunTimeResult_whenSuccessBreak_thenSetsLoopBreak()
     {
         RunTimeResult result = new RunTimeResult();
 
@@ -60,7 +60,7 @@ public class RunTimeResultTests
     }
 
     [Fact]
-    public void SuccessContinue_ShouldSetLoopContinue()
+    public void checkRunTimeResult_whenSuccessContinue_thenSetsLoopContinue()
     {
         RunTimeResult result = new RunTimeResult();
 
@@ -71,7 +71,7 @@ public class RunTimeResultTests
     }
 
     [Fact]
-    public void Register_ShouldCopyState_FromOtherResult()
+    public void checkRunTimeResult_whenRegister_thenCopiesStateFromOther()
     {
         RunTimeResult source = new RunTimeResult();
         RunTimeResult target = new RunTimeResult();
@@ -95,7 +95,7 @@ public class RunTimeResultTests
     }
 
     [Fact]
-    public void ShouldReturn_ShouldBeFalse_WhenNoFlagsOrError()
+    public void checkRunTimeResult_whenShouldReturnWithNoFlagsOrError_thenFalse()
     {
         RunTimeResult result = new RunTimeResult();
 
@@ -103,7 +103,7 @@ public class RunTimeResultTests
     }
 
     [Fact]
-    public void ShouldReturn_ShouldBeTrue_WhenErrorExists()
+    public void checkRunTimeResult_whenShouldReturnWithError_thenTrue()
     {
         RunTimeResult result = new RunTimeResult
         {
@@ -114,7 +114,7 @@ public class RunTimeResultTests
     }
 
     [Fact]
-    public void Reset_ShouldClearAllFields()
+    public void checkRunTimeResult_whenReset_thenClearsAllFields()
     {
         RunTimeResult result = new RunTimeResult
         {
@@ -135,7 +135,7 @@ public class RunTimeResultTests
     }
 
     [Fact]
-    public void MultipleOperations_ShouldNotLeakState()
+    public void checkRunTimeResult_whenMultipleOperations_thenNoStateLeakage()
     {
         RunTimeResult result = new RunTimeResult();
 
@@ -147,7 +147,7 @@ public class RunTimeResultTests
     }
 
     [Fact]
-    public void Register_ShouldOverwriteExistingState()
+    public void checkRunTimeResult_whenRegister_thenOverwritesExistingState()
     {
         RunTimeResult result = new RunTimeResult();
         RunTimeResult source = new RunTimeResult
