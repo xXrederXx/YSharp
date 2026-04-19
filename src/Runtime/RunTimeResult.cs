@@ -26,12 +26,6 @@ public class RunTimeResult
         return res.value;
     }
 
-    public bool Register(RunTimeResult res, out Value val)
-    {
-        val = Register(res);
-        return ShouldReturn();
-    }
-
     public void Reset()
     {
         value = ValueNull.Instance;

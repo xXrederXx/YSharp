@@ -41,7 +41,7 @@ public sealed partial class VString
     private static Result<Value, Error> ToBool(VString self, List<Value> args)
     {
         Error err = ValueHelper.CheckArgs(args, 0, [], self.Context); // no argument
-        if (!err.IsError) return Result<Value, Error>.Fail(err);
+        if (err.IsError) return Result<Value, Error>.Fail(err);
 
         return Result<Value, Error>.Success(new VBool(self.IsTrue()));
     }
@@ -51,7 +51,7 @@ public sealed partial class VString
         Error err = ValueHelper.CheckArgs(args, 0, [], self.Context); // format argument
         if (err.IsError) return Result<Value, Error>.Fail(err);
 
-        return Result<Value, Error>.Success(new VString(self.value.ToUpper()));
+        return Result<Value, Error>.Success(new VString(self.value.ToLower()));
     }
 
     private static Result<Value, Error> ToNumber(VString self, List<Value> args)

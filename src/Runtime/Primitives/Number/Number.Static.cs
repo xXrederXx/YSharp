@@ -35,7 +35,7 @@ public sealed partial class VNumber : Value
     private static Result<Value, Error> MyToString(VNumber self, List<Value> args)
     {
         Error err = ValueHelper.CheckArgs(args, 0, [], self.Context); // no argument
-        if (!err.IsError) return Result<Value, Error>.Success(new VString(self.value.ToString()));
+        if (!err.IsError) return Result<Value, Error>.Success(new VString(self.value.ToString(StaticConfig.numberCulture)));
 
         err = ValueHelper.CheckArgs(args, 1, [typeof(VString)], self.Context); // format argument
         if (err.IsError) return Result<Value, Error>.Fail(err);

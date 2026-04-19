@@ -92,7 +92,7 @@ public sealed class VBuiltInFunction : VBaseFunction
             );
         }
 
-        RunClass runClass = new();
+        RuntimeEnviroment runClass = new();
         RunResult res = runClass.Run(fileName, script, CliArgs.DefaultArgs); // TODO: Add a way to inherit args
         if (res.IsFailed) return new RunTimeResult().Failure(res.GetError());
         return new RunTimeResult().Success(ValueNull.Instance);

@@ -11,10 +11,10 @@ using RunnerResult = Result<Value, Error>;
 
 public class ForTests
 {
-    private readonly RunClass runner = new RunClass();
+    private readonly RuntimeEnviroment runner = new RuntimeEnviroment();
 
     [Fact]
-    void checkFor_whenValidLoopWithStep_succes()
+    public void checkFor_whenValidLoopWithStep_thenSumsTo95()
     {
         RunnerResult result = runner.Run(
             "<TEST>",
@@ -31,11 +31,11 @@ public class ForTests
         Assert.True(result.TryGetValue(out Value resultValue));
         VList list = Assert.IsType<VList>(resultValue);
         VNumber number = Assert.IsType<VNumber>(list.value.Last());
-        Assert.Equal(95.0, number.value, 1e-9);
+        Assert.Equal(95.0, number.value, TestingConstans.DOUBLE_PRECISION);
     }
 
     [Fact]
-    void checkFor_whenValidLoopNoStep_succes()
+    public void checkFor_whenValidLoopNoStep_thenSumsTo45()
     {
         RunnerResult result = runner.Run(
             "<TEST>",
@@ -52,7 +52,51 @@ public class ForTests
         Assert.True(result.TryGetValue(out Value resultValue));
         VList list = Assert.IsType<VList>(resultValue);
         VNumber number = Assert.IsType<VNumber>(list.value.Last());
-        Assert.Equal(45.0, number.value, 1e-9);
+        Assert.Equal(45.0, number.value, TestingConstans.DOUBLE_PRECISION);
+    }
+
+    [Fact(Skip = "Issue#43")]
+    public void checkForWithContinue_whenValidLoopNoStep_thenSkipsAllIterations()
+    {
+        RunnerResult result = runner.Run(
+            "<TEST>",
+            """
+            VAR x = 0
+            FOR i = 0 TO 10 THEN
+                CONTINUE;
+                VAR x += i
+            END
+            x # Moves it to out
+            """,
+            CliArgs.DefaultArgs
+        );
+
+        Assert.True(result.TryGetValue(out Value resultValue));
+        VList list = Assert.IsType<VList>(resultValue);
+        VNumber number = Assert.IsType<VNumber>(list.value.Last());
+        Assert.Equal(0.0, number.value, TestingConstans.DOUBLE_PRECISION);
+    }
+
+    [Fact(Skip = "Issue#43")]
+    public void checkForWithBreak_whenValidLoopNoStep_thenStopsAtFirstIteration()
+    {
+        RunnerResult result = runner.Run(
+            "<TEST>",
+            """
+            VAR x = 0
+            FOR i = 0 TO 10 THEN
+                BREAK;
+                VAR x += i
+            END
+            x # Moves it to out
+            """,
+            CliArgs.DefaultArgs
+        );
+
+        Assert.True(result.TryGetValue(out Value resultValue));
+        VList list = Assert.IsType<VList>(resultValue);
+        VNumber number = Assert.IsType<VNumber>(list.value.Last());
+        Assert.Equal(0.0, number.value, TestingConstans.DOUBLE_PRECISION);
     }
 
     [Fact]

@@ -29,7 +29,7 @@ public sealed class ImportClass : Value
             )
         );
 
-        foreach (MethodInfo? method in data.methods)
+        foreach (MethodInfo? method in data.Methods)
         {
             ParameterInfo[] paramsInfo = method.GetParameters();
 
