@@ -8,7 +8,8 @@ namespace YSharp.Tests;
 
 using RunResult = Result<Value, Error>;
 
-public class FunctionDefinitonTest {
+public class FunctionDefinitonTest
+{
     private readonly RuntimeEnviroment _runClass = new();
 
     [Fact]
