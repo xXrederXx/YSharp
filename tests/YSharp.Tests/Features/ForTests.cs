@@ -55,6 +55,50 @@ public class ForTests
         Assert.Equal(45.0, number.value, TestingConstans.DOUBLE_PRECISION);
     }
 
+    [Fact(Skip = "Issue#43")]
+    void checkForWithContinue_whenValidLoopNoStep_succes()
+    {
+        RunnerResult result = runner.Run(
+            "<TEST>",
+            """
+            VAR x = 0
+            FOR i = 0 TO 10 THEN
+                CONTINUE;
+                VAR x += i
+            END
+            x # Moves it to out
+            """,
+            CliArgs.DefaultArgs
+        );
+
+        Assert.True(result.TryGetValue(out Value resultValue));
+        VList list = Assert.IsType<VList>(resultValue);
+        VNumber number = Assert.IsType<VNumber>(list.value.Last());
+        Assert.Equal(0.0, number.value, TestingConstans.DOUBLE_PRECISION);
+    }
+
+    [Fact(Skip = "Issue#43")]
+    void checkForWithBreak_whenValidLoopNoStep_succes()
+    {
+        RunnerResult result = runner.Run(
+            "<TEST>",
+            """
+            VAR x = 0
+            FOR i = 0 TO 10 THEN
+                BREAK;
+                VAR x += i
+            END
+            x # Moves it to out
+            """,
+            CliArgs.DefaultArgs
+        );
+
+        Assert.True(result.TryGetValue(out Value resultValue));
+        VList list = Assert.IsType<VList>(resultValue);
+        VNumber number = Assert.IsType<VNumber>(list.value.Last());
+        Assert.Equal(0.0, number.value, TestingConstans.DOUBLE_PRECISION);
+    }
+
     [Fact]
     void checkFor_whenNoIdentifier_fail()
     {
