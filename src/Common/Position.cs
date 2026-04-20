@@ -35,7 +35,8 @@ public readonly struct Position : IEquatable<Position>
 
     public static readonly Position Null = new();
 
-    [FieldOffset(0)] private readonly ulong _data;
+    [FieldOffset(0)]
+    private readonly ulong _data;
 
     /// <summary>
     ///     Constructor for a new Position
@@ -74,6 +75,15 @@ public readonly struct Position : IEquatable<Position>
             | ((ulong)fileId << FileIdShift);
     }
 
+    /// <summary>
+    /// This is only used inside position to create new instances based on this one. Be carefull
+    /// </summary>
+    /// <param name="data">The fully populated data (No checking done!)</param>
+    private Position(ulong data)
+    {
+        _data = data;
+    }
+
     public static bool operator ==(Position left, Position right) => left.Equals(right);
 
     public static bool operator !=(Position left, Position right) => !left.Equals(right);
@@ -86,27 +96,35 @@ public readonly struct Position : IEquatable<Position>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public readonly Position Advance(char currentChar)
     {
-        ushort line = Line;
-        ushort col = Column;
+        ulong data = _data;
+
+        // Always increment index (top 32 bits)
+        data += 1UL << IndexShift;
 
         if (currentChar is '\n' or '\r')
         {
-            line++;
-            col = 0;
+            // increment line
+            data += 1UL << LineShift;
+
+            // reset column (set to 0)
+            data &= ~(ColumnMaskRaw << ColumnShift);
         }
         else
-            col++;
+        {
+            // increment column
+            data += 1UL << ColumnShift;
+        }
 
-        return new Position(Index + 1, line, col, FileId);
+        return new Position(data);
     }
 
-    public readonly override bool Equals(object? obj) => obj is Position posObj && Equals(posObj);
+    public override readonly bool Equals(object? obj) => obj is Position posObj && Equals(posObj);
 
     public readonly bool Equals(Position other) => _data == other._data;
 
-    public readonly override int GetHashCode() => _data.GetHashCode();
+    public override readonly int GetHashCode() => _data.GetHashCode();
 
-    public readonly override string ToString() =>
+    public override readonly string ToString() =>
         $"[Idx: {Index}, Ln: {Line}, Col: {Column}, FID: {FileId}]";
 
     private const int IndexShift = 32;
