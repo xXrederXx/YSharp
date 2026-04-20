@@ -262,13 +262,13 @@ public static class Interpreter
             context.SymbolTable.Set(varName, new VNumber(i));
 
             res.Register(Visit(node.BodyNode, context));
-            if (res.ShouldReturn() && !res.loopContinue && res.loopBreak)
+            if (res.ShouldReturn() && !res.LoopContinue && res.LoopBreak)
                 return res;
 
-            if (res.loopContinue)
+            if (res.LoopContinue)
                 continue;
 
-            if (res.loopBreak)
+            if (res.LoopBreak)
                 break;
 
             i += StepNumber;
@@ -447,7 +447,7 @@ public static class Interpreter
         RunTimeResult res = new();
 
         Value val = res.Register(Visit(node.TryNode, context));
-        if (!res.error.IsError)
+        if (!res.Error.IsError)
             return res.Success(val);
 
         if (context.SymbolTable is null)
@@ -456,7 +456,7 @@ public static class Interpreter
         }
 
         if (node.CatchVarName is not null)
-            context.SymbolTable.Set(node.CatchVarName.Value, new VString(res.error.ToString()));
+            context.SymbolTable.Set(node.CatchVarName.Value, new VString(res.Error.ToString()));
 
         Value catchVal = res.Register(Visit(node.CatchNode, context));
         if (res.ShouldReturn())
@@ -556,13 +556,13 @@ public static class Interpreter
                 break;
 
             res.Register(Visit(node.BodyNode, context));
-            if (res.ShouldReturn() && !res.loopContinue && res.loopBreak)
+            if (res.ShouldReturn() && !res.LoopContinue && res.LoopBreak)
                 return res;
 
-            if (res.loopContinue)
+            if (res.LoopContinue)
                 continue;
 
-            if (res.loopBreak)
+            if (res.LoopBreak)
                 break;
         }
 

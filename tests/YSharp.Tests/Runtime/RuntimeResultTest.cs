@@ -14,11 +14,11 @@ public class RunTimeResultTests
 
         result.Success(value);
 
-        Assert.Equal(value, result.value);
-        Assert.Equal(ValueNull.Instance, result.funcReturnValue);
-        Assert.Equal(ErrorNull.Instance, result.error);
-        Assert.False(result.loopBreak);
-        Assert.False(result.loopContinue);
+        Assert.Equal(value, result.Value);
+        Assert.Equal(ValueNull.Instance, result.FuncReturnValue);
+        Assert.Equal(ErrorNull.Instance, result.Error);
+        Assert.False(result.LoopBreak);
+        Assert.False(result.LoopContinue);
     }
 
     [Fact]
@@ -29,11 +29,11 @@ public class RunTimeResultTests
 
         result.Failure(error);
 
-        Assert.Equal(error, result.error);
-        Assert.Equal(ValueNull.Instance, result.value);
-        Assert.Equal(ValueNull.Instance, result.funcReturnValue);
-        Assert.False(result.loopBreak);
-        Assert.False(result.loopContinue);
+        Assert.Equal(error, result.Error);
+        Assert.Equal(ValueNull.Instance, result.Value);
+        Assert.Equal(ValueNull.Instance, result.FuncReturnValue);
+        Assert.False(result.LoopBreak);
+        Assert.False(result.LoopContinue);
     }
 
     [Fact]
@@ -44,7 +44,7 @@ public class RunTimeResultTests
 
         result.SuccessReturn(value);
 
-        Assert.Equal(value, result.funcReturnValue);
+        Assert.Equal(value, result.FuncReturnValue);
         Assert.True(result.ShouldReturn());
     }
 
@@ -55,7 +55,7 @@ public class RunTimeResultTests
 
         result.SuccessBreak();
 
-        Assert.True(result.loopBreak);
+        Assert.True(result.LoopBreak);
         Assert.True(result.ShouldReturn());
     }
 
@@ -66,7 +66,7 @@ public class RunTimeResultTests
 
         result.SuccessContinue();
 
-        Assert.True(result.loopContinue);
+        Assert.True(result.LoopContinue);
         Assert.True(result.ShouldReturn());
     }
 
@@ -79,19 +79,25 @@ public class RunTimeResultTests
         Value value = new Value();
         ExpectedTokenError error = new ExpectedTokenError(Position.Null, "tok");
 
-        source.value = value;
-        source.error = error;
-        source.loopBreak = true;
-        source.loopContinue = true;
-        source.funcReturnValue = value;
-
+        source.Success(value);
         Value returnedValue = target.Register(source);
-
         Assert.Equal(value, returnedValue);
-        Assert.Equal(error, target.error);
-        Assert.Equal(value, target.funcReturnValue);
-        Assert.True(target.loopBreak);
-        Assert.True(target.loopContinue);
+
+        source.Failure(error);
+        target.Register(source);
+        Assert.Equal(error, target.Error);
+
+        source.SuccessReturn(value);
+        target.Register(source);
+        Assert.Equal(value, target.FuncReturnValue);
+
+        source.SuccessBreak();
+        target.Register(source);
+        Assert.True(target.LoopBreak);
+
+        source.SuccessContinue();
+        target.Register(source);
+        Assert.True(target.LoopContinue);
     }
 
     [Fact]
@@ -105,33 +111,27 @@ public class RunTimeResultTests
     [Fact]
     public void checkRunTimeResult_whenShouldReturnWithError_thenTrue()
     {
-        RunTimeResult result = new RunTimeResult
-        {
-            error = new ExpectedTokenError(Position.Null, "tok"),
-        };
+        RunTimeResult result = new RunTimeResult().Failure(new ExpectedTokenError(Position.Null, "tok"));
 
         Assert.True(result.ShouldReturn());
     }
 
     [Fact]
-    public void checkRunTimeResult_whenReset_thenClearsAllFields()
+    public void Reset_ShouldClearAllState()
     {
-        RunTimeResult result = new RunTimeResult
-        {
-            value = new Value(),
-            error = new ExpectedTokenError(Position.Null, "tok"),
-            funcReturnValue = new Value(),
-            loopBreak = true,
-            loopContinue = true,
-        };
+        RunTimeResult result = new RunTimeResult().Success(new Value());
+
+        result.SuccessReturn(new Value());
+        result.SuccessBreak();
+        result.SuccessContinue();
 
         result.Reset();
 
-        Assert.Equal(ValueNull.Instance, result.value);
-        Assert.Equal(ErrorNull.Instance, result.error);
-        Assert.Equal(ValueNull.Instance, result.funcReturnValue);
-        Assert.False(result.loopBreak);
-        Assert.False(result.loopContinue);
+        Assert.Equal(ValueNull.Instance, result.Value);
+        Assert.Equal(ErrorNull.Instance, result.Error);
+        Assert.Equal(ValueNull.Instance, result.FuncReturnValue);
+        Assert.False(result.LoopBreak);
+        Assert.False(result.LoopContinue);
     }
 
     [Fact]
@@ -142,22 +142,21 @@ public class RunTimeResultTests
         result.Success(new Value());
         result.SuccessBreak();
 
-        Assert.True(result.loopBreak);
-        Assert.Equal(ValueNull.Instance, result.value); // reset happened
+        Assert.True(result.LoopBreak);
+        Assert.Equal(ValueNull.Instance, result.Value); // reset happened
     }
 
     [Fact]
     public void checkRunTimeResult_whenRegister_thenOverwritesExistingState()
     {
         RunTimeResult result = new RunTimeResult();
-        RunTimeResult source = new RunTimeResult
-        {
-            error = new ExpectedTokenError(Position.Null, "tok"),
-        };
+        RunTimeResult source = new RunTimeResult().Failure(
+            new ExpectedTokenError(Position.Null, "tok")
+        );
 
         result.Success(new Value());
         result.Register(source);
 
-        Assert.Equal(source.error, result.error);
+        Assert.Equal(source.Error, result.Error);
     }
 }

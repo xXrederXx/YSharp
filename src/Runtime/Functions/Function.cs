@@ -32,9 +32,9 @@ public sealed class VFunction(
             return res;
 
         Value value = res.Register(Interpreter.Visit(bodyNode, execContext));
-        if (res.ShouldReturn() && res.funcReturnValue is ValueNull)
+        if (res.ShouldReturn() && res.FuncReturnValue is ValueNull)
             return res;
-        Value retValue = autoReturn ? value : res.funcReturnValue;
+        Value retValue = autoReturn ? value : res.FuncReturnValue;
         return res.Success(retValue);
     }
 
