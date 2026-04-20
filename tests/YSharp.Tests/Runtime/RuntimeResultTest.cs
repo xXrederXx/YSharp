@@ -79,18 +79,24 @@ public class RunTimeResultTests
         Value value = new Value();
         ExpectedTokenError error = new ExpectedTokenError(Position.Null, "tok");
 
-        source.value = value;
-        source.error = error;
-        source.loopBreak = true;
-        source.loopContinue = true;
-        source.funcReturnValue = value;
-
+        source.Success(value);
         Value returnedValue = target.Register(source);
-
         Assert.Equal(value, returnedValue);
+
+        source.Failure(error);
+        target.Register(source);
         Assert.Equal(error, target.error);
+
+        source.SuccessReturn(value);
+        target.Register(source);
         Assert.Equal(value, target.funcReturnValue);
+
+        source.SuccessBreak();
+        target.Register(source);
         Assert.True(target.loopBreak);
+
+        source.SuccessContinue();
+        target.Register(source);
         Assert.True(target.loopContinue);
     }
 
@@ -105,25 +111,19 @@ public class RunTimeResultTests
     [Fact]
     public void checkRunTimeResult_whenShouldReturnWithError_thenTrue()
     {
-        RunTimeResult result = new RunTimeResult
-        {
-            error = new ExpectedTokenError(Position.Null, "tok"),
-        };
+        RunTimeResult result = new RunTimeResult().Failure(new ExpectedTokenError(Position.Null, "tok"));
 
         Assert.True(result.ShouldReturn());
     }
 
     [Fact]
-    public void checkRunTimeResult_whenReset_thenClearsAllFields()
+    public void Reset_ShouldClearAllState()
     {
-        RunTimeResult result = new RunTimeResult
-        {
-            value = new Value(),
-            error = new ExpectedTokenError(Position.Null, "tok"),
-            funcReturnValue = new Value(),
-            loopBreak = true,
-            loopContinue = true,
-        };
+        RunTimeResult result = new RunTimeResult().Success(new Value());
+
+        result.SuccessReturn(new Value());
+        result.SuccessBreak();
+        result.SuccessContinue();
 
         result.Reset();
 
@@ -150,10 +150,9 @@ public class RunTimeResultTests
     public void checkRunTimeResult_whenRegister_thenOverwritesExistingState()
     {
         RunTimeResult result = new RunTimeResult();
-        RunTimeResult source = new RunTimeResult
-        {
-            error = new ExpectedTokenError(Position.Null, "tok"),
-        };
+        RunTimeResult source = new RunTimeResult().Failure(
+            new ExpectedTokenError(Position.Null, "tok")
+        );
 
         result.Success(new Value());
         result.Register(source);
