@@ -79,7 +79,7 @@ public readonly struct Result<TValue, TError> : IEquatable<Result<TValue, TError
     public readonly bool TryGetError([NotNullWhen(true)] out TError error)
     {
         error = _Error!;
-        return IsSuccess;
+        return IsFailed;
     }
 
     /// <summary>
