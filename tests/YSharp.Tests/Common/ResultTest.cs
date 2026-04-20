@@ -22,7 +22,7 @@ public class ResultTests
         Result<int, string> result = Result<int, string>.Fail("error");
 
         Assert.False(result.IsSuccess);
-        Assert.True(result.IsFailed);
+        Assert.True(result.TryGetError(out string error));
         Assert.Equal("error", result.GetError());
     }
 
@@ -42,6 +42,24 @@ public class ResultTests
 
         Assert.False(result.TryGetValue(out int value));
         Assert.Equal(default, value);
+    }
+
+    [Fact]
+    public void checkResult_whenTryGetErrorOnFail_thenReturnsTrueAndError()
+    {
+        Result<int, string> result = Result<int, string>.Fail("x");
+
+        Assert.True(result.TryGetError(out string error));
+        Assert.Equal("x", error);
+    }
+
+    [Fact]
+    public void checkResult_whenTryGetErrorOnSuccess_thenReturnsFalse()
+    {
+        Result<int, string> result = Result<int, string>.Success(10);
+
+        Assert.False(result.TryGetError(out string error));
+        Assert.Equal(default, error);
     }
 
     [Fact]
@@ -197,7 +215,7 @@ public class ResultTests
         Result<int, string> result = default;
 
         Assert.False(result.IsSuccess);
-        Assert.True(result.IsFailed);
+        Assert.True(result.TryGetError(out string error));
 
         Assert.Throws<InvalidOperationException>(() => result.GetValue());
     }

@@ -114,8 +114,8 @@ public class ForTests
             CliArgs.DefaultArgs
         );
 
-        Assert.True(result.IsFailed);
-        Assert.IsType<ExpectedIdnetifierError>(result.GetError());
+        Assert.True(result.TryGetError(out Error error));
+        Assert.IsType<ExpectedIdnetifierError>(error);
     }
 
     [Fact]
@@ -133,8 +133,8 @@ public class ForTests
             CliArgs.DefaultArgs
         );
 
-        Assert.True(result.IsFailed);
-        ExpectedTokenError err = Assert.IsType<ExpectedTokenError>(result.GetError());
+        Assert.True(result.TryGetError(out Error error));
+        ExpectedTokenError err = Assert.IsType<ExpectedTokenError>(error);
         Assert.Contains("=", err.ToString());
     }
 
@@ -152,8 +152,8 @@ public class ForTests
             """,
             CliArgs.DefaultArgs
         );
-        Assert.True(result.IsFailed);
-        ExpectedKeywordError err = Assert.IsType<ExpectedKeywordError>(result.GetError());
+        Assert.True(result.TryGetError(out Error error));
+        ExpectedKeywordError err = Assert.IsType<ExpectedKeywordError>(error);
         Assert.Contains("TO", err.ToString());
     }
 
@@ -171,8 +171,8 @@ public class ForTests
             """,
             CliArgs.DefaultArgs
         );
-        Assert.True(result.IsFailed);
-        ExpectedKeywordError err = Assert.IsType<ExpectedKeywordError>(result.GetError());
+        Assert.True(result.TryGetError(out Error error));
+        ExpectedKeywordError err = Assert.IsType<ExpectedKeywordError>(error);
         Assert.Contains("THEN", err.ToString());
     }
 
@@ -188,8 +188,8 @@ public class ForTests
             """,
             CliArgs.DefaultArgs
         );
-        Assert.True(result.IsFailed);
-        ExpectedKeywordError err = Assert.IsType<ExpectedKeywordError>(result.GetError());
+        Assert.True(result.TryGetError(out Error error));
+        ExpectedKeywordError err = Assert.IsType<ExpectedKeywordError>(error);
         Assert.Contains("END", err.ToString());
     }
 
@@ -206,8 +206,8 @@ public class ForTests
             """,
             CliArgs.DefaultArgs
         );
-        Assert.True(result.IsFailed);
-        Assert.IsType<WrongTypeError>(result.GetError());
+        Assert.True(result.TryGetError(out Error error));
+        Assert.IsType<WrongTypeError>(error);
     }
 
     [Fact]
@@ -223,8 +223,8 @@ public class ForTests
             """,
             CliArgs.DefaultArgs
         );
-        Assert.True(result.IsFailed);
-        Assert.IsType<WrongTypeError>(result.GetError());
+        Assert.True(result.TryGetError(out Error error));
+        Assert.IsType<WrongTypeError>(error);
     }
 
     [Fact]
@@ -240,7 +240,7 @@ public class ForTests
             """,
             CliArgs.DefaultArgs
         );
-        Assert.True(result.IsFailed);
-        Assert.IsType<WrongTypeError>(result.GetError());
+        Assert.True(result.TryGetError(out Error error));
+        Assert.IsType<WrongTypeError>(error);
     }
 }

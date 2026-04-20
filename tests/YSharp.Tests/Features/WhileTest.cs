@@ -48,8 +48,8 @@ public class WhileTest
             CliArgs.DefaultArgs
         );
 
-        Assert.True(result.IsFailed);
-        ExpectedKeywordError err = Assert.IsType<ExpectedKeywordError>(result.GetError());
+        Assert.True(result.TryGetError(out Error error));
+        ExpectedKeywordError err = Assert.IsType<ExpectedKeywordError>(error);
         Assert.Contains("THEN", err.ToString());
     }
 
@@ -66,8 +66,8 @@ public class WhileTest
             CliArgs.DefaultArgs
         );
 
-        Assert.True(result.IsFailed);
-        ExpectedKeywordError err = Assert.IsType<ExpectedKeywordError>(result.GetError());
+        Assert.True(result.TryGetError(out Error error));
+        ExpectedKeywordError err = Assert.IsType<ExpectedKeywordError>(error);
         Assert.Contains("END", err.ToString());
     }
 }

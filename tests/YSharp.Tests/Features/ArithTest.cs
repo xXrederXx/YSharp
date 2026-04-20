@@ -82,10 +82,10 @@ public class ErrorTest
     public void checkDiv_whenDivBy0_returnError(CliArgs arg, double x, double y) // TEST BREAKES WHEN x / y ARE REMOVED
 #pragma warning restore xUnit1026 // Theory methods should use all of their parameters
     {
-        RunResult res = _runClass.Run("TEST", "1 / 0", arg);
+        RunResult result = _runClass.Run("TEST", "1 / 0", arg);
 
-        Assert.True(res.IsFailed);
-        Assert.IsType<DivisionByZeroError>(res.GetError());
+        Assert.True(result.TryGetError(out Error error));
+        Assert.IsType<DivisionByZeroError>(error);
     }
 
     [Theory]
@@ -132,8 +132,8 @@ public class ErrorTest
 
         if (y < 0)
         {
-            Assert.True(result.IsFailed);
-            Assert.IsType<InvalidSyntaxError>(result.GetError());
+            Assert.True(result.TryGetError(out Error error));
+            Assert.IsType<InvalidSyntaxError>(error);
         }
         else
         {
@@ -218,8 +218,8 @@ public class ErrorTest
             arg
         );
 
-        Assert.True(result.IsFailed);
-        InvalidSyntaxError err = Assert.IsType<InvalidSyntaxError>(result.GetError());
+        Assert.True(result.TryGetError(out Error error));
+        InvalidSyntaxError err = Assert.IsType<InvalidSyntaxError>(error);
         Assert.Contains('(', err.ToString());
     }
 

@@ -72,6 +72,17 @@ public readonly struct Result<TValue, TError> : IEquatable<Result<TValue, TError
     }
 
     /// <summary>
+    /// This function can be used to try to get the error. Only use the error if the function returns true
+    /// </summary>
+    /// <param name="value">This will be the error saved or the null if IsFailed is false</param>
+    /// <returns>True if the result was a fail and false otherwise</returns>
+    public readonly bool TryGetError([NotNullWhen(true)] out TError error)
+    {
+        error = _Error!;
+        return IsFailed;
+    }
+
+    /// <summary>
     /// This returns the saved value. Use with caution. Use TryGetValue if possible.
     /// </summary>
     /// <returns>The value from the result</returns>

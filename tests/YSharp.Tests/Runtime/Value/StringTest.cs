@@ -31,8 +31,8 @@ public class StringTest
     {
         Result<Value, Error> result = GetString("hi").AddedTo(new VNumber(5));
 
-        Assert.True(result.IsFailed);
-        Assert.IsType<IllegalOperationError>(result.GetError());
+        Assert.True(result.TryGetError(out Error error));
+        Assert.IsType<IllegalOperationError>(error);
     }
 
     [Fact]
@@ -71,8 +71,8 @@ public class StringTest
     {
         Result<Value, Error> result = GetString("hi").GetComparisonEQ(new VNumber(1));
 
-        Assert.True(result.IsFailed);
-        Assert.IsType<IllegalOperationError>(result.GetError());
+        Assert.True(result.TryGetError(out Error error));
+        Assert.IsType<IllegalOperationError>(error);
     }
 
     [Fact]
@@ -100,8 +100,8 @@ public class StringTest
     {
         Result<Value, Error> result = GetString("hi").GetComparisonNE(new VNumber(1));
 
-        Assert.True(result.IsFailed);
-        Assert.IsType<IllegalOperationError>(result.GetError());
+        Assert.True(result.TryGetError(out Error error));
+        Assert.IsType<IllegalOperationError>(error);
     }
 
     [Fact]
@@ -139,8 +139,8 @@ public class StringTest
     {
         Result<Value, Error> result = GetString("a").MuledTo(GetString("b"));
 
-        Assert.True(result.IsFailed);
-        Assert.IsType<IllegalOperationError>(result.GetError());
+        Assert.True(result.TryGetError(out Error error));
+        Assert.IsType<IllegalOperationError>(error);
     }
 
     [Fact]
@@ -170,8 +170,8 @@ public class StringTest
     {
         Result<Value, Error> result = GetString("a,b").GetFunc("Split", []);
 
-        Assert.True(result.IsFailed);
-        Assert.IsType<NumArgsError>(result.GetError());
+        Assert.True(result.TryGetError(out Error error));
+        Assert.IsType<NumArgsError>(error);
     }
 
     [Fact]
@@ -219,8 +219,8 @@ public class StringTest
     {
         Result<Value, Error> result = GetString("HI").GetFunc("ToLower", [new Value()]);
 
-        Assert.True(result.IsFailed);
-        Assert.IsType<NumArgsError>(result.GetError());
+        Assert.True(result.TryGetError(out Error error));
+        Assert.IsType<NumArgsError>(error);
     }
 
     [Fact]
@@ -228,8 +228,8 @@ public class StringTest
     {
         Result<Value, Error> result = GetString("hi").GetFunc("ToUpper", [new Value()]);
 
-        Assert.True(result.IsFailed);
-        Assert.IsType<NumArgsError>(result.GetError());
+        Assert.True(result.TryGetError(out Error error));
+        Assert.IsType<NumArgsError>(error);
     }
 
     [Fact]
@@ -237,8 +237,8 @@ public class StringTest
     {
         Result<Value, Error> result = GetString("hi").GetFunc("ToBool", [new Value()]);
 
-        Assert.True(result.IsFailed);
-        Assert.IsType<NumArgsError>(result.GetError());
+        Assert.True(result.TryGetError(out Error error));
+        Assert.IsType<NumArgsError>(error);
     }
 
     [Fact]
@@ -246,8 +246,8 @@ public class StringTest
     {
         Result<Value, Error> result = GetString("hi").GetFunc("ToNumber", [new Value()]);
 
-        Assert.True(result.IsFailed);
-        Assert.IsType<NumArgsError>(result.GetError());
+        Assert.True(result.TryGetError(out Error error));
+        Assert.IsType<NumArgsError>(error);
     }
 
     [Fact]
@@ -265,8 +265,8 @@ public class StringTest
     {
         Result<Value, Error> result = GetString("abc").GetFunc("ToNumber", []);
 
-        Assert.True(result.IsFailed);
-        Assert.IsType<WrongFormatError>(result.GetError());
+        Assert.True(result.TryGetError(out Error error));
+        Assert.IsType<WrongFormatError>(error);
     }
 
     [Fact]
