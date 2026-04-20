@@ -30,8 +30,8 @@ public class ListTest
     {
         Result<Value, Error> result = GetList().AddedTo(new VNumber(5));
 
-        Assert.True(result.IsFailed);
-        Assert.IsType<IllegalOperationError>(result.GetError());
+        Assert.True(result.TryGetError(out Error error));
+        Assert.IsType<IllegalOperationError>(error);
     }
 
     [Fact]
@@ -60,8 +60,8 @@ public class ListTest
     {
         Result<Value, Error> result = GetList().GetComparisonEQ(new VNumber(1));
 
-        Assert.True(result.IsFailed);
-        Assert.IsType<IllegalOperationError>(result.GetError());
+        Assert.True(result.TryGetError(out Error error));
+        Assert.IsType<IllegalOperationError>(error);
     }
 
     [Fact]
@@ -90,8 +90,8 @@ public class ListTest
     {
         Result<Value, Error> result = GetList().GetComparisonNE(new VNumber(1));
 
-        Assert.True(result.IsFailed);
-        Assert.IsType<IllegalOperationError>(result.GetError());
+        Assert.True(result.TryGetError(out Error error));
+        Assert.IsType<IllegalOperationError>(error);
     }
 
     [Fact]
@@ -135,8 +135,8 @@ public class ListTest
     {
         Result<Value, Error> result = GetList().MuledTo(new VNumber(-3));
 
-        Assert.True(result.IsFailed);
-        Assert.IsType<IllegalOperationError>(result.GetError());
+        Assert.True(result.TryGetError(out Error error));
+        Assert.IsType<IllegalOperationError>(error);
     }
 
     [Fact]
@@ -144,8 +144,8 @@ public class ListTest
     {
         Result<Value, Error> result = GetList().MuledTo(GetList());
 
-        Assert.True(result.IsFailed);
-        Assert.IsType<IllegalOperationError>(result.GetError());
+        Assert.True(result.TryGetError(out Error error));
+        Assert.IsType<IllegalOperationError>(error);
     }
 
     [Fact]
@@ -187,8 +187,8 @@ public class ListTest
         VNumber number = new(1);
         Result<Value, Error> result = GetList([number]).GetFunc("Get", [new VNumber(10)]);
 
-        Assert.True(result.IsFailed);
-        Assert.IsType<ArgOutOfRangeError>(result.GetError());
+        Assert.True(result.TryGetError(out Error error));
+        Assert.IsType<ArgOutOfRangeError>(error);
     }
 
     [Fact]
@@ -197,8 +197,8 @@ public class ListTest
         VNumber number = new(1);
         Result<Value, Error> result = GetList([number]).GetFunc("Get", [new VNumber(-10)]);
 
-        Assert.True(result.IsFailed);
-        Assert.IsType<ArgOutOfRangeError>(result.GetError());
+        Assert.True(result.TryGetError(out Error error));
+        Assert.IsType<ArgOutOfRangeError>(error);
     }
 
     [Fact]
@@ -207,8 +207,8 @@ public class ListTest
         VNumber number = new(1);
         Result<Value, Error> result = GetList([number]).GetFunc("Get", [new VString("0")]);
 
-        Assert.True(result.IsFailed);
-        Assert.IsType<WrongFormatError>(result.GetError());
+        Assert.True(result.TryGetError(out Error error));
+        Assert.IsType<WrongFormatError>(error);
     }
 
     [Fact]
@@ -249,8 +249,8 @@ public class ListTest
         Result<Value, Error> result = GetList()
             .GetFunc("IndexOf", [new VNumber(7), new VNumber(6)]);
 
-        Assert.True(result.IsFailed);
-        Assert.IsType<NumArgsError>(result.GetError());
+        Assert.True(result.TryGetError(out Error error));
+        Assert.IsType<NumArgsError>(error);
     }
 
     public static TheoryData<Value> IndexOfData()
@@ -292,8 +292,8 @@ public class ListTest
         VList vList = GetList([new VNumber(0)]);
         Result<Value, Error> result = vList.GetFunc("Remove", [new VNumber(2)]);
 
-        Assert.True(result.IsFailed);
-        Assert.IsType<ArgOutOfRangeError>(result.GetError());
+        Assert.True(result.TryGetError(out Error error));
+        Assert.IsType<ArgOutOfRangeError>(error);
     }
 
     private VList GetList(List<Value>? values = null)

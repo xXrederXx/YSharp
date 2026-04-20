@@ -58,8 +58,8 @@ public class MathTest
             [new VNumber(0.5), new VNumber(0.5)]
         );
 
-        Assert.True(result.IsFailed);
-        Assert.IsType<NumArgsError>(result.GetError());
+        Assert.True(result.TryGetError(out Error error));
+        Assert.IsType<NumArgsError>(error);
     }
 
     [Theory]

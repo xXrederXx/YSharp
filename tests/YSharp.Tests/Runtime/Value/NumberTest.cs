@@ -31,8 +31,8 @@ public class NumberTest
     {
         Result<Value, Error> result = new VNumber(5).AddedTo(new VString("test"));
 
-        Assert.True(result.IsFailed);
-        Assert.IsType<IllegalOperationError>(result.GetError());
+        Assert.True(result.TryGetError(out Error error));
+        Assert.IsType<IllegalOperationError>(error);
     }
 
     [Fact]
@@ -50,8 +50,8 @@ public class NumberTest
     {
         Result<Value, Error> result = new VNumber(5).SubedTo(new VString("test"));
 
-        Assert.True(result.IsFailed);
-        Assert.IsType<IllegalOperationError>(result.GetError());
+        Assert.True(result.TryGetError(out Error error));
+        Assert.IsType<IllegalOperationError>(error);
     }
 
     [Fact]
@@ -69,8 +69,8 @@ public class NumberTest
     {
         Result<Value, Error> result = new VNumber(5).MuledTo(new VString("test"));
 
-        Assert.True(result.IsFailed);
-        Assert.IsType<IllegalOperationError>(result.GetError());
+        Assert.True(result.TryGetError(out Error error));
+        Assert.IsType<IllegalOperationError>(error);
     }
 
     [Fact]
@@ -88,8 +88,8 @@ public class NumberTest
     {
         Result<Value, Error> result = new VNumber(5).DivedTo(new VNumber(0));
 
-        Assert.True(result.IsFailed);
-        Assert.IsType<DivisionByZeroError>(result.GetError());
+        Assert.True(result.TryGetError(out Error error));
+        Assert.IsType<DivisionByZeroError>(error);
     }
 
     [Fact]
@@ -97,8 +97,8 @@ public class NumberTest
     {
         Result<Value, Error> result = new VNumber(5).DivedTo(new VString("test"));
 
-        Assert.True(result.IsFailed);
-        Assert.IsType<IllegalOperationError>(result.GetError());
+        Assert.True(result.TryGetError(out Error error));
+        Assert.IsType<IllegalOperationError>(error);
     }
 
     [Fact]
@@ -116,8 +116,8 @@ public class NumberTest
     {
         Result<Value, Error> result = new VNumber(5).MuledTo(new VString("test"));
 
-        Assert.True(result.IsFailed);
-        Assert.IsType<IllegalOperationError>(result.GetError());
+        Assert.True(result.TryGetError(out Error error));
+        Assert.IsType<IllegalOperationError>(error);
     }
 
     [Theory]
@@ -138,8 +138,8 @@ public class NumberTest
     {
         Result<Value, Error> result = new VNumber(5).GetComparisonEQ(new VString("test"));
 
-        Assert.True(result.IsFailed);
-        Assert.IsType<IllegalOperationError>(result.GetError());
+        Assert.True(result.TryGetError(out Error error));
+        Assert.IsType<IllegalOperationError>(error);
     }
 
     [Theory]
@@ -160,8 +160,8 @@ public class NumberTest
     {
         Result<Value, Error> result = new VNumber(5).GetComparisonNE(new VString("test"));
 
-        Assert.True(result.IsFailed);
-        Assert.IsType<IllegalOperationError>(result.GetError());
+        Assert.True(result.TryGetError(out Error error));
+        Assert.IsType<IllegalOperationError>(error);
     }
 
     [Theory]
@@ -182,8 +182,8 @@ public class NumberTest
     {
         Result<Value, Error> result = new VNumber(5).GetComparisonGT(new VString("test"));
 
-        Assert.True(result.IsFailed);
-        Assert.IsType<IllegalOperationError>(result.GetError());
+        Assert.True(result.TryGetError(out Error error));
+        Assert.IsType<IllegalOperationError>(error);
     }
 
     [Theory]
@@ -204,8 +204,8 @@ public class NumberTest
     {
         Result<Value, Error> result = new VNumber(5).GetComparisonGTE(new VString("test"));
 
-        Assert.True(result.IsFailed);
-        Assert.IsType<IllegalOperationError>(result.GetError());
+        Assert.True(result.TryGetError(out Error error));
+        Assert.IsType<IllegalOperationError>(error);
     }
 
     [Theory]
@@ -226,8 +226,8 @@ public class NumberTest
     {
         Result<Value, Error> result = new VNumber(5).GetComparisonLT(new VString("test"));
 
-        Assert.True(result.IsFailed);
-        Assert.IsType<IllegalOperationError>(result.GetError());
+        Assert.True(result.TryGetError(out Error error));
+        Assert.IsType<IllegalOperationError>(error);
     }
 
     [Theory]
@@ -248,8 +248,8 @@ public class NumberTest
     {
         Result<Value, Error> result = new VNumber(5).GetComparisonLTE(new VString("test"));
 
-        Assert.True(result.IsFailed);
-        Assert.IsType<IllegalOperationError>(result.GetError());
+        Assert.True(result.TryGetError(out Error error));
+        Assert.IsType<IllegalOperationError>(error);
     }
 
     [Theory]
@@ -269,8 +269,8 @@ public class NumberTest
     {
         Result<Value, Error> result = new VNumber(6.7).GetFunc("ToBool", [new Value()]);
 
-        Assert.True(result.IsFailed);
-        Assert.IsType<NumArgsError>(result.GetError());
+        Assert.True(result.TryGetError(out Error error));
+        Assert.IsType<NumArgsError>(error);
     }
 
     [Fact]
@@ -278,8 +278,8 @@ public class NumberTest
     {
         Result<Value, Error> result = new VNumber(6.7).GetFunc("ToString", [new VNumber(1)]);
 
-        Assert.True(result.IsFailed);
-        Assert.IsType<WrongFormatError>(result.GetError());
+        Assert.True(result.TryGetError(out Error error));
+        Assert.IsType<WrongFormatError>(error);
     }
 
     [Fact]

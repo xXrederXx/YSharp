@@ -94,8 +94,8 @@ public class VarTest
             CliArgs.DefaultArgs
         );
 
-        Assert.True(result.IsFailed);
-        Assert.IsType<WrongTypeError>(result.GetError());
+        Assert.True(result.TryGetError(out Error error));
+        Assert.IsType<WrongTypeError>(error);
     }
 
     [Fact]
@@ -107,7 +107,7 @@ public class VarTest
             CliArgs.DefaultArgs
         );
 
-        Assert.True(result.IsFailed);
-        Assert.IsType<WrongTypeError>(result.GetError());
+        Assert.True(result.TryGetError(out Error error));
+        Assert.IsType<WrongTypeError>(error);
     }
 }

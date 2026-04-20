@@ -46,8 +46,8 @@ public class BoolTest
     void checkAnd_whenInvalid()
     {
         Result<Value, Error> result = new VBool(true).AndedTo(new VString("test"));
-        Assert.True(result.IsFailed);
-        Assert.IsType<IllegalOperationError>(result.GetError());
+        Assert.True(result.TryGetError(out Error error));
+        Assert.IsType<IllegalOperationError>(error);
     }
 
     [Theory]
@@ -68,8 +68,8 @@ public class BoolTest
     void checkOr_whenInvalid()
     {
         Result<Value, Error> result = new VBool(true).OredTo(new VString("test"));
-        Assert.True(result.IsFailed);
-        Assert.IsType<IllegalOperationError>(result.GetError());
+        Assert.True(result.TryGetError(out Error error));
+        Assert.IsType<IllegalOperationError>(error);
     }
 
     [Theory]
@@ -90,8 +90,8 @@ public class BoolTest
     void checkEqual_whenInvalid()
     {
         Result<Value, Error> result = new VBool(true).GetComparisonEQ(new VString("test"));
-        Assert.True(result.IsFailed);
-        Assert.IsType<IllegalOperationError>(result.GetError());
+        Assert.True(result.TryGetError(out Error error));
+        Assert.IsType<IllegalOperationError>(error);
     }
 
     [Theory]
@@ -112,7 +112,7 @@ public class BoolTest
     void checkNotEqual_whenInvalid()
     {
         Result<Value, Error> result = new VBool(true).GetComparisonNE(new VString("test"));
-        Assert.True(result.IsFailed);
-        Assert.IsType<IllegalOperationError>(result.GetError());
+        Assert.True(result.TryGetError(out Error error));
+        Assert.IsType<IllegalOperationError>(error);
     }
 }

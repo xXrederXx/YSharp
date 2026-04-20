@@ -74,8 +74,8 @@ public class DateTimeTest
     void checkAdding_whenInalid()
     {
         Result<Value, Error> result = new VDateTime(testDateTime).AddedTo(new VString("test"));
-        Assert.True(result.IsFailed);
-        Assert.IsType<IllegalOperationError>(result.GetError());
+        Assert.True(result.TryGetError(out Error error));
+        Assert.IsType<IllegalOperationError>(error);
     }
 
     [Fact]
@@ -93,8 +93,8 @@ public class DateTimeTest
     void checkSubstracting_whenInalid()
     {
         Result<Value, Error> result = new VDateTime(testDateTime).SubedTo(new VString("test"));
-        Assert.True(result.IsFailed);
-        Assert.IsType<IllegalOperationError>(result.GetError());
+        Assert.True(result.TryGetError(out Error error));
+        Assert.IsType<IllegalOperationError>(error);
     }
 
     [Fact]

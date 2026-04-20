@@ -22,7 +22,7 @@ public class ResultTests
         Result<int, string> result = Result<int, string>.Fail("error");
 
         Assert.False(result.IsSuccess);
-        Assert.True(result.IsFailed);
+        Assert.True(result.TryGetError(out string error));
         Assert.Equal("error", result.GetError());
     }
 
@@ -197,7 +197,7 @@ public class ResultTests
         Result<int, string> result = default;
 
         Assert.False(result.IsSuccess);
-        Assert.True(result.IsFailed);
+        Assert.True(result.TryGetError(out string error));
 
         Assert.Throws<InvalidOperationException>(() => result.GetValue());
     }

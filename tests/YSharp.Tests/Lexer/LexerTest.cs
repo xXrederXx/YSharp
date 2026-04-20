@@ -63,7 +63,10 @@ public class LexerTest
     [InlineData("\\\\", "\\")]
     [InlineData("\\\"", "\"")]
     [InlineData("\\t", "\t")]
-    void checkMakeString_whenValidEscapeChar_shouldReturnEscapedString(string escape, string expected)
+    void checkMakeString_whenValidEscapeChar_shouldReturnEscapedString(
+        string escape,
+        string expected
+    )
     {
         LexerResult result = new Lexer.Lexer($"\"{escape}\"", "TEST").MakeTokens();
 
@@ -80,9 +83,9 @@ public class LexerTest
     {
         LexerResult result = new Lexer.Lexer($"\"\\q\"", "TEST").MakeTokens();
 
-        Assert.False(result.TryGetValue(out List<BaseToken> _));
-        IllegalEscapeCharError error = Assert.IsType<IllegalEscapeCharError>(result.GetError());
-        Assert.Contains("q", error.ToString());
+        Assert.True(result.TryGetError(out Error error));
+        IllegalEscapeCharError errorCast = Assert.IsType<IllegalEscapeCharError>(error);
+        Assert.Contains("q", errorCast.ToString());
     }
 
     [Fact]
@@ -100,9 +103,9 @@ public class LexerTest
     {
         LexerResult result = new Lexer.Lexer($"!", "TEST").MakeTokens();
 
-        Assert.False(result.TryGetValue(out List<BaseToken> _));
-        ExpectedCharError error = Assert.IsType<ExpectedCharError>(result.GetError());
-        Assert.Contains("=", error.ToString());
+        Assert.True(result.TryGetError(out Error error));
+        ExpectedCharError errorCast = Assert.IsType<ExpectedCharError>(error);
+        Assert.Contains("=", errorCast.ToString());
     }
 
     [Theory]
@@ -150,8 +153,8 @@ public class LexerTest
     {
         LexerResult result = new Lexer.Lexer($"😭", "TEST").MakeTokens();
 
-        Assert.False(result.TryGetValue(out List<BaseToken> _));
-        Assert.IsType<IllegalCharError>(result.GetError());
+        Assert.True(result.TryGetError(out Error error));
+        Assert.IsType<IllegalCharError>(error);
     }
 
     [Theory]
