@@ -4,11 +4,11 @@ namespace YSharp.Runtime;
 
 public class RunTimeResult
 {
-    public Error error = ErrorNull.Instance;
-    public Value funcReturnValue = ValueNull.Instance;
-    public bool loopBreak;
-    public bool loopContinue;
-    public Value value = ValueNull.Instance;
+    public Error error { get; private set; } = ErrorNull.Instance;
+    public Value funcReturnValue { get; private set; } = ValueNull.Instance;
+    public bool loopBreak { get; private set; }
+    public bool loopContinue { get; private set; }
+    public Value value { get; private set; } = ValueNull.Instance;
 
     public RunTimeResult Failure(Error error)
     {
@@ -35,7 +35,8 @@ public class RunTimeResult
         loopBreak = false;
     }
 
-    public bool ShouldReturn() => error.IsError || funcReturnValue is not ValueNull || loopContinue || loopBreak;
+    public bool ShouldReturn() =>
+        error.IsError || funcReturnValue is not ValueNull || loopContinue || loopBreak;
 
     public RunTimeResult Success(Value value)
     {
