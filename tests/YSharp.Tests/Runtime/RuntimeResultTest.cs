@@ -14,11 +14,11 @@ public class RunTimeResultTests
 
         result.Success(value);
 
-        Assert.Equal(value, result.value);
-        Assert.Equal(ValueNull.Instance, result.funcReturnValue);
-        Assert.Equal(ErrorNull.Instance, result.error);
-        Assert.False(result.loopBreak);
-        Assert.False(result.loopContinue);
+        Assert.Equal(value, result.Value);
+        Assert.Equal(ValueNull.Instance, result.FuncReturnValue);
+        Assert.Equal(ErrorNull.Instance, result.Error);
+        Assert.False(result.LoopBreak);
+        Assert.False(result.LoopContinue);
     }
 
     [Fact]
@@ -29,11 +29,11 @@ public class RunTimeResultTests
 
         result.Failure(error);
 
-        Assert.Equal(error, result.error);
-        Assert.Equal(ValueNull.Instance, result.value);
-        Assert.Equal(ValueNull.Instance, result.funcReturnValue);
-        Assert.False(result.loopBreak);
-        Assert.False(result.loopContinue);
+        Assert.Equal(error, result.Error);
+        Assert.Equal(ValueNull.Instance, result.Value);
+        Assert.Equal(ValueNull.Instance, result.FuncReturnValue);
+        Assert.False(result.LoopBreak);
+        Assert.False(result.LoopContinue);
     }
 
     [Fact]
@@ -44,7 +44,7 @@ public class RunTimeResultTests
 
         result.SuccessReturn(value);
 
-        Assert.Equal(value, result.funcReturnValue);
+        Assert.Equal(value, result.FuncReturnValue);
         Assert.True(result.ShouldReturn());
     }
 
@@ -55,7 +55,7 @@ public class RunTimeResultTests
 
         result.SuccessBreak();
 
-        Assert.True(result.loopBreak);
+        Assert.True(result.LoopBreak);
         Assert.True(result.ShouldReturn());
     }
 
@@ -66,7 +66,7 @@ public class RunTimeResultTests
 
         result.SuccessContinue();
 
-        Assert.True(result.loopContinue);
+        Assert.True(result.LoopContinue);
         Assert.True(result.ShouldReturn());
     }
 
@@ -85,19 +85,19 @@ public class RunTimeResultTests
 
         source.Failure(error);
         target.Register(source);
-        Assert.Equal(error, target.error);
+        Assert.Equal(error, target.Error);
 
         source.SuccessReturn(value);
         target.Register(source);
-        Assert.Equal(value, target.funcReturnValue);
+        Assert.Equal(value, target.FuncReturnValue);
 
         source.SuccessBreak();
         target.Register(source);
-        Assert.True(target.loopBreak);
+        Assert.True(target.LoopBreak);
 
         source.SuccessContinue();
         target.Register(source);
-        Assert.True(target.loopContinue);
+        Assert.True(target.LoopContinue);
     }
 
     [Fact]
@@ -127,11 +127,11 @@ public class RunTimeResultTests
 
         result.Reset();
 
-        Assert.Equal(ValueNull.Instance, result.value);
-        Assert.Equal(ErrorNull.Instance, result.error);
-        Assert.Equal(ValueNull.Instance, result.funcReturnValue);
-        Assert.False(result.loopBreak);
-        Assert.False(result.loopContinue);
+        Assert.Equal(ValueNull.Instance, result.Value);
+        Assert.Equal(ErrorNull.Instance, result.Error);
+        Assert.Equal(ValueNull.Instance, result.FuncReturnValue);
+        Assert.False(result.LoopBreak);
+        Assert.False(result.LoopContinue);
     }
 
     [Fact]
@@ -142,8 +142,8 @@ public class RunTimeResultTests
         result.Success(new Value());
         result.SuccessBreak();
 
-        Assert.True(result.loopBreak);
-        Assert.Equal(ValueNull.Instance, result.value); // reset happened
+        Assert.True(result.LoopBreak);
+        Assert.Equal(ValueNull.Instance, result.Value); // reset happened
     }
 
     [Fact]
@@ -157,6 +157,6 @@ public class RunTimeResultTests
         result.Success(new Value());
         result.Register(source);
 
-        Assert.Equal(source.error, result.error);
+        Assert.Equal(source.Error, result.Error);
     }
 }

@@ -4,65 +4,65 @@ namespace YSharp.Runtime;
 
 public class RunTimeResult
 {
-    public Error error { get; private set; } = ErrorNull.Instance;
-    public Value funcReturnValue { get; private set; } = ValueNull.Instance;
-    public bool loopBreak { get; private set; }
-    public bool loopContinue { get; private set; }
-    public Value value { get; private set; } = ValueNull.Instance;
+    public Error Error { get; private set; } = ErrorNull.Instance;
+    public Value FuncReturnValue { get; private set; } = ValueNull.Instance;
+    public bool LoopBreak { get; private set; }
+    public bool LoopContinue { get; private set; }
+    public Value Value { get; private set; } = ValueNull.Instance;
 
     public RunTimeResult Failure(Error error)
     {
         Reset();
-        this.error = error;
+        this.Error = error;
         return this;
     }
 
     public Value Register(RunTimeResult res)
     {
-        error = res.error;
-        funcReturnValue = res.funcReturnValue;
-        loopContinue = res.loopContinue;
-        loopBreak = res.loopBreak;
-        return res.value;
+        Error = res.Error;
+        FuncReturnValue = res.FuncReturnValue;
+        LoopContinue = res.LoopContinue;
+        LoopBreak = res.LoopBreak;
+        return res.Value;
     }
 
     public void Reset()
     {
-        value = ValueNull.Instance;
-        error = ErrorNull.Instance;
-        funcReturnValue = ValueNull.Instance;
-        loopContinue = false;
-        loopBreak = false;
+        Value = ValueNull.Instance;
+        Error = ErrorNull.Instance;
+        FuncReturnValue = ValueNull.Instance;
+        LoopContinue = false;
+        LoopBreak = false;
     }
 
     public bool ShouldReturn() =>
-        error.IsError || funcReturnValue is not ValueNull || loopContinue || loopBreak;
+        Error.IsError || FuncReturnValue is not ValueNull || LoopContinue || LoopBreak;
 
     public RunTimeResult Success(Value value)
     {
         Reset();
-        this.value = value;
+        this.Value = value;
         return this;
     }
 
     public RunTimeResult SuccessBreak()
     {
         Reset();
-        loopBreak = true;
+        LoopBreak = true;
         return this;
     }
 
     public RunTimeResult SuccessContinue()
     {
         Reset();
-        loopContinue = true;
+        LoopContinue = true;
         return this;
     }
 
     public RunTimeResult SuccessReturn(Value value)
     {
         Reset();
-        funcReturnValue = value;
+        FuncReturnValue = value;
         return this;
     }
 }

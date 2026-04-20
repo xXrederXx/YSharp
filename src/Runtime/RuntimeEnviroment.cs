@@ -42,9 +42,9 @@ public class RuntimeEnviroment : IRuntimeEnviroment
         RunTimeResult result = Interpreter.Visit(rootNode, context);
 
         // return the node and Error
-        if (result.error.IsError)
-            return RunResult.Fail(result.error);
-        return RunResult.Success(result.value);
+        if (result.Error.IsError)
+            return RunResult.Fail(result.Error);
+        return RunResult.Success(result.Value);
     }
 
     private static void RenderDot(string fn, BaseNode node)
