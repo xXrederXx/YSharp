@@ -45,6 +45,24 @@ public class ResultTests
     }
 
     [Fact]
+    public void checkResult_whenTryGetErrorOnFail_thenReturnsTrueAndError()
+    {
+        Result<int, string> result = Result<int, string>.Fail("x");
+
+        Assert.True(result.TryGetError(out string error));
+        Assert.Equal("x", error);
+    }
+
+    [Fact]
+    public void checkResult_whenTryGetErrorOnSuccess_thenReturnsFalse()
+    {
+        Result<int, string> result = Result<int, string>.Success(10);
+
+        Assert.False(result.TryGetError(out string error));
+        Assert.Equal(default, error);
+    }
+
+    [Fact]
     public void checkResult_whenDeconstructOnSuccess_thenReturnsCorrectValues()
     {
         Result<int, string> result = Result<int, string>.Success(5);
