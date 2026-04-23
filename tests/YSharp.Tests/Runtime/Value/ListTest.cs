@@ -130,13 +130,13 @@ public class ListTest
         Assert.Empty(newList.value);
     }
 
-    [Fact(Skip = "Issue#41")]
+    [Fact]
     void checkMuledTo_Negative()
     {
         Result<Value, Error> result = GetList().MuledTo(new VNumber(-3));
 
         Assert.True(result.TryGetError(out Error error));
-        Assert.IsType<IllegalOperationError>(error);
+        Assert.IsType<ArgOutOfRangeError>(error);
     }
 
     [Fact]
