@@ -1,5 +1,6 @@
 using Xunit;
 using YSharp.Common;
+using YSharp.Lexer;
 using YSharp.Runtime;
 using YSharp.Runtime.Collections.List;
 using YSharp.Runtime.Primitives.Bool;
@@ -10,6 +11,7 @@ namespace YSharp.Tests;
 
 public class ListTest
 {
+
     [Fact]
     void checkToString()
     {
@@ -153,7 +155,7 @@ public class ListTest
     {
         VNumber number = new(1);
         VList vList = GetList();
-        Result<Value, Error> result = vList.GetFunc("Add", [number]);
+        Result<Value, Error> result = vList.GetFunc(TestingConstans.MakeToken("Add"), [number]);
 
         Assert.True(result.IsSuccess);
         Assert.Equal(number, vList.value.Last());
@@ -163,7 +165,7 @@ public class ListTest
     void checkGet_whenValidId_success()
     {
         VNumber number = new(1);
-        Result<Value, Error> result = GetList([number]).GetFunc("Get", [new VNumber(0)]);
+        Result<Value, Error> result = GetList([number]).GetFunc(TestingConstans.MakeToken("Get"), [new VNumber(0)]);
 
         Assert.True(result.TryGetValue(out Value value));
         VNumber newList = Assert.IsType<VNumber>(value);
@@ -174,7 +176,7 @@ public class ListTest
     void checkGet_whenNegativValidId_success()
     {
         VNumber number = new(1);
-        Result<Value, Error> result = GetList([number]).GetFunc("Get", [new VNumber(-1)]);
+        Result<Value, Error> result = GetList([number]).GetFunc(TestingConstans.MakeToken("Get"), [new VNumber(-1)]);
 
         Assert.True(result.TryGetValue(out Value value));
         VNumber newList = Assert.IsType<VNumber>(value);
@@ -185,7 +187,7 @@ public class ListTest
     void checkGet_whenIdTooBig_error()
     {
         VNumber number = new(1);
-        Result<Value, Error> result = GetList([number]).GetFunc("Get", [new VNumber(10)]);
+        Result<Value, Error> result = GetList([number]).GetFunc(TestingConstans.MakeToken("Get"), [new VNumber(10)]);
 
         Assert.True(result.TryGetError(out Error error));
         Assert.IsType<ArgOutOfRangeError>(error);
@@ -195,7 +197,7 @@ public class ListTest
     void checkGet_whenIdTooSmall_error()
     {
         VNumber number = new(1);
-        Result<Value, Error> result = GetList([number]).GetFunc("Get", [new VNumber(-10)]);
+        Result<Value, Error> result = GetList([number]).GetFunc(TestingConstans.MakeToken("Get"), [new VNumber(-10)]);
 
         Assert.True(result.TryGetError(out Error error));
         Assert.IsType<ArgOutOfRangeError>(error);
@@ -205,7 +207,7 @@ public class ListTest
     void checkGet_whenIdInvalidType_error()
     {
         VNumber number = new(1);
-        Result<Value, Error> result = GetList([number]).GetFunc("Get", [new VString("0")]);
+        Result<Value, Error> result = GetList([number]).GetFunc(TestingConstans.MakeToken("Get"), [new VString("0")]);
 
         Assert.True(result.TryGetError(out Error error));
         Assert.IsType<WrongFormatError>(error);
@@ -214,7 +216,7 @@ public class ListTest
     [Fact]
     void checkGetLength_success()
     {
-        Result<Value, Error> result = GetList([new VString("0")]).GetVar("Length");
+        Result<Value, Error> result = GetList([new VString("0")]).GetVar(TestingConstans.MakeToken("Length"));
 
         Assert.True(result.TryGetValue(out Value value));
         VNumber count = Assert.IsType<VNumber>(value);
@@ -236,7 +238,7 @@ public class ListTest
     [Fact]
     void checkIndexOf_whenNoElement_returnNegativ1()
     {
-        Result<Value, Error> result = GetList().GetFunc("IndexOf", [new VNumber(7)]);
+        Result<Value, Error> result = GetList().GetFunc(TestingConstans.MakeToken("IndexOf"), [new VNumber(7)]);
 
         Assert.True(result.TryGetValue(out Value value));
         VNumber index = Assert.IsType<VNumber>(value);
@@ -247,7 +249,7 @@ public class ListTest
     void checkIndexOf_whenInvalidArg_returnError()
     {
         Result<Value, Error> result = GetList()
-            .GetFunc("IndexOf", [new VNumber(7), new VNumber(6)]);
+            .GetFunc(TestingConstans.MakeToken("IndexOf"), [new VNumber(7), new VNumber(6)]);
 
         Assert.True(result.TryGetError(out Error error));
         Assert.IsType<NumArgsError>(error);
@@ -269,7 +271,7 @@ public class ListTest
     {
         // new Value just for testing that it checks types
         Result<Value, Error> result = GetList([new Value(), testItem])
-            .GetFunc("IndexOf", [testItem]);
+            .GetFunc(TestingConstans.MakeToken("IndexOf"), [testItem]);
 
         Assert.True(result.TryGetValue(out Value value));
         VNumber index = Assert.IsType<VNumber>(value);
@@ -280,7 +282,7 @@ public class ListTest
     void checkRemove_whenValidId()
     {
         VList vList = GetList([new VNumber(0)]);
-        Result<Value, Error> result = vList.GetFunc("Remove", [new VNumber(0)]);
+        Result<Value, Error> result = vList.GetFunc(TestingConstans.MakeToken("Remove"), [new VNumber(0)]);
 
         Assert.True(result.IsSuccess);
         Assert.Empty(vList.value);
@@ -290,7 +292,7 @@ public class ListTest
     void checkRemove_whenInvalidId()
     {
         VList vList = GetList([new VNumber(0)]);
-        Result<Value, Error> result = vList.GetFunc("Remove", [new VNumber(2)]);
+        Result<Value, Error> result = vList.GetFunc(TestingConstans.MakeToken("Remove"), [new VNumber(2)]);
 
         Assert.True(result.TryGetError(out Error error));
         Assert.IsType<ArgOutOfRangeError>(error);

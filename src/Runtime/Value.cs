@@ -1,4 +1,5 @@
 using YSharp.Common;
+using YSharp.Lexer;
 
 namespace YSharp.Runtime;
 
@@ -40,11 +41,11 @@ public class Value
     public virtual Result<Value, Error> GetComparisonNE(Value other) =>
         IllegalOperation(other);
 
-    public virtual Result<Value, Error> GetFunc(string name, ReadOnlySpan<Value> argNodes) =>
-        Result<Value, Error>.Fail(new FuncNotFoundError(Position.Null, name, Context));
+    public virtual Result<Value, Error> GetFunc(Token<string> nameToken, ReadOnlySpan<Value> argNodes) =>
+        Result<Value, Error>.Fail(new FuncNotFoundError(nameToken.StartPos, nameToken.Value, Context));
 
-    public virtual Result<Value, Error> GetVar(string name) =>
-        Result<Value, Error>.Fail(new VarNotFoundError(Position.Null, name, Context));
+    public virtual Result<Value, Error> GetVar(Token<string> nameToken) =>
+        Result<Value, Error>.Fail(new VarNotFoundError(nameToken.StartPos, nameToken.Value, Context));
 
     public virtual bool IsTrue() => false;
 

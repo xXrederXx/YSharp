@@ -1,4 +1,5 @@
 using YSharp.Common;
+using YSharp.Lexer;
 
 namespace YSharp.Runtime;
 
@@ -15,8 +16,10 @@ public class MethodTable<T>
             _methods[method.Item1] = method.Item2;
     }
 
-    public Result<Value, Error> Invoke(string name, T self, ReadOnlySpan<Value> args) =>
-        _methods.TryGetValue(name, out ValueMethod? func)
+    public Result<Value, Error> Invoke(Token<string> nameToken, T self, ReadOnlySpan<Value> args) =>
+        _methods.TryGetValue(nameToken.Value, out ValueMethod? func)
             ? func.Invoke(self, args)
-            : Result<Value, Error>.Fail(new FuncNotFoundError(Position.Null, name, self.Context));
+            : Result<Value, Error>.Fail(
+                new FuncNotFoundError(nameToken.StartPos, nameToken.Value, self.Context)
+            );
 }

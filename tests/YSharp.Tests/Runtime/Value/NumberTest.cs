@@ -257,7 +257,7 @@ public class NumberTest
     [InlineData(1, true)]
     void checkToBool(double x, bool expected)
     {
-        Result<Value, Error> result = new VNumber(x).GetFunc("ToBool", []);
+        Result<Value, Error> result = new VNumber(x).GetFunc(TestingConstans.MakeToken("ToBool"), []);
 
         Assert.True(result.TryGetValue(out Value value));
         VBool castValue = Assert.IsType<VBool>(value);
@@ -267,7 +267,7 @@ public class NumberTest
     [Fact]
     void checkToBool_whenInvalid()
     {
-        Result<Value, Error> result = new VNumber(6.7).GetFunc("ToBool", [new Value()]);
+        Result<Value, Error> result = new VNumber(6.7).GetFunc(TestingConstans.MakeToken("ToBool"), [new Value()]);
 
         Assert.True(result.TryGetError(out Error error));
         Assert.IsType<NumArgsError>(error);
@@ -276,7 +276,7 @@ public class NumberTest
     [Fact]
     void checkToString_whenInvalid()
     {
-        Result<Value, Error> result = new VNumber(6.7).GetFunc("ToString", [new VNumber(1)]);
+        Result<Value, Error> result = new VNumber(6.7).GetFunc(TestingConstans.MakeToken("ToString"), [new VNumber(1)]);
 
         Assert.True(result.TryGetError(out Error error));
         Assert.IsType<WrongFormatError>(error);
@@ -285,7 +285,7 @@ public class NumberTest
     [Fact]
     void checkToString_whenNoArg()
     {
-        Result<Value, Error> result = new VNumber(6.7).GetFunc("ToString", []);
+        Result<Value, Error> result = new VNumber(6.7).GetFunc(TestingConstans.MakeToken("ToString"), []);
 
         Assert.True(result.TryGetValue(out Value value));
         VString castValue = Assert.IsType<VString>(value);
@@ -297,7 +297,7 @@ public class NumberTest
     void checkToString_whenValidFormattArg(double number, string format, string expected)
     {
         Result<Value, Error> result = new VNumber(number).GetFunc(
-            "ToString",
+            TestingConstans.MakeToken("ToString"),
             [new VString(format)]
         );
 

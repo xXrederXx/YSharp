@@ -146,8 +146,6 @@ public static class Interpreter
     {
         RunTimeResult res = new();
 
-        string funcName = node.FuncNameTok.Value;
-
         Value[] argValue = new Value[node.ArgNodes.Length];
         for (int i = 0; i < node.ArgNodes.Length; i++)
         {
@@ -160,7 +158,7 @@ public static class Interpreter
         }
 
         Result<Value, Error> value = res.Register(Visit(node.Parent, context))
-            .GetFunc(funcName ?? "null", argValue);
+            .GetFunc(node.FuncNameTok, argValue);
 
         if (res.ShouldReturn())
             return res;
@@ -185,16 +183,12 @@ public static class Interpreter
     {
         RunTimeResult res = new();
 
-        string varName = node.VarNameTok.Value;
-        Result<Value, Error> value = res.Register(Visit(node.Parent, context)).GetVar(varName);
+        Result<Value, Error> value = res.Register(Visit(node.Parent, context)).GetVar(node.VarNameTok);
         if (res.ShouldReturn())
             return res;
 
         if (value.IsFailed)
             return res.Failure(value.GetError());
-
-        if (value.GetValue() is null)
-            return res.Failure(new VarNotFoundError(node.StartPos, varName, context));
 
         return res.Success(
             value.GetValue().Copy().SetPos(node.StartPos, node.EndPos).SetContext(context)

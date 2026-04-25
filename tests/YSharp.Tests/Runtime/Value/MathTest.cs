@@ -42,7 +42,7 @@ public class MathTest
     [MemberData(nameof(GetFunctionsData))]
     void checkFunctions(string name, double expected)
     {
-        Result<Value, Error> result = new VMath().GetFunc(name, [new VNumber(0.5)]);
+        Result<Value, Error> result = new VMath().GetFunc(TestingConstans.MakeToken(name), [new VNumber(0.5)]);
 
         Assert.True(result.TryGetValue(out Value value));
         VNumber number = Assert.IsType<VNumber>(value);
@@ -54,7 +54,7 @@ public class MathTest
     void checkFunctions_invalidArgs(string name, double _)
     {
         Result<Value, Error> result = new VMath().GetFunc(
-            name,
+            TestingConstans.MakeToken(name),
             [new VNumber(0.5), new VNumber(0.5)]
         );
 
@@ -68,7 +68,7 @@ public class MathTest
     [InlineData("TAU", Math.Tau)]
     void checkVariables(string name, double expected)
     {
-        Result<Value, Error> result = new VMath().GetVar(name);
+        Result<Value, Error> result = new VMath().GetVar(TestingConstans.MakeToken(name));
 
         Assert.True(result.TryGetValue(out Value value));
         VNumber number = Assert.IsType<VNumber>(value);

@@ -158,7 +158,7 @@ public class StringTest
     [Fact]
     void checkSplit_basic()
     {
-        Result<Value, Error> result = GetString("a,b,c").GetFunc("Split", [new VString(",")]);
+        Result<Value, Error> result = GetString("a,b,c").GetFunc(TestingConstans.MakeToken("Split"), [new VString(",")]);
 
         Assert.True(result.TryGetValue(out Value value));
         VList list = Assert.IsType<VList>(value);
@@ -168,7 +168,7 @@ public class StringTest
     [Fact]
     void checkSplit_invalidArgs()
     {
-        Result<Value, Error> result = GetString("a,b").GetFunc("Split", []);
+        Result<Value, Error> result = GetString("a,b").GetFunc(TestingConstans.MakeToken("Split"), []);
 
         Assert.True(result.TryGetError(out Error error));
         Assert.IsType<NumArgsError>(error);
@@ -177,7 +177,7 @@ public class StringTest
     [Fact]
     void checkToBool_true()
     {
-        Result<Value, Error> result = GetString("hi").GetFunc("ToBool", []);
+        Result<Value, Error> result = GetString("hi").GetFunc(TestingConstans.MakeToken("ToBool"), []);
 
         Assert.True(result.TryGetValue(out Value value));
         VBool boolean = Assert.IsType<VBool>(value);
@@ -187,7 +187,7 @@ public class StringTest
     [Fact]
     void checkToBool_false()
     {
-        Result<Value, Error> result = GetString("").GetFunc("ToBool", []);
+        Result<Value, Error> result = GetString("").GetFunc(TestingConstans.MakeToken("ToBool"), []);
 
         Assert.True(result.TryGetValue(out Value value));
         VBool boolean = Assert.IsType<VBool>(value);
@@ -197,7 +197,7 @@ public class StringTest
     [Fact]
     void checkToLower_success()
     {
-        Result<Value, Error> result = GetString("HI").GetFunc("ToLower", []);
+        Result<Value, Error> result = GetString("HI").GetFunc(TestingConstans.MakeToken("ToLower"), []);
 
         Assert.True(result.TryGetValue(out Value value));
         VString str = Assert.IsType<VString>(value);
@@ -207,7 +207,7 @@ public class StringTest
     [Fact]
     void checkToUpper_success()
     {
-        Result<Value, Error> result = GetString("hi").GetFunc("ToUpper", []);
+        Result<Value, Error> result = GetString("hi").GetFunc(TestingConstans.MakeToken("ToUpper"), []);
 
         Assert.True(result.TryGetValue(out Value value));
         VString str = Assert.IsType<VString>(value);
@@ -217,7 +217,7 @@ public class StringTest
     [Fact]
     void checkToLower_invalid()
     {
-        Result<Value, Error> result = GetString("HI").GetFunc("ToLower", [new Value()]);
+        Result<Value, Error> result = GetString("HI").GetFunc(TestingConstans.MakeToken("ToLower"), [new Value()]);
 
         Assert.True(result.TryGetError(out Error error));
         Assert.IsType<NumArgsError>(error);
@@ -226,7 +226,7 @@ public class StringTest
     [Fact]
     void checkToUpper_invalid()
     {
-        Result<Value, Error> result = GetString("hi").GetFunc("ToUpper", [new Value()]);
+        Result<Value, Error> result = GetString("hi").GetFunc(TestingConstans.MakeToken("ToUpper"), [new Value()]);
 
         Assert.True(result.TryGetError(out Error error));
         Assert.IsType<NumArgsError>(error);
@@ -235,7 +235,7 @@ public class StringTest
     [Fact]
     void checkToBool_invalid()
     {
-        Result<Value, Error> result = GetString("hi").GetFunc("ToBool", [new Value()]);
+        Result<Value, Error> result = GetString("hi").GetFunc(TestingConstans.MakeToken("ToBool"), [new Value()]);
 
         Assert.True(result.TryGetError(out Error error));
         Assert.IsType<NumArgsError>(error);
@@ -244,7 +244,7 @@ public class StringTest
     [Fact]
     void checkToNumber_invalidArgs()
     {
-        Result<Value, Error> result = GetString("hi").GetFunc("ToNumber", [new Value()]);
+        Result<Value, Error> result = GetString("hi").GetFunc(TestingConstans.MakeToken("ToNumber"), [new Value()]);
 
         Assert.True(result.TryGetError(out Error error));
         Assert.IsType<NumArgsError>(error);
@@ -253,7 +253,7 @@ public class StringTest
     [Fact]
     void checkToNumber_valid()
     {
-        Result<Value, Error> result = GetString("123").GetFunc("ToNumber", []);
+        Result<Value, Error> result = GetString("123").GetFunc(TestingConstans.MakeToken("ToNumber"), []);
 
         Assert.True(result.TryGetValue(out Value value));
         VNumber num = Assert.IsType<VNumber>(value);
@@ -263,7 +263,7 @@ public class StringTest
     [Fact]
     void checkToNumber_invalidContent()
     {
-        Result<Value, Error> result = GetString("abc").GetFunc("ToNumber", []);
+        Result<Value, Error> result = GetString("abc").GetFunc(TestingConstans.MakeToken("ToNumber"), []);
 
         Assert.True(result.TryGetError(out Error error));
         Assert.IsType<WrongFormatError>(error);
@@ -272,7 +272,7 @@ public class StringTest
     [Fact]
     void checkLength_valid()
     {
-        Result<Value, Error> result = GetString("123").GetVar("Length");
+        Result<Value, Error> result = GetString("123").GetVar(TestingConstans.MakeToken("Length"));
 
         Assert.True(result.TryGetValue(out Value value));
         VNumber num = Assert.IsType<VNumber>(value);
