@@ -40,7 +40,7 @@ public class Value
     public virtual Result<Value, Error> GetComparisonNE(Value other) =>
         IllegalOperation(other);
 
-    public virtual Result<Value, Error> GetFunc(string name, List<Value> argNodes) =>
+    public virtual Result<Value, Error> GetFunc(string name, ReadOnlySpan<Value> argNodes) =>
         Result<Value, Error>.Fail(new FuncNotFoundError(Position.Null, name, Context));
 
     public virtual Result<Value, Error> GetVar(string name) =>

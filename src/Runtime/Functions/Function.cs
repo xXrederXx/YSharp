@@ -22,7 +22,7 @@ public sealed class VFunction(
     /// </summary>
     /// <param name="args"></param>
     /// <returns>A Runtime Result</returns>
-    public override RunTimeResult Execute(List<Value> args)
+    public override RunTimeResult Execute(ReadOnlySpan<Value> args)
     {
         RunTimeResult res = new();
         Context execContext = GeneratContext();

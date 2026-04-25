@@ -94,7 +94,7 @@ public static class Interpreter
     private static RunTimeResult Visit_CallNode(CallNode node, Context context)
     {
         RunTimeResult res = new();
-        List<Value> args = new(node.ArgNodes.Length);
+        Value[] args = new Value[node.ArgNodes.Length];
 
         if (node.NodeToCall is VarAccessNode varAccessNode)
         {
@@ -118,7 +118,7 @@ public static class Interpreter
 
         for (int i = 0; i < node.ArgNodes.Length; i++)
         {
-            args.Add(res.Register(Visit(node.ArgNodes[i], context)));
+            args[i] = res.Register(Visit(node.ArgNodes[i], context));
             if (res.ShouldReturn())
                 return res;
         }
@@ -148,7 +148,7 @@ public static class Interpreter
 
         string funcName = node.FuncNameTok.Value;
 
-        List<Value> argValue = new(node.ArgNodes.Length);
+        Value[] argValue = new Value[node.ArgNodes.Length];
         for (int i = 0; i < node.ArgNodes.Length; i++)
         {
             BaseNode _node = node.ArgNodes[i];
@@ -156,7 +156,7 @@ public static class Interpreter
             if (res.ShouldReturn())
                 return res;
 
-            argValue.Add(val);
+            argValue[i] = val;
         }
 
         Result<Value, Error> value = res.Register(Visit(node.Parent, context))

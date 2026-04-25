@@ -32,7 +32,7 @@ public sealed partial class VNumber : Value
 
     private static VNumber MulToNum(VNumber self, VNumber other) => new(self.value * other.value);
 
-    private static Result<Value, Error> MyToString(VNumber self, List<Value> args)
+    private static Result<Value, Error> MyToString(VNumber self, ReadOnlySpan<Value> args)
     {
         Error err = ValueHelper.CheckArgs(args, 0, [], self.Context); // no argument
         if (!err.IsError) return Result<Value, Error>.Success(new VString(self.value.ToString(StaticConfig.numberCulture)));
@@ -49,7 +49,7 @@ public sealed partial class VNumber : Value
 
     private static VNumber SubToNum(VNumber self, VNumber other) => new(self.value - other.value);
 
-    private static Result<Value, Error> ToBool(VNumber self, List<Value> args)
+    private static Result<Value, Error> ToBool(VNumber self, ReadOnlySpan<Value> args)
     {
         Error err = ValueHelper.CheckArgs(args, 0, [], self.Context);
         if (err.IsError) return Result<Value, Error>.Fail(err);

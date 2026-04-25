@@ -14,7 +14,7 @@ public sealed partial class VNumber(double value) : Value
         return copy;
     }
 
-    public override Result<Value, Error> GetFunc(string name, List<Value> argNodes) =>
+    public override Result<Value, Error> GetFunc(string name, ReadOnlySpan<Value> argNodes) =>
         methodTable.Invoke(name, this, argNodes);
 
     public override bool IsTrue() => value != 0;

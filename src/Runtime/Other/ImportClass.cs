@@ -19,11 +19,11 @@ public sealed class ImportClass : Value
 
     public override Value Copy() => base.Copy();
 
-    public override Result<Value, Error> GetFunc(string name, List<Value> argNodes)
+    public override Result<Value, Error> GetFunc(string name, ReadOnlySpan<Value> argNodes)
     {
         Result<Value, Error> returnVE = Result<Value, Error>.Fail(
             new FuncNotFoundError(
-                argNodes.Count >= 1 ? argNodes[0].StartPos : Position.Null,
+                argNodes.Length >= 1 ? argNodes[0].StartPos : Position.Null,
                 name,
                 new Context()
             )
@@ -33,7 +33,7 @@ public sealed class ImportClass : Value
         {
             ParameterInfo[] paramsInfo = method.GetParameters();
 
-            if (method.Name != name && paramsInfo.Length != argNodes.Count) continue;
+            if (method.Name != name && paramsInfo.Length != argNodes.Length) continue;
 
             if (!TypeCanBeUsed(method.ReturnType)) continue;
 
