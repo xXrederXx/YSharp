@@ -5,17 +5,18 @@ namespace YSharp.Runtime;
 public class PropertyTable<T>
     where T : Value
 {
-    private readonly Dictionary<string, Func<T, Result<Value, Error>>> Properties;
+    private readonly Dictionary<string, ValueProperty> _properties;
+    public delegate Result<Value, Error> ValueProperty(T self);
 
-    public PropertyTable(ReadOnlySpan<(string, Func<T, Result<Value, Error>>)> properties)
+    public PropertyTable(ReadOnlySpan<(string, ValueProperty)> properties)
     {
-        Properties = [];
-        foreach ((string, Func<T, Result<Value, Error>>) prop in properties)
-            Properties[prop.Item1] = prop.Item2;
+        _properties = [];
+        foreach ((string, ValueProperty) prop in properties)
+            _properties[prop.Item1] = prop.Item2;
     }
 
     public Result<Value, Error> Get(string name, T self) =>
-        Properties.TryGetValue(name, out Func<T, Result<Value, Error>>? func)
-            ? func(self)
+        _properties.TryGetValue(name, out ValueProperty? func)
+            ? func.Invoke(self)
             : Result<Value, Error>.Fail(new VarNotFoundError(Position.Null, name, self.Context));
 }
