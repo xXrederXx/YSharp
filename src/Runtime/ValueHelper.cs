@@ -5,7 +5,7 @@ namespace YSharp.Runtime;
 public static class ValueHelper
 {
     public static Error CheckArgs(
-        List<Value> argValue,
+        ReadOnlySpan<Value> argValue,
         int length,
         List<Type> types,
         Context? context
@@ -18,19 +18,19 @@ public static class ValueHelper
         return ret;
     }
 
-    public static Error IsRightLength(int length, List<Value> argValue, Context? context)
+    public static Error IsRightLength(int length, ReadOnlySpan<Value> argValue, Context? context)
     {
-        if (length == argValue.Count) return ErrorNull.Instance;
-        return new NumArgsError(Position.Null, length, argValue.Count, context);
+        if (length == argValue.Length) return ErrorNull.Instance;
+        return new NumArgsError(Position.Null, length, argValue.Length, context);
     }
 
-    public static Error IsRightType(List<Type> types, List<Value> argValue, Context context)
+    public static Error IsRightType(List<Type> types, ReadOnlySpan<Value> argValue, Context context)
     {
-        if (types.Count != 1 && types.Count != argValue.Count)
+        if (types.Count != 1 && types.Count != argValue.Length)
             return new InternalInterpreterError(
                 "An error occured when trying to check the args passed into a function. But it failed when trying to check the types. The problem was that the args in the internal function didnt match a criteria. ");
         bool oneType = types.Count == 1;
-        for (int i = 0; i < argValue.Count; i++)
+        for (int i = 0; i < argValue.Length; i++)
         {
             Type valType = argValue[i].GetType();
 

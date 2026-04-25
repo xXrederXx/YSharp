@@ -42,7 +42,7 @@ public class DateTimeTest
     {
         VDateTime vDateTime = new VDateTime(testDateTime);
 
-        Result<Value, Error> result = vDateTime.GetVar(name);
+        Result<Value, Error> result = vDateTime.GetVar(TestingConstans.MakeToken(name));
         Assert.True(result.TryGetValue(out Value value));
         VNumber number = Assert.IsType<VNumber>(value);
         Assert.Equal(expected, number.value, TestingConstans.DOUBLE_PRECISION);
@@ -53,7 +53,7 @@ public class DateTimeTest
     {
         VDateTime vDateTime = new VDateTime(testDateTime);
 
-        Result<Value, Error> result = vDateTime.GetVar("DayOfWeek");
+        Result<Value, Error> result = vDateTime.GetVar(TestingConstans.MakeToken("DayOfWeek"));
         Assert.True(result.TryGetValue(out Value value));
         VString dayString = Assert.IsType<VString>(value);
         Assert.Equal("Friday", dayString.value);

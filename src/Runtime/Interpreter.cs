@@ -94,7 +94,7 @@ public static class Interpreter
     private static RunTimeResult Visit_CallNode(CallNode node, Context context)
     {
         RunTimeResult res = new();
-        List<Value> args = new(node.ArgNodes.Length);
+        Value[] args = new Value[node.ArgNodes.Length];
 
         if (node.NodeToCall is VarAccessNode varAccessNode)
         {
@@ -118,7 +118,7 @@ public static class Interpreter
 
         for (int i = 0; i < node.ArgNodes.Length; i++)
         {
-            args.Add(res.Register(Visit(node.ArgNodes[i], context)));
+            args[i] = res.Register(Visit(node.ArgNodes[i], context));
             if (res.ShouldReturn())
                 return res;
         }
@@ -146,9 +146,7 @@ public static class Interpreter
     {
         RunTimeResult res = new();
 
-        string funcName = node.FuncNameTok.Value;
-
-        List<Value> argValue = new(node.ArgNodes.Length);
+        Value[] argValue = new Value[node.ArgNodes.Length];
         for (int i = 0; i < node.ArgNodes.Length; i++)
         {
             BaseNode _node = node.ArgNodes[i];
@@ -156,11 +154,11 @@ public static class Interpreter
             if (res.ShouldReturn())
                 return res;
 
-            argValue.Add(val);
+            argValue[i] = val;
         }
 
         Result<Value, Error> value = res.Register(Visit(node.Parent, context))
-            .GetFunc(funcName ?? "null", argValue);
+            .GetFunc(node.FuncNameTok, argValue);
 
         if (res.ShouldReturn())
             return res;
@@ -185,16 +183,12 @@ public static class Interpreter
     {
         RunTimeResult res = new();
 
-        string varName = node.VarNameTok.Value;
-        Result<Value, Error> value = res.Register(Visit(node.Parent, context)).GetVar(varName);
+        Result<Value, Error> value = res.Register(Visit(node.Parent, context)).GetVar(node.VarNameTok);
         if (res.ShouldReturn())
             return res;
 
         if (value.IsFailed)
             return res.Failure(value.GetError());
-
-        if (value.GetValue() is null)
-            return res.Failure(new VarNotFoundError(node.StartPos, varName, context));
 
         return res.Success(
             value.GetValue().Copy().SetPos(node.StartPos, node.EndPos).SetContext(context)

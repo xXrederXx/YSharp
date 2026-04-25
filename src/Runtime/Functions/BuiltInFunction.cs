@@ -103,7 +103,7 @@ public sealed class VBuiltInFunction : VBaseFunction
         return new RunTimeResult().Failure(new AccessDepricatedError(execContext.ParentEntryPos, "RunTimed", execContext));
     }
 
-    public override RunTimeResult Execute(List<Value> args)
+    public override RunTimeResult Execute(ReadOnlySpan<Value> args)
     {
         RunTimeResult res = new();
         Context execContext = GeneratContext();

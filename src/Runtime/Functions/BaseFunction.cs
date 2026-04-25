@@ -14,11 +14,11 @@ public abstract class VBaseFunction : Value
             this.name = name;
     }
 
-    public abstract RunTimeResult Execute(List<Value> args);
+    public abstract RunTimeResult Execute(ReadOnlySpan<Value> args);
 
     protected static RunTimeResult CheckAndPopulateArgs(
         List<string> argNames,
-        List<Value> args,
+        ReadOnlySpan<Value> args,
         Context execContext
     )
     {
@@ -36,7 +36,7 @@ public abstract class VBaseFunction : Value
 
     protected static RunTimeResult CheckArgs(
         List<string> argNames,
-        List<Value> args,
+        ReadOnlySpan<Value> args,
         Context context
     )
     {
@@ -49,7 +49,7 @@ public abstract class VBaseFunction : Value
 
     protected static Error PopulateArgs(
         List<string> argNames,
-        List<Value> args,
+        ReadOnlySpan<Value> args,
         Context execContext
     )
     {
@@ -58,7 +58,7 @@ public abstract class VBaseFunction : Value
             return new InternalSymbolTableError(execContext);
         }
 
-        for (int i = 0; i < args.Count; i++)
+        for (int i = 0; i < args.Length; i++)
         {
             string argName = argNames[i];
             Value argValue = args[i];

@@ -1,21 +1,25 @@
 using YSharp.Common;
+using YSharp.Lexer;
 
 namespace YSharp.Runtime;
 
 public class MethodTable<T>
     where T : Value
 {
-    private readonly Dictionary<string, Func<T, List<Value>, Result<Value, Error>>> Methods;
+    private readonly Dictionary<string, ValueMethod> _methods;
+    public delegate Result<Value, Error> ValueMethod(T self, ReadOnlySpan<Value> args);
 
-    public MethodTable(ReadOnlySpan<(string, Func<T, List<Value>, Result<Value, Error>>)> methods)
+    public MethodTable(ReadOnlySpan<(string, ValueMethod)> methods)
     {
-        Methods = [];
-        foreach ((string, Func<T, List<Value>, Result<Value, Error>>) method in methods)
-            Methods[method.Item1] = method.Item2;
+        _methods = [];
+        foreach ((string, ValueMethod) method in methods)
+            _methods[method.Item1] = method.Item2;
     }
 
-    public Result<Value, Error> Invoke(string name, T self, List<Value> args) =>
-        Methods.TryGetValue(name, out Func<T, List<Value>, Result<Value, Error>>? func)
-            ? func(self, args)
-            : Result<Value, Error>.Fail(new FuncNotFoundError(Position.Null, name, self.Context));
+    public Result<Value, Error> Invoke(Token<string> nameToken, T self, ReadOnlySpan<Value> args) =>
+        _methods.TryGetValue(nameToken.Value, out ValueMethod? func)
+            ? func.Invoke(self, args)
+            : Result<Value, Error>.Fail(
+                new FuncNotFoundError(nameToken.StartPos, nameToken.Value, self.Context)
+            );
 }

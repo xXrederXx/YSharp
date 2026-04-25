@@ -1,5 +1,6 @@
 using System.Reflection;
 using YSharp.Common;
+using YSharp.Lexer;
 using YSharp.Runtime.Primitives.Bool;
 using YSharp.Runtime.Primitives.Number;
 using YSharp.Runtime.Primitives.String;
@@ -19,12 +20,12 @@ public sealed class ImportClass : Value
 
     public override Value Copy() => base.Copy();
 
-    public override Result<Value, Error> GetFunc(string name, List<Value> argNodes)
+    public override Result<Value, Error> GetFunc(Token<string> nameToken, ReadOnlySpan<Value> argNodes)
     {
         Result<Value, Error> returnVE = Result<Value, Error>.Fail(
             new FuncNotFoundError(
-                argNodes.Count >= 1 ? argNodes[0].StartPos : Position.Null,
-                name,
+                nameToken.StartPos,
+                nameToken.Value,
                 new Context()
             )
         );
@@ -33,7 +34,7 @@ public sealed class ImportClass : Value
         {
             ParameterInfo[] paramsInfo = method.GetParameters();
 
-            if (method.Name != name && paramsInfo.Length != argNodes.Count) continue;
+            if (method.Name != nameToken.Value && paramsInfo.Length != argNodes.Length) continue;
 
             if (!TypeCanBeUsed(method.ReturnType)) continue;
 

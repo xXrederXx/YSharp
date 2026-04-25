@@ -27,7 +27,7 @@ public sealed partial class VString
     private static VString MulToNum(VString self, VNumber other) =>
         new(string.Concat(Enumerable.Repeat(self.value, (int)other.value)));
 
-    private static Result<Value, Error> Split(VString self, List<Value> args)
+    private static Result<Value, Error> Split(VString self, ReadOnlySpan<Value> args)
     {
         Error err = ValueHelper.CheckArgs(args, 1, [typeof(VString)], self.Context); // format argument
         if (err.IsError) return Result<Value, Error>.Fail(err);
@@ -38,7 +38,7 @@ public sealed partial class VString
         return Result<Value, Error>.Success(new VList(self.value.Split(splitStr.value).Select(x => (Value)new VString(x)).ToList()));
     }
 
-    private static Result<Value, Error> ToBool(VString self, List<Value> args)
+    private static Result<Value, Error> ToBool(VString self, ReadOnlySpan<Value> args)
     {
         Error err = ValueHelper.CheckArgs(args, 0, [], self.Context); // no argument
         if (err.IsError) return Result<Value, Error>.Fail(err);
@@ -46,7 +46,7 @@ public sealed partial class VString
         return Result<Value, Error>.Success(new VBool(self.IsTrue()));
     }
 
-    private static Result<Value, Error> ToLower(VString self, List<Value> args)
+    private static Result<Value, Error> ToLower(VString self, ReadOnlySpan<Value> args)
     {
         Error err = ValueHelper.CheckArgs(args, 0, [], self.Context); // format argument
         if (err.IsError) return Result<Value, Error>.Fail(err);
@@ -54,7 +54,7 @@ public sealed partial class VString
         return Result<Value, Error>.Success(new VString(self.value.ToLower()));
     }
 
-    private static Result<Value, Error> ToNumber(VString self, List<Value> args)
+    private static Result<Value, Error> ToNumber(VString self, ReadOnlySpan<Value> args)
     {
         Error err = ValueHelper.CheckArgs(args, 0, [typeof(VString)], self.Context); // format argument
         if (err.IsError) return Result<Value, Error>.Fail(err);
@@ -70,7 +70,7 @@ public sealed partial class VString
         );
     }
 
-    private static Result<Value, Error> ToUpper(VString self, List<Value> args)
+    private static Result<Value, Error> ToUpper(VString self, ReadOnlySpan<Value> args)
     {
         Error err = ValueHelper.CheckArgs(args, 0, [], self.Context); // format argument
         if (err.IsError) return Result<Value, Error>.Fail(err);

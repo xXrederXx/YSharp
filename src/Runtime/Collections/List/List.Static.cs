@@ -17,13 +17,13 @@ public sealed partial class VList : Value
         propertyTable = new PropertyTable<VList>([("Length", GetLength)]);
     }
 
-    private static Result<Value, Error> Add(VList self, List<Value> args)
+    private static Result<Value, Error> Add(VList self, ReadOnlySpan<Value> args)
     {
         self.value.AddRange(args);
         return Result<Value, Error>.Success(ValueNull.Instance);
     }
 
-    private static Result<int, Error> ConvertToUsableIndex(VList self, List<Value> argValues)
+    private static Result<int, Error> ConvertToUsableIndex(VList self, ReadOnlySpan<Value> argValues)
     {
         // converts a value to a csharp usable index
         Error err = ValueHelper.CheckArgs(argValues, 1, [typeof(VNumber)], self.Context);
@@ -60,7 +60,7 @@ public sealed partial class VList : Value
         return Result<int, Error>.Success(index);
     }
 
-    private static Result<Value, Error> Get(VList self, List<Value> args)
+    private static Result<Value, Error> Get(VList self, ReadOnlySpan<Value> args)
     {
         Result<int, Error> index = ConvertToUsableIndex(self, args);
         if (index.IsFailed) return Result<Value, Error>.Fail(index.GetError());
@@ -71,7 +71,7 @@ public sealed partial class VList : Value
     private static Result<Value, Error> GetLength(VList self) =>
         Result<Value, Error>.Success(new VNumber(self.value.Count));
 
-    private static Result<Value, Error> IndexOf(VList self, List<Value> args)
+    private static Result<Value, Error> IndexOf(VList self, ReadOnlySpan<Value> args)
     {
         Error err = ValueHelper.IsRightLength(1, args, self.Context);
         if (err.IsError) return Result<Value, Error>.Fail(err);
@@ -90,7 +90,7 @@ public sealed partial class VList : Value
         return Result<Value, Error>.Success(new VNumber(index));
     }
 
-    private static Result<Value, Error> Remove(VList self, List<Value> args)
+    private static Result<Value, Error> Remove(VList self, ReadOnlySpan<Value> args)
     {
         Result<int, Error> index = ConvertToUsableIndex(self, args);
         if (index.IsFailed) return Result<Value, Error>.Fail(index.GetError());

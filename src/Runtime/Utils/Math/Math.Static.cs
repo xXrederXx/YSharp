@@ -40,7 +40,7 @@ public sealed partial class VMath : Value
         ]);
     }
 
-    private static Result<Value, Error> GetMathFunc(VMath self, Func<double, double> func, List<Value> argNodes)
+    private static Result<Value, Error> GetMathFunc(VMath self, Func<double, double> func, ReadOnlySpan<Value> argNodes)
     {
         Error err = ValueHelper.CheckArgs(
             argNodes,

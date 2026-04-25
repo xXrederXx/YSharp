@@ -1,4 +1,5 @@
 using YSharp.Common;
+using YSharp.Lexer;
 
 namespace YSharp.Runtime.Primitives.Number;
 
@@ -14,8 +15,8 @@ public sealed partial class VNumber(double value) : Value
         return copy;
     }
 
-    public override Result<Value, Error> GetFunc(string name, List<Value> argNodes) =>
-        methodTable.Invoke(name, this, argNodes);
+    public override Result<Value, Error> GetFunc(Token<string> nameToken, ReadOnlySpan<Value> argNodes) =>
+        methodTable.Invoke(nameToken, this, argNodes);
 
     public override bool IsTrue() => value != 0;
 
