@@ -21,15 +21,6 @@ markdown_extensions:
 
 docs_dir: Docs
 
-nav:
-  - Home: index.md
-  - Getting Started:
-    - Installation: getting-started/installation.md
-    - Shell: getting-started/shell.md
-    - Hello World: getting-started/hello-world.md
-  - Language Reference:
-    - Keywords: language-reference/keywords/index.md
-
 extra:
   last_updated: true
   social:
@@ -45,5 +36,6 @@ copyright: >
 
 plugins:
   - search
+  - awesome-pages
   - git-revision-date-localized:
       enable_creation_date: false
