@@ -667,16 +667,10 @@ public sealed partial class Parser
         }
 
         // look if it is increment or decrement
-        if (currentToken.IsType(TokenType.PP))
+        if (currentToken.IsOneOf([TokenType.PP, TokenType.MM], out TokenType foundType))
         {
             AdvanceParser(res);
-            return res.Success(new SuffixAssignNode(varName, true));
-        }
-
-        if (currentToken.IsType(TokenType.MM))
-        {
-            AdvanceParser(res);
-            return res.Success(new SuffixAssignNode(varName, false));
+            return res.Success(new SuffixAssignNode(varName, foundType));
         }
 
         // normal variable assign
