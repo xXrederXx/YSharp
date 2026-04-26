@@ -259,13 +259,14 @@ public static class Interpreter
             if (res.ShouldReturn() && !res.LoopContinue && res.LoopBreak)
                 return res;
 
+            i += StepNumber; // Needs to be Incremented before continue
+
             if (res.LoopContinue)
                 continue;
 
             if (res.LoopBreak)
                 break;
 
-            i += StepNumber;
         }
 
         return res.Success(ValueNull.Instance);
