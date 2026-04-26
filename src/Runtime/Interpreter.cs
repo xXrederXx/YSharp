@@ -256,8 +256,10 @@ public static class Interpreter
             context.SymbolTable.Set(varName, new VNumber(i));
 
             res.Register(Visit(node.BodyNode, context));
-            if (res.ShouldReturn() && !res.LoopContinue && res.LoopBreak)
+            if (res.ShouldReturn() && !res.LoopContinue && !res.LoopBreak)
                 return res;
+
+            i += StepNumber; // Needs to be Incremented before continue
 
             if (res.LoopContinue)
                 continue;
@@ -265,7 +267,6 @@ public static class Interpreter
             if (res.LoopBreak)
                 break;
 
-            i += StepNumber;
         }
 
         return res.Success(ValueNull.Instance);
