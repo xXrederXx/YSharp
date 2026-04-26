@@ -55,7 +55,7 @@ public class ForTests
         Assert.Equal(45.0, number.value, TestingConstans.DOUBLE_PRECISION);
     }
 
-    [Fact(Skip = "Issue#43")]
+    [Fact]
     public void checkForWithContinue_whenValidLoopNoStep_thenSkipsAllIterations()
     {
         RunnerResult result = runner.Run(
@@ -77,7 +77,7 @@ public class ForTests
         Assert.Equal(0.0, number.value, TestingConstans.DOUBLE_PRECISION);
     }
 
-    [Fact(Skip = "Issue#43")]
+    [Fact]
     public void checkForWithBreak_whenValidLoopNoStep_thenStopsAtFirstIteration()
     {
         RunnerResult result = runner.Run(
