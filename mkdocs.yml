@@ -1,0 +1,23 @@
+site_name: YSharp Documentation
+site_description: Documentation for the YSharp language and tooling
+site_author: xXrederXx
+
+theme:
+  name: material
+
+markdown_extensions:
+  - codehilite
+  - admonition
+  - toc:
+      permalink: true
+
+docs_dir: Docs
+
+nav:
+  - Home: index.md
+  - Getting Started:
+    - Installation: getting-started/installation.md
+    - Shell: getting-started/shell.md
+    - Hello World: getting-started/hello-world.md
+  - Language Reference:
+    - Keywords: language-reference/keywords/index.md
