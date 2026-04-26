@@ -62,7 +62,7 @@ public class NodeTests
             () => new ReturnNode(NodeNull.Instance, Position.Null, Position.Null),
             () => new StringNode(stringTok),
             () => new SubIfNode(NodeNull.Instance, NodeNull.Instance),
-            () => new SuffixAssignNode(stringTok, false),
+            () => new SuffixAssignNode(stringTok, TokenType.MM),
             () => new TryCatchNode(NodeNull.Instance, NodeNull.Instance, stringTok),
             () => new UnaryOpNode(NullToken.Instance, NodeNull.Instance),
             () => new VarAccessNode(stringTok),

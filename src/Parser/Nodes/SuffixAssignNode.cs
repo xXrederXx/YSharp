@@ -6,16 +6,16 @@ namespace YSharp.Parser.Nodes;
 
 public sealed class SuffixAssignNode : BaseNode
 {
-    public readonly bool IsAdd;
+    public readonly TokenType Type;
     public readonly string VarName;
 
     public override NodeDebugInfo DebugInfo =>
-        new($"SufAssign: {VarName} (Add? {IsAdd})", NodeDebugShape.Ellipse, []);
+        new($"SufAssign: {VarName} (Add? {Type})", NodeDebugShape.Ellipse, []);
 
-    public SuffixAssignNode(Token<string> varName, bool isAdd)
+    public SuffixAssignNode(Token<string> varName, TokenType type)
         : base(varName.StartPos, varName.EndPos)
     {
         this.VarName = varName.Value;
-        this.IsAdd = isAdd;
+        this.Type = type;
     }
 }

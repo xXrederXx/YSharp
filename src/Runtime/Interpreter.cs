@@ -183,7 +183,8 @@ public static class Interpreter
     {
         RunTimeResult res = new();
 
-        Result<Value, Error> value = res.Register(Visit(node.Parent, context)).GetVar(node.VarNameTok);
+        Result<Value, Error> value = res.Register(Visit(node.Parent, context))
+            .GetVar(node.VarNameTok);
         if (res.ShouldReturn())
             return res;
 
@@ -266,7 +267,6 @@ public static class Interpreter
 
             if (res.LoopBreak)
                 break;
-
         }
 
         return res.Success(ValueNull.Instance);
@@ -425,11 +425,18 @@ public static class Interpreter
         }
 
         Result<Value, Error> newValue;
-        if (node.IsAdd)
+        if (node.Type == TokenType.PP)
+        {
             newValue = numNode.AddedTo(new VNumber(1));
-        else
+        }
+        else if (node.Type == TokenType.MM)
+        {
             newValue = numNode.SubedTo(new VNumber(1));
-
+        }
+        else
+        {
+            return res.Failure(new InternalInterpreterError("No valid TokenType: " + node.Type));
+        }
         if (newValue.IsFailed)
             return res.Failure(newValue.GetError());
 

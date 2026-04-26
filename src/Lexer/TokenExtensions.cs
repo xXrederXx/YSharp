@@ -56,6 +56,38 @@ public static class TokenExtensions
         return false;
     }
 
+    /// <summary>
+    /// Determines whether the token's type is contained within the provided set of types,
+    /// and returns the matching type if found.
+    /// </summary>
+    /// <param name="self">The token to inspect.</param>
+    /// <param name="types">A span of token types to test against.</param>
+    /// <param name="foundType">
+    /// When this method returns, contains the matching <see cref="TokenType"/> if a match was found;
+    /// otherwise, <c>TokenType.Null</c>.
+    /// </param>
+    /// <returns>
+    /// <c>true</c> if the token's type matches any value in <paramref name="types"/>; otherwise, <c>false</c>.
+    /// </returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static bool IsOneOf(
+        this BaseToken self,
+        ReadOnlySpan<TokenType> types,
+        out TokenType foundType
+    )
+    {
+        foreach (TokenType type in types)
+        {
+            if (self.IsType(type))
+            {
+                foundType = type;
+                return true;
+            }
+        }
+
+        foundType = TokenType.NULL;
+        return false;
+    }
 
     /// <summary>
     /// Determines whether the value of the token is equal to the specified value.
