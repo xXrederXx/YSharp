@@ -75,17 +75,9 @@ public sealed partial class VList : Value
     {
         Error err = ValueHelper.IsRightLength(1, args, self.Context);
         if (err.IsError) return Result<Value, Error>.Fail(err);
+        Value toCompare = args[0];
 
-        int index = args[0] switch
-        {
-            VNumber num => self.value.FindIndex(v => v is VNumber n && n.value == num.value),
-            VString str => self.value.FindIndex(v => v is VString s && s.value == str.value),
-            VBool b => self.value.FindIndex(v => v is VBool boolVal && boolVal.value == b.value),
-            VList list => self.value.FindIndex(v =>
-                v is VList l && l.value.SequenceEqual(list.value)
-            ),
-            _ => -1
-        };
+        int index = self.value.FindIndex(other => other.GetComparisonEQ(toCompare).IsSuccess);
 
         return Result<Value, Error>.Success(new VNumber(index));
     }
