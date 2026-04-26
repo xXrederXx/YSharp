@@ -26,7 +26,7 @@ jobs:
           python-version: 3.x
 
       - name: Install dependencies
-        run: pip install mkdocs mkdocs-material mkdocs-git-revision-date-localized-plugin
+        run: pip install mkdocs mkdocs-material mkdocs-git-revision-date-localized-plugin mkdocs-awesome-pages-plugin
 
       - name: Deploy
         run: mkdocs gh-deploy --force
