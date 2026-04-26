@@ -4,6 +4,10 @@ site_author: xXrederXx
 
 theme:
   name: material
+  features:
+    - content.action.edit
+    - content.action.view
+    - content.code.copyright
 
 markdown_extensions:
   - codehilite
@@ -21,3 +25,17 @@ nav:
     - Hello World: getting-started/hello-world.md
   - Language Reference:
     - Keywords: language-reference/keywords/index.md
+
+extra:
+  last_updated: true
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/xXrederXx/ysharp
+
+copyright: >
+  © 2026 xXrederXx — Licensed under GPL-3.0
+
+plugins:
+  - search
+  - git-revision-date-localized:
+      enable_creation_date: false
