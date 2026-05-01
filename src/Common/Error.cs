@@ -14,8 +14,12 @@ public abstract class Error(int errorCode, string message, Position startPos)
         $"{FileNameRegistry.GetFileName(startPos.FileId)}({startPos.Line + 1}, {startPos.Column + 1}): ERROR YS{errorCode:D4} {message}";
 }
 
-public abstract class RunTimeError(Position startPos, string details, Context? context, int errorIndex)
-    : Error(errorIndex, details, startPos)
+public abstract class RunTimeError(
+    Position startPos,
+    string details,
+    Context? context,
+    int errorIndex
+) : Error(errorIndex, details, startPos)
 {
     public override string ToString() => base.ToString() + "\n" + GenerateTraceback();
 
@@ -56,64 +60,51 @@ public class ErrorNull : Error
 
 //* 0000–0999: Lexical Errors
 public class IllegalCharError(Position startPos, char illegalChar)
-    : Error(0001, $"Illegal character '{illegalChar}'", startPos)
-{ }
+    : Error(0001, $"Illegal character '{illegalChar}'", startPos) { }
 
 public class IllegalEscapeCharError(Position startPos, char illegalChar)
-    : Error(0002, $"'{illegalChar}' is not a valid escape character", startPos)
-{ }
+    : Error(0002, $"'{illegalChar}' is not a valid escape character", startPos) { }
+
 [ExcludeFromCodeCoverage]
 public class InvalidEncodingError(Position startPos, string encoding)
-    : Error(0003, $"Unsupported encoding: '{encoding}'", startPos)
-{ }
+    : Error(0003, $"Unsupported encoding: '{encoding}'", startPos) { }
 
 public class ExpectedCharError(Position startPos, char expectedChar)
-    : Error(0004, $"Expected the character '{expectedChar}'", startPos)
-{ }
+    : Error(0004, $"Expected the character '{expectedChar}'", startPos) { }
 
 public class IllegalNumberFormat(Position startPos)
-    : Error(0005, "You can't have 2 dots in a number", startPos)
-{ }
+    : Error(0005, "You can't have 2 dots in a number", startPos) { }
 
 //* 1000–1999: Syntax & Structure Errors
 public class InvalidSyntaxError(Position startPos, string details)
-    : Error(1000, details, startPos)
-{ }
+    : Error(1000, details, startPos) { }
 
 public class ExpectedKeywordError(Position startPos, string keyword)
-    : Error(1001, $"Expected keyword '{keyword}'", startPos)
-{ }
+    : Error(1001, $"Expected keyword '{keyword}'", startPos) { }
 
 [ExcludeFromCodeCoverage]
 public class UnexpectedEOFError(Position startPos)
-    : Error(1002, "Unexpected end of file", startPos)
-{ }
+    : Error(1002, "Unexpected end of file", startPos) { }
 
 [ExcludeFromCodeCoverage]
 public class UnexpectedIndentError(Position startPos)
-    : Error(1003, "Unexpected indent", startPos)
-{ }
+    : Error(1003, "Unexpected indent", startPos) { }
 
 [ExcludeFromCodeCoverage]
 public class ExpectedBlockError(Position startPos)
-    : Error(1004, "Expected an indented code block", startPos)
-{ }
+    : Error(1004, "Expected an indented code block", startPos) { }
 
 public class UnmatchedBracketError(Position startPos, char bracket)
-    : Error(1005, $"Unmatched bracket '{bracket}'", startPos)
-{ }
+    : Error(1005, $"Unmatched bracket '{bracket}'", startPos) { }
 
 public class ExpectedTokenError(Position startPos, string expectedToken)
-    : Error(1006, $"Expected the Token {expectedToken}", startPos)
-{ }
+    : Error(1006, $"Expected the Token {expectedToken}", startPos) { }
 
 public class ExpectedNewlineError(Position startPos)
-    : Error(1007, "Expected a Newline", startPos)
-{ }
+    : Error(1007, "Expected a Newline", startPos) { }
 
 public class ExpectedIdnetifierError(Position startPos)
-    : Error(1008, "Expected an Identifier", startPos)
-{ }
+    : Error(1008, "Expected an Identifier", startPos) { }
 
 //* 2000–2999: Semantic Errors
 public class VarNotFoundError(Position startPos, string varName, Context? context)
@@ -219,7 +210,16 @@ public class InvalidLoadedModuleError(Position startPos, string details, Context
     : RunTimeError(startPos, details, context, 8003);
 
 //* 9000–9999: Internal / System Errors
-public class InternalError(int code, string details) : Error(code, details, Position.Null);
+public class InternalError(int code, string details) : Error(code, details, Position.Null)
+{
+    public override string ToString()
+    {
+        return "ATTENTION: You should not see this error! It was caused by unpredicted behaviour inside YSharp!\n"
+            + "WHAT TO DO: Copy the code that you executed, as well as the error message below and create an Issue with the lable bug here:\n"
+            + "https://github.com/xXrederXx/YSharp/issues/\n\n"
+            + base.ToString();
+    }
+}
 
 public class InternalLexerError(string details) : InternalError(9001, details);
 
@@ -229,11 +229,13 @@ public class InternalInterpreterError(string details) : InternalError(9003, deta
 
 [ExcludeFromCodeCoverage]
 public class AssertionFailedError(Position startPos, string message)
-    : Error(9004, $"Assertion failed: {message}", startPos)
-{ }
+    : Error(9004, $"Assertion failed: {message}", startPos) { }
 
 public class InternalSymbolTableError(Context context)
     : InternalError(9005, "The current Symbol Table is null\n" + context);
 
-public class InternalTokenCastError<T>(BaseToken token, string membername) : InternalError(9006,
-    $"Casting the token ({token.GetType()}) to a Token<{typeof(T)}> failed in {membername} / Token: {token}");
+public class InternalTokenCastError<T>(BaseToken token, string membername)
+    : InternalError(
+        9006,
+        $"Casting the token ({token.GetType()}) to a Token<{typeof(T)}> failed in {membername} / Token: {token}"
+    );
