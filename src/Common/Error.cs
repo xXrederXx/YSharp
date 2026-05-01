@@ -1,4 +1,5 @@
 using System.Diagnostics.CodeAnalysis;
+using System.Runtime.CompilerServices;
 using YSharp.Lexer;
 using YSharp.Runtime;
 using YSharp.Util;
@@ -210,32 +211,53 @@ public class InvalidLoadedModuleError(Position startPos, string details, Context
     : RunTimeError(startPos, details, context, 8003);
 
 //* 9000–9999: Internal / System Errors
-public class InternalError(int code, string details) : Error(code, details, Position.Null)
+public class InternalError(int code, string details, string memberName, int lineNumber)
+    : Error(code, details, Position.Null)
 {
     public override string ToString()
     {
         return "ATTENTION: You should not see this error! It was caused by unpredicted behaviour inside YSharp!\n"
             + "WHAT TO DO: Copy the code that you executed, as well as the error message below and create an Issue with the lable bug here:\n"
             + "https://github.com/xXrederXx/YSharp/issues/\n\n"
+            + "META:\n"
+            + $"\t- MemberName: {memberName}\n"
+            + $"\t- Caller Line: {lineNumber}\n\n"
             + base.ToString();
     }
 }
 
-public class InternalLexerError(string details) : InternalError(9001, details);
+public class InternalLexerError(
+    string details,
+    [CallerMemberName] string memberName = "",
+    [CallerLineNumber] int lineNumber = -1
+) : InternalError(9001, details, memberName, lineNumber);
 
-public class InternalParserError(string details) : InternalError(9002, details);
+public class InternalParserError(
+    string details,
+    [CallerMemberName] string memberName = "",
+    [CallerLineNumber] int lineNumber = -1
+) : InternalError(9002, details, memberName, lineNumber);
 
-public class InternalInterpreterError(string details) : InternalError(9003, details);
+public class InternalInterpreterError(
+    string details,
+    [CallerMemberName] string memberName = "",
+    [CallerLineNumber] int lineNumber = -1
+) : InternalError(9003, details, memberName, lineNumber);
 
 [ExcludeFromCodeCoverage]
 public class AssertionFailedError(Position startPos, string message)
     : Error(9004, $"Assertion failed: {message}", startPos) { }
 
-public class InternalSymbolTableError(Context context)
-    : InternalError(9005, "The current Symbol Table is null\n" + context);
+public class InternalSymbolTableError(
+    Context context,
+    [CallerMemberName] string memberName = "",
+    [CallerLineNumber] int lineNumber = -1
+) : InternalError(9005, "The current Symbol Table is null\n" + context, memberName, lineNumber);
 
 public class InternalTokenCastError<T>(BaseToken token, string membername)
     : InternalError(
         9006,
-        $"Casting the token ({token.GetType()}) to a Token<{typeof(T)}> failed in {membername} / Token: {token}"
+        $"Casting the token ({token.GetType()}) to a Token<{typeof(T)}> failed in {membername} / Token: {token}",
+        membername,
+        -1
     );
