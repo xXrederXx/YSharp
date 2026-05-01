@@ -1,4 +1,5 @@
 using System.Diagnostics.CodeAnalysis;
+using System.Runtime.CompilerServices;
 using YSharp.Lexer;
 using YSharp.Runtime;
 using YSharp.Util;
@@ -14,8 +15,12 @@ public abstract class Error(int errorCode, string message, Position startPos)
         $"{FileNameRegistry.GetFileName(startPos.FileId)}({startPos.Line + 1}, {startPos.Column + 1}): ERROR YS{errorCode:D4} {message}";
 }
 
-public abstract class RunTimeError(Position startPos, string details, Context? context, int errorIndex)
-    : Error(errorIndex, details, startPos)
+public abstract class RunTimeError(
+    Position startPos,
+    string details,
+    Context? context,
+    int errorIndex
+) : Error(errorIndex, details, startPos)
 {
     public override string ToString() => base.ToString() + "\n" + GenerateTraceback();
 
@@ -62,6 +67,7 @@ public class IllegalCharError(Position startPos, char illegalChar)
 public class IllegalEscapeCharError(Position startPos, char illegalChar)
     : Error(0002, $"'{illegalChar}' is not a valid escape character", startPos)
 { }
+
 [ExcludeFromCodeCoverage]
 public class InvalidEncodingError(Position startPos, string encoding)
     : Error(0003, $"Unsupported encoding: '{encoding}'", startPos)
@@ -219,21 +225,54 @@ public class InvalidLoadedModuleError(Position startPos, string details, Context
     : RunTimeError(startPos, details, context, 8003);
 
 //* 9000–9999: Internal / System Errors
-public class InternalError(int code, string details) : Error(code, details, Position.Null);
+public class InternalError(int code, string details, string memberName, int lineNumber)
+    : Error(code, details, Position.Null)
+{
+    public override string ToString()
+    {
+        return "ATTENTION: You should not see this error! It was caused by unpredicted behaviour inside YSharp!\n"
+            + "WHAT TO DO: Copy the code that you executed, as well as the error message below and create an Issue with the lable bug here:\n"
+            + "https://github.com/xXrederXx/YSharp/issues/\n\n"
+            + "META:\n"
+            + $"\t- MemberName: {memberName}\n"
+            + $"\t- Caller Line: {lineNumber}\n\n"
+            + base.ToString();
+    }
+}
 
-public class InternalLexerError(string details) : InternalError(9001, details);
+public class InternalLexerError(
+    string details,
+    [CallerMemberName] string memberName = "",
+    [CallerLineNumber] int lineNumber = -1
+) : InternalError(9001, details, memberName, lineNumber);
 
-public class InternalParserError(string details) : InternalError(9002, details);
+public class InternalParserError(
+    string details,
+    [CallerMemberName] string memberName = "",
+    [CallerLineNumber] int lineNumber = -1
+) : InternalError(9002, details, memberName, lineNumber);
 
-public class InternalInterpreterError(string details) : InternalError(9003, details);
+public class InternalInterpreterError(
+    string details,
+    [CallerMemberName] string memberName = "",
+    [CallerLineNumber] int lineNumber = -1
+) : InternalError(9003, details, memberName, lineNumber);
 
 [ExcludeFromCodeCoverage]
 public class AssertionFailedError(Position startPos, string message)
     : Error(9004, $"Assertion failed: {message}", startPos)
 { }
 
-public class InternalSymbolTableError(Context context)
-    : InternalError(9005, "The current Symbol Table is null\n" + context);
+public class InternalSymbolTableError(
+    Context context,
+    [CallerMemberName] string memberName = "",
+    [CallerLineNumber] int lineNumber = -1
+) : InternalError(9005, "The current Symbol Table is null\n" + context, memberName, lineNumber);
 
-public class InternalTokenCastError<T>(BaseToken token, string membername) : InternalError(9006,
-    $"Casting the token ({token.GetType()}) to a Token<{typeof(T)}> failed in {membername} / Token: {token}");
+public class InternalTokenCastError<T>(BaseToken token, string membername)
+    : InternalError(
+        9006,
+        $"Casting the token ({token.GetType()}) to a Token<{typeof(T)}> failed in {membername} / Token: {token}",
+        membername,
+        -1
+    );
