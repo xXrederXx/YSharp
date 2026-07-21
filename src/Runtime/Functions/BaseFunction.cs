@@ -63,7 +63,12 @@ public abstract class VBaseFunction : Value
             string argName = argNames[i];
             Value argValue = args[i];
             argValue.SetContext(execContext);
-            execContext.SymbolTable.Set(argName, argValue);
+            execContext.SymbolTable.Set(
+                argName,
+                new Symbol(argValue, true),
+                argValue.StartPos,
+                execContext
+            );
         }
         return ErrorNull.Instance;
     }
