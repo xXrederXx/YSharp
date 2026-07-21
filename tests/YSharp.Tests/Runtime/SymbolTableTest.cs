@@ -55,6 +55,19 @@ public class SymbolTableTest
     }
 
     [Fact]
+    public void checkSet_whenSymbolReserved_thenReservedError()
+    {
+        SymbolTable symbolTable = new SymbolTable();
+        Error res = symbolTable.Set(
+            "IF",
+            new Symbol(new VNumber(6), false),
+            Position.Null,
+            new Context()
+        );
+        Assert.IsType<ReservedNameError>(res);
+    }
+
+    [Fact]
     public void checkUpdate_whenNewSymbol_thenNotFoundError()
     {
         SymbolTable symbolTable = new SymbolTable();
