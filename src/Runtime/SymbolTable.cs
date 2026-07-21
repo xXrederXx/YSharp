@@ -1,4 +1,6 @@
+using FastEnumUtility;
 using YSharp.Common;
+using YSharp.Lexer;
 using YSharp.Runtime.Functions;
 using YSharp.Runtime.Primitives.Bool;
 using YSharp.Runtime.Utils.Math;
@@ -28,6 +30,10 @@ public class SymbolTable
     ///</summary>
     public Error Set(string name, Symbol symbol, Position pos, Context ctx)
     {
+        if (FastEnum.TryParse(name, out KeywordType _))
+        {
+            return new ReservedNameError(pos, name, ctx);
+        }
         if (Symbols.TryGetValue(name, out Symbol? stored) && stored.IsReadonly)
         {
             return new AssignmentToConstantError(pos, name, ctx);
