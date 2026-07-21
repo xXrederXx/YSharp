@@ -252,10 +252,28 @@ public static class Interpreter
 
         string varName = node.VarNameTok.Value;
         // This is needed so later only update can be used
-        context.SymbolTable.Set(varName, new Symbol(new VNumber(i), false), node.VarNameTok.StartPos, context);
+        Error setError = context.SymbolTable.Set(
+            varName,
+            new Symbol(new VNumber(i), false),
+            node.VarNameTok.StartPos,
+            context
+        );
+        if (setError.IsError)
+        {
+            return res.Failure(setError);
+        }
         while (condition.Invoke(i))
         {
-            context.SymbolTable.Update(varName, new VNumber(i), node.VarNameTok.StartPos, context);
+            Error updateError = context.SymbolTable.Update(
+                varName,
+                new VNumber(i),
+                node.VarNameTok.StartPos,
+                context
+            );
+            if (updateError.IsError)
+            {
+                return res.Failure(updateError);
+            }
 
             res.Register(Visit(node.BodyNode, context));
             if (res.ShouldReturn() && !res.LoopContinue && !res.LoopBreak)
@@ -289,12 +307,16 @@ public static class Interpreter
         VFunction funcValue = new(funcName, bodyNode, argNames, node.RetNull);
         funcValue.SetContext(context).SetPos(node.StartPos, node.EndPos);
 
-        context.SymbolTable?.Set(
+        Error? setError = context.SymbolTable?.Set(
             funcName,
             new Symbol(funcValue, true),
             node.VarNameTok.StartPos,
             context
         );
+        if (setError is not null && setError.IsError)
+        {
+            return res.Failure(setError);
+        }
         return res.Success(funcValue);
     }
 
@@ -446,7 +468,16 @@ public static class Interpreter
         if (newValue.IsFailed)
             return res.Failure(newValue.GetError());
 
-        context.SymbolTable.Update(varName, newValue.GetValue(), node.StartPos, context);
+        Error updateError = context.SymbolTable.Update(
+            varName,
+            newValue.GetValue(),
+            node.StartPos,
+            context
+        );
+        if (updateError.IsError)
+        {
+            return res.Failure(updateError);
+        }
         return res.Success(newValue.GetValue());
     }
 
@@ -464,15 +495,18 @@ public static class Interpreter
         }
 
         if (node.CatchVarName is not null)
-            context.SymbolTable.Set(
+        {
+            Error setError = context.SymbolTable.Set(
                 node.CatchVarName.Value,
-                new Symbol(
-                    new VString(res.Error.ToString()), true),
-                    node.CatchVarName.StartPos,
-                    context
-
+                new Symbol(new VString(res.Error.ToString()), true),
+                node.CatchVarName.StartPos,
+                context
             );
-
+            if (setError.IsError)
+            {
+                return res.Failure(setError);
+            }
+        }
         Value catchVal = res.Register(Visit(node.CatchNode, context));
         if (res.ShouldReturn())
             return res;
@@ -553,12 +587,16 @@ public static class Interpreter
             return res.Failure(new InternalSymbolTableError(context));
         }
 
-        context.SymbolTable.Set(
+        Error setError = context.SymbolTable.Set(
             varName,
             new Symbol(value, false),
             node.VarNameTok.StartPos,
             context
         );
+        if (setError.IsError)
+        {
+            return res.Failure(setError);
+        }
         return res.Success(value);
     }
 

@@ -63,12 +63,16 @@ public abstract class VBaseFunction : Value
             string argName = argNames[i];
             Value argValue = args[i];
             argValue.SetContext(execContext);
-            execContext.SymbolTable.Set(
+            Error setError = execContext.SymbolTable.Set(
                 argName,
                 new Symbol(argValue, true),
                 argValue.StartPos,
                 execContext
             );
+            if (setError.IsError)
+            {
+                return setError;
+            }
         }
         return ErrorNull.Instance;
     }
