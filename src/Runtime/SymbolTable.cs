@@ -1,3 +1,6 @@
+using FastEnumUtility;
+using YSharp.Common;
+using YSharp.Lexer;
 using YSharp.Runtime.Functions;
 using YSharp.Runtime.Primitives.Bool;
 using YSharp.Runtime.Utils.Math;
@@ -7,27 +10,50 @@ namespace YSharp.Runtime;
 public class SymbolTable
 {
     public SymbolTable? Parent { private get; init; } = null;
-    private Dictionary<string, Value> Symbols = [];
+    private Dictionary<string, Symbol> Symbols { get; init; } = [];
 
     public Value Get(string? name) => Get(name, ValueNull.Instance);
 
     public Value Get(string? name, Value defaultValue)
     {
-        if (string.IsNullOrEmpty(name)) return defaultValue;
+        if (string.IsNullOrEmpty(name))
+            return defaultValue;
 
-        return Symbols.TryGetValue(name, out Value? value)
-            ? value
+        return Symbols.TryGetValue(name, out Symbol? symbol)
+            ? symbol.StoredValue
             : GetFromParent(name, defaultValue);
     }
 
-    public void Remove(string name)
+    ///<summary>
+    /// Try to add an entry into the symbol table.
+    /// If successfull it returns an ErrorNull.
+    ///</summary>
+    public Error Set(string name, Symbol symbol, Position pos, Context ctx)
     {
-        Symbols.Remove(name);
+        if (FastEnum.TryParse(name, out KeywordType _))
+        {
+            return new ReservedNameError(pos, name, ctx);
+        }
+        if (Symbols.TryGetValue(name, out Symbol? stored) && stored.IsReadonly)
+        {
+            return new AssignmentToConstantError(pos, name, ctx);
+        }
+        Symbols[name] = symbol;
+        return ErrorNull.Instance;
     }
 
-    public void Set(string name, Value value)
+    public Error Update(string name, Value value, Position pos, Context ctx)
     {
-        Symbols[name] = value;
+        if (!Symbols.TryGetValue(name, out Symbol? symbol))
+        {
+            return new VarNotFoundError(pos, name, ctx);
+        }
+        if (symbol.IsReadonly)
+        {
+            return new AssignmentToConstantError(pos, name, ctx);
+        }
+        symbol.StoredValue = value;
+        return ErrorNull.Instance;
     }
 
     private Value GetFromParent(string name, Value defaultValue) =>
@@ -35,18 +61,17 @@ public class SymbolTable
 
     public static SymbolTable GenerateGlobalSymboltable()
     {
-        SymbolTable SampleSymbolTable = new();
+        Dictionary<string, Symbol> Symbols = [];
 
-        SampleSymbolTable.Set("TRUE", new VBool(true));
-        SampleSymbolTable.Set("FALSE", new VBool(false));
+        Symbols.Add("TRUE", new Symbol(new VBool(true), true));
+        Symbols.Add("FALSE", new Symbol(new VBool(false), true));
 
-        SampleSymbolTable.Set("MATH", new VMath());
-        SampleSymbolTable.Set("PRINT", BuiltInFunctionsTable.print);
-        SampleSymbolTable.Set("INPUT", BuiltInFunctionsTable.input);
-        SampleSymbolTable.Set("RUN", BuiltInFunctionsTable.run);
-        SampleSymbolTable.Set("TIMETORUN", BuiltInFunctionsTable.timetorun);
-        SampleSymbolTable.Set("TIME", BuiltInFunctionsTable.time);
-
-        return SampleSymbolTable;
+        Symbols.Add("MATH", new Symbol(new VMath(), true));
+        Symbols.Add("PRINT", new Symbol(BuiltInFunctionsTable.print, true));
+        Symbols.Add("INPUT", new Symbol(BuiltInFunctionsTable.input, true));
+        Symbols.Add("RUN", new Symbol(BuiltInFunctionsTable.run, true));
+        Symbols.Add("TIMETORUN", new Symbol(BuiltInFunctionsTable.timetorun, true));
+        Symbols.Add("TIME", new Symbol(BuiltInFunctionsTable.time, true));
+        return new SymbolTable() { Symbols = Symbols };
     }
 }
