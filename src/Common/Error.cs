@@ -128,11 +128,9 @@ public class VarNotFoundError(Position startPos, string varName, Context? contex
 public class FuncNotFoundError(Position startPos, string funcName, Context? context)
     : RunTimeError(startPos, $"Function '{funcName}' is not defined", context, 2001);
 
-[ExcludeFromCodeCoverage]
 public class AssignmentToConstantError(Position startPos, string name, Context? context)
     : RunTimeError(startPos, $"Cannot assign to constant '{name}'", context, 2002);
 
-[ExcludeFromCodeCoverage]
 public class ReservedNameError(Position startPos, string name, Context? context)
     : RunTimeError(startPos, $"'{name}' is a reserved keyword", context, 2003);
 
