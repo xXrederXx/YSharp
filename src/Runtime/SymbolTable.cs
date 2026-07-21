@@ -22,11 +22,6 @@ public class SymbolTable
             : GetFromParent(name, defaultValue);
     }
 
-    public void Remove(string name)
-    {
-        Symbols.Remove(name);
-    }
-
     ///<summary>
     /// Try to add an entry into the symbol table.
     /// If successfull it returns an ErrorNull.
