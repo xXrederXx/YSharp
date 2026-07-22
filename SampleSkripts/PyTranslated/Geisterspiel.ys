@@ -1,0 +1,33 @@
+# TEMPORARY RANDOM FUNCTION
+VAR seed = 1
+FUN RandomInt(max)
+    VAR num = MATH.SIN(seed) * 43758.5453
+    RETURN MATH.FLOOR((num - MATH.FLOOR(num)) * max)
+END
+
+PRINT("Geisterspiel")
+VAR du_bist_mutig = TRUE
+VAR score = 0
+
+WHILE du_bist_mutig THEN
+    VAR geistertuer = RandomInt(4)
+    PRINT("Vor dir sind drei Türen ...")
+    PRINT("Hinter einer ist ein Geist.")
+    PRINT("Welche Tür öffnest du?")
+    PRINT("1, 2 oder 3?")
+    VAR tuer = INPUT().ToNumber()
+    IF tuer == geistertuer THEN
+        PRINT("GEIST!!!")
+        VAR du_bist_mutig = FALSE
+    END
+    ELIF tuer < 0 OR tuer > 3 THEN
+        PRINT("error")
+    END
+    ELSE
+        PRINT("Kein Geist!")
+        PRINT("Du bist ein Zimmer weiter.")
+        VAR score++
+    END
+END
+PRINT("Laufe weg!")
+PRINT("Spiel vorbei! Deine Punkte:" + score.ToString())

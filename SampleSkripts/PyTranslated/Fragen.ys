@@ -1,0 +1,33 @@
+PRINT("Tim's Mutter hat 3 Kinder Track, Treck und?")
+VAR a = INPUT()
+IF a == "Tim" THEN
+    PRINT("Richtig")
+    PRINT("Was ist die grösste zahl?")
+    PRINT("Hier eingeben (Nur Zahlen)")
+    VAR b = INPUT().ToNumber()
+    IF b == 9 THEN
+        PRINT("Richtig")
+        PRINT("was hat 3 buchstaben")
+        PRINT("manchmal 8 buchstaben")
+        PRINT("aber niemals 7 buchstaben")
+        PRINT("die anfangs wörter, die 4. dimension, etwas anderes evtl. Copy Paste")
+        VAR c = INPUT()
+        IF c == "die anfangs wörter" THEN
+            PRINT("Richtig")
+            PRINT("Du hattest alle richtig, bravo!")
+        END
+        ELSE
+            PRINT("Falsch")
+            PRINT("die anfangs wörter wäre richtig")
+        END
+    END
+    ELSE
+        PRINT("Falsch")
+        PRINT("9 wäre richtig, weil alle anderen einfach mehrere 9 haben")
+    END
+END
+ELSE
+    PRINT("Falsch")
+    PRINT("Richtig wäre Tim")
+    PRINT("Hast du Grossgeschrieben?")
+END
