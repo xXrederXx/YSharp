@@ -33,7 +33,7 @@ jobs:
             --collect:"XPlat Code Coverage" \
             --results-directory TestResults
       - name: Generate coverage badge JSON
-        run: python .github/scripts/build-coverage-badge.py
+        run: python .github/scripts/build_coverage_badge.py
       - name: Create Pull Request with coverage badge (main only)
         if: github.ref == 'refs/heads/main'
         uses: peter-evans/create-pull-request@v5
